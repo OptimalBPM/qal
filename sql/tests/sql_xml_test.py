@@ -10,9 +10,9 @@ From test 6 and forward, also SQL:s for all platforms are being tested in the sa
 in the sql_test for convenience and that those tests use datasets.
 '''
 import unittest
-from qal.sql.sql_xml import SQL_XML
-from qal.sql.tests.sql_test import my_diff, gen_simple_insert, gen_simple_select, gen_simple_create
-from qal.dal.dal_types import db_types
+from sql.sql_xml import SQL_XML
+from sql.tests.sql_test import my_diff, gen_simple_insert, gen_simple_select, gen_simple_create
+from dal.dal_types import db_types
 
 import os
 Test_Script_Dir = os.path.dirname(__file__)

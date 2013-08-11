@@ -5,9 +5,9 @@ Created on May 23, 2010
 '''
 import unittest
 import difflib
-from qal.sql.sql_types import *
-from qal.dal.dal_types import *
-from qal.sql.sql import *
+from sql.sql_types import *
+from dal.dal_types import *
+from sql.sql import *
 
 
 global r_create_table_mysql 

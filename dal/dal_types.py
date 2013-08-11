@@ -4,7 +4,7 @@ Created on Aug 17, 2010
 @author: Nicklas Boerjesson
 '''
 
-from qal.common.listhelper import CI_index
+from common.listhelper import CI_index
 
 DB_MYSQL = 0
 DB_POSTGRESQL = 1

@@ -4,8 +4,8 @@ Created on Sep 14, 2012
 @author: Nicklas Boerjesson
 '''
 
-from qal.dal.dal_types import DB_DB2,DB_ORACLE, DB_POSTGRESQL
-from qal.sql.sql_utils import db_specific_object_reference
+from dal.dal_types import DB_DB2,DB_ORACLE, DB_POSTGRESQL
+from sql.sql_utils import db_specific_object_reference
 class Parameter_Custom_Dataset(object):
     '''
     Is the base class for all datasets in QAL-
