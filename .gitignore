@@ -1,3 +1,5 @@
+*.pyc
+*__pycache__*
 /.externalToolBuilders
 .project
 .pydevproject
@@ -5,6 +7,6 @@
 /.git
 
 *test*_out.sql
-qal.egg-info
+*.egg-info
 build
 dist
