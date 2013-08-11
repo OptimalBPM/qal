@@ -4,7 +4,7 @@ Created on May 8, 2010
 @author: Nicklas Boerjesson
 '''
 
-from .dal_types import DB_MYSQL, DB_POSTGRESQL, DB_ORACLE, DB_DB2, DB_SQLSERVER, string_to_db_type
+from qal.dal.dal_types import DB_MYSQL, DB_POSTGRESQL, DB_ORACLE, DB_DB2, DB_SQLSERVER, string_to_db_type
 
 class Database_Abstraction_Layer(object):
     '''
