@@ -6,9 +6,9 @@ Created on Oct 10, 2010
 @todo: There should be tests for listing tables and so forth.
 '''
 import unittest
-from dal.tests.framework import get_default_dal
-from sql.sql_meta_queries import Meta_Queries 
-from dal.dal_types import DB_MYSQL, DB_POSTGRESQL, DB_ORACLE, DB_DB2, DB_SQLSERVER
+from qal.dal.tests.framework import get_default_dal
+from qal.sql.sql_meta_queries import Meta_Queries 
+from qal.dal.dal_types import DB_MYSQL, DB_POSTGRESQL, DB_ORACLE, DB_DB2, DB_SQLSERVER
 
 
 class TestSQL_Meta_queries(unittest.TestCase):

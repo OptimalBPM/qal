@@ -4,15 +4,15 @@ Created on Sep 21, 2010
 @author: Nicklas Boerjesson
 
 '''
-from .sql_meta import list_class_properties, list_parameter_classes, list_verb_classes, find_class
-from .sql_types import sql_property_to_type, data_types, and_or, \
+from qal.sql.sql_meta import list_class_properties, list_parameter_classes, list_verb_classes, find_class
+from qal.sql.sql_types import sql_property_to_type, data_types, and_or, \
     constraint_types, index_types, verbs, expression_item_types, \
     condition_part,set_operator, tabular_expression_item_types, data_source_types
 from urllib.request import quote, unquote
-from dal.dal_types import db_types
+from qal.dal.dal_types import db_types
 from xml.dom.minidom import Document, parseString, Text
 from xml.sax.saxutils import escape
-from sql.sql_utils import check_for_param_content
+from qal.sql.sql_utils import check_for_param_content
 
 # TODO : This is a wee bit risky, this means that the schema will be dynamic dependent on what the server supports.
 # Good or Bad?

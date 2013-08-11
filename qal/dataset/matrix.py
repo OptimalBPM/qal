@@ -4,10 +4,10 @@ Created on Jan 8, 2012
 @author: Nicklas Boerjesson
 '''
 
-from dal.dal_types import DB_DB2,DB_ORACLE, DB_POSTGRESQL
-from sql.sql_utils import db_specific_object_reference
+from qal.dal.dal_types import DB_DB2,DB_ORACLE, DB_POSTGRESQL
+from qal.sql.sql_utils import db_specific_object_reference
 from datetime import date, datetime
-from .custom import Parameter_Custom_Dataset
+from qal.dataset.custom import Parameter_Custom_Dataset
 
 class Parameter_Matrix_Dataset(Parameter_Custom_Dataset):
  

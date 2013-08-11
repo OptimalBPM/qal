@@ -4,7 +4,7 @@ Created on Sep 14, 2012
 @author: Nicklas Boerjesson
 '''
 
-from .custom import Parameter_Custom_Dataset
+from qal.dataset.custom import Parameter_Custom_Dataset
 
 class Parameter_XML_Dataset(Parameter_Custom_Dataset):
     '''

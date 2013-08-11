@@ -20,6 +20,6 @@ setup(
       It supports several database backends and file formats.
       """,
     url='https://sourceforge.net/projects/qal/',
-    packages=['qal', 'qal.dal', 'qal.sql', 'qal.common'],
+    packages=['qal', 'qal.dal', 'qal.dal.tests', 'qal.sql', 'qal.sql.tests', 'qal.common', 'qal.dataset'],
     license='BSD',
     install_requires=['setuptools'])

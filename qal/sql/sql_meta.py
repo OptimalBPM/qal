@@ -7,11 +7,11 @@ from the SQL.py and generates meta data by analyzing its objects.
 '''
 
 # Import the entire SQL namespace to make it searchable and supress warnings.
-from .sql import * #@UnusedWildImport #IGNORE:W0401
-from dataset.flatfile import Parameter_Flatfile_Dataset #@UnusedWildImport #IGNORE:W0401
-from dataset.rdbms import Parameter_RDBMS_Dataset #@UnusedWildImport #IGNORE:W0401
-from dataset.xml import Parameter_XML_Dataset #@UnusedWildImport #IGNORE:W0401
-from dataset.matrix import Parameter_Matrix_Dataset #@UnusedWildImport #IGNORE:W0401
+from qal.sql.sql import * #@UnusedWildImport #IGNORE:W0401
+from qal.dataset.flatfile import Parameter_Flatfile_Dataset #@UnusedWildImport #IGNORE:W0401
+from qal.dataset.rdbms import Parameter_RDBMS_Dataset #@UnusedWildImport #IGNORE:W0401
+from qal.dataset.xml import Parameter_XML_Dataset #@UnusedWildImport #IGNORE:W0401
+from qal.dataset.matrix import Parameter_Matrix_Dataset #@UnusedWildImport #IGNORE:W0401
 
 def list_parameter_classes():
     """List all parameter classes"""

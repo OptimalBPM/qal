@@ -8,15 +8,15 @@ For example: sources means that it is a list of Parameter_Source.
 @warning: Changes and new classes must satisfy both the import/export of data structures and schema generation.
 
 '''
-from .sql_types import DEFAULT_ROWSEP, expression_item_types,tabular_expression_item_types
-from dal.dal_types import DB_POSTGRESQL, DB_MYSQL, DB_ORACLE, DB_DB2, DB_SQLSERVER 
+from qal.sql.sql_types import DEFAULT_ROWSEP, expression_item_types,tabular_expression_item_types
+from qal.dal.dal_types import DB_POSTGRESQL, DB_MYSQL, DB_ORACLE, DB_DB2, DB_SQLSERVER 
 
-from sql.sql_utils import *
-from .sql_types import condition_part
-from dataset.flatfile import Parameter_Flatfile_Dataset
-from dataset.rdbms import Parameter_RDBMS_Dataset
-from dataset.xml import Parameter_XML_Dataset
-from dataset.matrix import Parameter_Matrix_Dataset
+from qal.sql.sql_utils import *
+from qal.sql.sql_types import condition_part
+from qal.dataset.flatfile import Parameter_Flatfile_Dataset
+from qal.dataset.rdbms import Parameter_RDBMS_Dataset
+from qal.dataset.xml import Parameter_XML_Dataset
+from qal.dataset.matrix import Parameter_Matrix_Dataset
                               
 class Parameter_Base(object): 
     """This class is a base class for all parameter classes."""
