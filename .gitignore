@@ -5,3 +5,6 @@
 /.git
 
 *test*_out.sql
+qal.egg-info
+build
+dist
