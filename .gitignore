@@ -1,3 +1,6 @@
 *.class
 *.pyc
 *.pyo
+dist
+build
+qal.egg-info
