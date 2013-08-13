@@ -84,7 +84,8 @@ class Database_Abstraction_Layer(object):
             Conn = cx_Oracle.connect(connstr) 
             Conn.autocommit=self.autocommit
                   
-              
+        else:
+            raise Exception("connect_to_db: Invalid database type.")              
       
         
         self.db_connection = Conn      
