@@ -10,6 +10,13 @@ class Database_Abstraction_Layer(object):
     '''
     This class is a base class for all access classes.
     '''
+    
+    # Events
+    
+    on_connect = None
+    
+    # Properties
+    
     db_connection = None
     settings = None
     db_type = None
@@ -88,7 +95,9 @@ class Database_Abstraction_Layer(object):
             raise Exception("connect_to_db: Invalid database type.")              
       
         
-        self.db_connection = Conn      
+        self.db_connection = Conn   
+        if self.on_connect:
+            self.on_connect()  
         return Conn 
     
     
