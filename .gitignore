@@ -10,3 +10,5 @@
 *.egg-info
 build
 dist
+.pypirc
+qal-0.1
