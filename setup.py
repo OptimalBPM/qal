@@ -17,8 +17,7 @@ setup(
     author_email='nicklasb_attheold_gmaildotcom',
     maintainer='Nicklas Boerjesson',
     maintainer_email='nicklasb_attheold_gmaildotcom',
-    long_description="""\
-      Query Abstraction Layer is a Python library for mixing data from different data sources into SQL statements.
+    long_description="""Query Abstraction Layer is a Python library for mixing data from different data sources into SQL statements.\
       It supports several database backends and file formats.
       """,
     url='https://sourceforge.net/projects/qal/',
@@ -27,5 +26,4 @@ setup(
         # If any package contains *.txt or *.xml files, include them:
         '': ['*.txt', '*.xml', '*.sql']
     },
-    license='BSD',
-    install_requires=['setuptools'])
+    license='BSD')
