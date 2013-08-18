@@ -48,6 +48,7 @@ WHERE table_type = 'BASE TABLE' \
     AND table_catalog = ':DATABASE' \
 ORDER BY table_type, table_name "
 
+table_list_mysql_by_database_name = "SHOW TABLES IN :DATABASE"
 
 
 table_list_db2_by_schema = "select NAME from sysibm.systables \
@@ -73,8 +74,8 @@ def table_list_sql_by_schema(_db_type, _user):
     return SQL
 
 def table_list_sql_by_database_name(_db_type, _database):
-    if not(_db_type in [1]):
-        raise Exception("table_list_sql_by_database_name: Only postgres is supported currently!") 
+    if not(_db_type in [0,1]):
+        raise Exception("table_list_sql_by_database_name: Only MySQL and Postgres is supported currently!") 
     
     SQL = [table_list_mysql_by_database_name, table_list_postgresql_by_database_name, table_list_oracle_by_schema, table_list_db2_by_schema, table_list_sqlserver][_db_type]
     SQL = SQL.replace(":DATABASE", _database)
