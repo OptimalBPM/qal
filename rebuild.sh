@@ -5,15 +5,15 @@ set +v
 echo "Staging temp area on local hard drive..."
 
 sudo rm -rf /tmp/qal_dist
-sudo rsync -qavz --exclude subdirectory5 --exclude-from ../source/.gitignore --exclude .gitignore --exclude .gitignore_global ../source/ /tmp/qal_dist/
+sudo rsync -qavz --exclude subdirectory5 --exclude-from .gitignore --exclude .gitignore --exclude .gitignore_global ../source/ /tmp/qal_dist/
 
 cd /tmp/qal_dist
 
 if [ X"$1" = X"upload" ]; then
-  echo "Building and uploading"
+  echo "Building and uploading QAL"
   sudo python3.2 setup.py -q sdist bdist_egg upload
 else
-  echo "Building..."
+  echo "Building QAL..."
   sudo python3.2 setup.py -q sdist bdist bdist_egg
 fi
 
