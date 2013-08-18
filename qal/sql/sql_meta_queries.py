@@ -38,13 +38,23 @@ WHERE \
 (tbl.name=':TABLENAME') \
 ORDER BY clmns.column_id ASC"
 
-table_list_mysql = table_list_postgresql =  table_list_oracle = table_list_sqlserver = ""
+table_list_mysql_by_database_name =  table_list_oracle_by_schema = table_list_sqlserver = ""
 
-table_list_db2 = "select NAME from sysibm.systables \
+
+table_list_postgresql_by_database_name = "SELECT  table_name \
+FROM information_schema.tables \
+WHERE table_type = 'BASE TABLE' \
+    AND table_schema = 'public' \
+    AND table_catalog = ':DATABASE' \
+ORDER BY table_type, table_name "
+
+
+
+table_list_db2_by_schema = "select NAME from sysibm.systables \
 where CREATOR  = ':USER' \
 and type = 'T';"
 
-table_list_oracle = "select table_name from user_tables WHERE TABLESPACE_NAME = ':USER' AND table_name NOT LIKE 'DEF$_%'"
+table_list_oracle_by_schema = "select table_name from user_tables WHERE TABLESPACE_NAME = ':USER' AND table_name NOT LIKE 'DEF$_%'"
 
 
 
@@ -54,12 +64,20 @@ def table_info_sql(_db_type, _table_name, _database_name):
     SQL = SQL.replace(":DATABASENAME", _database_name)
     return SQL
 
-def table_list_sql(_db_type, _user):
+def table_list_sql_by_schema(_db_type, _user):
     if not(_db_type in [2,3]):
-        raise Exception("table_list_sql: Only DB2 and Oracle supported currently!") 
+        raise Exception("table_list_sql_by_schema: Only DB2 and Oracle supported currently!") 
     
-    SQL = [table_list_mysql, table_list_postgresql, table_list_oracle, table_list_db2, table_list_sqlserver][_db_type]
+    SQL = [table_list_mysql_by_database_name, table_list_postgresql_by_database_name, table_list_oracle_by_schema, table_list_db2_by_schema, table_list_sqlserver][_db_type]
     SQL = SQL.replace(":USER", _user)
+    return SQL
+
+def table_list_sql_by_database_name(_db_type, _database):
+    if not(_db_type in [1]):
+        raise Exception("table_list_sql_by_database_name: Only postgres is supported currently!") 
+    
+    SQL = [table_list_mysql_by_database_name, table_list_postgresql_by_database_name, table_list_oracle_by_schema, table_list_db2_by_schema, table_list_sqlserver][_db_type]
+    SQL = SQL.replace(":DATABASE", _database)
     return SQL
 
 
@@ -87,14 +105,21 @@ class Meta_Queries(object):
         return columns   
      
 
-    def table_list(self, _schema_name):
-        rows = self.dal.query(table_list_sql(self.dal.db_type, _schema_name))
+    def table_list_by_schema(self, _schema_name):
+        rows = self.dal.query(table_list_sql_by_schema(self.dal.db_type, _schema_name))
         columns = list()
         for row in rows:
             columns.append(row[0])
         return columns    
         
-
+    def table_list_by_database_name(self, _database_name):
+        rows = self.dal.query(table_list_sql_by_database_name(self.dal.db_type, _database_name))
+        print("SQL:\n"+ table_list_sql_by_database_name(self.dal.db_type, _database_name) + "\n_database_name:" + _database_name + "\nrows: \n" + str(rows))
+        columns = list()
+        for row in rows:
+            columns.append(row[0])
+        return columns  
+    
     def oracle_all_sequences(self):
         rows = self.dal.query('SELECT SEQUENCE_NAME FROM USER_SEQUENCES')
         sequences = list()
