@@ -17,6 +17,8 @@ class Database_Abstraction_Layer(object):
     
     # Properties
     
+    connected = False
+    
     db_connection = None
     settings = None
     db_type = None
@@ -95,9 +97,12 @@ class Database_Abstraction_Layer(object):
             raise Exception("connect_to_db: Invalid database type.")              
       
         
-        self.db_connection = Conn   
+        self.db_connection = Conn
+        
         if self.on_connect:
-            self.on_connect()  
+            self.on_connect() 
+        self.connected = True
+            
         return Conn 
     
     
@@ -141,5 +146,4 @@ class Database_Abstraction_Layer(object):
     def rollback(self):
         self.db_connection.rollback()
     
-    def connected(self):
-        return self.db_connection.connected
+
