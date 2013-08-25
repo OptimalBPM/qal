@@ -217,4 +217,4 @@ def make_operator(_operator, _double_pipe_c):
 def make_function(_name, _value):
     """Assembles an SQL function call."""
     return _name + parenthesise(_value)
-                              
+                 

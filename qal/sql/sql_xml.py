@@ -23,12 +23,14 @@ global debugverb
 
 
 def sql_property_to_xml_type(_PropertyName):
+    """Converts a SQL class' property name to an XML type"""
     result = sql_property_to_type(_PropertyName)
     if result[0] in ['string', 'decimal', 'boolean', 'integer']:
         result[0] = "xsd:" + result[0]
     return result
 
 def xml_set_cdata(_node, _value, _lowercase=False):
+    """Helper to set character data in an XML tree"""
     if _value != None and _value != "":
         sec = Text()
         if _value is str:
@@ -43,12 +45,14 @@ def xml_set_cdata(_node, _value, _lowercase=False):
     
 
 def xml_get_text(_node):
+    """Helper function to get character data from an XML tree"""
     rc = list()
     for node in _node.childNodes:
         if node.nodeType == node.TEXT_NODE:
             rc.append(node.data)
     return unquote(''.join(rc))
 def xml_get_boolean(_node):
+    """Helper function to get a boolean value from XSD:booleans defaults"""
     value = xml_get_text(_node)
     if value.lower() == 'true':
         return True
@@ -60,6 +64,7 @@ def xml_get_boolean(_node):
 
 
 def xml_get_numeric(_node, _type = ""):
+    """Helper function to read a numeric value from the XML"""
     try:
         _value = xml_get_text(_node)
         if _type.lower() == "integer":
@@ -76,7 +81,7 @@ def xml_get_numeric(_node, _type = ""):
 
     return number
 def xml_base_type_value(_node, _typename):
-    
+    """Using the base type name, get appropriate data"""
     if _typename in ["int", "float"]:
         return xml_get_numeric(_node)
     elif _typename in ["str"]:
@@ -89,6 +94,7 @@ def xml_base_type_value(_node, _typename):
     
 
 def xml_get_allowed_value(_node, _type):
+    """Check if a value is allowed in a certain XML node"""
     value = xml_get_text(_node)
 
     if (value in _type[1] or value == ""):
@@ -100,7 +106,7 @@ def xml_get_allowed_value(_node, _type):
         raise Exception("xml_get_allowed_value: " + str(value) + " is not a valid value in a " + _type[0] + ". Node:" + str(_node))
 
 def xml_find_non_text_child(_node):
-    # Finds the first child that is not of the Text node type.
+    """Finds the first child that is not of the Text node type."""
     nodelist = _node.childNodes
     for node in nodelist:
         if node.nodeType != node.TEXT_NODE:
@@ -110,15 +116,16 @@ def xml_find_non_text_child(_node):
     #raise Exception("XMLFindNonText: Only text childnodes found under " + _node.nodeName)
 
 def find_child_node(_node, _nodename):
+    """Find all child nodes of an XML tree"""
     for node in _node.childNodes :  # visit every node <bar />
         if (node.nodeName.lower() == _nodename.lower()):
             return node
     return None    
       
 class SQL_XML(object):
-    '''
-    classdocs
-    '''
+    """
+    This class converts XML into a class structure(declare in SQL.py) that holds the statements. 
+    """
     
     namespace = 'http://www.unifiedbpm.se/XMLschema/DAL/SQL'
     prefix_schema = 'xsd'
@@ -279,6 +286,7 @@ class SQL_XML(object):
             
     
     def generate_schema(self):
+        """Generates an XML schema based on the class structure in SQL.py"""
         #Create the minidom document
         doc = Document();
         
@@ -381,6 +389,7 @@ class SQL_XML(object):
         return _obj
 
     def xml_to_sql_structure(self, _xml = "", _node = None ):
+        """Translates an XML file into a class structure"""
         
         self._debug_print("xml_to_sql_structure - XML being parsed:\n" + _xml)
         if _node == None:
@@ -413,6 +422,7 @@ class SQL_XML(object):
         return _structure
     
     def xml_file_to_sql(self, _xml_file_name, **kwargs):
+        """Reads a specified XML fil and translates it into an SQL class structure.""" 
         # Read file
         _xml_file = open(_xml_file_name, 'r')
         _xml = _xml_file.read()
@@ -466,7 +476,7 @@ class SQL_XML(object):
 
     
     def sql_structure_to_xml(self, _structure):
-        
+        """Translates an XML structure into XML"""
         #Create the minidom document
         _doc = Document();
         _doc.encoding = self.encoding

@@ -7,29 +7,33 @@ Created on Sep 14, 2012
 from qal.dal.dal_types import DB_DB2,DB_ORACLE, DB_POSTGRESQL
 from qal.sql.sql_utils import db_specific_object_reference
 class Parameter_Custom_Dataset(object):
-    '''
-    Is the base class for all datasets in QAL-
-    Note: The fields are name like this to not appear as parameters in automatic generators like sql_xml.
-    '''
+    """This is the base class for all (external) datasets in QAL-
+    Note: The fields are named like this to not appear as parameters in automatic generators like sql_xml.
+    """
 
     field_names = []
     data_table = [] 
 
 
     def __init__(self):
-        '''
-        Constructor
-        '''
+        """Constructor""" 
         self.field_names = []
         self.data_table = [] 
+        
     def load(self):
+        """Load the data"""
         raise Exception('Parameter_Custom_Dataset.Load is not implemented in class: ' + self.classname)
         pass
     
     def as_sql(self, _db_type):
+        """Generate SQL
+        Either throug a union SQL or into a temp table."""
         _result = []
         
         _add_field_names = (len(self.data_table) > 0) and (len(self.field_names) == len(self.data_table[0]))
+        
+        
+        # TODO: If is i a large number of rows, make an insert into a temp table instead.
         for _row in self.data_table:
             _curr_row = []
             for _col_idx in range(len(_row)):

@@ -7,9 +7,7 @@ Created on May 8, 2010
 from qal.dal.dal_types import DB_MYSQL, DB_POSTGRESQL, DB_ORACLE, DB_DB2, DB_SQLSERVER, string_to_db_type
 
 class Database_Abstraction_Layer(object):
-    '''
-    This class is a base class for all access classes.
-    '''
+    """This class abstracts the different perculiarities of the different database backends with regards to connection details"""
     
     # Events
     
@@ -29,7 +27,9 @@ class Database_Abstraction_Layer(object):
     db_instance = ''
     db_driver = None
     db_autocommit = True
+    
     def read_db_settings(self):
+        """Read setting from the settings.Parser object"""
         self.db_type        = string_to_db_type(self.settings.Parser.get("database", "type"))
         self.db_server      = self.settings.Parser.get("database", "server")   
         self.db_databasename= self.settings.Parser.get("database", "database_name")   
@@ -40,7 +40,7 @@ class Database_Abstraction_Layer(object):
         if self.settings.Parser.has_option("database", "instance"):
             self.db_instance    = self.settings.Parser.get("database", "instance")
     def connect_to_db(self):
-        
+        '''Connects to the database'''
         if (self.db_type == DB_MYSQL):
             import pymysql
             Conn = pymysql.connect (host = self.db_server,
@@ -108,6 +108,8 @@ class Database_Abstraction_Layer(object):
     
     
     def init_db(self):
+        """Read database settings and connect"""
+        #TODO: See if this should be here.
         self.read_db_settings()
         self.db_driver = self.connect_to_db()   
     
@@ -125,6 +127,7 @@ class Database_Abstraction_Layer(object):
         pass
     
     def execute(self, _SQL):
+        """Execute the SQL statement, expect no dataset"""
         if self.db_type == DB_POSTGRESQL:
             self.db_connection.execute(_SQL)
         else:
@@ -132,18 +135,21 @@ class Database_Abstraction_Layer(object):
             cur.execute(_SQL)
 
     def query(self, _SQL):
+        """Execute the SQL statement, get a dataset"""
         cur = self.db_connection.cursor()
         cur.execute(_SQL)
         return cur.fetchall()
         
    
     def close(self):
+        """Close the database connection"""
         self.db_connection.close()
             
     def commit(self):
+        """Commit the transaction"""
         self.db_connection.commit()
 
     def rollback(self):
+        """Rollback the transaction"""
         self.db_connection.rollback()
     
-

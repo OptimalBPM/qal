@@ -15,18 +15,14 @@ import sys
 
 class Parameter_Flatfile_Dataset(Parameter_Custom_Dataset):
  
-    '''
-    This class loads a flat file into an array.
-    '''
+    """This class loads a flat file into an array."""
     delimiter = None
     filename = None
     has_header = None
     csv_dialect = None
     
     def __init__(self, _delimiter = None, _filename = None, _has_header = None, _csv_dialect = None):
-        '''
-        Constructor
-        '''
+        """Constructor"""
         if _delimiter != None: 
             self.delimiter = _delimiter
         else:  
@@ -52,6 +48,7 @@ class Parameter_Flatfile_Dataset(Parameter_Custom_Dataset):
         
         
     def load(self):
+        """Load data"""
         _tmp_dir_abs = os.getcwd() 
         print("Parameter_Flatfile_Dataset.load: Filename='"+str(os.path.normpath(_tmp_dir_abs +'/' + self.filename)) + "', Delimiter='"+str(self.delimiter)+"'")
         

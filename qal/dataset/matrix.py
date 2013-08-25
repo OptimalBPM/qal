@@ -11,9 +11,7 @@ from qal.dataset.custom import Parameter_Custom_Dataset
 
 class Parameter_Matrix_Dataset(Parameter_Custom_Dataset):
  
-    '''
-    classdocs
-    '''
+    """The matrix dataset hold a multidimensional array of data"""
     
     _dal = None
     
@@ -26,9 +24,11 @@ class Parameter_Matrix_Dataset(Parameter_Custom_Dataset):
         
         
     def load(self):
+        """Load data. Not implementet as it is not needed in the matrix descendant"""
         pass
 
     def as_sql(self, _db_type):
+        """Generate SQL"""
         # TODO: Review this code, as it is almost copied from the custom class. 
         #TODO: Add check here and in custom so that it is impossible to not fill all field_names when used.
         _result = []
