@@ -21,7 +21,7 @@ setup(
       It supports several database backends and file formats.
       """,
     url='https://sourceforge.net/projects/qal/',
-    packages=['qal', 'qal.dal', 'qal.dal.tests', 'qal.sql', 'qal.sql.tests', 'qal.sql.tests.resources', 'qal.common', 'qal.dataset'],
+    packages=['qal', 'qal.dal', 'qal.dal.tests', 'qal.sql', 'qal.sql.tests', 'qal.sql.tests.resources', 'qal.common', 'qal.dataset', 'qal.tools', 'qal.tools.tests'],
     package_data = {
         # If any package contains *.txt or *.xml files, include them:
         '': ['*.txt', '*.xml', '*.sql']
