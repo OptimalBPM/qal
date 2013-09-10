@@ -7,11 +7,11 @@ Created on Jan 8, 2012
 from qal.dal.dal_types import DB_DB2,DB_ORACLE, DB_POSTGRESQL
 from qal.sql.sql_utils import db_specific_object_reference
 from datetime import date, datetime
-from qal.dataset.custom import Parameter_Custom_Dataset
+from qal.nosql.custom import Custom_Dataset
 
-class Parameter_Matrix_Dataset(Parameter_Custom_Dataset):
+class Matrix_Dataset(Custom_Dataset):
  
-    """The matrix dataset hold a multidimensional array of data"""
+    """The matrix dataset holds a multidimensional array of data"""
     
     _dal = None
     
@@ -19,7 +19,7 @@ class Parameter_Matrix_Dataset(Parameter_Custom_Dataset):
         '''
         Constructor
         '''
-        super(Parameter_Matrix_Dataset, self ).__init__()
+        super(Matrix_Dataset, self ).__init__()
         
         
         

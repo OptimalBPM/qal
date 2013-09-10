@@ -5,7 +5,7 @@ Created on Sep 14, 2012
 '''
 
 
-from qal.dataset.custom import Parameter_Custom_Dataset
+from qal.nosql.custom import Custom_Dataset
 
 import csv
 import os
@@ -13,7 +13,7 @@ import sys
 
 
 
-class Parameter_Flatfile_Dataset(Parameter_Custom_Dataset):
+class Flatfile_Dataset(Custom_Dataset):
  
     """This class loads a flat file into an array."""
     delimiter = None
@@ -43,14 +43,14 @@ class Parameter_Flatfile_Dataset(Parameter_Custom_Dataset):
             
             
              
-        super(Parameter_Flatfile_Dataset, self ).__init__()
+        super(Flatfile_Dataset, self ).__init__()
         
         
         
     def load(self):
         """Load data"""
         _tmp_dir_abs = os.getcwd() 
-        print("Parameter_Flatfile_Dataset.load: Filename='"+str(os.path.normpath(_tmp_dir_abs +'/' + self.filename)) + "', Delimiter='"+str(self.delimiter)+"'")
+        print("Flatfile_Dataset.load: Filename='"+str(os.path.normpath(_tmp_dir_abs +'/' + self.filename)) + "', Delimiter='"+str(self.delimiter)+"'")
         
         _file = open(os.path.normpath(_tmp_dir_abs +'/' + self.filename), 'r')
         _reader = csv.reader(_file, delimiter=self.delimiter, quoting=csv.QUOTE_NONE)

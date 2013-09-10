@@ -5,9 +5,9 @@ Created on Sep 14, 2012
 '''
 
 
-from qal.dataset.custom import Parameter_Custom_Dataset
+from qal.nosql.custom import Custom_Dataset
 
-class Parameter_RDBMS_Dataset(Parameter_Custom_Dataset):
+class RDBMS_Dataset(Custom_Dataset):
  
     """This class represent an dataset from external RDBMS database server"""
     
@@ -15,7 +15,7 @@ class Parameter_RDBMS_Dataset(Parameter_Custom_Dataset):
     
     def __init__(self):
         """Constructor"""
-        super(Parameter_RDBMS_Dataset, self ).__init__()
+        super(RDBMS_Dataset, self ).__init__()
         
         
         

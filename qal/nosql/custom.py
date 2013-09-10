@@ -6,7 +6,7 @@ Created on Sep 14, 2012
 
 from qal.dal.dal_types import DB_DB2,DB_ORACLE, DB_POSTGRESQL
 from qal.sql.sql_utils import db_specific_object_reference
-class Parameter_Custom_Dataset(object):
+class Custom_Dataset(object):
     """This is the base class for all (external) datasets in QAL-
     Note: The fields are named like this to not appear as parameters in automatic generators like sql_xml.
     """
@@ -22,7 +22,7 @@ class Parameter_Custom_Dataset(object):
         
     def load(self):
         """Load the data"""
-        raise Exception('Parameter_Custom_Dataset.Load is not implemented in class: ' + self.classname)
+        raise Exception('Custom_Dataset.Load is not implemented in class: ' + self.classname)
         pass
     
     def as_sql(self, _db_type):
