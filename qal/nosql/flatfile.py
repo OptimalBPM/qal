@@ -9,9 +9,6 @@ from qal.nosql.custom import Custom_Dataset
 
 import csv
 import os
-import sys
-
-
 
 class Flatfile_Dataset(Custom_Dataset):
  
