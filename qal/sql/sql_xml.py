@@ -244,7 +244,8 @@ class SQL_XML(object):
         self._add_child_array_of(_document, _parent_node, 'Array_Parameter_Condition', ["Parameter_Condition"])
         self._add_child_array_of(_document, _parent_node, 'Array_Parameter_Field', ["Parameter_Field"])
         self._add_child_array_of(_document, _parent_node, 'Array_expression_item', expression_item_types())
-        self._add_child_array_of(_document, _parent_node, 'Array_tabular_expression_item', tabular_expression_item_types())        
+        self._add_child_array_of(_document, _parent_node, 'Array_tabular_expression_item', tabular_expression_item_types())    
+        self._add_child_array_of(_document, _parent_node, 'Array_list', '*')        
 
         
                 

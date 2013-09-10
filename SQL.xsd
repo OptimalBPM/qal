@@ -46,10 +46,10 @@
   </xsd:simpleType>
   <xsd:simpleType name="data_source">
     <xsd:restriction base="xsd:string">
-      <xsd:enumeration value="Parameter_Flatfile_Dataset"/>
+      <xsd:enumeration value="Flatfile_Dataset"/>
       <xsd:enumeration value="Parameter_XML_Dataset"/>
       <xsd:enumeration value="Parameter_RDBMS_Dataset"/>
-      <xsd:enumeration value="Parameter_Matrix_Dataset"/>
+      <xsd:enumeration value="Matrix_Dataset"/>
     </xsd:restriction>
   </xsd:simpleType>
   <xsd:simpleType name="csv_dialects">
@@ -81,7 +81,7 @@
       <xsd:element name="Parameter_Cast" type="Parameter_Cast"/>
       <xsd:element name="Parameter_Function" type="Parameter_Function"/>
       <xsd:element name="Parameter_IN" type="Parameter_IN"/>
-      <xsd:element name="Parameter_Dataset" type="Parameter_Dataset"/>
+      <xsd:element name="Parameter_NoSQL" type="Parameter_NoSQL"/>
       <xsd:element name="Parameter_CASE" type="Parameter_CASE"/>
       <xsd:element name="Parameter_Set" type="Parameter_Set"/>
     </xsd:choice>
@@ -89,7 +89,7 @@
   <xsd:complexType name="tabular_expression_item">
     <xsd:choice>
       <xsd:element name="Verb_SELECT" type="Verb_SELECT"/>
-      <xsd:element name="Parameter_Dataset" type="Parameter_Dataset"/>
+      <xsd:element name="Parameter_NoSQL" type="Parameter_NoSQL"/>
       <xsd:element name="Parameter_Set" type="Parameter_Set"/>
     </xsd:choice>
   </xsd:complexType>
@@ -153,7 +153,7 @@
       <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_Cast" type="Parameter_Cast"/>
       <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_Function" type="Parameter_Function"/>
       <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_IN" type="Parameter_IN"/>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_Dataset" type="Parameter_Dataset"/>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_NoSQL" type="Parameter_NoSQL"/>
       <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_CASE" type="Parameter_CASE"/>
       <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_Set" type="Parameter_Set"/>
     </xsd:choice>
@@ -161,7 +161,7 @@
   <xsd:complexType name="Array_tabular_expression_item">
     <xsd:choice>
       <xsd:element maxOccurs="unbounded" minOccurs="0" name="Verb_SELECT" type="Verb_SELECT"/>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_Dataset" type="Parameter_Dataset"/>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_NoSQL" type="Parameter_NoSQL"/>
       <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_Set" type="Parameter_Set"/>
     </xsd:choice>
   </xsd:complexType>
@@ -188,7 +188,7 @@
       <xsd:element minOccurs="0" name="operator" type="xsd:string"/>
     </xsd:all>
   </xsd:complexType>
-  <xsd:complexType name="Parameter_Dataset">
+  <xsd:complexType name="Parameter_NoSQL">
     <xsd:all>
       <xsd:element minOccurs="0" name="data_source" type="data_source_types"/>
       <xsd:element minOccurs="0" name="operator" type="xsd:string"/>
@@ -207,7 +207,7 @@
       <xsd:element minOccurs="0" name="operator" type="xsd:string"/>
     </xsd:all>
   </xsd:complexType>
-  <xsd:complexType name="Parameter_Flatfile_Dataset">
+  <xsd:complexType name="Flatfile_Dataset">
     <xsd:all>
       <xsd:element minOccurs="0" name="filename" type="xsd:string"/>
       <xsd:element minOccurs="0" name="delimiter" type="xsd:string"/>
@@ -296,7 +296,7 @@
   <xsd:complexType name="Parameter_XML_Dataset">
     <xsd:all/>
   </xsd:complexType>
-  <xsd:complexType name="Parameter_Matrix_Dataset">
+  <xsd:complexType name="Matrix_Dataset">
     <xsd:all/>
   </xsd:complexType>
   <xsd:complexType name="Parameter_CASE">

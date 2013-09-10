@@ -33,7 +33,7 @@ def data_types():
 
 def data_source_types():
     """Returns a list of the supported data source types"""
-    return ['Parameter_Flatfile_Dataset', 'Parameter_XML_Dataset', 'Parameter_RDBMS_Dataset', 'Parameter_Matrix_Dataset']
+    return ['Flatfile_Dataset', 'XML_Dataset', 'RDBMS_Dataset', 'Matrix_Dataset']
 
 def boolean():
     """Returns a list of the supported boolean values"""
@@ -56,13 +56,12 @@ def expression_item_types():
     return ['Verb_SELECT','Parameter_Expression',
                 'Parameter_String','Parameter_Numeric',
                 'Parameter_Identifier','Parameter_Cast',
-                'Parameter_Function', 'Parameter_IN', 'Parameter_Dataset', 'Parameter_CASE', 'Parameter_Set']
+                'Parameter_Function', 'Parameter_IN', 'Parameter_NoSQL', 'Parameter_CASE', 'Parameter_Set']
     
 def tabular_expression_item_types(): 
     """Returns a list of the supported tabular expression types""" 
-    return ['Verb_SELECT','Parameter_Dataset', 'Parameter_Set']
-    
-    
+    return ['Verb_SELECT','Parameter_NoSQL', 'Parameter_Set']
+
 def in_types():
     """Returns a list of what is supported in a IN-statement""" 
     return ['Verb_SELECT', 'Parameter_String'] 
@@ -85,7 +84,9 @@ def sql_property_to_type(_property_name):
     if _property_name in ['name','default','tablename','alias','default','operator',\
                         'identifier','escape_character','string_value','operator','sql_mysql',\
                         'sql_postgresql','sql_oracle','sql_db2','sql_sqlserver','row_separator',\
-                         'prefix', 'direction', 'operator','table', 'parameters', 'delimiter', 'filename', 'target_table']:
+                        'prefix', 'direction', 'operator','table', 'parameters', 'delimiter',\
+                        'filename', 'target_table', 'connection_guid', 'temporary_table_name',\
+                        'temporary_table_name_prefix']:
         return ['string']
     
     elif _property_name == 'numeric_value':
@@ -141,7 +142,7 @@ def sql_property_to_type(_property_name):
 
     elif _property_name in ['columnnames']:
         return ['Array_string']
-    
+        
     elif _property_name == 'columns':
         return ['Array_Parameter_ColumnDefinition']
     

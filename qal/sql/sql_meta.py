@@ -8,10 +8,10 @@ from the SQL.py and generates meta data by analyzing its objects.
 
 # Import the entire SQL namespace to make it searchable and supress warnings.
 from qal.sql.sql import * #@UnusedWildImport #IGNORE:W0401
-from qal.dataset.flatfile import Parameter_Flatfile_Dataset #@UnusedWildImport #IGNORE:W0401
-from qal.dataset.rdbms import Parameter_RDBMS_Dataset #@UnusedWildImport #IGNORE:W0401
-from qal.dataset.xml import Parameter_XML_Dataset #@UnusedWildImport #IGNORE:W0401
-from qal.dataset.matrix import Parameter_Matrix_Dataset #@UnusedWildImport #IGNORE:W0401
+from qal.nosql.flatfile import Flatfile_Dataset #@UnusedWildImport #IGNORE:W0401
+from qal.nosql.rdbms import RDBMS_Dataset #@UnusedWildImport #IGNORE:W0401
+from qal.nosql.xml import XML_Dataset #@UnusedWildImport #IGNORE:W0401
+from qal.nosql.matrix import Matrix_Dataset #@UnusedWildImport #IGNORE:W0401
 
 def list_parameter_classes():
     """List all parameter classes"""
@@ -51,8 +51,13 @@ def find_class(_name, _raiserror = True):
             Obj = k[1]()
             ObjName = k[0]
             break
+    # Python types
+    if _name == "list":
+        return [], "list"
+    
     if (Obj == None and _raiserror):
         raise Exception("sql_meta - find_class: Cannot find matching class - " + _name)
+    
     return Obj, ObjName
     
                 

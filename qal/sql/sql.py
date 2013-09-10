@@ -16,10 +16,10 @@ from qal.dal.dal_types import DB_POSTGRESQL, DB_MYSQL, DB_ORACLE, DB_DB2, DB_SQL
 
 from qal.sql.sql_utils import *
 from qal.sql.sql_types import condition_part
-from qal.dataset.flatfile import Parameter_Flatfile_Dataset
-from qal.dataset.rdbms import Parameter_RDBMS_Dataset
-from qal.dataset.xml import Parameter_XML_Dataset
-from qal.dataset.matrix import Parameter_Matrix_Dataset
+from qal.nosql.flatfile import Flatfile_Dataset
+from qal.nosql.rdbms import RDBMS_Dataset
+from qal.nosql.xml import XML_Dataset
+from qal.nosql.matrix import Matrix_Dataset
                               
 class Parameter_Base(object): 
     """This class is a base class for all parameter classes."""
@@ -34,6 +34,42 @@ class Parameter_Base(object):
         """Generate SQL for specified database engine"""
         raise Exception(self.__class__.__name__ + ".as_sql() is not implemented")
  
+
+class Parameter_Remotable(object): 
+    """This class is a base class for all classes that is remotable. 
+    That is, they can fetch their data from, or perform their actions at, a different location than the parent class.
+    If they return data, the data will be held in the temporary table, where it can be joined with or otherwise managed.
+    """
+    """The temporary table name is automatically generated based on the temporary table_name prefix."""
+    temporary_table_name = None
+    """The temporary table name is automatically generated based on the temporary table_name prefix.
+    Its default is "t_". """
+    temporary_table_name_prefix = "t_"   
+    connection_guid = None
+    
+    def __init__(self,  _connection_guid=None, _temporary_table_name_prefix = None ):
+        super(Parameter_Remotable, self ).__init__()
+        if _connection_guid != None: 
+            self.connection_guid = _connection_guid
+
+        if _temporary_table_name_prefix != None: 
+            self._temporary_table_name_prefix = _temporary_table_name_prefix
+
+    def as_sql(self, _db_type): 
+        """Make connection to resource defined the connection_guid"""
+        pass
+        """Run query"""
+        pass
+        """Generate table name"""
+        pass
+        """Create temporary table using column names and types from result set"""
+        pass
+        """Insert data into temporary table""" 
+        
+        raise Exception(self.__class__.__name__ + ".as_sql() is not implemented")
+ 
+ 
+
  
 class SQL_List(list):
     """This is the base class for lists of class instances."""    
@@ -163,8 +199,8 @@ class Parameter_IN(Parameter_Expression_Item):
 
         
 
-class Parameter_Dataset(Parameter_Expression_Item):  
-    """Holds a dataset from an external source"""
+class Parameter_NoSQL(Parameter_Expression_Item):  
+    """Holds a dataset from an external, non-SQL source"""
     data_source = None
 
     
@@ -196,7 +232,7 @@ class Parameter_Dataset(Parameter_Expression_Item):
             self.data_source.load()
             return "("+ self.data_source.as_sql(_db_type) + ")"       
         else:
-            raise Exception('Parameter_Dataset.as_sql : data_source not set.');
+            raise Exception('Parameter_NoSQL.as_sql : data_source not set.');
 
 class Parameter_Identifier(Parameter_Expression_Item):
     """Holds an identifier(column-, table or other reference)"""
@@ -351,7 +387,7 @@ class Parameter_Set(Parameter_Base):
         return ('\n'+self.set_operator + '\n').join(_sqls)     
     
 class Parameter_Source(Parameter_Base):
-    """This class defines any source of data that can be used with a FROM or JOIN-statement."""
+    """This class hold a source of data that can be used with a FROM or JOIN-statement."""
     # expression could be any table-valued expression
     expression     = None
     
@@ -860,7 +896,7 @@ class Verb_INSERT(Parameter_Base):
                    
         return result  
     
-class Verb_DELETE(Parameter_Expression_Item):
+class Verb_DELETE(Parameter_Base):
     """This class holds a DELETE statement"""
     sources = None
     """
