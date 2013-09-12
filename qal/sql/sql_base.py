@@ -8,7 +8,9 @@ Created on Sep 12, 2013
 This module contains all the base classes for the SQL-related code.
 The reason is simply to make things more manageable and split things up a bit.
 """
+
 from qal.sql.sql_types import DEFAULT_ROWSEP
+
 
 class Parameter_Base(object): 
     """This class is a base class for all parameter classes."""
@@ -24,8 +26,8 @@ class Parameter_Base(object):
         raise Exception(self.__class__.__name__ + ".as_sql() is not implemented")
  
 
-class Parameter_Remotable(object): 
-    """This class is a base class for all classes that is remotable. 
+class Parameter_Remotable(Parameter_Base): 
+    """This class is a base class for all parameter classes that is remotable. 
     That is, they can fetch their data from, or perform their actions at, a different location than the parent class.
     If they return data, the data will be held in the temporary table, where it can be joined with or otherwise managed.
     """
@@ -34,7 +36,7 @@ class Parameter_Remotable(object):
     """The temporary table name is automatically generated based on the temporary table_name prefix.
     Its default is "t_". """
     temporary_table_name_prefix = "t_"   
-    connection_guid = None
+    resource_guid = None
     
     def __init__(self,  _connection_guid=None, _temporary_table_name_prefix = None ):
         super(Parameter_Remotable, self ).__init__()
@@ -43,9 +45,12 @@ class Parameter_Remotable(object):
 
         if _temporary_table_name_prefix != None: 
             self._temporary_table_name_prefix = _temporary_table_name_prefix
+            
+    def prepare(self):
+        pass
 
     def as_sql(self, _db_type): 
-        """Make connection to resource defined the connection_guid"""
+        """Make connection to resource defined the resource_guid"""
         pass
         """Run query"""
         pass
