@@ -85,7 +85,7 @@ def sql_property_to_type(_property_name):
                         'identifier','escape_character','string_value','operator','sql_mysql',\
                         'sql_postgresql','sql_oracle','sql_db2','sql_sqlserver','row_separator',\
                         'prefix', 'direction', 'operator','table', 'parameters', 'delimiter',\
-                        'filename', 'target_table', 'connection_guid', 'temporary_table_name',\
+                        'filename', 'target_table', 'resource_guid', 'temporary_table_name',\
                         'temporary_table_name_prefix']:
         return ['string']
     

@@ -31,23 +31,21 @@ class Parameter_Remotable(Parameter_Base):
     That is, they can fetch their data from, or perform their actions at, a different location than the parent class.
     If they return data, the data will be held in the temporary table, where it can be joined with or otherwise managed.
     """
-    """The temporary table name is automatically generated based on the temporary table_name prefix."""
+    """The temporary table name is used by owners to reference the data correctly."""
     temporary_table_name = None
     """The temporary table name is automatically generated based on the temporary table_name prefix.
     Its default is "t_". """
     temporary_table_name_prefix = "t_"   
     resource_guid = None
     
-    def __init__(self,  _connection_guid=None, _temporary_table_name_prefix = None ):
+    def __init__(self,  _resource_guid=None, _temporary_table_name_prefix = None ):
         super(Parameter_Remotable, self ).__init__()
-        if _connection_guid != None: 
-            self.connection_guid = _connection_guid
+        if _resource_guid != None: 
+            self.resource_guid = _resource_guid
 
         if _temporary_table_name_prefix != None: 
             self._temporary_table_name_prefix = _temporary_table_name_prefix
             
-    def prepare(self):
-        pass
 
     def as_sql(self, _db_type): 
         """Make connection to resource defined the resource_guid"""
