@@ -5,21 +5,19 @@ Created on Sep 21, 2010
 
 '''
 from qal.sql.sql_meta import list_class_properties, list_parameter_classes, list_verb_classes, find_class
-from qal.sql.sql_types import sql_property_to_type, data_types, and_or, \
+from qal.sql.sql_types import sql_property_to_type, and_or, \
     constraint_types, index_types, verbs, expression_item_types, \
     condition_part,set_operator, tabular_expression_item_types, data_source_types
-from urllib.request import quote, unquote
+
 from qal.dal.dal_types import db_types
-from xml.dom.minidom import Document, parseString, Text
+from xml.dom.minidom import Document, parseString
 from xml.sax.saxutils import escape
-from qal.sql.sql_utils import check_for_param_content
+from qal.common.xml_utils import XML_Translation, xml_base_type_value, find_child_node, xml_get_text,\
+    xml_set_cdata, xml_get_numeric, xml_get_boolean, xml_get_allowed_value, xml_find_non_text_child
 
 # TODO : This is a wee bit risky, this means that the schema will be dynamic dependent on what the server supports.
 # Good or Bad?
 from csv import list_dialects
-
-
-global debugverb 
 
 
 def sql_property_to_xml_type(_PropertyName):
@@ -29,135 +27,24 @@ def sql_property_to_xml_type(_PropertyName):
         result[0] = "xsd:" + result[0]
     return result
 
-def xml_set_cdata(_node, _value, _lowercase=False):
-    """Helper to set character data in an XML tree"""
-    if _value != None and _value != "":
-        sec = Text()
-        if _value is str:
-            _value = quote(_value)
-        if _lowercase: # Force lowercase.
-            sec.data =  _value.lower() 
-        else:
-            sec.data = _value 
-        
-        _node.appendChild(sec)
-    
-    
 
-def xml_get_text(_node):
-    """Helper function to get character data from an XML tree"""
-    rc = list()
-    for node in _node.childNodes:
-        if node.nodeType == node.TEXT_NODE:
-            rc.append(node.data)
-    return unquote(''.join(rc))
-def xml_get_boolean(_node):
-    """Helper function to get a boolean value from XSD:booleans defaults"""
-    value = xml_get_text(_node)
-    if value.lower() == 'true':
-        return True
-    elif value.lower() == 'false':
-        return False
-    else: 
-        raise Exception('xml_get_boolean: "' + value + '" is not a boolean value')
-        
-
-
-def xml_get_numeric(_node, _type = ""):
-    """Helper function to read a numeric value from the XML"""
-    try:
-        _value = xml_get_text(_node)
-        if _type.lower() == "integer":
-            number = int(_value)
-        else:            
-            number = float(_value)
-    except:
-        if str(_value).lower() == 'null':
-            return 'NULL' 
-        if not check_for_param_content(_value):
-            raise Exception("xml_get_numeric: Invalid numeric format: " + _value)
-        else:
-            return _value
-
-    return number
-def xml_base_type_value(_node, _typename):
-    """Using the base type name, get appropriate data"""
-    if _typename in ["int", "float"]:
-        return xml_get_numeric(_node)
-    elif _typename in ["str"]:
-        return xml_get_text(_node) 
-    elif _typename in ["bool"]:
-        return xml_get_boolean(_node)
-    else:
-        raise Exception("xml_base_type_value: Invalid base type: " + _typename)  
-
-    
-
-def xml_get_allowed_value(_node, _type):
-    """Check if a value is allowed in a certain XML node"""
-    value = xml_get_text(_node)
-
-    if (value in _type[1] or value == ""):
-        return value
-    # Check for correct string format.
-    elif value[0:8].lower() == "varchar(" and  value[8:len(value) - 1].isnumeric() and value[len(value) - 1] == ")":
-        return value  
-    else:
-        raise Exception("xml_get_allowed_value: " + str(value) + " is not a valid value in a " + _type[0] + ". Node:" + str(_node))
-
-def xml_find_non_text_child(_node):
-    """Finds the first child that is not of the Text node type."""
-    nodelist = _node.childNodes
-    for node in nodelist:
-        if node.nodeType != node.TEXT_NODE:
-            return node
-    
-    return None    
-    #raise Exception("XMLFindNonText: Only text childnodes found under " + _node.nodeName)
-
-def find_child_node(_node, _nodename):
-    """Find all child nodes of an XML tree"""
-    for node in _node.childNodes :  # visit every node <bar />
-        if (node.nodeName.lower() == _nodename.lower()):
-            return node
-    return None    
-      
-class SQL_XML(object):
+class SQL_XML(XML_Translation):
     """
     This class converts XML into a class structure(declare in SQL.py) that holds the statements. 
     """
-    
-    namespace = 'http://www.unifiedbpm.se/XMLschema/DAL/SQL'
-    prefix_schema = 'xsd'
+
     prefix_sql = 'sql'
-    prefix_xml = 'xsi'
-    schema_uri = 'http://www.unifiedbpm.se/XMLschema/DAL/SQL.xsd'
     encoding = 'utf-8'
-    
-    debuglevel = 2
-    
-    nestinglevel = 0
-    
+
     def __init__(self):
         '''
         Constructor
         '''
-    def _print_nestinglevel(self, _value):
-        self._debug_print(_value + ' level: ' + str(self.nestinglevel),4)
-        
-    def _get_up(self,_value):
-        self.nestinglevel = self.nestinglevel - 1
-        self._print_nestinglevel("Leaving " + _value)
-
-    def _go_down(self,_value):
-        self.nestinglevel = self.nestinglevel + 1
-        self._print_nestinglevel("Entering " + _value)
-        
-    def _debug_print(self, _value, _debuglevel = 3):
-        if self.debuglevel >= _debuglevel:
-            print(_value)
-    
-
+        super(SQL_XML, self ).__init__()
+        self.namespace = 'http://www.unifiedbpm.se/XMLschema/DAL/SQL'
+        self.schema_uri = 'http://www.unifiedbpm.se/XMLschema/DAL/SQL.xsd'
+        self.debuglevel = 2
+        self.nestinglevel = 0
     
     def _add_ps(self, _value):
         # Adds the set SQL-prefix.
@@ -416,7 +303,7 @@ class SQL_XML(object):
         _verb = xml_find_non_text_child(_node)
         if (_verb == None):
             raise Exception('XMLToSQL: No Verb_*-node found.') 
-        self.debugverb = _verb
+
         _structure = self._parse_class_xml_node(_verb)        
 
                 
