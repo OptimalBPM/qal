@@ -11,6 +11,7 @@ Created on Sep 13, 2013
 from urllib.request import quote, unquote
 from xml.dom.minidom import Text
 from qal.sql.sql_utils import check_for_param_content
+from xml.dom.minidom import Document, parseString
 
 def xml_set_cdata(_node, _value, _lowercase=False):
     """Helper to set character data in an XML tree"""
@@ -145,3 +146,31 @@ class XML_Translation(object):
         """Prints a debug message if the debugging level is sufficient."""
         if self.debuglevel >= _debuglevel:
             print(_value)
+            
+            
+            
+    def get_root_node(self, _nodename, _xml = "", _node = None ):
+        
+        if _node == None:
+            self._debug_print(self.__class__.__name__ +".get_root_node : - XML being parsed:\n" + _xml)
+            try:
+                _doc = parseString(_xml)
+            except Exception as e:
+                raise Exception(self.__class__.__name__ +".get_root_node : Exception parsing SQL:\n" + str(e) + "\n XML: \n" + _xml)
+        
+            """ Find root node having _nodename. """
+            for _curr_node in _doc.childNodes:
+                if _curr_node.nodeName == self._add_ps(_nodename):
+                    return _curr_node 
+                else:
+                    break 
+                
+            if _curr_node.nodeName != self._add_ps(_nodename):
+                raise Exception(self.__class__.__name__ + '.get_root_node : "' + self._add_ps(_nodename) + ' top node required.')
+        else:
+            if _node.nodeName != _nodename and _node.nodeName != self._add_ps(_nodename):
+                raise Exception(self.__class__.__name__ + '.get_root_node : "' + _nodename +'" top node required.')
+
+        return _node
+
+

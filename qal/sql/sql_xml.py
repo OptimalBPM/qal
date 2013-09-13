@@ -10,7 +10,7 @@ from qal.sql.sql_types import sql_property_to_type, and_or, \
     condition_part,set_operator, tabular_expression_item_types, data_source_types
 
 from qal.dal.dal_types import db_types
-from xml.dom.minidom import Document, parseString
+from xml.dom.minidom import Document
 from xml.sax.saxutils import escape
 from qal.common.xml_utils import XML_Translation, xml_base_type_value, find_child_node, xml_get_text,\
     xml_set_cdata, xml_get_numeric, xml_get_boolean, xml_get_allowed_value, xml_find_non_text_child
@@ -278,32 +278,10 @@ class SQL_XML(XML_Translation):
 
     def xml_to_sql_structure(self, _xml = "", _node = None ):
         """Translates an XML file into a class structure"""
-        
-        self._debug_print("xml_to_sql_structure - XML being parsed:\n" + _xml)
-        if _node == None:
-            try:
-                _doc = parseString(_xml)
-            except Exception as e:
-                raise Exception("xml_to_sql_structure.write_step_log_entry: Exception parsing SQL:\n" + str(e) + "\n XML: \n" + _xml)
-        
-            # Find root node "statement".
-            for _curr_node in _doc.childNodes:
-                if _curr_node.nodeName == self._add_ps('statement'):
-                    _node = _curr_node 
-                else:
-                    break 
-                
-            if _curr_node.nodeName != self._add_ps('statement'):
-                raise Exception('XMLToSQL: "' + self._add_ps('statement') + ' top node required.')
-        else:
-            if _node.nodeName != 'statement' and _node.nodeName != self._add_ps('statement'):
-                raise Exception('XMLToSQL: "' + 'statement" top node required.')
-
-        
+        _node = self.get_root_node('statement', _xml, _node)
         _verb = xml_find_non_text_child(_node)
         if (_verb == None):
             raise Exception('XMLToSQL: No Verb_*-node found.') 
-
         _structure = self._parse_class_xml_node(_verb)        
 
                 
