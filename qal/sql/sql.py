@@ -123,7 +123,7 @@ class Parameter_IN(Parameter_Expression_Item):
 
         
 
-class Parameter_NoSQL(Parameter_Expression_Item):  
+class Parameter_NoSQL(Parameter_Expression_Item, Parameter_Remotable):  
     """Holds a dataset from an external, non-SQL source"""
     data_source = None
 
@@ -284,7 +284,7 @@ class Parameter_CASE(Parameter_Expression_Item):
 class Parameter_Set(Parameter_Base): 
     
     """This class holds a set. 
-    In SQL, that means more than one tabular datasets combiner using a set operator like UNION."""
+    In SQL, that means more than one tabular datasets is combined using a set operator like UNION."""
     # expression could be any table-valued expression
     subsets     = None
     set_operator = None
@@ -310,7 +310,7 @@ class Parameter_Set(Parameter_Base):
         # Separate them with operators.
         return ('\n'+self.set_operator + '\n').join(_sqls)     
     
-class Parameter_Source(Parameter_Base):
+class Parameter_Source(Parameter_Base, Parameter_Remotable):
     """This class hold a source of data that can be used with a FROM or JOIN-statement."""
     # expression could be any table-valued expression
     expression     = None
@@ -355,7 +355,7 @@ class Parameter_ORDER_BY_item(Parameter_Expression):
         return super(Parameter_ORDER_BY_item, self ).as_sql(_db_type) + " " + self.direction
         
      
-class Verb_SELECT(Parameter_Expression_Item):
+class Verb_SELECT(Parameter_Expression_Item, Parameter_Remotable):
     """This class holds a SELECT statement. """
     fields = None
     sources = None
@@ -475,6 +475,9 @@ class Verb_SELECT(Parameter_Expression_Item):
         
         self._post_sql = ''
         self._post_verb = ''
+        
+        if self.resource_uuid:
+            self.prepare()
          
         return result
     

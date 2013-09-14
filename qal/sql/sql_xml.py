@@ -186,7 +186,7 @@ class SQL_XML(XML_Translation):
         return doc
     
     
-    def _parse_array_xml_node(self, _node, _list):
+    def _parse_array_xml_node(self, _node, _list, _parent):
         self._go_down("_parse_array_xml_node") 
         self._debug_print("_parse_array_xml_node: Parsing " + _node.nodeName)
         
@@ -196,13 +196,13 @@ class SQL_XML(XML_Translation):
             
             if currNode.nodeType != currNode.TEXT_NODE:
                 # Do not handle text nodes, there should never be any in lists.
-                resobj = self._parse_class_xml_node(currNode, None)
+                resobj = self._parse_class_xml_node(currNode, None, _parent)
                 _list.append(resobj)
                 
         self._get_up("_parse_array_xml_node")    
         return _list
     
-    def _parse_class_xml_node(self, _node, _classname=None):
+    def _parse_class_xml_node(self, _node,_classname, _parent):
         self._go_down("_parse_class_xml_node")
         if _classname == None:
             _classname = _node.nodeName
@@ -216,15 +216,20 @@ class SQL_XML(XML_Translation):
         if _stripped_classname.lower() in  ['str', 'int', 'float', 'datetime']:
             return xml_base_type_value(_node, _stripped_classname) 
         
-        # Find the actual class.
+        # Find and instatiate the actual class.
         _obj, _obj_name = find_class(_stripped_classname)
-
+        
         if hasattr(_obj, 'as_sql'):
-            self._debug_print("Found matching Parameter class for " + _classname + " : " + _obj_name)
+            _obj._parent = _parent
+            self._debug_print("_parse_class_xml_node: Found matching Parameter class for " + _classname + " : " + _obj_name)
+            if hasattr(_obj, 'prepare') and _node.hasAttribute("resource_uuid"):
+                _obj.resource_uuid = _node.getAttribute("resource_uuid")
+                self._debug_print("_parse_class_xml_node: Added resource_uuid for " + _obj_name + ": " + _obj.resource_uuid)
+            
         elif isinstance(_obj, list):
             # If this is a list, parse it and return.
-            self._debug_print("Found matching list class for " + _classname + " : " + _obj_name)
-            return self._parse_array_xml_node(_node, _obj) 
+            self._debug_print("_parse_class_xml_node: Found matching list class for " + _classname + " : " + _obj_name)
+            return self._parse_array_xml_node(_node, _obj, _obj) 
         else:
             raise Exception("_parse_class_xml_node: Could not find matching class : " + _obj_name)
         
@@ -238,7 +243,7 @@ class SQL_XML(XML_Translation):
                     self._debug_print("_parse_class_xml_node: Parsing property " + _curr_itemkey)
                     
                     if isinstance(_curr_obj, list):
-                        _obj.__dict__[_curr_itemkey] = self._parse_array_xml_node(_curr_node, _curr_obj)
+                        _obj.__dict__[_curr_itemkey] = self._parse_array_xml_node(_curr_node, _curr_obj, _obj)
                     else:
                         # Match the property to a type.
                         currtype = sql_property_to_type(_curr_itemkey)
@@ -249,19 +254,20 @@ class SQL_XML(XML_Translation):
                         elif currtype[0].lower() in ['integer', 'float', 'decimal']:
                             _obj.__dict__[_curr_itemkey] = xml_get_numeric(_curr_node, currtype[0])
                         elif currtype[0:5] == 'verb_' or currtype[0:10] == 'parameter_':
-                                _obj.__dict__[_curr_itemkey] = self._parse_class_xml_node(_curr_node, _obj)
+                            raise Exception("_parse_class_xml_node: Strange VERB/PARAMETER happened parsing.. parent: "+ _parent.__class__.__name__ + "Class: " +_classname+" Currtype: " +currtype)
+                            _obj.__dict__[_curr_itemkey] = self._parse_class_xml_node(_curr_node, _obj, _obj)
                            
                         elif len(currtype) > 1 and type(currtype[1]) == list:
                             _curr_child = xml_find_non_text_child(_curr_node)
                             if (_curr_child):
-                                _obj.__dict__[_curr_itemkey] = self._parse_class_xml_node(_curr_child)    
+                                _obj.__dict__[_curr_itemkey] = self._parse_class_xml_node(_curr_child, None, _obj)    
                             else:
                                 # Base types doesn't have any children.
                                 _obj.__dict__[_curr_itemkey] = xml_get_allowed_value(_curr_node, currtype)
                                 
                         else:
                             if _curr_node.hasChildNodes():
-                                _obj.__dict__[_curr_itemkey] = self._parse_class_xml_node(_curr_node, currtype[0])  
+                                _obj.__dict__[_curr_itemkey] = self._parse_class_xml_node(_curr_node, currtype[0], _obj)  
                
                   
         self._get_up("_parse_class_xml_node")       
@@ -273,7 +279,7 @@ class SQL_XML(XML_Translation):
         _verb = xml_find_non_text_child(_node)
         if (_verb == None):
             raise Exception('XMLToSQL: No Verb_*-node found.') 
-        _structure = self._parse_class_xml_node(_verb)        
+        _structure = self._parse_class_xml_node(_verb, None, None)        
 
                 
         return _structure
