@@ -152,14 +152,16 @@ class XML_Translation(object):
          
     def _add_own(self, _value):
         # Adds the set SQL-prefix.
-        return self.prefix_own + ':' + _value
-                
+        if self.prefix_own:
+            return self.prefix_own + ':' + _value
+        else:
+            return _value
     def _strip_own(self, _value):
         ps_len = len(self.prefix_own + ':')
         if _value[0:ps_len] == self.prefix_own + ':':
             return _value[ps_len:len(_value)]
         else:
-            return _value            
+            return _value
         
     def get_root_node(self, _nodename, _xml = "", _node = None ):
         
