@@ -111,6 +111,7 @@ class XML_Translation(object):
     """Transcoding settings"""
     prefix_xml = 'xsi'
     prefix_schema = 'xsd'
+    prefix_own = None
     
     namespace = None
     schema_uri = None
@@ -147,8 +148,19 @@ class XML_Translation(object):
         if self.debuglevel >= _debuglevel:
             print(_value)
             
-            
-            
+    """Helper utilities"""
+         
+    def _add_own(self, _value):
+        # Adds the set SQL-prefix.
+        return self.prefix_own + ':' + _value
+                
+    def _strip_own(self, _value):
+        ps_len = len(self.prefix_own + ':')
+        if _value[0:ps_len] == self.prefix_own + ':':
+            return _value[ps_len:len(_value)]
+        else:
+            return _value            
+        
     def get_root_node(self, _nodename, _xml = "", _node = None ):
         
         if _node == None:
@@ -160,15 +172,15 @@ class XML_Translation(object):
         
             """ Find root node having _nodename. """
             for _curr_node in _doc.childNodes:
-                if _curr_node.nodeName == self._add_ps(_nodename):
+                if _curr_node.nodeName == self._add_own(_nodename):
                     return _curr_node 
                 else:
                     break 
                 
-            if _curr_node.nodeName != self._add_ps(_nodename):
-                raise Exception(self.__class__.__name__ + '.get_root_node : "' + self._add_ps(_nodename) + ' top node required.')
+            if _curr_node.nodeName != self._add_own(_nodename):
+                raise Exception(self.__class__.__name__ + '.get_root_node : "' + self._add_own(_nodename) + ' top node required.')
         else:
-            if _node.nodeName != _nodename and _node.nodeName != self._add_ps(_nodename):
+            if _node.nodeName != _nodename and _node.nodeName != self._add_own(_nodename):
                 raise Exception(self.__class__.__name__ + '.get_root_node : "' + _nodename +'" top node required.')
 
         return _node

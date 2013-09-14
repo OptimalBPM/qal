@@ -33,7 +33,7 @@ class SQL_XML(XML_Translation):
     This class converts XML into a class structure(declare in SQL.py) that holds the statements. 
     """
 
-    prefix_sql = 'sql'
+
     encoding = 'utf-8'
 
     def __init__(self):
@@ -43,20 +43,11 @@ class SQL_XML(XML_Translation):
         super(SQL_XML, self ).__init__()
         self.namespace = 'http://www.unifiedbpm.se/XMLschema/DAL/SQL'
         self.schema_uri = 'http://www.unifiedbpm.se/XMLschema/DAL/SQL.xsd'
+        self.prefix_own = 'sql'
         self.debuglevel = 2
         self.nestinglevel = 0
     
-    def _add_ps(self, _value):
-        # Adds the set SQL-prefix.
-        return self.prefix_sql + ':' + _value
-                
-    def _strip_ps(self, _value):
-        ps_len = len(self.prefix_sql + ':')
-        if _value[0:ps_len] == self.prefix_sql + ':':
-            return _value[ps_len:len(_value)]
-        else:
-            return _value
-        
+      
     
     def _add_child_array_of(self, _document, _parentNode, _name, _types):
 
@@ -219,7 +210,7 @@ class SQL_XML(XML_Translation):
                                       
         self._debug_print("_parse_class_xml_node: Parsing " + _classname)
 
-        _stripped_classname = self._strip_ps(_classname)
+        _stripped_classname = self._strip_own(_classname)
         
         # Check for base typesError in Verb_CREATE_INDEX, name is not set.
         if _stripped_classname.lower() in  ['str', 'int', 'float', 'datetime']:
@@ -241,7 +232,7 @@ class SQL_XML(XML_Translation):
         for _curr_itemkey, _curr_obj in _obj.__dict__.items():
 
             if _curr_itemkey != 'row_separator':
-                _curr_node = find_child_node(_node, self._add_ps(_curr_itemkey))
+                _curr_node = find_child_node(_node, self._add_own(_curr_itemkey))
                 if _curr_node != None:
                     
                     self._debug_print("_parse_class_xml_node: Parsing property " + _curr_itemkey)
@@ -312,13 +303,13 @@ class SQL_XML(XML_Translation):
         
         if (_object != None and _object != ""):
             self._debug_print("_xml_encode_object: Encoding " + _object.__class__.__name__)
-            _object_node = _document.createElement(self.prefix_sql + ':' + _object.__class__.__name__)
+            _object_node = _document.createElement(self.prefix_own + ':' + _object.__class__.__name__)
             _parent_node.appendChild(_object_node)                
             if hasattr(_object, "__dict__"):
                 for _curr_property_name, currProperty in _object.__dict__.items():
                     if not _curr_property_name.lower() in ['row_separator'] and not hasattr(currProperty, '__call__') and _curr_property_name[0:1] != '_':
                         # Create node for property
-                        _curr_node = _document.createElement(self.prefix_sql + ':' + _curr_property_name)
+                        _curr_node = _document.createElement(self.prefix_own + ':' + _curr_property_name)
                                
                         # Property is a list
                         if isinstance(currProperty, list):
@@ -347,10 +338,10 @@ class SQL_XML(XML_Translation):
         _doc = Document();
         _doc.encoding = self.encoding
         # Create the root element "statement".
-        _statement = _doc.createElement(self.prefix_sql + ":statement")
+        _statement = _doc.createElement(self.prefix_own + ":statement")
         _statement.setAttribute("xmlns:" + self.prefix_xml, 'http://www.w3.org/2001/XMLSchema')
         _statement.setAttribute(self.prefix_xml + ":schemaLocation", self.namespace + ' ' + self.schema_uri)
-        _statement.setAttribute("xmlns:" + self.prefix_sql, self.namespace)
+        _statement.setAttribute("xmlns:" + self.prefix_own, self.namespace)
         _doc.appendChild(_statement) 
        
         # Recurse structure
