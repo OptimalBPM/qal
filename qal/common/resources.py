@@ -4,7 +4,7 @@ Created on Sep 13, 2013
 @author: Nicklas Börjesson
 @note: This module contains access functionality for resources.
 """
-from qal.common.xml_utils import XML_Translation, xml_get_text
+from qal.common.xml_utils import XML_Translation, xml_get_text, find_child_node
 
 class Resource(object):
     
@@ -59,21 +59,21 @@ class Resources(XML_Translation):
     def parse_xml(self, _resources_node=None, _resources_xml=None):
         
         if _resources_node == None:
-            _resources = self.get_root_node('resources', _resources_xml, _resources_node)
+            _root_node = self.get_root_node('sql:statement', _resources_xml, _resources_node)
+            _resources_node = find_child_node(_root_node, "resources")
+        
         
         self.local_resources = dict()
         
-        for _curr_resource in _resources.childNodes:
+        for _curr_resource_node in _resources_node.childNodes:
             _new_resource = Resource()
-            if _curr_resource.nodeType != _curr_resource.TEXT_NODE:
+            if _curr_resource_node.nodeType != _curr_resource_node.TEXT_NODE:
                 self._debug_print("parse_xml: Create new resource object")
-                _new_resource.uuid = _curr_resource.getAttribute("uuid")
-                _new_resource.type = _curr_resource.getAttribute("type")
-                _new_resource.caption = _curr_resource.getAttribute("caption")
+                _new_resource.uuid = _curr_resource_node.getAttribute("uuid")
+                _new_resource.type = _curr_resource_node.getAttribute("type")
+                _new_resource.caption = _curr_resource_node.getAttribute("caption")
                 
-                
-                
-                for _curr_resource_data in _curr_resource.childNodes:
+                for _curr_resource_data in _curr_resource_node.childNodes:
                     if _curr_resource_data.nodeType != _curr_resource_data.TEXT_NODE:
                         _new_resource.data[_curr_resource_data.nodeName.lower()] = xml_get_text(_curr_resource_data)
                         self._debug_print("parse_xml: Add data "+ _curr_resource_data.nodeName.lower() + " " + _new_resource.data[_curr_resource_data.nodeName.lower()] , 4)
@@ -81,5 +81,3 @@ class Resources(XML_Translation):
                 self.local_resources[_new_resource.uuid] = _new_resource
                 self._debug_print("parse_xml: Append resource: "+_new_resource.caption + " uuid: " + _new_resource.uuid + " type: " + _new_resource.type  , 4)
     
-    
-        

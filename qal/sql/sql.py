@@ -308,6 +308,8 @@ class Parameter_Set(Parameter_Base):
         # Loop all expressions into a list. 
         [_sqls.append(none_as_sql(x,_db_type,'')) for x in self.subsets]
         # Separate them with operators.
+        
+        #TODO: Add prepare call somewhere
         return ('\n'+self.set_operator + '\n').join(_sqls)     
     
 class Parameter_Source(Parameter_Base, Parameter_Remotable):
@@ -339,7 +341,11 @@ class Parameter_Source(Parameter_Base, Parameter_Remotable):
         
     def as_sql(self,_db_type):
         """Generate SQL for specified database engine"""
-        return none_as_sql(self.expression,_db_type, '')
+        _sql = none_as_sql(self.expression,_db_type, '')
+    
+        self.prepare()
+
+        return _sql
     
 class Parameter_ORDER_BY_item(Parameter_Expression): 
     """This class holds an order by-statement"""
@@ -433,7 +439,10 @@ class Verb_SELECT(Parameter_Expression_Item, Parameter_Remotable):
         # Add joins
         if len(self.sources) > 1:
             for index, item in enumerate(self.sources):
+
                 if index > 0:
+                    """As as_sql is not called, prepare has to be called explicitly."""
+                    item.prepare()
                     if item.join_type:
                         result+= ' '+ item.join_type
                     result+= ' JOIN ' + none_as_sql(item.expression, _db_type, _error = 'Verb_SELECT: Joins must contain a statement or a reference to a table.')

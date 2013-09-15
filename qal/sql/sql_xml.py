@@ -14,7 +14,7 @@ from xml.dom.minidom import Document
 from xml.sax.saxutils import escape
 from qal.common.xml_utils import XML_Translation, xml_base_type_value, find_child_node, xml_get_text,\
     xml_set_cdata, xml_get_numeric, xml_get_boolean, xml_get_allowed_value, xml_find_non_text_child
-
+from qal.common.resources import Resources
 # TODO : This is a wee bit risky, this means that the schema will be dynamic dependent on what the server supports.
 # Good or Bad?
 from csv import list_dialects
@@ -35,6 +35,7 @@ class SQL_XML(XML_Translation):
 
 
     encoding = 'utf-8'
+    resources = None
 
     def __init__(self):
         '''
@@ -224,7 +225,8 @@ class SQL_XML(XML_Translation):
             self._debug_print("_parse_class_xml_node: Found matching Parameter class for " + _classname + " : " + _obj_name)
             if hasattr(_obj, 'prepare') and _node.hasAttribute("resource_uuid"):
                 _obj.resource_uuid = _node.getAttribute("resource_uuid")
-                self._debug_print("_parse_class_xml_node: Added resource_uuid for " + _obj_name + ": " + _obj.resource_uuid)
+                _obj._resource = self._resources.get_resource(_obj.resource_uuid)
+                self._debug_print("_parse_class_xml_node: Added resource_uuid for " + _obj_name + ": " + _obj.resource_uuid, 1)
             
         elif isinstance(_obj, list):
             # If this is a list, parse it and return.
@@ -276,6 +278,12 @@ class SQL_XML(XML_Translation):
     def xml_to_sql_structure(self, _xml = "", _node = None ):
         """Translates an XML file into a class structure"""
         _node = self.get_root_node('statement', _xml, _node)
+        
+        _resources_node = find_child_node(_node, 'resources')
+        
+        if _resources_node:        
+            self._resources = Resources(_resources_node = _resources_node)
+        
         _verb = xml_find_non_text_child(_node)
         if (_verb == None):
             raise Exception('XMLToSQL: No Verb_*-node found.') 
@@ -349,7 +357,7 @@ class SQL_XML(XML_Translation):
         _statement.setAttribute(self.prefix_xml + ":schemaLocation", self.namespace + ' ' + self.schema_uri)
         _statement.setAttribute("xmlns:" + self.prefix_own, self.namespace)
         _doc.appendChild(_statement) 
-       
+        
         # Recurse structure
         self._xml_encode_object(_doc, _statement, _structure);
         

@@ -40,12 +40,23 @@ class Parameter_Remotable(object):
     
             
     def prepare(self, _temporary_table_name_prefix = "t_"):
-        """The prepare function checks whether the resource GUID is set. 
+        """The prepare function checks whether the resource GUID is set and if resources need fetching
         If so, it fetches the data and puts it into a dataset
         The temporary table name is automatically generated based on the temporary table_name prefix.
         Its default is "t_". """
         
-        print("_______________________DDDDD_______________prepare: sdfsdfsdfds" + self.resource_uuid)
+
+        
+        if not self.resource_uuid:
+            return None
+        
+        print(self.__class__.__name__ + ".prepare: Resource_uuid: " + str(self.resource_uuid))        
+
+        if  (not self.check_need_prepare()):
+            print(self.__class__.__name__ + ".prepare: No need to prepare:" + str(self.resource_uuid))
+            return None
+        
+        print(self.__class__.__name__ + ".prepare: Needs preparing, preparing for resource_uuid: " + str(self.resource_uuid))
         
         """Make connection to resource defined the resource_uuid"""
         pass
@@ -60,10 +71,30 @@ class Parameter_Remotable(object):
         pass
         """Insert data into temporary table""" 
         pass
+        return None
 
- 
+    def check_need_prepare(self):
+        """
+        Checks context, whether a prepare is needed. It is needed if:
+        1. If the nearest parent with resource has a different ID
+        2. If no parent has a resourceID
+        
+        It is NOT needed if the nearest parent with resource has the same ID.
+        """
+        _curr_parent = self._parent
+        while _curr_parent:
+            print(self.__class__.__name__ + ".check_need_prepare: level up" + str(_curr_parent))
+            if hasattr(_curr_parent, 'resource_uuid') and _curr_parent.resource_uuid:
+                if self.resource_uuid == _curr_parent.resource_uuid:
+                    return False
+                else:
+                    print(self.__class__.__name__ + ".check_need_prepare: Different resource uuid found:" + str(_curr_parent.resource_uuid) + " (own: " +str(self.resource_uuid)+ ")")
+                    return True
+            _curr_parent = _curr_parent._parent
 
- 
+        return True
+                
+        
 class SQL_List(list):
     """This is the base class for lists of class instances."""    
 

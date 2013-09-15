@@ -14,6 +14,7 @@ from qal.sql.sql_xml import SQL_XML
 from qal.sql.tests.sql_test import my_diff #, gen_simple_insert, gen_simple_select, gen_simple_create
 from qal.dal.dal_types import db_types
 
+
 import os
 Test_Script_Dir = os.path.dirname(__file__)
 Test_Resource_Dir = Test_Script_Dir + '/resources'
@@ -246,7 +247,33 @@ class class_SQL_Meta_XML_Test(unittest.TestCase):
 
         self.assertEqual(_str_xml_comp[:-2],_str_xml_out[:-1], 'test_insert_matrix_csv: The generated XML file differs.\n'+ my_diff(_str_xml_comp, _str_xml_out))
 
-# TODO: test_delete
+    def test_8_resource(self):
+        _meta_xml = SQL_XML()
+        _meta_xml.schema_uri = '../../dal/SQL.xsd'      
+
+        f = open(Test_Resource_Dir +"/_test_SELECT_resource_in.xml","r")
+        _str_xml_in = f.read()
+        _structure = _meta_xml.xml_to_sql_structure(_str_xml_in)
+
+        # Compare with all SQL flavours
+        #self._compare_sql_files_for_all_db_types(_structure,"_test_DELETE", _overwrite = True)
+
+        
+        _structure.as_sql(0)
+        # Compare compare-file with XML output file
+        _xml_out = _meta_xml.sql_structure_to_xml(_structure)
+        _str_xml_out = _xml_out.toxml()
+        f_out = open(Test_Resource_Dir +"/_test_SELECT_resource_out.xml","w")
+        print(_str_xml_out, file=f_out)
+        f_out.close()
+        
+#        f_comp = open(Test_Resource_Dir +"/_test_SELECT_resource_cmp.xml","r")
+#        _str_xml_comp = f_comp.read()
+
+
+#        self.assertEqual(_str_xml_comp[:-2],_str_xml_out[:-1], 'test_insert_matrix_csv: The generated XML file differs.\n'+ my_diff(_str_xml_comp, _str_xml_out))
+
+
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

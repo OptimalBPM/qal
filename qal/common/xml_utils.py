@@ -172,7 +172,7 @@ class XML_Translation(object):
             except Exception as e:
                 raise Exception(self.__class__.__name__ +".get_root_node : Exception parsing SQL:\n" + str(e) + "\n XML: \n" + _xml)
         
-            """ Find root node having _nodename. """
+            """ Find root node having _nodename."""
             for _curr_node in _doc.childNodes:
                 if _curr_node.nodeName == self._add_own(_nodename):
                     return _curr_node 
