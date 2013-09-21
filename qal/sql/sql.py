@@ -42,7 +42,7 @@ class Parameter_Expression(Parameter_Expression_Item):
         else:
             self.expressionitems = SQL_List()
                    
-    def as_sql(self, _db_type):
+    def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine""" 
         result = ''
         #Loop expressions
@@ -73,7 +73,7 @@ class Parameter_String(Parameter_Expression_Item):
             self.escape_character = ''
         
     
-    def as_sql(self, _db_type):
+    def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
         if _db_type != DB_ORACLE:
             return "'" + self.string_value + "'"
@@ -89,7 +89,7 @@ class Parameter_Numeric(Parameter_Expression_Item):
         super(Parameter_Numeric, self ).__init__(_operator)
         self.numeric_value = _numeric_value  
     
-    def as_sql(self, _db_type):
+    def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
         
         #Check if it is a valid float
@@ -109,7 +109,7 @@ class Parameter_IN(Parameter_Expression_Item):
         super(Parameter_IN, self ).__init__(_operator)
         self.in_values = _in_values 
     
-    def as_sql(self, _db_type):
+    def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
         
         # Handle strings separately. Somewhat non-pythonic, but the alternative would be far more complicated.
@@ -150,13 +150,13 @@ class Parameter_NoSQL(Parameter_Expression_Item, Parameter_Remotable):
         else:
             raise Exception('Dataset_To_SQL: Dataset not loaded.'); 
         
-    def as_sql(self, _db_type):
+    def _generate_sql(self, _db_type):
         if (self.data_source):
            
             self.data_source.load()
             return "("+ self.data_source.as_sql(_db_type) + ")"       
         else:
-            raise Exception('Parameter_NoSQL.as_sql : data_source not set.');
+            raise Exception('Parameter_NoSQLas_sql : data_source not set.');
 
 class Parameter_Identifier(Parameter_Expression_Item):
     """Holds an identifier(column-, table or other reference)"""
@@ -172,7 +172,7 @@ class Parameter_Identifier(Parameter_Expression_Item):
             self.prefix = '' 
             
     
-    def as_sql(self, _db_type, _is_source_table = False):
+    def _generate_sql(self, _db_type, _is_source_table = False):
         """Generate SQL for specified database engine"""
         # Add prefix if set
         if self.prefix != '':
@@ -211,7 +211,7 @@ class Parameter_Cast(Parameter_Expression_Item):
         
         self.datatype = _datatype
     
-    def as_sql(self, _DB_Type):
+    def _generate_sql(self, _DB_Type):
         """Generate SQL for specified database engine"""
         return self.make_cast(self.expression.as_sql(_DB_Type))    
 
@@ -231,7 +231,7 @@ class Parameter_Function(Parameter_Expression_Item):
         self.name = _name    
 
 
-    def as_sql(self, _db_type):
+    def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
         result = ''
         for index, item in enumerate(self.parameters):
@@ -249,7 +249,7 @@ class Parameter_WHEN(Parameter_Base):
         self.conditions = _conditions
         self.result = _result  
         
-    def as_sql(self,_db_type):
+    def _generate_sql(self,_db_type):
         """Generate SQL for specified database engine"""
         return 'WHEN ' + self.conditions.as_sql(_db_type) + ' THEN ' + self.result.as_sql(_db_type)
 
@@ -269,7 +269,7 @@ class Parameter_CASE(Parameter_Expression_Item):
         
         self.else_statement = _else_statement
 
-    def as_sql(self, _DB_Type):
+    def _generate_sql(self, _DB_Type):
         """Generate SQL for specified database engine"""
         result = 'CASE'
         for item in self.when_statements:
@@ -302,14 +302,12 @@ class Parameter_Set(Parameter_Base):
             self.set_operator = _set_operator
         else:
             self.set_operator = None                
-    def as_sql(self,_db_type):
+    def _generate_sql(self,_db_type):
         """Generate SQL for specified database engine"""
         _sqls = []
         # Loop all expressions into a list. 
         [_sqls.append(none_as_sql(x,_db_type,'')) for x in self.subsets]
         # Separate them with operators.
-        
-        #TODO: Add prepare call somewhere
         return ('\n'+self.set_operator + '\n').join(_sqls)     
     
 class Parameter_Source(Parameter_Base, Parameter_Remotable):
@@ -339,12 +337,10 @@ class Parameter_Source(Parameter_Base, Parameter_Remotable):
         
         self.join_type = _join_type
         
-    def as_sql(self,_db_type):
+    def _generate_sql(self,_db_type):
         """Generate SQL for specified database engine"""
         _sql = none_as_sql(self.expression,_db_type, '')
     
-        self.prepare()
-
         return _sql
     
 class Parameter_ORDER_BY_item(Parameter_Expression): 
@@ -356,9 +352,9 @@ class Parameter_ORDER_BY_item(Parameter_Expression):
         super(Parameter_ORDER_BY_item, self ).__init__(_expressionitems)
         self.direction = _direction
 
-    def as_sql(self, _db_type):
+    def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
-        return super(Parameter_ORDER_BY_item, self ).as_sql(_db_type) + " " + self.direction
+        return super(Parameter_ORDER_BY_item, self )._generate_sql(_db_type) + " " + self.direction
         
      
 class Verb_SELECT(Parameter_Expression_Item, Parameter_Remotable):
@@ -403,12 +399,12 @@ class Verb_SELECT(Parameter_Expression_Item, Parameter_Remotable):
                     self._post_sql = 'LIMIT ' + str(int(self.top_limit))
             elif (_db_type in [DB_DB2]):
                     self._post_sql = 'FETCH FIRST ' + str(int(self.top_limit)) + ' ROWS ONLY '         
-            # Oracles' solution is not handled here, but in the .as_sql-WHERE handling.
+            # Oracles' solution is not handled here, but in the as_sql-WHERE handling.
             elif (_db_type != DB_ORACLE): 
                 self._post_verb = 'TOP ' + str(int(self.top_limit)) + ' '
             
 
-    def as_sql(self, _db_type):
+    def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
         
         if len(self.sources) > 0:        
@@ -441,8 +437,8 @@ class Verb_SELECT(Parameter_Expression_Item, Parameter_Remotable):
             for index, item in enumerate(self.sources):
 
                 if index > 0:
-                    """As as_sql is not called, prepare has to be called explicitly."""
-                    item.prepare()
+                    """As as_sql is not called, as_sql has to be called explicitly."""
+                    item.as_sql(_db_type)
                     if item.join_type:
                         result+= ' '+ item.join_type
                     result+= ' JOIN ' + none_as_sql(item.expression, _db_type, _error = 'Verb_SELECT: Joins must contain a statement or a reference to a table.')
@@ -484,10 +480,7 @@ class Verb_SELECT(Parameter_Expression_Item, Parameter_Remotable):
         
         self._post_sql = ''
         self._post_verb = ''
-        
-        if self.resource_uuid:
-            self.prepare()
-         
+
         return result
     
     def append_field_identifier(self, _identifier):
@@ -518,7 +511,7 @@ class Parameter_Condition(Parameter_Base):
         self.operator =  _operator  
         self.and_or    = _and_or
         
-    def as_sql(self, _db_type, _index = 0):
+    def _generate_sql(self, _db_type, _index = 0):
         """Generate SQL for specified database engine (index if for handling when it is the first in a list of conditions)"""
         # TODO: Handle ILIKE for PostgreSQL.
         if (_index != 0):
@@ -548,7 +541,7 @@ class Parameter_Conditions(SQL_List):
             raise "Parameter_Conditions: Invalid structure - Cannot get and_or operator from empty list of conditions."
         
         
-    def as_sql(self, _db_type, _parent_index = 0):
+    def _generate_sql(self, _db_type, _parent_index = 0):
         """Generate SQL for specified database engine"""
         _result = ''  
 
@@ -576,7 +569,7 @@ class Parameter_Field(Parameter_Base):
             self.expression = _expression   
         self.alias      = _alias
     
-    def as_sql(self, _DB_Type):
+    def _generate_sql(self, _DB_Type):
         """Generate SQL for specified database engine"""
         if self.alias != '':
             return self.expression.as_sql(_DB_Type) + ' AS ' + self.alias
@@ -605,7 +598,7 @@ class Parameter_Constraint(Parameter_Base):
             self.checkconditions = SQL_List(["Parameter_Condition", "Parameter_Conditions"])
 
                 
-    def as_sql(self, _db_type):
+    def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
         result = 'CONSTRAINT ' + db_specific_object_reference(self.name, _db_type) + ' ' + self.constraint_type
         if (self.constraint_type == "CHECK"):
@@ -640,7 +633,7 @@ class Verb_CREATE_INDEX(Parameter_Base):
         else:
             self.columnnames = SQL_List('string')
           
-    def as_sql(self, _db_type):
+    def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
         check_not_null("Verb_CREATE_INDEX", [[self.name, "name"],[self.index_type, "index_type"], [self.tablename, "tablename"]])
         # Handle DB2s strange deviation #1
@@ -677,7 +670,7 @@ class Parameter_ColumnDefinition(Parameter_Base):
   
         
 
-    def as_sql(self, _db_type, _mysql_pk = False):
+    def _generate_sql(self, _db_type, _mysql_pk = False):
         """Generate SQL for specified database engine"""
         result = db_specific_object_reference(self.name, _db_type) + ' ' + db_specific_datatype(self.datatype, _db_type) 
         if (_db_type == DB_MYSQL and _mysql_pk == True and self.datatype.lower() == 'serial'):
@@ -767,7 +760,7 @@ class Verb_CREATE_TABLE(Parameter_DDL):
 
 
     
-    def as_sql(self, _db_type):
+    def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
         self._post_statements = []
         result = 'CREATE TABLE '+ citate(self.name, _db_type) + ' (' + self._row_separator
@@ -815,7 +808,7 @@ class Verb_INSERT(Parameter_Base):
             result = result + currIdent.as_sql(_db_type)
         return result     
         
-    def as_sql(self, _db_type):
+    def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
         
         if len(self.column_identifiers) > 0:
@@ -850,7 +843,7 @@ class Verb_DELETE(Parameter_Base):
             self.sources = SQL_List("Parameter_Source")
         
 
-    def as_sql(self, _db_type):
+    def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
         
         result = ''
@@ -924,7 +917,7 @@ class Verb_Custom(Parameter_DDL):
     sql_db2 = ''
     sql_sqlserver = ''
 
-    def as_sql(self, _db_type):
+    def _generate_sql(self, _db_type):
         """Return the specified SQLs for each database engine"""
         return [self.sql_mysql, self.sql_postgresql, self.sql_oracle, self.sql_db2, self.sql_sqlserver][_db_type]
         

@@ -223,7 +223,7 @@ class SQL_XML(XML_Translation):
         if hasattr(_obj, 'as_sql'):
             _obj._parent = _parent
             self._debug_print("_parse_class_xml_node: Found matching Parameter class for " + _classname + " : " + _obj_name)
-            if hasattr(_obj, 'prepare') and _node.hasAttribute("resource_uuid"):
+            if hasattr(_obj, '_bring_into_context') and _node.hasAttribute("resource_uuid"):
                 _obj.resource_uuid = _node.getAttribute("resource_uuid")
                 _obj._resource = self._resources.get_resource(_obj.resource_uuid)
                 self._debug_print("_parse_class_xml_node: Added resource_uuid for " + _obj_name + ": " + _obj.resource_uuid, 1)

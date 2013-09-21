@@ -24,9 +24,18 @@ class Parameter_Base(object):
         if _row_separator != None: 
             self._row_separator = _row_separator
             
-    def as_sql(self, _db_type): 
+    def _generate_sql(self, _db_type): 
         """Generate SQL for specified database engine"""
-        raise Exception(self.__class__.__name__ + ".as_sql() is not implemented")
+        raise Exception(self.__class__.__name__ + "._generate_sql() is not implemented")
+    
+    def as_sql(self, _db_type):
+        
+        if hasattr(self,'resource_uuid') and self.resource_uuid and self._check_need_prepare():
+            return self._bring_into_context(_db_type)
+        else:
+            return self._generate_sql(_db_type)
+        
+        
  
 
 class Parameter_Remotable(object): 
@@ -39,33 +48,25 @@ class Parameter_Remotable(object):
     resource_uuid = None
     
             
-    def prepare(self, _temporary_table_name_prefix = "t_"):
-        """The prepare function checks whether the resource GUID is set and if resources need fetching
-        If so, it fetches the data and puts it into a dataset
-        The temporary table name is automatically generated based on the temporary table_name prefix.
-        Its default is "t_". """
+    def _bring_into_context(self, _db_type):
+        """The _bring_into_context function checks whether the resource GUID is set and if resources need fetching
+        If so, it fetches the data and puts it into a dataset, which is then inserted into the parents context.
+        """
         
+        print(self.__class__.__name__ + "._bring_into_context: Resource_uuid: " + str(self.resource_uuid))        
 
         
-        if not self.resource_uuid:
-            return None
+        print(self.__class__.__name__ + "._bring_into_context: Needs preparing, preparing for resource_uuid: " + str(self.resource_uuid))
         
-        print(self.__class__.__name__ + ".prepare: Resource_uuid: " + str(self.resource_uuid))        
-
-        if  (not self.check_need_prepare()):
-            print(self.__class__.__name__ + ".prepare: No need to prepare:" + str(self.resource_uuid))
-            return None
-        
-        print(self.__class__.__name__ + ".prepare: Needs preparing, preparing for resource_uuid: " + str(self.resource_uuid))
         
         """Make connection to resource defined the resource_uuid"""
         pass
+        """Call as_sql to get query to run"""
+        _sql_text = self._generate_sql(_db_type) 
         """Run query/load to get the result set"""
         pass
         """Generate temporary table name(cannot be more than 8 characters due to some database backend limitations)"""
-        #TODO: See if this should be smarter
-        self.temporary_table_name = _temporary_table_name_prefix + str(time.second) + str(time.microsecond)[0:2] 
-        
+
         pass
         """Create temporary table using column names and types from result set"""
         pass
@@ -73,9 +74,9 @@ class Parameter_Remotable(object):
         pass
         return None
 
-    def check_need_prepare(self):
+    def _check_need_prepare(self):
         """
-        Checks context, whether a prepare is needed. It is needed if:
+        Checks context, whether a _bring_into_context is needed. It is needed if:
         1. If the nearest parent with resource has a different ID
         2. If no parent has a resourceID
         
@@ -83,12 +84,12 @@ class Parameter_Remotable(object):
         """
         _curr_parent = self._parent
         while _curr_parent:
-            print(self.__class__.__name__ + ".check_need_prepare: level up" + str(_curr_parent))
+            print(self.__class__.__name__ + "._check_need_prepare: level up" + str(_curr_parent))
             if hasattr(_curr_parent, 'resource_uuid') and _curr_parent.resource_uuid:
                 if self.resource_uuid == _curr_parent.resource_uuid:
                     return False
                 else:
-                    print(self.__class__.__name__ + ".check_need_prepare: Different resource uuid found:" + str(_curr_parent.resource_uuid) + " (own: " +str(self.resource_uuid)+ ")")
+                    print(self.__class__.__name__ + "._check_need_prepare: Different resource uuid found:" + str(_curr_parent.resource_uuid) + " (own: " +str(self.resource_uuid)+ ")")
                     return True
             _curr_parent = _curr_parent._parent
 
