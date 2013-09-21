@@ -511,8 +511,9 @@ class Parameter_Condition(Parameter_Base):
         self.operator =  _operator  
         self.and_or    = _and_or
         
-    def _generate_sql(self, _db_type, _index = 0):
+    def as_sql(self, _db_type, _index = 0):
         """Generate SQL for specified database engine (index if for handling when it is the first in a list of conditions)"""
+        """Note that the Parameter_Base.as_sql is not called, this is because 1) Conditions are in context 2) Needs _index argument"""
         # TODO: Handle ILIKE for PostgreSQL.
         if (_index != 0):
             _result = ' ' + self.and_or + ' '
@@ -529,7 +530,7 @@ class Parameter_Conditions(SQL_List):
    
    
     def get_first_and_or(self):
-        """Return the forst and/or to know if it should add its own
+        """Return the first and/or to know if it should add its own
         (If it is the first condition there is no point in adding its or, but rather the parent conditions' operator."""
         if (len(self)) > 0:
             _first_item = self[0]
@@ -541,7 +542,7 @@ class Parameter_Conditions(SQL_List):
             raise "Parameter_Conditions: Invalid structure - Cannot get and_or operator from empty list of conditions."
         
         
-    def _generate_sql(self, _db_type, _parent_index = 0):
+    def as_sql(self, _db_type, _parent_index = 0):
         """Generate SQL for specified database engine"""
         _result = ''  
 
