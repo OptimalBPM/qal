@@ -6,6 +6,11 @@ Created on Sep 13, 2013
 """
 from qal.common.xml_utils import XML_Translation, xml_get_text, find_child_node
 
+
+def resource_types():
+    """Returns a list of the supported resource types"""
+    return ["CUSTOM", "FLATFILE", "MATRIX", "XML", "RDBMS"]
+
 class Resource(object):
     
     uuid = None
@@ -14,6 +19,11 @@ class Resource(object):
     
     data = {}
     
+    def __init__(self):
+        self.uuid = None
+        self.type = None
+        self.caption = None    
+        self.data = {}
     
 
 class Resources(XML_Translation):
@@ -76,7 +86,7 @@ class Resources(XML_Translation):
                 for _curr_resource_data in _curr_resource_node.childNodes:
                     if _curr_resource_data.nodeType != _curr_resource_data.TEXT_NODE:
                         _new_resource.data[_curr_resource_data.nodeName.lower()] = xml_get_text(_curr_resource_data)
-                        self._debug_print("parse_xml: Add data "+ _curr_resource_data.nodeName.lower() + " " + _new_resource.data[_curr_resource_data.nodeName.lower()] , 4)
+                        self._debug_print("parse_xml: Add data "+ _curr_resource_data.nodeName.lower() + " " + _new_resource.data[_curr_resource_data.nodeName.lower()] , 1)
             
                 self.local_resources[_new_resource.uuid] = _new_resource
                 self._debug_print("parse_xml: Append resource: "+_new_resource.caption + " uuid: " + _new_resource.uuid + " type: " + _new_resource.type  , 4)

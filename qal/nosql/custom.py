@@ -7,7 +7,7 @@ Created on Sep 14, 2012
 from qal.dal.dal_types import DB_DB2,DB_ORACLE, DB_POSTGRESQL
 from qal.sql.sql_utils import db_specific_object_reference
 class Custom_Dataset(object):
-    """This is the base class for all (external) datasets in QAL-
+    """This is the base class for all (external) data sets in QAL-
     Note: The fields are named like this to not appear as parameters in automatic generators like sql_xml.
     """
 
@@ -27,7 +27,7 @@ class Custom_Dataset(object):
     
     def as_sql(self, _db_type):
         """Generate SQL
-        Either throug a union SQL or into a temp table."""
+        Either through a union SQL or into a temp table."""
         _result = []
         
         _add_field_names = (len(self.data_table) > 0) and (len(self.field_names) == len(self.data_table[0]))

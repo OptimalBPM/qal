@@ -23,7 +23,7 @@ from qal.sql.sql_utils import add_operator, parenthesise, oracle_add_escape, add
                                  citate,check_not_null, curr_user, db_specific_datatype, curr_datetime, add_comma_rs, oracle_create_auto_increment
 from qal.sql.sql_types import condition_part
 from qal.nosql.flatfile import Flatfile_Dataset
-from qal.nosql.rdbms import RDBMS_Dataset
+from qal.sql.rdbms import RDBMS_Dataset
 from qal.nosql.xml import XML_Dataset
 from qal.nosql.matrix import Matrix_Dataset
 

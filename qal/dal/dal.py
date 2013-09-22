@@ -39,6 +39,7 @@ class Database_Abstraction_Layer(object):
         self.autocommit     = self.settings.get("database", "autocommit", True)        
         if self.settings.Parser.has_option("database", "instance"):
             self.db_instance    = self.settings.Parser.get("database", "instance")
+            
     def connect_to_db(self):
         '''Connects to the database'''
         if (self.db_type == DB_MYSQL):
@@ -113,7 +114,7 @@ class Database_Abstraction_Layer(object):
         self.read_db_settings()
         self.db_driver = self.connect_to_db()   
     
-    def __init__(self, _settings):
+    def __init__(self, _settings = None):
         '''
         Init
           

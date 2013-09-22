@@ -12,7 +12,8 @@ The reason is simply to make things more manageable and split things up a bit.
 """
 
 from qal.sql.sql_types import DEFAULT_ROWSEP
-
+from qal.common.resources import resource_types
+from qal.dal.dal_types import db_type_to_string
 
 class Parameter_Base(object): 
     """This class is a base class for all parameter classes."""
@@ -58,13 +59,40 @@ class Parameter_Remotable(object):
         
         print(self.__class__.__name__ + "._bring_into_context: Needs preparing, preparing for resource_uuid: " + str(self.resource_uuid))
         
+        if not self._resource:
+            raise Exception(self.__class__.__name__ + "._bring_into_context: _resource not cached")
         
         """Make connection to resource defined the resource_uuid"""
-        pass
+        if self._resource.type == 'rdbms':
+            
+            from qal.sql.rdbms import RDBMS_Dataset
+            
+            _ds = RDBMS_Dataset(self._resource)
+            print("Querying using " + str(self._resource) + "  " + self._resource.caption + " Server type : " + self._resource.data.get("db_type"))
+            
+            _rows =_ds._dal.query("SELECT * FROM table1")
+            
+            for _row in _rows:
+                for _col in _row:
+                    print(str(_col))
+            
+            
+        
+        #return ["CUSTOM", "FLATFILE", "MATRIX", "XML", "RDBMS"];    
+
+                    
+        if _ds:
+            _data = _ds.load()    
+    
         """Call as_sql to get query to run"""
         _sql_text = self._generate_sql(_db_type) 
         """Run query/load to get the result set"""
-        pass
+
+        
+        
+        
+        print(self.__class__.__name__ + "._bring_into_context: Using "+ self._resource.caption +", resource_uuid: " + str(self.resource_uuid))
+
         """Generate temporary table name(cannot be more than 8 characters due to some database backend limitations)"""
 
         pass
