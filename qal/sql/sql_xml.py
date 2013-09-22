@@ -35,7 +35,7 @@ class SQL_XML(XML_Translation):
 
 
     encoding = 'utf-8'
-    resources = None
+    _resources = None
 
     def __init__(self):
         '''
@@ -223,11 +223,7 @@ class SQL_XML(XML_Translation):
         if hasattr(_obj, 'as_sql'):
             _obj._parent = _parent
             self._debug_print("_parse_class_xml_node: Found matching Parameter class for " + _classname + " : " + _obj_name)
-            if hasattr(_obj, '_bring_into_context') and _node.hasAttribute("resource_uuid"):
-                _obj.resource_uuid = _node.getAttribute("resource_uuid")
-                _obj._resource = self._resources.get_resource(_obj.resource_uuid)
-                self._debug_print("_parse_class_xml_node: Added resource_uuid for " + _obj_name + ": " + _obj.resource_uuid, 1)
-            
+
         elif isinstance(_obj, list):
             # If this is a list, parse it and return.
             self._debug_print("_parse_class_xml_node: Found matching list class for " + _classname + " : " + _obj_name)
@@ -239,6 +235,7 @@ class SQL_XML(XML_Translation):
         for _curr_itemkey, _curr_obj in _obj.__dict__.items():
 
             if _curr_itemkey != 'row_separator':
+                
                 _curr_node = find_child_node(_node, self._add_own(_curr_itemkey))
                 if _curr_node != None:
                     
@@ -272,6 +269,10 @@ class SQL_XML(XML_Translation):
                                 _obj.__dict__[_curr_itemkey] = self._parse_class_xml_node(_curr_node, currtype[0], _obj)  
                
                   
+        if self._resources and hasattr(_obj, 'resource_uuid') and _obj.resource_uuid != None:
+            _obj._resource = self._resources.get_resource(_obj.resource_uuid)
+            self._debug_print("_parse_class_xml_node: Added resource_uuid for " + _obj_name + ": " + _obj.resource_uuid, 1)
+        
         self._get_up("_parse_class_xml_node")       
         return _obj
 
@@ -281,7 +282,8 @@ class SQL_XML(XML_Translation):
         
         _resources_node = find_child_node(_node, 'resources')
         
-        if _resources_node:        
+        if _resources_node:  
+            self._debug_print("xml_to_sql_structure: Found resources.")      
             self._resources = Resources(_resources_node = _resources_node)
         
         _verb = xml_find_non_text_child(_node)

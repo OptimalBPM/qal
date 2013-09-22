@@ -135,6 +135,8 @@ class Parameter_NoSQL(Parameter_Expression_Item, Parameter_Remotable):
             self.data_source = _data_source
         else:
             self.data_source = None
+        
+        self.resource_uuid = None
             
     def dataset_to_sql(self):
         """Generate SQL for specified database engine """
@@ -336,6 +338,7 @@ class Parameter_Source(Parameter_Base, Parameter_Remotable):
         self.alias = _alias
         
         self.join_type = _join_type
+        self.resource_uuid = None
         
     def _generate_sql(self,_db_type):
         """Generate SQL for specified database engine"""
@@ -391,6 +394,7 @@ class Verb_SELECT(Parameter_Expression_Item, Parameter_Remotable):
             self.order_by = SQL_List("Parameter_Expression_Item")
             
         self.top_limit = None
+        self.resource_uuid = None
         
     def add_limit(self, _db_type):
         """Generate SQL for specified database engine for limits on number of rows (TOP/LIMIT/FETCH FIRST)"""

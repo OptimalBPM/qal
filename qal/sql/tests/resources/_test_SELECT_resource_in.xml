@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
-
 <sql:statement xmlns:sql="http://www.unifiedbpm.se/XMLschema/DAL/SQL" xmlns:xsi="http://www.w3.org/2001/XMLSchema" xsi:schemaLocation="http://www.unifiedbpm.se/XMLschema/DAL/SQL ../SQL.xsd">
-	<sql:Verb_SELECT resource_uuid="{DD34A233-47A6-4C16-A26F-195711B49B97}">
+	<sql:Verb_SELECT>
+		<sql:resource_uuid>{DD34A233-47A6-4C16-A26F-195711B49B97}</sql:resource_uuid>
 		<sql:operator>C</sql:operator>
 		<sql:fields>
 			<sql:Parameter_Field>
@@ -133,7 +133,8 @@
 			</sql:Parameter_ORDER_BY_item>
 		</sql:order_by>
 		<sql:sources>
-			<sql:Parameter_Source resource_uuid="{DD34A233-47A6-4C16-A26F-195711B49B97}" >
+			<sql:Parameter_Source>
+				<sql:resource_uuid>{DD34A233-47A6-4C16-A26F-195711B49B97}</sql:resource_uuid>
 				<sql:conditions>
 					<sql:Parameter_Condition>
 						<sql:operator>&gt;</sql:operator>
@@ -180,7 +181,8 @@
 				<sql:join_type/>
 				<sql:alias>T1</sql:alias>
 			</sql:Parameter_Source>
-			<sql:Parameter_Source resource_uuid="{1D62083E-88F7-4442-920D-0B6CC59BA2FF}">
+			<sql:Parameter_Source>
+				<sql:resource_uuid>{1D62083E-88F7-4442-920D-0B6CC59BA2FF}</sql:resource_uuid>
 				<sql:conditions>
 					<sql:Parameter_Condition>
 						<sql:operator>&gt;</sql:operator>
