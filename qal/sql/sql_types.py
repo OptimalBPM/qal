@@ -29,6 +29,7 @@ def index_types():
 def data_types():
     """Returns a list of the supported data types"""
     # @note: string(3000) is added to give some leeway for DB2s default table page size of 4000. 
+    # TODO: Investigate BLOB support
     return ['integer', 'string', 'string(255)', 'string(3000)', 'float', 'serial', 'timestamp', 'boolean']
 
 def data_source_types():

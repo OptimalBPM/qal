@@ -5,6 +5,7 @@ Created on May 8, 2010
 '''
 
 from qal.dal.dal_types import DB_MYSQL, DB_POSTGRESQL, DB_ORACLE, DB_DB2, DB_SQLSERVER, string_to_db_type
+from qal.dal.dal_conversions import parse_description
 
 class Database_Abstraction_Layer(object):
     """This class abstracts the different perculiarities of the different database backends with regards to connection details"""
@@ -135,10 +136,18 @@ class Database_Abstraction_Layer(object):
             cur = self.db_connection.cursor()
             cur.execute(_SQL)
 
-    def query(self, _SQL):
+    
+
+    def query(self, _SQL, _parse_fields = None):
         """Execute the SQL statement, get a dataset"""
         cur = self.db_connection.cursor()
         cur.execute(_SQL)
+        
+        if _parse_fiels:
+            self.fields_info = parse_description(cur.description);
+        else:
+            self.fields_info = None
+        
         return cur.fetchall()
         
    
