@@ -4,7 +4,7 @@ Created on Sep 23, 2013
 @author: Nicklas Boerjesson
 """
 
-
+from datetime import datetime
 """
 MySQL constants, made from: https://github.com/PyMySQL/PyMySQL/blob/master/pymysql/constants/FIELD_TYPE.py
 """
@@ -44,26 +44,26 @@ Arguably, they should be declared in qal.dal.dal_types instead.
 """
 
 
-def mysql_type_to_python_type(typeid):
-    if typeid in (
+def mysql_type_to_SQL_type(_type_code):
+    if _type_code in (
         MySQL_VARCHAR, 
         MySQL_VAR_STRING,
         MySQL_STRING
     ):
         return 'string'
-    elif typeid in  (
+    elif _type_code in  (
         MySQL_TINY_BLOB, 
         MySQL_MEDIUM_BLOB,
         MySQL_LONG_BLOB,
         MySQL_BLOB,
         ):
         return "blob"    
-    elif typeid in (MySQL_DECIMAL,
+    elif _type_code in (MySQL_DECIMAL,
         MySQL_FLOAT,
         MySQL_DOUBLE,
         ):        
         return "float"
-    elif typeid in (MySQL_DECIMAL,
+    elif _type_code in (MySQL_DECIMAL,
         MySQL_TINY,
         MySQL_SHORT,
         MySQL_LONG,
@@ -72,7 +72,7 @@ def mysql_type_to_python_type(typeid):
         MySQL_BIT
         ):
         return "integer"    
-    elif typeid in (
+    elif _type_code in (
         MySQL_DATE,
         MySQL_TIME,
         MySQL_DATETIME,
@@ -82,6 +82,21 @@ def mysql_type_to_python_type(typeid):
     else:
         return "not supported" 
     
+def python_type_to_SQL_type(_python_type):
+    if isinstance(_python_type, str):
+        return 'string'
+    elif isinstance(_python_type, bytes):
+        return "blob"    
+    elif isinstance(_python_type, float):
+        return "float"
+    elif isinstance(_python_type, int):
+        return "integer"    
+    elif isinstance(_python_type, datetime.datetime):
+        return "timestamp"
+    else:
+        return "not supported" 
+    
+        
 def parse_description(_descriptions):
     pass
     
