@@ -19,18 +19,22 @@ class RDBMS_Dataset(Custom_Dataset):
     
     _dal = None
     _resource = None
+    SQL = None
     
-    def __init__(self, _resource = None):
+    def __init__(self, _resource = None, _SQL = None):
         """Constructor"""
         super(RDBMS_Dataset, self ).__init__()
         self._dal = Database_Abstraction_Layer()
         if _resource:
             self.parse_resource(_resource)
+            
+        if _SQL:
+            self.SQL = _SQL
         
     def parse_resource(self, _resource):
         if _resource.type.upper() != 'RDBMS':
             raise Exception("RDBMS_Dataset.parse_resource error: Wrong resource type")
-        
+        self._resource =            _resource
         self._dal.db_type =         string_to_db_type(_resource.data.get("db_type"))
         self._dal.db_server =       _resource.data.get("server")
         self._dal.db_databasename = _resource.data.get("database")
@@ -45,6 +49,15 @@ class RDBMS_Dataset(Custom_Dataset):
             
         
     def load(self):
+        print("Querying using " + str(self._resource) + "  " + self._resource.caption + " Server type : " + self._resource.data.get("db_type"))
+        
+        _rows = self._dal.query(self.SQL)
+        
+  
+        for _row in _rows:
+            for _col in _row:
+                print(str(_col))
+            
         """Load data. Not implemented."""
         pass
         

@@ -64,25 +64,19 @@ class Parameter_Remotable(object):
         
         """Make connection to resource defined the resource_uuid"""
         if self._resource.type == 'rdbms':
-            
             from qal.sql.rdbms import RDBMS_Dataset
-            
-            _ds = RDBMS_Dataset(self._resource)
-            print("Querying using " + str(self._resource) + "  " + self._resource.caption + " Server type : " + self._resource.data.get("db_type"))
-            
-            _rows =_ds._dal.query("SELECT * FROM table1")
-            
-            for _row in _rows:
-                for _col in _row:
-                    print(str(_col))
-            
+            _ds = RDBMS_Dataset(self._resource, "SELECT * FROM table1")
+
+
             
         
         #return ["CUSTOM", "FLATFILE", "MATRIX", "XML", "RDBMS"];    
 
                     
         if _ds:
-            _data = _ds.load()    
+            _data = _ds.load()
+        else:
+            raise Exception(self.__class__.__name__ + "._bring_into_context - Error: Invalid resource type : " + str(self._resource.type))    
     
         """Call as_sql to get query to run"""
         _sql_text = self._generate_sql(_db_type) 
