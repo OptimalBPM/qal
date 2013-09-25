@@ -12,6 +12,7 @@ class Custom_Dataset(object):
     """
 
     field_names = []
+    field_types = []
     data_table = [] 
 
 

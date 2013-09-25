@@ -5,6 +5,7 @@ Created on Sep 23, 2013
 """
 
 from datetime import datetime
+from qal.dal.dal_types import DB_MYSQL, DB_POSTGRESQL
 """
 MySQL constants, made from: https://github.com/PyMySQL/PyMySQL/blob/master/pymysql/constants/FIELD_TYPE.py
 """
@@ -97,6 +98,18 @@ def python_type_to_SQL_type(_python_type):
         return "not supported" 
     
         
-def parse_description(_descriptions):
-    pass
+def parse_description(_descriptions, _db_type):
+    _field_names = []
+    _field_types = []
+    
+    for _column in (_descriptions):
+        _field_names.append(_column[0])
+        if _db_type == DB_MYSQL:
+            _field_types.append(mysql_type_to_SQL_type(_column[1]))
+        elif _db_type == DB_MYSQL:
+            _field_types.append(python_type_to_SQL_type(_column[1]))
+        else:
+            _field_types.append(_column[1])
+    
+    return _field_names, _field_types            
     

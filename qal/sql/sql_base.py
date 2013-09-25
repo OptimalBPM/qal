@@ -65,10 +65,7 @@ class Parameter_Remotable(object):
         """Make connection to resource defined the resource_uuid"""
         if self._resource.type == 'rdbms':
             from qal.sql.rdbms import RDBMS_Dataset
-            _ds = RDBMS_Dataset(self._resource, "SELECT * FROM table1")
-
-
-            
+            _ds = RDBMS_Dataset(self._resource, self._generate_sql(_db_type))
         
         #return ["CUSTOM", "FLATFILE", "MATRIX", "XML", "RDBMS"];    
 

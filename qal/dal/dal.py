@@ -19,7 +19,7 @@ class Database_Abstraction_Layer(object):
     connected = False
     
     db_connection = None
-    settings = None
+
     db_type = None
     db_server = ''
     db_databasename = ''
@@ -29,18 +29,36 @@ class Database_Abstraction_Layer(object):
     db_driver = None
     db_autocommit = True
     
-    def read_db_settings(self):
+    
+    field_names = None
+    field_types = None
+    
+    def read_ini_settings(self, _ini_parser):
         """Read setting from the settings.Parser object"""
-        self.db_type        = string_to_db_type(self.settings.Parser.get("database", "type"))
-        self.db_server      = self.settings.Parser.get("database", "server")   
-        self.db_databasename= self.settings.Parser.get("database", "database_name")   
-        self.db_username    = self.settings.Parser.get("database", "username")
-        self.db_password    = self.settings.Parser.get("database", "password")
-        self.DB_Port        = self.settings.Parser.get("database", "port")
-        self.autocommit     = self.settings.get("database", "autocommit", True)        
-        if self.settings.Parser.has_option("database", "instance"):
-            self.db_instance    = self.settings.Parser.get("database", "instance")
+        self.db_type        = string_to_db_type(_ini_parser.Parser.get("database", "type"))
+        self.db_server      = _ini_parser.Parser.get("database", "server")   
+        self.db_databasename= _ini_parser.Parser.get("database", "database_name")   
+        self.db_username    = _ini_parser.Parser.get("database", "username")
+        self.db_password    = _ini_parser.Parser.get("database", "password")
+        self.DB_Port        = _ini_parser.Parser.get("database", "port")
+        self.autocommit     = _ini_parser.get("database", "autocommit", True)        
+        if _ini_parser.Parser.has_option("database", "instance"):
+            self.db_instance    = _ini_parser.Parser.get("database", "instance")
             
+            
+    def read_resource_settings(self, _resource):
+        if _resource.type.upper() != 'RDBMS':
+            raise Exception("RDBMS_Dataset.parse_resource error: Wrong resource type")
+        self.db_type =         string_to_db_type(_resource.data.get("db_type"))
+        self.db_server =       _resource.data.get("server")
+        self.db_databasename = _resource.data.get("database")
+        self.db_instance =     _resource.data.get("instance")
+        self.db_username =     _resource.data.get("username")
+        self.db_password =     _resource.data.get("password")
+        self.DB_Port =         _resource.data.get("DB_Port")
+        self.autocommit =      _resource.data.get("autocommit")
+        
+                       
     def connect_to_db(self):
         '''Connects to the database'''
         if (self.db_type == DB_MYSQL):
@@ -112,10 +130,10 @@ class Database_Abstraction_Layer(object):
     def init_db(self):
         """Read database settings and connect"""
         #TODO: See if this should be here.
-        self.read_db_settings()
+        self.read_ini_settings()
         self.db_driver = self.connect_to_db()   
     
-    def __init__(self, _settings = None):
+    def __init__(self, _settings = None, _resource = None):
         '''
         Init
           
@@ -142,11 +160,13 @@ class Database_Abstraction_Layer(object):
         """Execute the SQL statement, get a dataset"""
         cur = self.db_connection.cursor()
         cur.execute(_SQL)
+        cur.executemany()
         
-        if _parse_fiels:
-            self.fields_info = parse_description(cur.description);
+        if _parse_fields:
+            self.field_names, self.field_types = parse_description(cur.description);
         else:
-            self.fields_info = None
+            self.field_names = None
+            self.field_types = None 
         
         return cur.fetchall()
         
