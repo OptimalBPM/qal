@@ -40,15 +40,7 @@ class RDBMS_Dataset(Custom_Dataset):
             _dest = self._dal
             self._resource = _resource
         
-        _dest.db_type =         string_to_db_type(_resource.data.get("db_type"))
-        _dest.db_server =       _resource.data.get("server")
-        _dest.db_databasename = _resource.data.get("database")
-        _dest.db_instance =     _resource.data.get("instance")
-        _dest.db_username =     _resource.data.get("username")
-        _dest.db_password =     _resource.data.get("password")
-        _dest.DB_Port =         _resource.data.get("DB_Port")
-        _dest.autocommit =      _resource.data.get("autocommit")
-        
+        _dest.read_resource_settings(_resource)
         _dest.connect_to_db()        
 
             
