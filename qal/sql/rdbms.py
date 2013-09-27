@@ -9,6 +9,7 @@ from qal.nosql.custom import Custom_Dataset
 from qal.common.resources import Resource
 from qal.dal.dal import Database_Abstraction_Layer
 from qal.dal.dal_types import string_to_db_type
+#from qal.sql.sql import Verb_CREATE_TABLE
 
 
 class RDBMS_Dataset(Custom_Dataset):
@@ -34,7 +35,7 @@ class RDBMS_Dataset(Custom_Dataset):
             self.SQL = _SQL
         
     def connect_resource(self, _resource, _dest = None):
-        """Assign resources to a DAL instance"""
+        """Is this pointless? Assign resources to a DAL instance"""
 
         if _dest == None:
             _dest = self._dal
@@ -53,18 +54,4 @@ class RDBMS_Dataset(Custom_Dataset):
         self.field_types = self._dal.field_types
         
         
-    def copy_to_temp_table(self, _resource):
-        """Move datatable into a temp table on the resource, return the table name. 
-        The resource must be a RDBMS database."""
-        
-        _query = """INSERT INTO `data` (frame, sensor_row, sensor_col, value) VALUES (%s, %s, %s, %s ) """
-        _values = []
-        _rows, _cols, _frames = numpy.nonzero(data)
-        for _row, _col, _frame in zip(_rows, _cols, _frames):
-            values.append((frame, row, col, data[row,col,frame]))
-        
-        cur.executemany(_query, values)
-        
-        """Use executemany"""
-        
-        pass
+

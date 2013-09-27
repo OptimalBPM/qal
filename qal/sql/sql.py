@@ -820,11 +820,12 @@ class Verb_INSERT(Parameter_Base):
             result = 'INSERT INTO '+ self.destination_identifier.as_sql(_db_type) + ' (' + self.makeIdentifiers(_db_type) + ')' + DEFAULT_ROWSEP
             # Add data and remove parenthesis. Removing them here could certainly be seen as ugly but the reason 
             # is that MySQL cannot handle them. It would break everything else any other way.
-            tmpSQL = self.data.as_sql(_db_type)
-            if isinstance(self.data, Parameter_Set):
-                result = result +  tmpSQL
-            else:
-                result = result +  tmpSQL.lstrip('(').rstrip(')')
+            if self.data:
+                tmpSQL = self.data.as_sql(_db_type)
+                if isinstance(self.data, Parameter_Set):
+                    result = result +  tmpSQL
+                else:
+                    result = result +  tmpSQL.lstrip('(').rstrip(')')
         else:
             raise Exception('Verb_INSERT.as_sql: No column_identifiers specified!')
                    
