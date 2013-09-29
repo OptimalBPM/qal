@@ -5,10 +5,10 @@ Created on May 8, 2010
 '''
 
 from qal.dal.dal_types import DB_MYSQL, DB_POSTGRESQL, DB_ORACLE, DB_DB2, DB_SQLSERVER, string_to_db_type
-from qal.dal.dal_conversions import parse_description
+from qal.dal.dal_conversions import parse_description, python_type_to_SQL_type
 
 class Database_Abstraction_Layer(object):
-    """This class abstracts the different perculiarities of the different database backends with regards to connection details"""
+    """This class abstracts the different peculiarities of the different database backends with regards to connection details"""
     
     # Events
     
@@ -71,11 +71,16 @@ class Database_Abstraction_Layer(object):
             
 
         elif (self.db_type == DB_POSTGRESQL):
-            import postgresql.driver.dbapi20  
-            Conn = postgresql.driver.dbapi20.connect (host = self.db_server, 
+            import postgresql.driver as pg_driver 
+            if self.DB_Port == "":
+                _port = 5432
+            else:
+                _port = self.DB_Port
+            Conn = pg_driver.connect(host = self.db_server, 
                                                 database =  self.db_databasename, 
                                                 user = self.db_username, 
-                                                password = self.db_password)
+                                                password = self.db_password,
+                                                port = _port)
                             
         elif (self.db_type == DB_SQLSERVER):
             import pyodbc
@@ -130,7 +135,7 @@ class Database_Abstraction_Layer(object):
     def init_db(self):
         """Read database settings and connect"""
         #TODO: See if this should be here.
-        self.read_ini_settings()
+        self.read_ini_settings(self.settings)
         self.db_driver = self.connect_to_db()   
     
     def __init__(self, _settings = None, _resource = None):
@@ -146,29 +151,64 @@ class Database_Abstraction_Layer(object):
     def select(self, params):
         pass
     
-    def execute(self, _SQL):
+    def execute(self, _sql):
         """Execute the SQL statement, expect no dataset"""
         if self.db_type == DB_POSTGRESQL:
-            self.db_connection.execute(_SQL)
+            self.db_connection.execute(_sql)
         else:
             cur = self.db_connection.cursor()
-            cur.execute(_SQL)
+            cur.execute(_sql)
+            
+    def _make_positioned_params(self, _input):
+            _pos = 1
+            _old_sql =  _input                          
+            _new_sql = _old_sql.replace("%s", "$" + str(_pos), 1)
+            while _new_sql != _old_sql:
+                _pos = _pos + 1
+                _old_sql = _new_sql
+                _new_sql = _old_sql.replace("%s", "$" + str(_pos), 1)
+            return _new_sql
+           
+    def executemany(self, _sql, _values):
+        """Execute the SQL statements , expect no dataset"""
+        if self.db_type == DB_POSTGRESQL:
+            # Change parameter type into Postgres positional ones, like  $1, $2 and so on.
+            _sql = self._make_positioned_params(_sql)
 
+            print(_sql)
+
+            _prepared = self.db_connection.prepare(_sql)
+            
+            for _row in _values:
+                _prepared(*_row)
+        else:
+            cur = self.db_connection.cursor()
+            cur.executemany(_sql, _values)
     
 
-    def query(self, _SQL, _parse_fields = None):
+    def query(self, _sql, _parse_fields = None):
         """Execute the SQL statement, get a dataset"""
-        cur = self.db_connection.cursor()
-        cur.execute(_SQL)
-        cur.executemany()
-        
-        if _parse_fields:
-            self.field_names, self.field_types = parse_description(cur.description);
+        # py-postgres doesn't use the DB-API, as it doesn't work well-
+        if self.db_type == DB_POSTGRESQL:
+            _ps = self.db_connection.prepare(_sql)
+            _res = _ps()
+            if _ps.column_names != None:
+                self.field_names = _ps.column_names 
+                self.field_types = []                
+                for _curr_type in _ps.column_types:
+                    self.field_types.append(python_type_to_SQL_type(_curr_type))
+            return _res
         else:
-            self.field_names = None
-            self.field_types = None 
-        
-        return cur.fetchall()
+            cur = self.db_connection.cursor()
+            cur.execute(_sql)
+            
+            if _parse_fields:
+                self.field_names, self.field_types = parse_description(cur.description, self.db_type);
+            else:
+                self.field_names = None
+                self.field_types = None 
+            
+            return cur.fetchall()
         
    
     def close(self):
