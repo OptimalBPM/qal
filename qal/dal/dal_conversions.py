@@ -84,15 +84,16 @@ def mysql_type_to_SQL_type(_type_code):
         return "not supported" 
     
 def python_type_to_SQL_type(_python_type):
-    if isinstance(_python_type, str):
+    print("python_type_to_SQL_type:" + str(_python_type))
+    if (_python_type == str):
         return 'string'
-    elif isinstance(_python_type, bytes):
+    elif (_python_type == bytes):
         return "blob"    
-    elif isinstance(_python_type, float):
+    elif (_python_type == float):
         return "float"
-    elif isinstance(_python_type, int):
+    elif (_python_type == int):
         return "integer"    
-    elif isinstance(_python_type, datetime.datetime):
+    elif (_python_type == datetime):
         return "timestamp"
     else:
         return "not supported" 
@@ -106,8 +107,6 @@ def parse_description(_descriptions, _db_type):
         _field_names.append(_column[0])
         if _db_type == DB_MYSQL:
             _field_types.append(mysql_type_to_SQL_type(_column[1]))
-        elif _db_type == DB_MYSQL:
-            _field_types.append(python_type_to_SQL_type(_column[1]))
         else:
             _field_types.append(_column[1])
     
