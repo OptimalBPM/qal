@@ -43,13 +43,13 @@ def make_insert_skeleton(_table_name, _field_names):
 def copy_to_temp_table(_dal, _values, _field_names, _field_types, _table_name = None):
     """Move datatable into a temp table on the resource, return the table name. """
     if _table_name == None:
-        _table_name = "#test"
+        _table_name = "test"
     if len(_values) == 0:
         print("copy_to_temp_table: No source data, nothing to do, aborting.")
     else:        
         _create_table_sql = create_temporary_table(_table_name, _field_names, _field_types, _db_type = _dal.db_type)    
         
-        print("Creating temporary \"_table_name\" table..")
+        print("Creating temporary " + _table_name + " table..\n"+_create_table_sql)
         _dal.execute(_create_table_sql)
         _insert = make_insert_skeleton(_table_name = _table_name, _field_names = _field_names)
     

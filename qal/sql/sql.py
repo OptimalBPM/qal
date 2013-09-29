@@ -20,12 +20,14 @@ from qal.sql.sql_base import Parameter_Base, Parameter_Remotable, SQL_List, Para
 
 from qal.sql.sql_utils import add_operator, parenthesise, oracle_add_escape, add_comma, make_operator, check_for_param_content,\
                                 none_as_sql, error_on_blank, comma_separate, make_function, db_specific_operator, db_specific_object_reference,\
-                                 citate,check_not_null, curr_user, db_specific_datatype, curr_datetime, add_comma_rs, oracle_create_auto_increment
+                                citate,check_not_null, curr_user, db_specific_datatype, curr_datetime, add_comma_rs, oracle_create_auto_increment,\
+                                handle_temp_table_ref
 from qal.sql.sql_types import condition_part
 from qal.nosql.flatfile import Flatfile_Dataset
 from qal.sql.rdbms import RDBMS_Dataset
 from qal.nosql.xml import XML_Dataset
 from qal.nosql.matrix import Matrix_Dataset
+from qal.dal.dal_types import DB_SQLSERVER
 
 
 
@@ -173,6 +175,7 @@ class Parameter_Identifier(Parameter_Expression_Item):
         else:
             self.prefix = '' 
             
+                                  
     
     def _generate_sql(self, _db_type, _is_source_table = False):
         """Generate SQL for specified database engine"""
@@ -183,9 +186,9 @@ class Parameter_Identifier(Parameter_Expression_Item):
             _tmp_prefix = ''
         # Add quote if needed
         if _db_type in (DB_POSTGRESQL, DB_DB2, DB_ORACLE) and not _is_source_table:
-            return  _tmp_prefix + '"' + str(self.identifier) + '"'
+            return _tmp_prefix + '"' + str(handle_temp_table_ref(self.identifier, _db_type)) + '"'
         else:    
-            return _tmp_prefix + str(self.identifier)
+            return _tmp_prefix + str(handle_temp_table_ref(self.identifier, _db_type))
 
 
 class Parameter_Cast(Parameter_Expression_Item):
@@ -718,8 +721,7 @@ class Verb_CREATE_TABLE(Parameter_DDL):
     columns = None
     constraints = None
     _post_statements = None
-    _temporary = None
-    def __init__(self, _name = None, _columns = None, _constraints = None, _temporary = None):
+    def __init__(self, _name = None, _columns = None, _constraints = None):
         super(Verb_CREATE_TABLE, self ).__init__()
         if _name != None:
             self.name = _name  
@@ -737,9 +739,6 @@ class Verb_CREATE_TABLE(Parameter_DDL):
             self.constraints = SQL_List(["Parameter_Constraint", "Parameter_Constraints"])
         
         self._post_statements = list()
-        
-        if _temporary != None:
-            self._temporary = _temporary
         
         
     def get_post_statements(self):
@@ -773,7 +772,7 @@ class Verb_CREATE_TABLE(Parameter_DDL):
     def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
         self._post_statements = []
-        if self._temporary:
+        if self.name[0] == "#":
             if _db_type in [DB_POSTGRESQL, DB_MYSQL]:
                 _result = "CREATE TEMPORARY TABLE "
             elif _db_type == [DB_DB2]:
@@ -782,10 +781,12 @@ class Verb_CREATE_TABLE(Parameter_DDL):
                 _result = "CREATE GLOBAL TEMPORARY TABLE "
             else:
                 _result = "CREATE TABLE "
+            
+            _result+= citate(self.name[1:len(self.name)], _db_type) + " (" + self._row_separator
         else:
             _result = "CREATE TABLE "
+            _result+= citate(self.name, _db_type) + " (" + self._row_separator
             
-        _result+= citate(self.name, _db_type) + " (" + self._row_separator
         _result+= self.make_columns(_db_type) 
         if (len(self.constraints) > 0):
             _result+= ',' + self._row_separator + self.make_constraints(_db_type) 

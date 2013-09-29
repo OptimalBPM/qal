@@ -134,18 +134,18 @@ def curr_datetime(_db_type):
     elif _db_type == DB_SQLSERVER:
         return 'GETDATE()'      
         
-def db_specific_object_reference(_value, _db):
+def db_specific_object_reference(_value, _db_type):
     """Qualifies an object reference in a database-type specific (see dal_types) way."""
 
-    if _db == DB_MYSQL:
+    if _db_type == DB_MYSQL:
         return "`" + _value + "`"
-    elif _db == DB_POSTGRESQL:
+    elif _db_type == DB_POSTGRESQL:
         return '"' + _value + '"'
-    elif _db == DB_ORACLE:
+    elif _db_type == DB_ORACLE:
         return '"' + str(_value)[0:30] + '"'
-    elif _db == DB_DB2:
+    elif _db_type == DB_DB2:
         return '"' + _value + '"'
-    elif _db == DB_SQLSERVER:
+    elif _db_type == DB_SQLSERVER:
         return '[' + _value + ']'
 
     else:
@@ -217,4 +217,11 @@ def make_operator(_operator, _double_pipe_c):
 def make_function(_name, _value):
     """Assembles an SQL function call."""
     return _name + parenthesise(_value)
-                 
+
+
+def handle_temp_table_ref(_identifier, _db_type):
+    if _identifier[0] == "#" and  _db_type != DB_SQLSERVER:
+        return _identifier[1:len(_identifier)]
+    else:
+        return _identifier
+    
