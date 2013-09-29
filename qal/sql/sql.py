@@ -718,7 +718,8 @@ class Verb_CREATE_TABLE(Parameter_DDL):
     columns = None
     constraints = None
     _post_statements = None
-    def __init__(self, _name = None, _columns = None, _constraints = None):
+    _temporary = None
+    def __init__(self, _name = None, _columns = None, _constraints = None, _temporary = None):
         super(Verb_CREATE_TABLE, self ).__init__()
         if _name != None:
             self.name = _name  
@@ -736,6 +737,10 @@ class Verb_CREATE_TABLE(Parameter_DDL):
             self.constraints = SQL_List(["Parameter_Constraint", "Parameter_Constraints"])
         
         self._post_statements = list()
+        
+        if _temporary != None:
+            self._temporary = _temporary
+        
         
     def get_post_statements(self):
         """Return post statements. That is statements run after the main SQL"""
@@ -768,17 +773,29 @@ class Verb_CREATE_TABLE(Parameter_DDL):
     def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
         self._post_statements = []
-        result = 'CREATE TABLE '+ citate(self.name, _db_type) + ' (' + self._row_separator
-        result+= self.make_columns(_db_type) 
+        if self._temporary:
+            if _db_type in [DB_POSTGRESQL, DB_MYSQL]:
+                _result = "CREATE TEMPORARY TABLE "
+            elif _db_type == [DB_DB2]:
+                _result = "DECLARE GLOBAL TEMPORARY TABLE "
+            elif _db_type == [DB_ORACLE]:
+                _result = "CREATE GLOBAL TEMPORARY TABLE "
+            else:
+                _result = "CREATE TABLE "
+        else:
+            _result = "CREATE TABLE "
+            
+        _result+= citate(self.name, _db_type) + " (" + self._row_separator
+        _result+= self.make_columns(_db_type) 
         if (len(self.constraints) > 0):
-            result+= ',' + self._row_separator + self.make_constraints(_db_type) 
-        result+= self._row_separator + ')' 
+            _result+= ',' + self._row_separator + self.make_constraints(_db_type) 
+        _result+= self._row_separator + ')' 
         
   
         if _db_type == DB_MYSQL:
-            result+= ' ENGINE=InnoDB'
+            _result+= ' ENGINE=InnoDB'
                  
-        return result
+        return _result
     
 class Verb_INSERT(Parameter_Base):
     """This class holds an INSERT statement"""
