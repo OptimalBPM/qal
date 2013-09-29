@@ -175,8 +175,6 @@ class Database_Abstraction_Layer(object):
             # Change parameter type into Postgres positional ones, like  $1, $2 and so on.
             _sql = self._make_positioned_params(_sql)
 
-            print(_sql)
-
             _prepared = self.db_connection.prepare(_sql)
             
             for _row in _values:
@@ -197,7 +195,7 @@ class Database_Abstraction_Layer(object):
                 self.field_types = []                
                 for _curr_type in _ps.column_types:
                     self.field_types.append(python_type_to_SQL_type(_curr_type))
-            return _res
+
         else:
             cur = self.db_connection.cursor()
             cur.execute(_sql)
@@ -208,8 +206,14 @@ class Database_Abstraction_Layer(object):
                 self.field_names = None
                 self.field_types = None 
             
-            return cur.fetchall()
+            _res = cur.fetchall()
+            
+        # Untuple. TODO: This might need to be optimised, perhaps by working with the same array. 
+        _results = [] 
+        for _row in _res:
+            _results.append(list(_row))
         
+        return _results
    
     def close(self):
         """Close the database connection"""
