@@ -19,10 +19,11 @@ def make_column_definitions(_field_names, _field_types):
 
 
 
-def create_table(_table_name, _field_names, _field_types, _db_type):
+def create_temporary_table(_table_name, _field_names, _field_types, _db_type):
 
     _columns = make_column_definitions(_field_names, _field_types)
     _CREATE = Verb_CREATE_TABLE(_name = _table_name, _columns = _columns)
+    _CREATE._temporary = True
     return _CREATE.as_sql(_db_type)
 
 
@@ -39,24 +40,24 @@ def make_insert_skeleton(_table_name, _field_names):
     _column_identifiers = make_column_identifiers(_field_names)
     return Verb_INSERT(_destination_identifier = _destination_identifier, _column_identifiers = _column_identifiers)
 
-def copy_to_temp_table(self, _dal, _values, _field_name, _field_types):
+def copy_to_temp_table(_dal, _values, _field_names, _field_types, _table_name = None):
     """Move datatable into a temp table on the resource, return the table name. """
+    if _table_name == None:
+        _table_name = "#test"
+    if len(_values) == 0:
+        print("copy_to_temp_table: No source data, nothing to do, aborting.")
+    else:        
+        _create_table_sql = create_temporary_table(_table_name, _field_names, _field_types, _db_type = _dal.db_type)    
+        
+        print("Creating temporary \"_table_name\" table..")
+        _dal.execute(_create_table_sql)
+        _insert = make_insert_skeleton(_table_name = _table_name, _field_names = _field_names)
     
-    _tmp_table_name = "#test"
-    _insert = make_insert_skeleton(_field_name, _field_types)
-    print(_insert.as_sql(_dal.db_type))
-    _query = " VALUES (" +"%s, " * (len(self.field_names) - 1) + "%s)"
-    print(_query)
+        _values_sql = "VALUES (" +"%s, " * (len(_field_names) - 1) + "%s)"
+        
+        print("Inserting " + str(len(_values)) + " rows (" + str(len(_values[0])) + " columns)")
+        _dal.executemany(_insert.as_sql(_dal.db_type) + _values_sql, _values)
+    
     
         
-    _values = []
-    # _rows, _cols, _frames = numpy.nonzero(data)
-    for _row in zip(self.data_table):
-        pass
-    #    _values.append((frame, row, col, data[row,col,frame]))
-    
-    #_dest_dal.executemany(_query, _values)
-    
-    """Use executemany"""
-    pass
-
+   
