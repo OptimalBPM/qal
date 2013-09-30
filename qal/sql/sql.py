@@ -15,7 +15,8 @@ For example: sources means that it is a list of Parameter_Source.
 from qal.sql.sql_types import DEFAULT_ROWSEP, expression_item_types,tabular_expression_item_types
 from qal.dal.dal_types import DB_POSTGRESQL, DB_MYSQL, DB_ORACLE, DB_DB2 # , DB_SQLSERVER 
 
-from qal.sql.sql_base import Parameter_Base, Parameter_Remotable, SQL_List, Parameter_Expression_Item
+from qal.sql.sql_base import Parameter_Base, SQL_List, Parameter_Expression_Item
+from qal.sql.sql_remotable import Parameter_Remotable
 
 
 from qal.sql.sql_utils import add_operator, parenthesise, oracle_add_escape, add_comma, make_operator, check_for_param_content,\
