@@ -54,7 +54,7 @@ def copy_to_temp_table(_dal, _values, _field_names, _field_types, _table_name = 
         print("Inserting " + str(len(_values)) + " rows (" + str(len(_values[0])) + " columns)")
         _dal.executemany(_insert.as_sql(_dal.db_type) + _values_sql, _values)
         
-    return None
+    return _table_name
     
         
    
