@@ -36,9 +36,10 @@ def list_class_properties(_classname):
         for k in globals()[_classname].__dict__.items():
             if not hasattr(k[1], '__call__') and k[0][0:1] != '_': 
                 result.append(k[0])
-                
-        if len(globals()[_classname]().__class__.__mro__) > 2:
-            result.extend(list_class_properties(globals()[_classname]().__class__.__mro__[1].__name__))
+        _mro_length = len(globals()[_classname]().__class__.__mro__)        
+        if _mro_length > 2:
+            for _mro_idx in range(1, _mro_length - 1):
+                result.extend(list_class_properties(globals()[_classname]().__class__.__mro__[_mro_idx].__name__))
     
     return result
 
