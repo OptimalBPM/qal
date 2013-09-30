@@ -78,10 +78,11 @@ def mysql_type_to_SQL_type(_type_code):
         MySQL_TIME,
         MySQL_DATETIME,
         MySQL_YEAR,
-        MySQL_NEWDATE):
+        MySQL_NEWDATE,
+        MySQL_TIMESTAMP):
         return "timestamp"
     else:
-        return "not supported" 
+        raise Exception("mysql_type_to_SQL_type: _type_code \"" + str(_type_code) + "\"not supported") 
     
 def python_type_to_SQL_type(_python_type):
     print("python_type_to_SQL_type:" + str(_python_type))
@@ -96,7 +97,7 @@ def python_type_to_SQL_type(_python_type):
     elif (_python_type == datetime):
         return "timestamp"
     else:
-        return "not supported" 
+        raise Exception("python_type_to_SQL_type: _type_code \"" + str(_python_type) + "\"not supported")
     
         
 def parse_description(_descriptions, _db_type):
