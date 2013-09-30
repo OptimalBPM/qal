@@ -72,7 +72,7 @@ class Database_Abstraction_Layer(object):
 
         elif (self.db_type == DB_POSTGRESQL):
             import postgresql.driver as pg_driver 
-            if self.DB_Port == "":
+            if self.DB_Port == None or self.DB_Port == "":
                 _port = 5432
             else:
                 _port = self.DB_Port
@@ -132,12 +132,6 @@ class Database_Abstraction_Layer(object):
     
     
     
-    def init_db(self):
-        """Read database settings and connect"""
-        #TODO: See if this should be here.
-        self.read_ini_settings(self.settings)
-        self.db_driver = self.connect_to_db()   
-    
     def __init__(self, _settings = None, _resource = None):
         '''
         Init
@@ -145,7 +139,13 @@ class Database_Abstraction_Layer(object):
         '''  
         if _settings != None:      
             self.settings = _settings
-            self.init_db()
+            self.read_ini_settings(_settings)
+            self.db_driver = self.connect_to_db()
+            
+        if _resource != None:
+            self.resource = _resource
+            self.read_resource_settings(_resource)
+            self.db_driver = self.connect_to_db()   
 
 
     def select(self, params):
