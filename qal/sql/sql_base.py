@@ -14,6 +14,9 @@ The reason is simply to make things more manageable and split things up a bit.
 from qal.sql.sql_types import DEFAULT_ROWSEP
 from qal.common.resources import resource_types
 from qal.dal.dal_types import db_type_to_string
+from qal.dal.dal import Database_Abstraction_Layer
+
+
 
 class Parameter_Base(object): 
     """This class is a base class for all parameter classes."""
@@ -62,22 +65,24 @@ class Parameter_Remotable(object):
         if not self._resource:
             raise Exception(self.__class__.__name__ + "._bring_into_context: _resource not cached")
         
-        """Make connection to resource defined the resource_uuid"""
+        """Make connection to resource defined by the resource_uuid"""
         if self._resource.type == 'rdbms':
-            from qal.sql.rdbms import RDBMS_Dataset
-            _ds = RDBMS_Dataset(self._resource, self._generate_sql(_db_type))
-        
-        #return ["CUSTOM", "FLATFILE", "MATRIX", "XML", "RDBMS"];    
+            _source_dal = Database_Abstraction_Layer(_resource = self._resource)
+            _data = _source_dal.execute(self._generate_sql(_db_type))
+        elif self._resource.type in ["CUSTOM", "FLATFILE", "MATRIX", "XML"]:
+            # Use all NoSQL-datasets
 
-                    
-        if _ds:
-            _data = _ds.load()
+            _dataset = None
+            if _dataset:
+                _data = _dataset.load()
+        
+                  
         else:
             raise Exception(self.__class__.__name__ + "._bring_into_context - Error: Invalid resource type : " + str(self._resource.type))    
-    
-        """Call as_sql to get query to run"""
-        _sql_text = self._generate_sql(_db_type) 
-        """Run query/load to get the result set"""
+        
+        # This is imported locally, to not interfere with the structure.
+        from qal.sql.sql_macros import copy_to_temp_table 
+        _table_name = copy_to_temp_table(_dal = self._dal_ , _values =_data, _field_names = _source_dal.field_names, _field_types = _source_dal.field_types, _table_name = None)
 
         
         
