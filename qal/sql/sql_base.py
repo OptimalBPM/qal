@@ -43,12 +43,13 @@ class Parameter_Base(object):
  
 
 class Parameter_Remotable(object): 
-    """This class is a auxilliary class for all parameter classes that is remotable. 
+    """This class is a auxilliary class for all parameter classes that are remotable. 
     That is, they can fetch their data from, or perform their actions at, a different location than the parent class.
     If they return data, the data will be held in the temporary table, where it can be joined with or otherwise managed.
     """
-    """The temporary table name is used by owners to reference the data correctly."""
-    temporary_table_name = None
+    """The temporary table name is used by owners to reference the data correctly. It is prefixed by an underscore to 
+    not be shown in the external structure."""
+    _temporary_table_name = None
     resource_uuid = None
     
             
