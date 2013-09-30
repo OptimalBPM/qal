@@ -184,7 +184,7 @@ class Database_Abstraction_Layer(object):
             cur.executemany(_sql, _values)
     
 
-    def query(self, _sql, _parse_fields = None):
+    def query(self, _sql):
         """Execute the SQL statement, get a dataset"""
         # py-postgres doesn't use the DB-API, as it doesn't work well-
         if self.db_type == DB_POSTGRESQL:
@@ -200,11 +200,7 @@ class Database_Abstraction_Layer(object):
             cur = self.db_connection.cursor()
             cur.execute(_sql)
             
-            if _parse_fields:
-                self.field_names, self.field_types = parse_description(cur.description, self.db_type);
-            else:
-                self.field_names = None
-                self.field_types = None 
+            self.field_names, self.field_types = parse_description(cur.description, self.db_type);
             
             _res = cur.fetchall()
             
