@@ -1,11 +1,11 @@
-'''
+"""
 Created on Sep 26, 2013
 
 @author: Nicklas Boerjesson
-'''
+"""
 
 from qal.sql.sql import Verb_CREATE_TABLE, Verb_INSERT, SQL_List, Parameter_ColumnDefinition,Parameter_Identifier
-from qal.dal.dal import Database_Abstraction_Layer 
+
 
 def make_column_definitions(_field_names, _field_types):
     _columns = SQL_List()
@@ -14,10 +14,6 @@ def make_column_definitions(_field_names, _field_types):
     for _field_counter in range(0, len(_field_names)):
         _columns.append(Parameter_ColumnDefinition(_name = _field_names[_field_counter], _datatype = _field_types[_field_counter]))
     return _columns
-
-
-
-
 
 def create_temporary_table(_table_name, _field_names, _field_types, _db_type):
 
@@ -57,7 +53,8 @@ def copy_to_temp_table(_dal, _values, _field_names, _field_types, _table_name = 
         
         print("Inserting " + str(len(_values)) + " rows (" + str(len(_values[0])) + " columns)")
         _dal.executemany(_insert.as_sql(_dal.db_type) + _values_sql, _values)
-    
+        
+    return None
     
         
    
