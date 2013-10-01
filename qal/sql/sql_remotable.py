@@ -11,11 +11,15 @@ class Parameter_Remotable(object):
     If they return data, the data will be held in the temporary table, where it can be joined with or otherwise managed.
     """
     """The temporary table name is used by owners to reference the data correctly. It is prefixed by an underscore to 
-    not be shown in the external structure."""
+    not be shown in the external structure.(it is possible that it will be removed)"""
     _temporary_table_name = None
+    """The resource object, usually loaded by the XML importer"""
     _resource = None
+    """The classes' DAL connection."""
     _dal = None
+    """The nearest parent that is in another database context than self"""
     _out_of_context_parent = None
+    """This value identifies what context this part of the query resides in"""
     resource_uuid = None
     
             
@@ -31,7 +35,6 @@ class Parameter_Remotable(object):
         print(self.__class__.__name__ + "._bring_into_context: Needs preparing, preparing for resource_uuid: " + str(self.resource_uuid))
         
         if not self._resource:
-            print(self.__class__.__name__ + "._bring_into_context - Error: _resource not cached")
             raise Exception(self.__class__.__name__ + "._bring_into_context - Error: _resource not cached")
         
         # TODO: Generate random temp table name, max 1 (#) + 7 alphanumeric characters
@@ -67,8 +70,7 @@ class Parameter_Remotable(object):
         else:
             raise Exception(self.__class__.__name__ + "._bring_into_context - Error: Invalid resource type : " + str(self._resource.type))    
         print(self._dal.field_types)
-        """ This is imported locally, to not interfere with the structure."""
-        from qal.sql.sql_macros import copy_to_temp_table 
+
         
         """Does the out-of-context parent have a connection? If so, that's where the data should go."""
         if self._out_of_context_parent._dal:
@@ -76,20 +78,22 @@ class Parameter_Remotable(object):
         else:
             """If it doesn't, create one to the resource, and use that."""
             _parent_dal = Database_Abstraction_Layer(_resource=self._out_of_context_parent._resource)
-            """Also set the parents, since we are using temporary tables, they need to be in the same context.""" 
+            """Also set the parents _dal, since we are using temporary tables, they need to be in the same context.""" 
             self._out_of_context_parent._dal = _parent_dal
             
-        """Copy the data into the parents' context."""
+        """ The sql_macros library is imported locally, to not interfere with the qal.sql.* structure."""
+        from qal.sql.sql_macros import copy_to_temp_table             
+        """Copy the data into the parents' context so the parent can access it."""
         _table_name = copy_to_temp_table(_dal = _parent_dal, _values =_data, _field_names = self._dal.field_names, _field_types = self._dal.field_types, _table_name = _tmp_table_name)
         
-        # TODO: Check what shoult be returned, it isn't used anyway.
+        # TODO: Check what should be returned, it isn't used anyway.
         return _table_name
         
 
     def _check_need_prepare(self):
         """
-        Checks context, whether a _bring_into_context is needed. It is needed if:
-        1. If the nearest parent with resource has a different ID
+        Checks context, whether a call to _bring_into_context is needed. It is needed if:
+        1. If the nearest parent with resource has a different resource ID
         2. If no parent has a resourceID
         
         It is NOT needed if the nearest parent with resource has the same ID. 
@@ -105,8 +109,6 @@ class Parameter_Remotable(object):
                     return False
                 else:
                     print(self.__class__.__name__ + "._check_need_prepare: Different resource uuid found:" + str(_curr_parent.resource_uuid) + " (own: " +str(self.resource_uuid)+ ")")
-                    print("Setting _out_of_context_parent = "+ str(_curr_parent))
-                    
                     self._out_of_context_parent = _curr_parent
                     return True
             _curr_parent = _curr_parent._parent
