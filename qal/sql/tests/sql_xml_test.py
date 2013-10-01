@@ -12,7 +12,7 @@ in the sql_test for convenience and that those tests use datasets.
 import unittest
 from qal.sql.sql_xml import SQL_XML
 from qal.sql.tests.sql_test import my_diff #, gen_simple_insert, gen_simple_select, gen_simple_create
-from qal.dal.dal_types import db_types
+from qal.dal.dal_types import db_types, DB_POSTGRESQL
 
 
 import os
@@ -259,12 +259,17 @@ class class_SQL_Meta_XML_Test(unittest.TestCase):
         #self._compare_sql_files_for_all_db_types(_structure,"_test_DELETE", _overwrite = True)
 
         
-        _structure.as_sql(0)
+        _sql_out = _structure.as_sql(DB_POSTGRESQL)
+        _rows = _structure._dal.query(_sql_out)
+        
+        for _row in _rows:
+            
+            for _col in _row:
+                print(_col)
         # Compare compare-file with XML output file
         _xml_out = _meta_xml.sql_structure_to_xml(_structure)
         _str_xml_out = _xml_out.toxml()
         f_out = open(Test_Resource_Dir +"/_test_SELECT_resource_out.xml","w")
-        print(_str_xml_out, file=f_out)
         f_out.close()
         
 #        f_comp = open(Test_Resource_Dir +"/_test_SELECT_resource_cmp.xml","r")
