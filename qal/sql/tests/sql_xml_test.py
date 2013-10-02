@@ -248,6 +248,8 @@ class class_SQL_Meta_XML_Test(unittest.TestCase):
         self.assertEqual(_str_xml_comp[:-2],_str_xml_out[:-1], 'test_insert_matrix_csv: The generated XML file differs.\n'+ my_diff(_str_xml_comp, _str_xml_out))
 
     def test_8_resource(self):
+        # TODO: Describe the requirements for the test.
+        
         _meta_xml = SQL_XML()
         _meta_xml.schema_uri = '../../dal/SQL.xsd'      
 
