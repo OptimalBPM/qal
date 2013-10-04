@@ -28,18 +28,18 @@ class Parameter_Remotable(object):
         If so, it fetches the data and puts it into a dataset, which is then inserted into the parents context.
         The parent is referenced to as the out-of-context parent.
         """
-        
-        print(self.__class__.__name__ + "._bring_into_context: Resource_uuid: " + str(self.resource_uuid))        
-
-        
+       
         print(self.__class__.__name__ + "._bring_into_context: Needs preparing, preparing for resource_uuid: " + str(self.resource_uuid))
         
         if not self._resource:
             raise Exception(self.__class__.__name__ + "._bring_into_context - Error: _resource not cached")
         
-        # TODO: Generate random temp table name, max 1 (#) + 7 alphanumeric characters
-        _tmp_table_name = '#tmp'
-        
+        # Generate random temp table name, max 1 (#) + 8 alphanumeric characters
+        import random
+        import string
+        char_set = string.ascii_lowercase + string.digits
+        _tmp_table_name = '#' +''.join(random.sample(char_set*8,8))
+       
         
         if self._resource.type == 'rdbms':
             if not self._dal:
