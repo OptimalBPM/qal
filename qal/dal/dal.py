@@ -48,7 +48,7 @@ class Database_Abstraction_Layer(object):
             
     def read_resource_settings(self, _resource):
         if _resource.type.upper() != 'RDBMS':
-            raise Exception("RDBMS_Dataset.parse_resource error: Wrong resource type")
+            raise Exception("read_resource_settings error: Wrong resource type - " + _resource.type)
         self.db_type =         string_to_db_type(_resource.data.get("db_type"))
         self.db_server =       _resource.data.get("server")
         self.db_databasename = _resource.data.get("database")
