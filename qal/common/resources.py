@@ -52,7 +52,7 @@ class Resources(XML_Translation):
         _resource = None
         
         """Check local list"""
-        if self.local_resources:
+        if self.local_resources and _uuid in self.local_resources:
             _resource = self.local_resources[_uuid]
         
         """Lookup externally"""
@@ -60,7 +60,7 @@ class Resources(XML_Translation):
             _resource = self.external_resources_callback(_uuid)
         
         if _resource == None:
-            raise Exception("get_resource: Resource not found")
+            raise Exception("get_resource: Resource not found - uuid: " + _uuid)
         else:
             return _resource
      
