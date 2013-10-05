@@ -18,6 +18,13 @@
 			<username>ubpmuser</username>
 			<password>test</password>
 		</resource>
+		<resource type="flatfile" uuid="{86470370-FF78-48A4-9759-A3BAE4EE22FE}" caption="csv-file">
+			<filename>resources/_SELECT_resource_csv_in.txt</filename>
+			<delimiter>,</delimiter>
+			<has_header>True</has_header>
+			<csv_dialect>excel-tab</csv_dialect>
+		</resource>		
+		
 		
 	</resources>
 
