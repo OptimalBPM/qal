@@ -176,8 +176,7 @@ class XML_Translation(object):
             for _curr_node in _doc.childNodes:
                 if _curr_node.nodeName == self._add_own(_nodename):
                     return _curr_node 
-                else:
-                    break 
+  
                 
             if _curr_node.nodeName != self._add_own(_nodename):
                 raise Exception(self.__class__.__name__ + '.get_root_node : "' + self._add_own(_nodename) + ' top node required.')
