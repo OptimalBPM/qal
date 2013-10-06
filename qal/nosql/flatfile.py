@@ -21,7 +21,8 @@ class Flatfile_Dataset(Custom_Dataset):
     
     def __init__(self, _delimiter = None, _filename = None, _has_header = None, _csv_dialect = None, _resource = None):
         """Constructor"""
-        
+        super(Flatfile_Dataset, self ).__init__() 
+       
         if _resource != None:
             self.read_resource_settings(_resource)
         else:
@@ -43,7 +44,7 @@ class Flatfile_Dataset(Custom_Dataset):
             else:
                 self.csv_dialect = None      
              
-        super(Flatfile_Dataset, self ).__init__()
+
         
     def read_resource_settings(self, _resource):
         if _resource.type.upper() != 'FLATFILE':
