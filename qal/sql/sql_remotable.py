@@ -40,14 +40,15 @@ class Parameter_Remotable(object):
         char_set = string.ascii_lowercase + string.digits
         _tmp_table_name = '#' +''.join(random.sample(char_set*8,8))
        
+        from qal.sql.sql import Parameter_Identifier
         
-        if self._resource.type == 'rdbms':
+        if self._resource.type.upper() == 'RDBMS':
             if not self._dal:
                 """Make connection to resource defined by the resource_uuid"""
                 self._dal = Database_Abstraction_Layer(_resource = self._resource)
             
             _source_sql = self._generate_sql(self._dal.db_type)
-            from qal.sql.sql import Parameter_Source, Parameter_Identifier
+            from qal.sql.sql import Parameter_Source
             if  isinstance(self, Parameter_Source):
                 print("is Parameter_Source")
                 if isinstance(self.expression[0], Parameter_Identifier):
@@ -57,19 +58,25 @@ class Parameter_Remotable(object):
                         self.expression[0].identifier = _tmp_table_name[1:len(_tmp_table_name)]
                     else:
                         self.expression[0].identifier = _tmp_table_name
+                    
 
             _data = self._dal.query(_source_sql)
+            _field_names = self._dal.field_names
+            _field_types = self._dal.field_types
             self._dal.close()
-        elif self._resource.type in ["CUSTOM", "FLATFILE", "MATRIX", "XML"]:
-            # TODO: Use all NoSQL-datasets
+            
+        elif self._resource.type.upper() in ["FLATFILE"]:
 
-            _dataset = None
-            if _dataset:
-                _data = _dataset.load()
+            from qal.nosql.flatfile import Flatfile_Dataset
+            
+            self._data_source = Flatfile_Dataset(_resource = self._resource)
+            
+            _data = self._data_source.load()
+            _field_names = self._data_source.field_names
+            _field_types = ["string"] * len(_field_names)
                   
         else:
             raise Exception(self.__class__.__name__ + "._bring_into_context - Error: Invalid resource type : " + str(self._resource.type))    
-        print(self._dal.field_types)
 
         
         """Does the out-of-context parent have a connection? If so, that's where the data should go."""
@@ -84,10 +91,10 @@ class Parameter_Remotable(object):
         """ The sql_macros library is imported locally, to not interfere with the qal.sql.* structure."""
         from qal.sql.sql_macros import copy_to_temp_table             
         """Copy the data into the parents' context so the parent can access it."""
-        _table_name = copy_to_temp_table(_dal = _parent_dal, _values =_data, _field_names = self._dal.field_names, _field_types = self._dal.field_types, _table_name = _tmp_table_name)
+        _table_name = copy_to_temp_table(_dal = _parent_dal, _values =_data, _field_names = _field_names, _field_types = _field_types, _table_name = _tmp_table_name)
         
-        # TODO: Check what should be returned, it isn't used anyway.
-        return _table_name
+        _ident = Parameter_Identifier(_identifier = _table_name)
+        return _ident.as_sql(_parent_dal.db_type)
         
 
     def _check_need_prepare(self):
