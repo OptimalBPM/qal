@@ -9,7 +9,7 @@ from qal.common.xml_utils import XML_Translation, xml_get_text, find_child_node
 
 def resource_types():
     """Returns a list of the supported resource types"""
-    return ["CUSTOM", "FLATFILE", "MATRIX", "XML", "RDBMS"]
+    return ["CUSTOM", "FLATFILE", "MATRIX", "XPATH", "RDBMS"]
 
 class Resource(object):
     

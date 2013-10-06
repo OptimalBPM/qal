@@ -47,7 +47,7 @@
   <xsd:simpleType name="data_source">
     <xsd:restriction base="xsd:string">
       <xsd:enumeration value="Flatfile_Dataset"/>
-      <xsd:enumeration value="Parameter_XML_Dataset"/>
+      <xsd:enumeration value="Parameter_XPath_Dataset"/>
       <xsd:enumeration value="Parameter_RDBMS_Dataset"/>
       <xsd:enumeration value="Matrix_Dataset"/>
     </xsd:restriction>
@@ -293,7 +293,7 @@
   <xsd:complexType name="Parameter_DML">
     <xsd:all/>
   </xsd:complexType>
-  <xsd:complexType name="Parameter_XML_Dataset">
+  <xsd:complexType name="Parameter_XPath_Dataset">
     <xsd:all/>
   </xsd:complexType>
   <xsd:complexType name="Matrix_Dataset">

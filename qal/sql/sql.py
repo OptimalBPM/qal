@@ -25,7 +25,7 @@ from qal.sql.sql_utils import add_operator, parenthesise, oracle_add_escape, add
                                 handle_temp_table_ref
 from qal.sql.sql_types import condition_part
 from qal.nosql.flatfile import Flatfile_Dataset
-from qal.nosql.xml import XML_Dataset
+from qal.nosql.xml import XPath_Dataset
 from qal.nosql.matrix import Matrix_Dataset
 from qal.dal.dal_types import DB_SQLSERVER
 
