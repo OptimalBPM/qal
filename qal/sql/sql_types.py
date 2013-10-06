@@ -11,6 +11,7 @@ Created on Sep 20, 2010
 DEFAULT_ROWSEP = chr(13)
 
 from csv import list_dialects
+from qal.nosql.xpath import xpath_data_formats
 
 """
  Global types:
@@ -87,7 +88,7 @@ def sql_property_to_type(_property_name):
                         'sql_postgresql','sql_oracle','sql_db2','sql_sqlserver','row_separator',\
                         'prefix', 'direction', 'operator','table', 'parameters', 'delimiter',\
                         'filename', 'target_table', 'resource_uuid', 'temporary_table_name',\
-                        'temporary_table_name_prefix']:
+                        'temporary_table_name_prefix', 'rows_xpath']:
         return ['string']
     
     elif _property_name == 'numeric_value':
@@ -124,6 +125,9 @@ def sql_property_to_type(_property_name):
     
     elif _property_name == 'index_type':
         return ['index_types', index_types()]
+    
+    elif _property_name == 'xpath_data_format':
+        return ['xpath_data_format',xpath_data_formats()]
     
     elif _property_name in ['expression','parameters','result','else_statement','orderby','expressionitems']:
         return ['Array_expression_item', expression_item_types()]
