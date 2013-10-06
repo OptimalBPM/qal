@@ -53,20 +53,20 @@ class XPath_Dataset(Custom_Dataset):
         self.field_xpaths = _resource.data.get("field_xpaths")       
         self.field_types = _resource.data.get("field_types")  
               
-    def format_to_tree(self, _data_format, _data):
+    def file_to_tree(self, _data_format, _reference):
         print("format_to_tree : " + _data_format)
         if _data_format == 'HTML':
             import lxml.html
-            return lxml.html.fromstring(_data)
+            return lxml.html.parse(_reference)
+        else:
+            raise Exception("file_to_tree: " + _data_format + " is not supported")
             
         
     def load(self):
         """Parse file, apply root XPath to iterate over and then collect field data via field_xpaths."""
         print("Loading : " + self.filename)
-        _data = self.get_data(self.filename)
-        print("Loaded " + str(len(_data)) + " characters")
         
-        _tree = self.format_to_tree(self.xpath_data_format, _data)
+        _tree = self.file_to_tree(self.xpath_data_format, self.filename)
         
         #_root_nodes = _tree.xpath("/html/body/form/table/tr[4]/td[2]/table/tr[2]/td/table[2]/tr/td/table/tr[10]/td/table/tr")
         _root_nodes = _tree.xpath(self.rows_xpath)

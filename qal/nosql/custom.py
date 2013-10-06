@@ -29,16 +29,6 @@ class Custom_Dataset(object):
         raise Exception('Custom_Dataset.Load is not implemented in class: ' + self.classname)
         pass
     
-    def get_data(self, _reference, _encoding = None):
-        # Try and see if it is an URL..
-        _file = None
-        try:
-            _file = urlopen(_reference)
-        except:
-            _file = open(_reference, mode='r', encoding = _encoding)
-           
-            
-        return _file.read()
     
     def as_sql(self, _db_type):
         """Generate SQL
