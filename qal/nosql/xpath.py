@@ -61,7 +61,7 @@ class XPath_Dataset(Custom_Dataset):
             
         
     def load(self):
-        # TODO: Implement XPath parsing.
+        """Parse file, apply root XPath to iterate over and then collect field data via field_xpaths."""
         print("Loading : " + self.filename)
         _data = self.get_data(self.filename)
         print("Loaded " + str(len(_data)) + " characters")
