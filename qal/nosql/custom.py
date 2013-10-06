@@ -31,9 +31,12 @@ class Custom_Dataset(object):
     
     def get_data(self, _reference, _encoding = None):
         # Try and see if it is an URL..
-        _file = urlopen(_reference, encoding = _encoding)
-        if _file == None:
+        _file = None
+        try:
+            _file = urlopen(_reference)
+        except:
             _file = open(_reference, mode='r', encoding = _encoding)
+           
             
         return _file.read()
     
