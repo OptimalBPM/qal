@@ -182,7 +182,7 @@ def db_specific_datatype(value, DB):
             result = unenumerate(['TEXT', 'VARCHAR', 'VARCHAR2(4000)', 'VARCHAR(3100)', 'varchar(max)'], DB)
             
     elif (value.lower() == "float"):
-        result = unenumerate(['DOUBLE', 'double', 'FLOAT', 'Double', 'float'], DB)    
+        result = unenumerate(['DOUBLE', 'double precision', 'FLOAT', 'Double', 'float'], DB)    
     
     elif (value.lower() == "serial"):
         result = unenumerate(['INTEGER AUTO_INCREMENT', 'serial', 'integer','INT GENERATED ALWAYS AS IDENTITY', 'int IDENTITY(1,1)'], DB)
