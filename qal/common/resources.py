@@ -77,7 +77,7 @@ class Resources(XML_Translation):
         
         for _curr_resource_node in _resources_node.childNodes:
             
-            if _curr_resource_node.nodeType != _curr_resource_node.TEXT_NODE and _curr_resource_node.getAttribute("uuid") != '':
+            if _curr_resource_node.nodeType == _curr_resource_node.ELEMENT_NODE and _curr_resource_node.getAttribute("uuid") != '':
                 self._debug_print("parse_xml: Create new resource object")
                 _new_resource = Resource()
                 _new_resource.uuid = _curr_resource_node.getAttribute("uuid")
@@ -85,7 +85,7 @@ class Resources(XML_Translation):
                 _new_resource.caption = _curr_resource_node.getAttribute("caption")
                 
                 for _curr_resource_data in _curr_resource_node.childNodes:
-                    if _curr_resource_data.nodeType != _curr_resource_data.TEXT_NODE:
+                    if _curr_resource_data.nodeType == _curr_resource_data.ELEMENT_NODE:
                         _new_resource.data[_curr_resource_data.nodeName.lower()] = xml_get_text(_curr_resource_data)
                         self._debug_print("parse_xml: Add data "+ _curr_resource_data.nodeName.lower() + " " + _new_resource.data[_curr_resource_data.nodeName.lower()] , 1)
             
