@@ -7,7 +7,7 @@ Created on Sep 14, 2012
 from qal.nosql.custom import Custom_Dataset
 
 def data_formats():
-    return ['HTML1.0', 'XML', 'XHTML']
+    return ['XML', 'XHTML', 'HTML', 'UNTIDY_HTML']
 
 class XPath_Dataset(Custom_Dataset):
     """This class implements data formats that are possible to query via XPath.
@@ -62,13 +62,27 @@ class XPath_Dataset(Custom_Dataset):
   
         if _resource.type.upper() != 'XPATH':
             raise Exception("XPath_Dataset.read_resource_settings.parse_resource error: Wrong resource type: " + _resource.type)
+        self.filename   =   _resource.data.get("filename")
         self.rows_xpath =   _resource.data.get("rows_xpath")
         self.data_format =  _resource.data.get("data_format")
         
+        
+    def format_to_tree(self, _data_format, _data):
+        if _data_format == 'HTML':
+            import lxml.html
+            return lxml.html.fromstring(_data)
+            
+        
     def load(self):
         # TODO: Implement XPath parsing.
-        import xml.etree.ElementTree as ET
-        pass
+        
+        _data = self.get_data(self.filename)
+        
+        _tree = self.format_to_tree(self.data_format, _data)
+        
+        _root_nodes = _tree.xpath(self.rows_xpath)
+        for _curr_row in _root_nodes:
+            print(str(_curr_row))
         
         # TODO: Flatten result
         

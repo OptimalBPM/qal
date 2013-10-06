@@ -1,4 +1,5 @@
 <?xml version="1.0" ?>
+<!-- This file is also used as a template for resource definitions, they are copied from here to other test suites. -->
 <sql:statement xmlns:sql="http://www.unifiedbpm.se/XMLschema/DAL/SQL" xmlns:xsi="http://www.w3.org/2001/XMLSchema" xsi:schemaLocation="http://www.unifiedbpm.se/XMLschema/DAL/SQL ../SQL.xsd">
 
 	<sql:VERB_SELECT/>
@@ -31,7 +32,7 @@
 			<filename>resources/_test_SELECT_resource_xpath_html_in.html</filename>
 			
 			<rows_xpath>/html/body/form/table/tbody/tr[4]/td[2]/table/tbody/tr[2]/td/table[2]/tbody/tr/td/table/tbody/tr[10]/td/table/tbody/tr[*]</rows_xpath>
-			<data_format>HTML1.0</data_format>
+			<data_format>HTML</data_format>
 			<!--	
 				</rows_xpath>
 			<fields>

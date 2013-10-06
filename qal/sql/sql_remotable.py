@@ -74,6 +74,15 @@ class Parameter_Remotable(object):
             _data = self._data_source.load()
             _field_names = self._data_source.field_names
             _field_types = ["string"] * len(_field_names)
+            
+        elif self._resource.type.upper() in ["XPATH"]:    
+            from qal.nosql.xpath import XPath_Dataset
+            
+            self._data_source = XPath_Dataset(_resource = self._resource)
+            
+            _data = self._data_source.load()
+            _field_names = self._data_source.field_names
+            _field_types = self._data_source.field_types
                   
         else:
             raise Exception(self.__class__.__name__ + "._bring_into_context - Error: Invalid resource type : " + str(self._resource.type))    
