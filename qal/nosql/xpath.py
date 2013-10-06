@@ -68,8 +68,8 @@ class XPath_Dataset(Custom_Dataset):
         
         _tree = self.format_to_tree(self.xpath_data_format, _data)
         
-        _root_nodes = _tree.xpath("/html/body/form/table/tr[4]/td[2]/table/tr[2]/td/table[2]/tr/td/table/tr[10]/td/table/tr")
-        #_root_nodes = _tree.xpath(self.rows_xpath)
+        #_root_nodes = _tree.xpath("/html/body/form/table/tr[4]/td[2]/table/tr[2]/td/table[2]/tr/td/table/tr[10]/td/table/tr")
+        _root_nodes = _tree.xpath(self.rows_xpath)
         _data = []
         for _curr_row in _root_nodes:
             _row_data = []
