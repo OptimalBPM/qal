@@ -47,7 +47,7 @@ class Flatfile_Dataset(Custom_Dataset):
         
     def read_resource_settings(self, _resource):
         if _resource.type.upper() != 'FLATFILE':
-            raise Exception("Flatfile_Dataset.read_resource_settings.parse_resource error: Wrong resource type")
+            raise Exception("Flatfile_Dataset.read_resource_settings.parse_resource error: Wrong resource type: " + _resource.type)
         self.filename =    _resource.data.get("filename")
         self.delimiter =   _resource.data.get("delimiter")
         self.has_header =  bool(_resource.data.get("has_header"))
