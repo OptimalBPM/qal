@@ -1,7 +1,32 @@
 <sql:statement xmlns:sql="http://www.unifiedbpm.se/XMLschema/DAL/SQL" xmlns:xsi="http://www.w3.org/2001/XMLSchema" xsi:schemaLocation="http://www.unifiedbpm.se/XMLschema/DAL/SQL ../../dal/SQL.xsd">
 
 	<sql:Verb_SELECT>
-		<sql:order_by/>
+		<sql:order_by>
+			<sql:Parameter_ORDER_BY_item>
+				<sql:direction></sql:direction>
+				<sql:expressionitems>
+					<sql:Parameter_Identifier>
+						<sql:identifier>table_postgresID</sql:identifier>
+						<sql:prefix>PG</sql:prefix>
+						<sql:operator></sql:operator>
+					</sql:Parameter_Identifier>
+				</sql:expressionitems>
+				<sql:operator></sql:operator>
+				<sql:operator></sql:operator>
+			</sql:Parameter_ORDER_BY_item>
+			<sql:Parameter_ORDER_BY_item>
+				<sql:direction></sql:direction>
+				<sql:expressionitems>
+					<sql:Parameter_Identifier>
+						<sql:identifier>file_htmlCode</sql:identifier>
+						<sql:prefix>HTML</sql:prefix>
+						<sql:operator></sql:operator>
+					</sql:Parameter_Identifier>
+				</sql:expressionitems>
+				<sql:operator></sql:operator>
+				<sql:operator></sql:operator>
+			</sql:Parameter_ORDER_BY_item>
+		</sql:order_by>
 		<sql:fields>
 			<sql:Parameter_Field>
 				<sql:alias></sql:alias>
@@ -49,6 +74,16 @@
 					<sql:Parameter_Identifier>
 						<sql:identifier>file_csvName</sql:identifier>
 						<sql:prefix>CSV</sql:prefix>
+						<sql:operator></sql:operator>
+					</sql:Parameter_Identifier>
+				</sql:expression>
+			</sql:Parameter_Field>
+			<sql:Parameter_Field>
+				<sql:alias></sql:alias>
+				<sql:expression>
+					<sql:Parameter_Identifier>
+						<sql:identifier>file_htmlCode</sql:identifier>
+						<sql:prefix>HTML</sql:prefix>
 						<sql:operator></sql:operator>
 					</sql:Parameter_Identifier>
 				</sql:expression>
@@ -149,25 +184,7 @@
 				<sql:resource_uuid></sql:resource_uuid>
 			</sql:Parameter_Source>
 			<sql:Parameter_Source>
-				<!--
-				<sql:conditions>
-					<sql:Parameter_Condition>
-						<sql:right>
-							<sql:Parameter_Numeric>
-								<sql:numeric_value>1</sql:numeric_value>
-								<sql:operator></sql:operator>
-							</sql:Parameter_Numeric>
-						</sql:right>
-						<sql:and_or>AND</sql:and_or>
-						<sql:operator>=</sql:operator>
-						<sql:left>
-							<sql:Parameter_Numeric>
-								<sql:numeric_value>1</sql:numeric_value>
-								<sql:operator></sql:operator>
-							</sql:Parameter_Numeric>
-						</sql:left>
-					</sql:Parameter_Condition>
-				</sql:conditions> -->
+				<sql:conditions/>
 				<sql:join_type>CROSS</sql:join_type>
 				<sql:alias>HTML</sql:alias>
 				<sql:expression>
