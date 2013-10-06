@@ -6,6 +6,9 @@ Created on Sep 14, 2012
 
 from qal.dal.dal_types import DB_DB2,DB_ORACLE, DB_POSTGRESQL
 from qal.sql.sql_utils import db_specific_object_reference
+import urllib.request
+from urllib.request import urlopen
+
 class Custom_Dataset(object):
     """This is the base class for all (external) data sets in QAL-
     Note: The fields are named like this to not appear as parameters in automatic generators like sql_xml.
@@ -25,6 +28,14 @@ class Custom_Dataset(object):
         """Load the data"""
         raise Exception('Custom_Dataset.Load is not implemented in class: ' + self.classname)
         pass
+    
+    def get_data(self, _reference, _encoding = None):
+        # Try and see if it is an URL..
+        _file = urlopen(_reference, encoding = _encoding)
+        if _file == None:
+            _file = open(_reference, mode='r', encoding = _encoding)
+            
+        return _file.read()
     
     def as_sql(self, _db_type):
         """Generate SQL
