@@ -450,7 +450,8 @@ class Verb_SELECT(Parameter_Expression_Item, Parameter_Remotable):
                         result+= ' '+ item.join_type
                     result+= ' JOIN ' + none_as_sql(item.expression, _db_type, _error = 'Verb_SELECT: Joins must contain a statement or a reference to a table.')
                     result+= ' AS ' + error_on_blank(item.alias,'Verb_SELECT: Joins must have aliases.')
-                    result+= ' ON ' + none_as_sql(item.conditions,_db_type, _error = 'Verb_SELECT: Joins must have conditions.')
+                    if item.join_type != "CROSS":
+                        result+= ' ON ' + none_as_sql(item.conditions,_db_type, _error = 'Verb_SELECT: Joins must have conditions.')
         
         # Add WHERE 
         if len(self.sources) > 0:
