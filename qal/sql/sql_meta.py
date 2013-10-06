@@ -46,16 +46,20 @@ def list_class_properties(_classname):
 
 def find_class(_name, _raiserror = True):
     """Using name, find a class reference""" 
-    Obj = None
-    ObjName = None
-    for k in globals().items():
-        if k[0].lower() == _name.lower():
-            Obj = k[1]()
-            ObjName = k[0]
-            break
-    # Python types
-    if _name == "list":
-        return [], "list"
+    try:
+    
+        Obj = None
+        ObjName = None
+        for k in globals().items():
+            if k[0].lower() == _name.lower():
+                Obj = k[1]()
+                ObjName = k[0]
+                break
+        # Python types
+        if _name == "list":
+            return [], "list"
+    except Exception as e:
+        raise Exception("sql_meta - find_class: Error looking for " + str(_name) + " : " + str(e))
     
     if (Obj == None and _raiserror):
         raise Exception("sql_meta - find_class: Cannot find matching class - " + _name)
