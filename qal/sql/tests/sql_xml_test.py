@@ -262,12 +262,11 @@ class class_SQL_Meta_XML_Test(unittest.TestCase):
 
         
         _sql_out = _structure.as_sql(DB_POSTGRESQL)
+        print(_sql_out)
         _rows = _structure._dal.query(_sql_out)
         
         for _row in _rows:
-            
-            for _col in _row:
-                print(_col)
+            print(str(_row))
         # Compare compare-file with XML output file
         _xml_out = _meta_xml.sql_structure_to_xml(_structure)
         _str_xml_out = _xml_out.toxml()
