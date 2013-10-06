@@ -177,7 +177,7 @@ class Parameter_Identifier(Parameter_Expression_Item):
             
                                   
     
-    def _generate_sql(self, _db_type, _is_source_table = False):
+    def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
         # Add prefix if set
         if self.prefix != '':
@@ -185,7 +185,7 @@ class Parameter_Identifier(Parameter_Expression_Item):
         else:
             _tmp_prefix = ''
         # Add quote if needed
-        if _db_type in (DB_POSTGRESQL, DB_DB2, DB_ORACLE) and not _is_source_table:
+        if _db_type in (DB_POSTGRESQL, DB_DB2, DB_ORACLE):
             return _tmp_prefix + '"' + str(handle_temp_table_ref(self.identifier, _db_type)) + '"'
         else:    
             return _tmp_prefix + str(handle_temp_table_ref(self.identifier, _db_type))
@@ -326,7 +326,7 @@ class Parameter_Source(Parameter_Base, Parameter_Remotable):
     def __init__(self, _expression = None, _conditions = None, _alias = '', _join_type = None):
         super(Parameter_Source, self ).__init__()
         
-        # One can either have tabular source data, or an SQL expression 
+        # One can either have tabular source data i union:ed sets, a sub select, an SQL identifier or a noSQL data set. 
 
         if _expression != None:
             self.expression = _expression
