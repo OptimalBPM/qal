@@ -24,7 +24,25 @@
 			<has_header>True</has_header>
 			<csv_dialect>excel-tab</csv_dialect>
 		</resource>		
-		
+		<resource type="xpath" uuid="{0B8B71C1-D3A8-4F16-B8E1-9C73E196254C}" caption="csv-file">
+			<!-- Source : http://www.bot.or.th/English/Statistics/FinancialMarkets/ExchangeRate/_layouts/Application/ExchangeRate/ExchangeRate.aspx 
+			  XPath to first data row in HTML: /html/body/form/table/tbody/tr[4]/td[2]/table/tbody/tr[2]/td/table[2]/tbody/tr/td/table/tbody/tr[10]/td/table/tbody/tr[3]/td
+			-->
+			<filename>resources/_test_SELECT_resource_xpath_html_in.html</filename>
+			
+			<rows_xpath>/html/body/form/table/tbody/tr[4]/td[2]/table/tbody/tr[2]/td/table[2]/tbody/tr/td/table/tbody/tr[10]/td/table/tbody/tr[*]</rows_xpath>
+			<data_format>HTML1.0</data_format>
+			<!--	
+				</rows_xpath>
+			<fields>
+				<item>
+					<xpath>/td/[class="app_table_content]"</xpath>
+					<field_name></field_name>
+					<field_type></field_type>
+				</item>
+			</fields> -->
+
+		</resource>		
 		
 	</resources>
 
