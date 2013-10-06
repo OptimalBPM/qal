@@ -17,33 +17,42 @@ class Flatfile_Dataset(Custom_Dataset):
     filename = None
     has_header = None
     csv_dialect = None
+    field_names = None
     
-    def __init__(self, _delimiter = None, _filename = None, _has_header = None, _csv_dialect = None):
+    def __init__(self, _delimiter = None, _filename = None, _has_header = None, _csv_dialect = None, _resource = None):
         """Constructor"""
-        if _delimiter != None: 
-            self.delimiter = _delimiter
-        else:  
-            self.delimiter = None    
-        if _filename != None: 
-            self.filename = _filename
+        
+        if _resource != None:
+            self.read_resource_settings(_resource)
         else:
-            self.filename = None      
-        if _has_header != None: 
-            self.has_header = _has_header
-        else:
-            self.has_header = None
-              
-        if _csv_dialect != None: 
-            self.csv_dialect = _csv_dialect
-        else:
-            self.csv_dialect = None      
-            
-            
+            if _delimiter != None: 
+                self.delimiter = _delimiter
+            else:  
+                self.delimiter = None    
+            if _filename != None: 
+                self.filename = _filename
+            else:
+                self.filename = None      
+            if _has_header != None: 
+                self.has_header = _has_header
+            else:
+                self.has_header = None
+                  
+            if _csv_dialect != None: 
+                self.csv_dialect = _csv_dialect
+            else:
+                self.csv_dialect = None      
              
         super(Flatfile_Dataset, self ).__init__()
         
-        
-        
+    def read_resource_settings(self, _resource):
+        if _resource.type.upper() != 'FLATFILE':
+            raise Exception("Flatfile_Dataset.read_resource_settings.parse_resource error: Wrong resource type")
+        self.filename =    _resource.data.get("filename")
+        self.delimiter =   _resource.data.get("delimiter")
+        self.has_header =  bool(_resource.data.get("has_header"))
+        self.csv_dialect = _resource.data.get("csv_dialect")
+
     def load(self):
         """Load data"""
         _tmp_dir_abs = os.getcwd() 
@@ -57,6 +66,7 @@ class Flatfile_Dataset(Custom_Dataset):
             # Save header row if existing.
             if (_first_row and self.has_header == True):
                 self.field_names = [_curr_col.replace("'", "") for _curr_col in _row]
+                print("self.field_names :" + str(self.field_names))
                 _first_row = False
             else:
                 self.data_table.append(_row)
@@ -65,4 +75,6 @@ class Flatfile_Dataset(Custom_Dataset):
             
         if (self.has_header == False):
             for _curr_idx in range(0,len(_reader[0])):
-                self.field_names.append("Field_"+ str(_curr_idx))           
+                self.field_names.append("Field_"+ str(_curr_idx))   
+            
+        return self.data_table        
