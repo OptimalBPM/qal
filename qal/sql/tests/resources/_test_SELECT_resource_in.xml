@@ -149,6 +149,7 @@
 				<sql:resource_uuid></sql:resource_uuid>
 			</sql:Parameter_Source>
 			<sql:Parameter_Source>
+				<!--
 				<sql:conditions>
 					<sql:Parameter_Condition>
 						<sql:right>
@@ -166,8 +167,8 @@
 							</sql:Parameter_Numeric>
 						</sql:left>
 					</sql:Parameter_Condition>
-				</sql:conditions>
-				<sql:join_type>INNER</sql:join_type>
+				</sql:conditions> -->
+				<sql:join_type>CROSS</sql:join_type>
 				<sql:alias>HTML</sql:alias>
 				<sql:expression>
 					<sql:Parameter_NoSQL>
@@ -179,7 +180,7 @@
 				<sql:resource_uuid></sql:resource_uuid>
 			</sql:Parameter_Source>
 		</sql:sources>
-		<sql:top_limit>1</sql:top_limit>
+		<sql:top_limit>0</sql:top_limit>
 		<sql:operator></sql:operator>
 		<sql:resource_uuid>{1D62083E-88F7-4442-920D-0B6CC59BA2FF}</sql:resource_uuid>
 	</sql:Verb_SELECT>
