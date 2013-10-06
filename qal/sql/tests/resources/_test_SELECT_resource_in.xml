@@ -53,6 +53,16 @@
 					</sql:Parameter_Identifier>
 				</sql:expression>
 			</sql:Parameter_Field>
+			<sql:Parameter_Field>
+				<sql:alias></sql:alias>
+				<sql:expression>
+					<sql:Parameter_Identifier>
+						<sql:identifier>file_htmlValue</sql:identifier>
+						<sql:prefix>HTML</sql:prefix>
+						<sql:operator></sql:operator>
+					</sql:Parameter_Identifier>
+				</sql:expression>
+			</sql:Parameter_Field>
 		</sql:fields>
 		<sql:sources>
 			<sql:Parameter_Source>
@@ -136,12 +146,44 @@
 						<sql:resource_uuid>{86470370-FF78-48A4-9759-A3BAE4EE22FE}</sql:resource_uuid>
 					</sql:Parameter_NoSQL>
 				</sql:expression>
+				<sql:resource_uuid></sql:resource_uuid>
+			</sql:Parameter_Source>
+			<sql:Parameter_Source>
+				<sql:conditions>
+					<sql:Parameter_Condition>
+						<sql:right>
+							<sql:Parameter_Numeric>
+								<sql:numeric_value>1</sql:numeric_value>
+								<sql:operator></sql:operator>
+							</sql:Parameter_Numeric>
+						</sql:right>
+						<sql:and_or>AND</sql:and_or>
+						<sql:operator>=</sql:operator>
+						<sql:left>
+							<sql:Parameter_Numeric>
+								<sql:numeric_value>1</sql:numeric_value>
+								<sql:operator></sql:operator>
+							</sql:Parameter_Numeric>
+						</sql:left>
+					</sql:Parameter_Condition>
+				</sql:conditions>
+				<sql:join_type>INNER</sql:join_type>
+				<sql:alias>HTML</sql:alias>
+				<sql:expression>
+					<sql:Parameter_NoSQL>
+						<sql:data_source>XPath_Dataset</sql:data_source>
+						<sql:operator></sql:operator>
+						<sql:resource_uuid>{0B8B71C1-D3A8-4F16-B8E1-9C73E196254C}</sql:resource_uuid>
+					</sql:Parameter_NoSQL>
+				</sql:expression>
+				<sql:resource_uuid></sql:resource_uuid>
 			</sql:Parameter_Source>
 		</sql:sources>
 		<sql:top_limit>1</sql:top_limit>
 		<sql:operator></sql:operator>
 		<sql:resource_uuid>{1D62083E-88F7-4442-920D-0B6CC59BA2FF}</sql:resource_uuid>
 	</sql:Verb_SELECT>
+
 	<resources>
 	
 		<resource type="rdbms" uuid="{1D62083E-88F7-4442-920D-0B6CC59BA2FF}" caption="localhost_pg">
@@ -169,9 +211,22 @@
 			  XPath to first data row in HTML: /html/body/form/table/tbody/tr[4]/td[2]/table/tbody/tr[2]/td/table[2]/tbody/tr/td/table/tbody/tr[10]/td/table/tbody/tr[3]/td
 			-->
 			<filename>resources/_test_SELECT_resource_xpath_html_in.html</filename>
-			<rows_xpath>/html/body/form/table/tbody/tr[4]/td[2]/table/tbody/tr[2]/td/table[2]/tbody/tr/td/table/tbody/tr[10]/td/table/tbody/tr[*]</rows_xpath>
+			<rows_xpath>/html/body/form/table/tr[4]/td[2]/table/tr[2]/td/table[2]/tr/td/table/tr[10]/td/table/tr</rows_xpath>
 			<xpath_data_format>HTML</xpath_data_format>
-		</resource>
+			<field_xpaths>
+				<item>td[2]</item>
+				<item>td[3]</item>				
+			</field_xpaths>
+			<field_names>
+				<item>file_htmlCode</item>
+				<item>file_htmlValue</item>	
+			</field_names>
+			<field_types>
+				<item>string</item>
+				<item>string</item>
+			</field_types> 
+
+		</resource>		
 	</resources>
 
 </sql:statement>

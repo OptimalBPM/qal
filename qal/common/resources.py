@@ -86,8 +86,18 @@ class Resources(XML_Translation):
                 
                 for _curr_resource_data in _curr_resource_node.childNodes:
                     if _curr_resource_data.nodeType == _curr_resource_data.ELEMENT_NODE:
-                        _new_resource.data[_curr_resource_data.nodeName.lower()] = xml_get_text(_curr_resource_data)
-                        self._debug_print("parse_xml: Add data "+ _curr_resource_data.nodeName.lower() + " " + _new_resource.data[_curr_resource_data.nodeName.lower()] , 1)
+                        if _curr_resource_data.getElementsByTagName("item").length > 0:
+                            _new_data = []
+                            for _curr_item in _curr_resource_data.childNodes:
+                                if _curr_item.nodeType == _curr_item.ELEMENT_NODE:
+                                    _new_data.append(xml_get_text(_curr_item))
+                            _new_resource.data[_curr_resource_data.nodeName.lower()] = _new_data
+                            self._debug_print("parse_xml: Add datas "+ _curr_resource_data.nodeName.lower() + " " +  str(_new_resource.data[_curr_resource_data.nodeName.lower()]) , 1)
+                                    
+                        else:
+                            _new_resource.data[_curr_resource_data.nodeName.lower()] = xml_get_text(_curr_resource_data)
+                            self._debug_print("parse_xml: Add data "+ _curr_resource_data.nodeName.lower() + " " + _new_resource.data[_curr_resource_data.nodeName.lower()] , 1)
+                        
             
                 self.local_resources[_new_resource.uuid] = _new_resource
                 self._debug_print("parse_xml: Append resource: "+_new_resource.caption + " uuid: " + _new_resource.uuid + " type: " + _new_resource.type  , 4)
