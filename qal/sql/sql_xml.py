@@ -269,7 +269,7 @@ class SQL_XML(XML_Translation):
                                 _obj.__dict__[_curr_itemkey] = self._parse_class_xml_node(_curr_node, currtype[0], _obj)  
                
                   
-        if self._resources and hasattr(_obj, 'resource_uuid') and _obj.resource_uuid != None:
+        if self._resources and hasattr(_obj, 'resource_uuid') and _obj.resource_uuid != None and _obj.resource_uuid != '':
             _obj._resource = self._resources.get_resource(_obj.resource_uuid)
             self._debug_print("_parse_class_xml_node: Added resource_uuid for " + _obj_name + ": " + _obj.resource_uuid, 1)
         

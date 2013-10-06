@@ -76,9 +76,10 @@ class Resources(XML_Translation):
         self.local_resources = dict()
         
         for _curr_resource_node in _resources_node.childNodes:
-            _new_resource = Resource()
-            if _curr_resource_node.nodeType != _curr_resource_node.TEXT_NODE:
+            
+            if _curr_resource_node.nodeType != _curr_resource_node.TEXT_NODE and _curr_resource_node.getAttribute("uuid") != '':
                 self._debug_print("parse_xml: Create new resource object")
+                _new_resource = Resource()
                 _new_resource.uuid = _curr_resource_node.getAttribute("uuid")
                 _new_resource.type = _curr_resource_node.getAttribute("type")
                 _new_resource.caption = _curr_resource_node.getAttribute("caption")
