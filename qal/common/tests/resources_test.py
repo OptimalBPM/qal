@@ -24,7 +24,7 @@ class Test(unittest.TestCase):
         #_resources.debuglevel = 4
         _resources.parse_xml(_resources_xml=_str_xml_in)
         
-        self.assertEqual(len(_resources.local_resources), 4, 'Resources are not as many as they should')
+        self.assertEqual(len(_resources.local_resources), 5, 'Resources are not as many as they should')
                         
         _test_resource = _resources.get_resource("{1D62083E-88F7-4442-920D-0B6CC59BA2FF}")
         self.assertIsNotNone(_test_resource, 'Resource data not found')        
