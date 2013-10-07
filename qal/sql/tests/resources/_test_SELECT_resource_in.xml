@@ -98,6 +98,26 @@
 					</sql:Parameter_Identifier>
 				</sql:expression>
 			</sql:Parameter_Field>
+			<sql:Parameter_Field>
+				<sql:alias></sql:alias>
+				<sql:expression>
+					<sql:Parameter_Identifier>
+						<sql:identifier>file_xmltitle</sql:identifier>
+						<sql:prefix>XML</sql:prefix>
+						<sql:operator></sql:operator>
+					</sql:Parameter_Identifier>
+				</sql:expression>
+			</sql:Parameter_Field>
+			<sql:Parameter_Field>
+				<sql:alias></sql:alias>
+				<sql:expression>
+					<sql:Parameter_Identifier>
+						<sql:identifier>file_xmlprice</sql:identifier>
+						<sql:prefix>XML</sql:prefix>
+						<sql:operator></sql:operator>
+					</sql:Parameter_Identifier>
+				</sql:expression>
+			</sql:Parameter_Field>
 		</sql:fields>
 		<sql:sources>
 			<sql:Parameter_Source>
@@ -196,12 +216,41 @@
 				</sql:expression>
 				<sql:resource_uuid></sql:resource_uuid>
 			</sql:Parameter_Source>
+			<sql:Parameter_Source>
+				<sql:conditions>
+					<sql:Parameter_Condition>
+						<sql:right>
+							<sql:Parameter_Numeric>
+								<sql:numeric_value>1</sql:numeric_value>
+								<sql:operator></sql:operator>
+							</sql:Parameter_Numeric>
+						</sql:right>
+						<sql:and_or>AND</sql:and_or>
+						<sql:operator>=</sql:operator>
+						<sql:left>
+							<sql:Parameter_Numeric>
+								<sql:numeric_value>1</sql:numeric_value>
+								<sql:operator></sql:operator>
+							</sql:Parameter_Numeric>
+						</sql:left>
+					</sql:Parameter_Condition>
+				</sql:conditions>
+				<sql:join_type>INNER</sql:join_type>
+				<sql:alias>XML</sql:alias>
+				<sql:expression>
+					<sql:Parameter_NoSQL>
+						<sql:data_source>XPath_Dataset</sql:data_source>
+						<sql:operator></sql:operator>
+						<sql:resource_uuid>{969A610A-FCA6-4837-B33A-BAA8F13D8B70}</sql:resource_uuid>
+					</sql:Parameter_NoSQL>
+				</sql:expression>
+				<sql:resource_uuid></sql:resource_uuid>
+			</sql:Parameter_Source>
 		</sql:sources>
 		<sql:top_limit>0</sql:top_limit>
 		<sql:operator></sql:operator>
 		<sql:resource_uuid>{1D62083E-88F7-4442-920D-0B6CC59BA2FF}</sql:resource_uuid>
 	</sql:Verb_SELECT>
-
 	<resources>
 	
 		<resource type="rdbms" uuid="{1D62083E-88F7-4442-920D-0B6CC59BA2FF}" caption="localhost_pg">
@@ -224,7 +273,7 @@
 			<has_header>True</has_header>
 			<csv_dialect>csv</csv_dialect>
 		</resource>		
-		<resource type="xpath" uuid="{0B8B71C1-D3A8-4F16-B8E1-9C73E196254C}" caption="csv-file">
+		<resource type="xpath" uuid="{0B8B71C1-D3A8-4F16-B8E1-9C73E196254C}" caption="html-file">
 			<!-- Source : http://www.bot.or.th/English/Statistics/FinancialMarkets/ExchangeRate/_layouts/Application/ExchangeRate/ExchangeRate.aspx 
 			  XPath to first data row in HTML: /html/body/form/table/tbody/tr[4]/td[2]/table/tbody/tr[2]/td/table[2]/tbody/tr/td/table/tbody/tr[10]/td/table/tbody/tr[3]/td
 			-->
@@ -245,6 +294,26 @@
 			</field_types> 
 
 		</resource>		
+		<resource type="xpath" uuid="{969A610A-FCA6-4837-B33A-BAA8F13D8B70}" caption="xml-file">
+			<!-- Source(Microsoft's books.xml) : http://msdn.microsoft.com/en-us/library/ms762271%28v=vs.85%29.aspx -->
+			<filename>resources/_test_SELECT_resource_xpath_xml_in.xml</filename>
+			<rows_xpath>/catalog/book[@id="bk111"]</rows_xpath>
+			<xpath_data_format>XML</xpath_data_format>
+			<field_xpaths>
+				<item>title</item>
+				<item>price</item>				
+			</field_xpaths>
+			<field_names>
+				<item>file_xmltitle</item>
+				<item>file_xmlprice</item>	
+			</field_names>
+			<field_types>
+				<item>string</item>
+				<item>float</item>
+			</field_types> 
+		</resource>		
+		
+		
 	</resources>
 
 </sql:statement>

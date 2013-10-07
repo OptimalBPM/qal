@@ -56,17 +56,25 @@ class XPath_Dataset(Custom_Dataset):
     def file_to_tree(self, _data_format, _reference):
         print("format_to_tree : " + _data_format)
         if _data_format == 'HTML':
-            import lxml.html
-            return lxml.html.parse(_reference)
+            from lxml import html
+            return html.parse(_reference)
+        if _data_format == 'XML':
+            from lxml import etree
+            return etree.parse(_reference)
         else:
             raise Exception("file_to_tree: " + _data_format + " is not supported")
             
+    
+
         
     def load(self):
         """Parse file, apply root XPath to iterate over and then collect field data via field_xpaths."""
         print("Loading : " + self.filename)
         
-        _tree = self.file_to_tree(self.xpath_data_format, self.filename)
+        try:
+            _tree = self.file_to_tree(self.xpath_data_format, self.filename)
+        except Exception as e:
+            raise Exception("XPath_Dataset.load - error parsing " + self.xpath_data_format + " file : " + str(e))
         
         #_root_nodes = _tree.xpath("/html/body/form/table/tr[4]/td[2]/table/tr[2]/td/table[2]/tr/td/table/tr[10]/td/table/tr")
         _root_nodes = _tree.xpath(self.rows_xpath)
@@ -76,7 +84,8 @@ class XPath_Dataset(Custom_Dataset):
             for _field_idx in range(0, len(self.field_names)):
                 _item_data = _curr_row.xpath(self.field_xpaths[_field_idx])
                 if len(_item_data) > 0:
-                    _row_data.append(_item_data[0].text)
+                    
+                    _row_data.append(self.cast_text_to_type(_item_data[0].text, _field_idx))
                 else:
                     _row_data.append("")
             
