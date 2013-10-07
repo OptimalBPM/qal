@@ -160,23 +160,33 @@ class Database_Abstraction_Layer(object):
             cur.execute(_sql)
             
     def _make_positioned_params(self, _input):
-            _pos = 1
-            _old_sql =  _input                          
-            _new_sql = _old_sql.replace("%s", "$" + str(_pos), 1)
-            while _new_sql != _old_sql:
-                _pos = _pos + 1
-                _old_sql = _new_sql
-                _new_sql = _old_sql.replace("%s", "$" + str(_pos), 1)
-            return _new_sql
+
+            _arg_idx = 1
+            _output =  _input
+            
+            # Simplest possible scan, prepared to handle the types differently.                        
+            for _curr_idx in range(0, len(_input)):
+                _chunk = _input[_curr_idx:_curr_idx +2]
+                
+                if _chunk == "%s":
+                    _output = _output.replace(_chunk,"$" + str(_arg_idx), 1)           
+                    _arg_idx+=1            
+                elif _chunk == "%d":                    
+                    _output = _output.replace(_chunk,"$" + str(_arg_idx), 1)           
+                    _arg_idx+=1            
+
+            return _output    
+                
            
     def executemany(self, _sql, _values):
         """Execute the SQL statements , expect no dataset"""
         if self.db_type == DB_POSTGRESQL:
             # Change parameter type into Postgres positional ones, like  $1, $2 and so on.
+            # TODO: Correctly handle other datatypes than string.
             _sql = self._make_positioned_params(_sql)
 
             _prepared = self.db_connection.prepare(_sql)
-            
+            print(_sql)
             for _row in _values:
                 _prepared(*_row)
         else:
