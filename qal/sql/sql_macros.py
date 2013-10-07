@@ -50,8 +50,18 @@ def copy_to_temp_table(_dal, _values, _field_names, _field_types, _table_name = 
         print("copy_to_temp_table: No source data, inserting no rows.")
     else:        
         _insert = make_insert_skeleton(_table_name = _table_name, _field_names = _field_names)
-    
-        _values_sql = "VALUES (" +"%s, " * (len(_field_names) - 1) + "%s)"
+         
+        _refs = []
+        for _curr_idx in range(0, len(_field_names)):
+            if _field_types[_curr_idx] in ["float", "integer"]:
+                _refs.append("%d")
+            else:
+                _refs.append("%s")
+
+#            else:
+#                raise Exception("copy_to_temp_table -error: Invalid field type: " + _field_types[_curr_idx])
+        
+        _values_sql = "VALUES (" +", ".join(_refs) + ")"
         
         print("Inserting " + str(len(_values)) + " rows (" + str(len(_values[0])) + " columns)")
         _dal.executemany(_insert.as_sql(_dal.db_type) + _values_sql, _values)
