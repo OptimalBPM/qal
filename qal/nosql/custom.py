@@ -24,6 +24,14 @@ class Custom_Dataset(object):
         self.field_names = []
         self.data_table = [] 
         
+    def cast_text_to_type(self, _text, _field_idx):
+        if  self.field_types[_field_idx] == "integer":
+            return int(_text)
+        if  self.field_types[_field_idx] == "float":
+            return float(_text)
+        else:
+            return _text
+        
     def load(self):
         """Load the data"""
         raise Exception('Custom_Dataset.Load is not implemented in class: ' + self.classname)
