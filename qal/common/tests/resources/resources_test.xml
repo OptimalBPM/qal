@@ -62,8 +62,24 @@
 				<item>string</item>
 				<item>float</item>
 			</field_types> 
-		</resource>		
+		</resource>	
+<!--		<resource type="xpath" uuid="{969A610A-FCA6-4837-B33A-BAA8F13D8B70}" caption="xml-rpc">	
+			<WSDL>http://www.webservicex.net/GenericNAICS.asmx?WSDL</WSDL>
+			<operation>GetNAICSByID</operation>
+			<field_xpaths>
+				<item>title</item>
+				<item>price</item>				
+			</field_xpaths>
+			<field_names>
+				<item>file_xmltitle</item>
+				<item>file_xmlprice</item>	
+			</field_names>
+			<field_types>
+				<item>string</item>
+				<item>float</item>
+			</field_types>
 		
+		</resource> -->	
 	</resources>
 
 </sql:statement>
