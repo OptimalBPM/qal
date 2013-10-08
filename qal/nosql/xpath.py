@@ -7,11 +7,12 @@ Created on Sep 14, 2012
 from qal.nosql.custom import Custom_Dataset
 
 def xpath_data_formats():
-    return ["XML", "XHTML", "HTML", "UNTIDY_HTML"]
+    return ["XML", "XHTML", "HTML"] # "UNTIDY_HTML"]
 
 class XPath_Dataset(Custom_Dataset):
     """This class implements data formats that are possible to query via XPath.
-    These include XML and HTML 1.0. Untidy HTML files are parsed using the Beautiful Soup 4 library.
+    Currently XML and HTML are implemented(XHTML isn't tested). 
+    Untidy HTML will be implemented using the Beautiful Soup library.
     """
 
     filename = None
