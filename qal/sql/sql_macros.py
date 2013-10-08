@@ -15,7 +15,7 @@ def make_column_definitions(_field_names, _field_types):
         _columns.append(Parameter_ColumnDefinition(_name = _field_names[_field_counter], _datatype = _field_types[_field_counter]))
     return _columns
 
-def create_temporary_table(_table_name, _field_names, _field_types, _db_type):
+def create_table(_table_name, _field_names, _field_types, _db_type):
 
     _columns = make_column_definitions(_field_names, _field_types)
     _CREATE = Verb_CREATE_TABLE(_name = _table_name, _columns = _columns)
@@ -36,18 +36,17 @@ def make_insert_skeleton(_table_name, _field_names):
     _column_identifiers = make_column_identifiers(_field_names)
     return Verb_INSERT(_destination_identifier = _destination_identifier, _column_identifiers = _column_identifiers)
 
-def copy_to_temp_table(_dal, _values, _field_names, _field_types, _table_name = None):
-    """Move datatable into a temp table on the resource, return the table name. """
-    if _table_name == None:
-        _table_name = "test"
+def copy_to_table(_dal, _values, _field_names, _field_types, _table_name, _create_table = None):
+    """Move datatable into a table on the resource, return the table name. """
         
-    # Always create temporary table even if it ends up empty.
-    _create_table_sql = create_temporary_table(_table_name, _field_names, _field_types, _db_type = _dal.db_type)    
-    
-    print("Creating temporary " + _table_name + " table..\n"+_create_table_sql)
-    _dal.execute(_create_table_sql)
+    if _create_table == True:    
+        # Always create temporary table even if it ends up empty.
+        _create_table_sql = create_table(_table_name, _field_names, _field_types, _db_type = _dal.db_type)    
+        print("Creating " + _table_name + " table..\n"+_create_table_sql)
+        _dal.execute(_create_table_sql)
+        
     if len(_values) == 0:
-        print("copy_to_temp_table: No source data, inserting no rows.")
+        print("copy_to_table: No source data, inserting no rows.")
     else:        
         _insert = make_insert_skeleton(_table_name = _table_name, _field_names = _field_names)
          
@@ -59,7 +58,7 @@ def copy_to_temp_table(_dal, _values, _field_names, _field_types, _table_name = 
                 _refs.append("%s")
 
 #            else:
-#                raise Exception("copy_to_temp_table -error: Invalid field type: " + _field_types[_curr_idx])
+#                raise Exception("copy_to_table -error: Invalid field type: " + _field_types[_curr_idx])
         
         _values_sql = "VALUES (" +", ".join(_refs) + ")"
         

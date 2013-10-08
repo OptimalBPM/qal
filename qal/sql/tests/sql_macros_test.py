@@ -4,7 +4,7 @@ Created on Sep 26, 2013
 @author: Nicklas Boerjesson
 '''
 import unittest
-from qal.sql.sql_macros import create_temporary_table, make_insert_skeleton,copy_to_temp_table
+from qal.sql.sql_macros import create_table, make_insert_skeleton,copy_to_table
 from qal.dal.dal_types import DB_POSTGRESQL, DB_MYSQL, db_type_to_string,\
     DB_SQLSERVER
 from qal.sql.sql_types import DEFAULT_ROWSEP
@@ -44,8 +44,8 @@ values = [["string_1_A", "string_1_B"],["string_2_A", "string_2_B"],["string_3_A
 @default_dal(db_type)
 class Test(unittest.TestCase):
 
-    def test_1_create_temporary_table_sql(self):
-        self.assertEqual(create_temporary_table(table_name, _field_names = field_names,
+    def test_1_create_table_sql(self):
+        self.assertEqual(create_table(table_name, _field_names = field_names,
                      _field_types = field_types, _db_type = db_type), create_temporary_table_SQL)
         
     def test_2_make_insert_skeleton(self):
@@ -54,7 +54,7 @@ class Test(unittest.TestCase):
         self.assertEqual(_sql, make_insert_skeleton_SQL)
        
     def test_3_copy_to_temp_table(self):
-        copy_to_temp_table(_dal = self._dal, _values = values, _field_names = field_names, _field_types = field_types, _table_name = table_name)
+        copy_to_table(_dal = self._dal, _values = values, _field_names = field_names, _field_types = field_types, _table_name = table_name, _create_table= True)
         _rows = self._dal.query("SELECT * FROM " + Parameter_Identifier(_identifier = table_name).as_sql(self._dal.db_type))
         self.assertEqual(_rows, values)
         
