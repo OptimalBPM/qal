@@ -72,7 +72,7 @@ class Database_Abstraction_Layer(object):
 
         elif (self.db_type == DB_POSTGRESQL):
             import postgresql.driver as pg_driver 
-            if self.DB_Port == None or self.DB_Port == "":
+            if self.DB_Port == None or self.DB_Port == "" or self.DB_Port == 0:
                 _port = 5432
             else:
                 _port = self.DB_Port
