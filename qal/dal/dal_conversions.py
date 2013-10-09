@@ -96,6 +96,8 @@ def python_type_to_SQL_type(_python_type):
         return "integer"    
     elif (_python_type == datetime):
         return "timestamp"
+    elif (_python_type == bool):
+        return "boolean"
     else:
         raise Exception("python_type_to_SQL_type: _type_code \"" + str(_python_type) + "\"not supported")
     
