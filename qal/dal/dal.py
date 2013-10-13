@@ -33,6 +33,9 @@ class Database_Abstraction_Layer(object):
     field_names = None
     field_types = None
     
+    # Postgres transaction object
+    _pg_xact = None
+    
     def read_ini_settings(self, _ini_parser):
         """Read setting from the settings.Parser object"""
         self.db_type        = string_to_db_type(_ini_parser.Parser.get("database", "type"))
@@ -153,6 +156,8 @@ class Database_Abstraction_Layer(object):
     
     def execute(self, _sql):
         """Execute the SQL statement, expect no dataset"""
+        
+        
         if self.db_type == DB_POSTGRESQL:
             self.db_connection.execute(_sql)
         else:
@@ -180,6 +185,8 @@ class Database_Abstraction_Layer(object):
            
     def executemany(self, _sql, _values):
         """Execute the SQL statements , expect no dataset"""
+        
+       
         if self.db_type == DB_POSTGRESQL:
             # Change parameter type into Postgres positional ones, like  $1, $2 and so on.
             # TODO: Correctly handle other datatypes than string.
@@ -196,6 +203,7 @@ class Database_Abstraction_Layer(object):
 
     def query(self, _sql):
         """Execute the SQL statement, get a dataset"""
+        
         # py-postgres doesn't use the DB-API, as it doesn't work well-
         if self.db_type == DB_POSTGRESQL:
             _ps = self.db_connection.prepare(_sql)
@@ -221,15 +229,31 @@ class Database_Abstraction_Layer(object):
         
         return _results
    
+    
+   
     def close(self):
         """Close the database connection"""
         self.db_connection.close()
+        
+    def start(self):
+        if self.db_type == DB_POSTGRESQL and self._pg_xact == None:
+            self._pg_xact = self.db_connection.xact()
+            self._pg_xact.start()
+     
             
     def commit(self):
         """Commit the transaction"""
-        self.db_connection.commit()
+        if self.db_type == DB_POSTGRESQL:
+            if self._pg_xact != None:
+                self._pg_xact.commit()
+                self._pg_xact = None
+        else:
+            self.db_connection.commit()
 
     def rollback(self):
         """Rollback the transaction"""
+        if self.db_type == DB_POSTGRESQL:
+            self._pg_xact.rollback()
+            self._pg_xact = None
         self.db_connection.rollback()
     
