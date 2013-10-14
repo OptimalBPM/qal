@@ -90,12 +90,13 @@ class Database_Abstraction_Layer(object):
             #TODO: Investigate if there is any more adapting needed, platform.release() can also be used. 
             import platform
             if platform.system().lower() == 'linux':
+
                 connstr = "DRIVER=FreeTDS;SERVER=" + self.db_server + ";DATABASE=" + self.db_databasename +";TDS VERSION=8.0;UID=" + self.db_username + ";PWD=" + self.db_password + ";PORT="+self.DB_Port + ";Trusted_Connection=no"
             elif platform.system().lower() == 'windows':
                 connstr = "Driver={SQL Server};Server=" + self.db_server + ";DATABASE=" + self.db_databasename +";UID=" + self.db_username + ";PWD=" + self.db_password + ";PORT="+self.DB_Port + ";Trusted_Connection=no"
             else:
                 raise Exception("connect_to_db: ODBC connections on " + platform.system() + " not supported yet.")
-
+            print("Connect to database using connection string:  " + connstr)
             Conn = pyodbc.connect(connstr, autocommit=self.autocommit);      
 
         elif (self.db_type == DB_DB2):
