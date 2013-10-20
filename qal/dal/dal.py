@@ -91,9 +91,9 @@ class Database_Abstraction_Layer(object):
             import platform
             if platform.system().lower() == 'linux':
 
-                connstr = "DRIVER=FreeTDS;SERVER=" + self.db_server + ";DATABASE=" + self.db_databasename +";TDS VERSION=8.0;UID=" + self.db_username + ";PWD=" + self.db_password + ";PORT="+self.DB_Port + ";Trusted_Connection=no"
+                connstr = "DRIVER=FreeTDS;SERVER=" + self.db_server + ";DATABASE=" + self.db_databasename +";TDS VERSION=8.0;UID=" + self.db_username + ";PWD=" + self.db_password + ";PORT="+str(self.DB_Port) + ";Trusted_Connection=no"
             elif platform.system().lower() == 'windows':
-                connstr = "Driver={SQL Server};Server=" + self.db_server + ";DATABASE=" + self.db_databasename +";UID=" + self.db_username + ";PWD=" + self.db_password + ";PORT="+self.DB_Port + ";Trusted_Connection=no"
+                connstr = "Driver={SQL Server};Server=" + self.db_server + ";DATABASE=" + self.db_databasename +";UID=" + self.db_username + ";PWD=" + self.db_password + ";PORT="+str(self.DB_Port) + ";Trusted_Connection=no"
             else:
                 raise Exception("connect_to_db: ODBC connections on " + platform.system() + " not supported yet.")
             print("Connect to database using connection string:  " + connstr)
@@ -110,14 +110,14 @@ class Database_Abstraction_Layer(object):
                 raise Exception("connect_to_db: DB2 connections on " + platform.system() + " not supported yet.")
             
             # DSN-less?{IBM DB2 ODBC DRIVER} ?? http://www.webmasterworld.com/forum88/4434.htm
-            connstr =  "Driver=" + drivername + ";Database=" + self.db_databasename +";hostname=" + self.db_server + ";port="+self.DB_Port + ";protocol=TCPIP; uid=" + self.db_username + "; pwd=" + self.db_password
+            connstr =  "Driver=" + drivername + ";Database=" + self.db_databasename +";hostname=" + self.db_server + ";port="+str(self.DB_Port) + ";protocol=TCPIP; uid=" + self.db_username + "; pwd=" + self.db_password
             #connstr = "DSN=" + self.db_server + ";UID=" + self.db_username + ";PWD=" + self.db_password 
             Conn = pyodbc.connect(connstr, autocommit=self.autocommit)
         
         # cx_Oracle in python 3.X not checked yet.
         elif (self.db_type == DB_ORACLE):
             import cx_Oracle
-            connstr = self.db_username + '/' +  self.db_password + '@' + self.db_server + ':' + self.DB_Port + '/' + self.db_instance
+            connstr = self.db_username + '/' +  self.db_password + '@' + self.db_server + ':' + str(self.DB_Port) + '/' + self.db_instance
             print(connstr)
             Conn = cx_Oracle.connect(connstr) 
             Conn.autocommit=self.autocommit
