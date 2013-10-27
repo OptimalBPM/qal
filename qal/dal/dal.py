@@ -28,7 +28,7 @@ class Database_Abstraction_Layer(object):
     db_instance = ''
     db_driver = None
     db_autocommit = True
-    
+    db_port = None
     
     field_names = None
     field_types = None
