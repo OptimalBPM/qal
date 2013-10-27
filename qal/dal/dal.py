@@ -43,7 +43,7 @@ class Database_Abstraction_Layer(object):
         self.db_databasename= _ini_parser.Parser.get("database", "database_name")   
         self.db_username    = _ini_parser.Parser.get("database", "username")
         self.db_password    = _ini_parser.Parser.get("database", "password")
-        self.DB_Port        = _ini_parser.Parser.get("database", "port")
+        self.db_port        = _ini_parser.Parser.get("database", "port")
         self.autocommit     = _ini_parser.get("database", "autocommit", True)        
         if _ini_parser.Parser.has_option("database", "instance"):
             self.db_instance    = _ini_parser.Parser.get("database", "instance")
@@ -58,7 +58,7 @@ class Database_Abstraction_Layer(object):
         self.db_instance =     _resource.data.get("instance")
         self.db_username =     _resource.data.get("username")
         self.db_password =     _resource.data.get("password")
-        self.DB_Port =         _resource.data.get("DB_Port")
+        self.db_port =         _resource.data.get("port")
         self.autocommit =      _resource.data.get("autocommit")
         
                        
@@ -75,10 +75,10 @@ class Database_Abstraction_Layer(object):
 
         elif (self.db_type == DB_POSTGRESQL):
             import postgresql.driver as pg_driver 
-            if self.DB_Port == None or self.DB_Port == "" or self.DB_Port == 0:
+            if self.db_port == None or self.db_port == "" or self.db_port == 0:
                 _port = 5432
             else:
-                _port = self.DB_Port
+                _port = self.db_port
             Conn = pg_driver.connect(host = self.db_server, 
                                                 database =  self.db_databasename, 
                                                 user = self.db_username, 
@@ -91,9 +91,9 @@ class Database_Abstraction_Layer(object):
             import platform
             if platform.system().lower() == 'linux':
 
-                connstr = "DRIVER=FreeTDS;SERVER=" + self.db_server + ";DATABASE=" + self.db_databasename +";TDS VERSION=8.0;UID=" + self.db_username + ";PWD=" + self.db_password + ";PORT="+str(self.DB_Port) + ";Trusted_Connection=no"
+                connstr = "DRIVER=FreeTDS;SERVER=" + self.db_server + ";DATABASE=" + self.db_databasename +";TDS VERSION=8.0;UID=" + self.db_username + ";PWD=" + self.db_password + ";PORT="+str(self.db_port) + ";Trusted_Connection=no"
             elif platform.system().lower() == 'windows':
-                connstr = "Driver={SQL Server};Server=" + self.db_server + ";DATABASE=" + self.db_databasename +";UID=" + self.db_username + ";PWD=" + self.db_password + ";PORT="+str(self.DB_Port) + ";Trusted_Connection=no"
+                connstr = "Driver={SQL Server};Server=" + self.db_server + ";DATABASE=" + self.db_databasename +";UID=" + self.db_username + ";PWD=" + self.db_password + ";PORT="+str(self.db_port) + ";Trusted_Connection=no"
             else:
                 raise Exception("connect_to_db: ODBC connections on " + platform.system() + " not supported yet.")
             print("Connect to database using connection string:  " + connstr)
@@ -110,14 +110,14 @@ class Database_Abstraction_Layer(object):
                 raise Exception("connect_to_db: DB2 connections on " + platform.system() + " not supported yet.")
             
             # DSN-less?{IBM DB2 ODBC DRIVER} ?? http://www.webmasterworld.com/forum88/4434.htm
-            connstr =  "Driver=" + drivername + ";Database=" + self.db_databasename +";hostname=" + self.db_server + ";port="+str(self.DB_Port) + ";protocol=TCPIP; uid=" + self.db_username + "; pwd=" + self.db_password
+            connstr =  "Driver=" + drivername + ";Database=" + self.db_databasename +";hostname=" + self.db_server + ";port="+str(self.db_port) + ";protocol=TCPIP; uid=" + self.db_username + "; pwd=" + self.db_password
             #connstr = "DSN=" + self.db_server + ";UID=" + self.db_username + ";PWD=" + self.db_password 
             Conn = pyodbc.connect(connstr, autocommit=self.autocommit)
         
         # cx_Oracle in python 3.X not checked yet.
         elif (self.db_type == DB_ORACLE):
             import cx_Oracle
-            connstr = self.db_username + '/' +  self.db_password + '@' + self.db_server + ':' + str(self.DB_Port) + '/' + self.db_instance
+            connstr = self.db_username + '/' +  self.db_password + '@' + self.db_server + ':' + str(self.db_port) + '/' + self.db_instance
             print(connstr)
             Conn = cx_Oracle.connect(connstr) 
             Conn.autocommit=self.autocommit
