@@ -49,7 +49,8 @@ WHERE table_type = 'BASE TABLE' \
 ORDER BY table_type, table_name "
 
 table_list_mysql_by_database_name = "SHOW TABLES IN :DATABASE"
-
+table_list_oracle_by_database_name = "select table_name from dba_tables;"
+table_list_db2_by_database_name = "SELECT NAME FROM SYSIBM.SYSTABLES WHERE Type = 'T';"
 
 table_list_db2_by_schema = "select NAME from sysibm.systables \
 where CREATOR  = ':USER' \
@@ -77,10 +78,10 @@ def table_list_sql_by_schema(_db_type, _user):
 
 def table_list_sql_by_database_name(_db_type, _database):
     """List tables in a specified database"""
-    if not(_db_type in [0,1]):
-        raise Exception("table_list_sql_by_database_name: Only MySQL and Postgres is supported currently!") 
+    if not(_db_type in [0,1,3]):
+        raise Exception("table_list_sql_by_database_name: Only MySQL, Postgres and DB2 is supported currently!") 
     
-    SQL = [table_list_mysql_by_database_name, table_list_postgresql_by_database_name, table_list_oracle_by_schema, table_list_db2_by_schema, table_list_sqlserver][_db_type]
+    SQL = [table_list_mysql_by_database_name, table_list_postgresql_by_database_name, table_list_oracle_by_database_name, table_list_db2_by_database_name, table_list_sqlserver][_db_type]
     SQL = SQL.replace(":DATABASE", _database)
     return SQL
 
