@@ -16,15 +16,16 @@ def make_column_definitions(_field_names, _field_types):
         _columns.append(Parameter_ColumnDefinition(_name = _field_names[_field_counter], _datatype = _field_types[_field_counter]))
     return _columns
 
-def create_table(_table_name, _field_names, _field_types, _db_type):
-
+def create_table_skeleton(_table_name, _field_names, _field_types):
+    """Creates a sql for creating tables."""
     _columns = make_column_definitions(_field_names, _field_types)
     _CREATE = Verb_CREATE_TABLE(_name = _table_name, _columns = _columns)
     _CREATE._temporary = True
-    return _CREATE.as_sql(_db_type)
+    return _CREATE
 
 
 def make_column_identifiers(_field_names):
+    """Create columns idenfiers from a list of field names."""
     _columns = SQL_List()
     _field_counter = 0
     _curr_column = None
@@ -42,7 +43,7 @@ def copy_to_table(_dal, _values, _field_names, _field_types, _table_name, _creat
         
     if _create_table == True:    
         # Always create temporary table even if it ends up empty.
-        _create_table_sql = create_table(_table_name, _field_names, _field_types, _db_type = _dal.db_type)    
+        _create_table_sql = create_table_skeleton(_table_name, _field_names, _field_types).as_sql(_dal.db_type)    
         print("Creating " + _table_name + " table..\n"+_create_table_sql)
         _dal.execute(_create_table_sql)
         
@@ -69,6 +70,7 @@ def copy_to_table(_dal, _values, _field_names, _field_types, _table_name, _creat
     return _table_name
     
 def select_all_skeleton(_table_name):
+    """Returns a "SELECT * FROM _table_name"-structure. """
     _expression = Parameter_Identifier(_table_name)
     _source = Parameter_Source(_expression, _conditions = None, _alias = None, _join_type = None)
     _select = Verb_SELECT(_fields = None, _sources = [_source], _operator =  "AND")
