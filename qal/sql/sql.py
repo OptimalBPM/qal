@@ -419,14 +419,18 @@ class Verb_SELECT(Parameter_Expression_Item, Parameter_Remotable):
             
         # Add select and its fields
         result = 'SELECT ' + self._post_verb
-        for index, item in enumerate(self.fields):
-            result+= add_comma(index, item.as_sql(_db_type))
+        if (self.fields != None) and (len(self.fields) > 0):
+            for index, item in enumerate(self.fields):
+                result+= add_comma(index, item.as_sql(_db_type))
+        else:
+            result+='*'
+            
         
         # Add FROM
         if len(self.sources) > 0:
             result+= ' FROM '
             result+= self.sources[0].as_sql(_db_type) 
-            if self.sources[0].alias != '':
+            if  self.sources[0].alias != None and self.sources[0].alias != '':
                 if (_db_type != DB_ORACLE):
                     result+= ' AS ' + self.sources[0].alias
                 else:
