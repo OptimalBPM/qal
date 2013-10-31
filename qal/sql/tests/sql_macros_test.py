@@ -4,7 +4,7 @@ Created on Sep 26, 2013
 @author: Nicklas Boerjesson
 '''
 import unittest
-from qal.sql.sql_macros import create_table, make_insert_skeleton,copy_to_table
+from qal.sql.sql_macros import create_table_skeleton, make_insert_skeleton,copy_to_table,select_all_skeleton
 from qal.dal.dal_types import DB_POSTGRESQL, DB_MYSQL, db_type_to_string,\
     DB_SQLSERVER
 from qal.sql.sql_types import DEFAULT_ROWSEP
@@ -29,7 +29,10 @@ create_temporary_table_SQL+= citate(handle_temp_table_ref(table_name, db_type), 
 
 make_insert_skeleton_SQL = "INSERT INTO " + citate(handle_temp_table_ref(table_name, db_type), db_type)  \
  +  " (" + citate("column1", db_type) + ", " + citate("column2", db_type) + ")"+DEFAULT_ROWSEP 
- 
+
+
+make_select_all_skeleton_SQL = "SELECT * FROM "+ citate("test", db_type)
+
 if db_type == DB_MYSQL:
     create_temporary_table_SQL+= " ENGINE=InnoDB"
     
@@ -44,9 +47,9 @@ values = [["string_1_A", "string_1_B"],["string_2_A", "string_2_B"],["string_3_A
 @default_dal(db_type)
 class Test(unittest.TestCase):
 
-    def test_1_create_table_sql(self):
-        self.assertEqual(create_table(table_name, _field_names = field_names,
-                     _field_types = field_types, _db_type = db_type), create_temporary_table_SQL)
+    def test_1_create_table_skeleton(self):
+        self.assertEqual(create_table_skeleton(table_name, _field_names = field_names,
+                     _field_types = field_types).as_sql(db_type), create_temporary_table_SQL)
         
     def test_2_make_insert_skeleton(self):
         _sql = make_insert_skeleton(table_name, _field_names = field_names, ).as_sql(db_type)
@@ -57,9 +60,9 @@ class Test(unittest.TestCase):
         copy_to_table(_dal = self._dal, _values = values, _field_names = field_names, _field_types = field_types, _table_name = table_name, _create_table= True)
         _rows = self._dal.query("SELECT * FROM " + Parameter_Identifier(_identifier = table_name).as_sql(self._dal.db_type))
         self.assertEqual(_rows, values)
-        
 
-
+    def test_4_select_all_skeleton(self):
+        self.assertEqual(select_all_skeleton("test").as_sql(db_type), make_select_all_skeleton_SQL)
         
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

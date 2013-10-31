@@ -4,7 +4,8 @@ Created on Sep 26, 2013
 @author: Nicklas Boerjesson
 """
 
-from qal.sql.sql import Verb_CREATE_TABLE, Verb_INSERT, SQL_List, Parameter_ColumnDefinition,Parameter_Identifier
+from qal.sql.sql import Verb_CREATE_TABLE, Verb_SELECT, Verb_INSERT, SQL_List, \
+    Parameter_ColumnDefinition,Parameter_Identifier, Parameter_Source
 
 
 def make_column_definitions(_field_names, _field_types):
@@ -67,5 +68,11 @@ def copy_to_table(_dal, _values, _field_names, _field_types, _table_name, _creat
         
     return _table_name
     
-        
+def select_all_skeleton(_table_name):
+    _expression = Parameter_Identifier(_table_name)
+    _source = Parameter_Source(_expression, _conditions = None, _alias = None, _join_type = None)
+    _select = Verb_SELECT(_fields = None, _sources = [_source], _operator =  "AND")
+    
+    return _select
+            
    
