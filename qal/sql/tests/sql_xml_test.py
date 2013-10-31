@@ -41,6 +41,7 @@ class class_SQL_Meta_XML_Test(unittest.TestCase):
             if not _overwrite:
                 f = open(Test_Resource_Dir +"/" + _filename_part + "_in.sql","r", newline = '')
                 _str_sql_in = f.read()
+                f.close()
                 
                 _str_sql_out = _structure.as_sql(_curr_db_type_idx)
                 f_out = open(Test_Resource_Dir +"/" + _filename_part + "_out.sql","w")

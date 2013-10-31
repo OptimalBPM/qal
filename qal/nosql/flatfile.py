@@ -73,7 +73,7 @@ class Flatfile_Dataset(Custom_Dataset):
                 self.data_table.append(_row)
                     
             
-            
+        _file.close()    
         if (self.has_header == False):
             for _curr_idx in range(0,len(_reader[0])):
                 self.field_names.append("Field_"+ str(_curr_idx))   
