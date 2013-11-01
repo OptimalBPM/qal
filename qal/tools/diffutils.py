@@ -27,7 +27,7 @@ def compare(self, _left, _right, _key_columns, _full):
     return _missing_left, _missing_right, _difference
 
 def diff_to_text(_missing_left, _missing_right, _difference):
-    """Creates a text representation of the differences"""
+    """Creates a textual representation of the differences"""
     _diff_text = ""
         
     return _diff_text
