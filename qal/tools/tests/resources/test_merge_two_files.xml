@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<merge>
+	<mappings>
+		<field_mappings>
+		  <field_mapping>
+		    <is_key>1</is_key>
+		    <src_column>emp_no</src_column>
+		    <src_data_type>string</src_data_type>
+		    <src_cast_to>string</src_cast_to>
+		    <transformations>
+		    	<trim order=1/>
+		        <is_null order=2>NULL</is_null>
+		        <replace order=3>
+		        	<old> </old>
+		        	<new></new>
+		        </replace>
+		        <cast order=5>integer</cast>
+		    </transformations>
+		    <dest_column>emp_no</dest_column>
+		  </field_mapping>
+		  <field_mapping>
+		    <is_key>0</is_key>
+		    <src_column>name</src_column>
+		    <src_data_type>string</src_data_type>
+		    <src_cast_to>string</src_cast_to>
+		    <transformations>
+		        <trim order=1></trim>
+		        <replace order=3>
+		        	<old>mr. </old>
+		        	<new></new>
+		        </replace>	        
+		        <replace order=3>
+		        	<old>ms. </old>
+		        	<new></new>
+		        </replace>	        
+		    </transformations>
+		    <dest_column>name</dest_column>
+		  </field_mapping>
+		  <field_mapping>
+		    <is_key>0</is_key>
+		    <src_column>position</src_column>
+		    <src_data_type>string</src_data_type>
+		    <src_cast_to>string</src_cast_to>
+		    <transformations>
+		        <trim order=1></trim>
+		    </transformations>
+		    <dest_column>position</dest_column>
+		  </field_mapping>
+		  <field_mapping>
+		    <is_key>0</is_key>
+		    <src_column>manager</src_column>
+		    <src_data_type>string</src_data_type>
+		    <src_cast_to>string</src_cast_to>
+		    <transformations>
+		        <trim order=1></trim>
+		      	<cast order=5>integer</cast>
+		    </transformations>
+		    <dest_column>manager</dest_column>
+		  </field_mapping>
+		  <field_mapping>
+		    <is_key>0</is_key>
+		    <src_column>hiredate</src_column>
+		    <src_data_type>string</src_data_type>
+		    <src_cast_to>string</src_cast_to>
+		    <transformations>
+		        <trim order=1></trim>
+		      	<cast order=5>timestamp</cast>
+		    </transformations>
+		    <dest_column>hiredate</dest_column>
+		  </field_mapping>
+		  <field_mapping>
+		    <is_key>0</is_key>
+		    <src_column>salary</src_column>
+		    <src_data_type>string</src_data_type>
+		    <src_cast_to>string</src_cast_to>
+		    <transformations>
+		        <trim order=1></trim>
+		        <replace order=3>
+		        	<old>,</old>
+		        	<new>.</new>
+		        </replace>	 
+		      	<cast order=5>float</cast>
+		    </transformations>
+		    <dest_column>salary</dest_column>
+		  </field_mapping>
+		  <field_mapping>
+		    <is_key>0</is_key>
+		    <src_column>comm</src_column>
+		    <src_data_type>string</src_data_type>
+		    <src_cast_to>string</src_cast_to>
+		    <transformations>
+		        <trim order=1></trim>
+		        <replace order=3>
+		        	<old>,</old>
+		        	<new>.</new>
+		        </replace>	 
+		        <cast order=5>float</cast>
+		    </transformations>
+		    <dest_column>comm</dest_column>
+		  </field_mapping>
+		  <field_mapping>
+		    <is_key>0</is_key>
+		    <src_column>dep_no</src_column>
+		    <src_data_type>string</src_data_type>
+		    <src_cast_to>string</src_cast_to>
+		    <transformations>
+		        <trim order=1></trim>
+		       	<replace order=3>
+		        	<old> </old>
+		        	<new></new>
+		        </replace>	 
+		      	<cast order=5>integer</cast>
+		    </transformations>
+		    <dest_column>dep_no</dest_column>
+		  </field_mapping>
+	
+	  </field_mappings>
+	  <table_mappings>
+	     <!--<source_table>table1</source_table>-->
+	   <!--<dest_table>table1</dest_table>-->
+	  </table_mappings>  
+  </mappings>
+  <resources>
+    <resource caption="source" type="flatfile" uuid="source_uuid">
+		<filename>resources/csv_source.csv</filename>
+		<delimiter>,</delimiter>
+		<has_header>True</has_header>
+		<csv_dialect>excel-tab</csv_dialect>
+	</resource>		
+    <resource caption="destination" type="flatfile" uuid="source_uuid">
+		<filename>resources/csv_source.csv</filename>
+		<delimiter>,</delimiter>
+		<has_header>True</has_header>
+		<csv_dialect>excel-tab</csv_dialect>
+	</resource>	
+  </resources>
+</merge>
