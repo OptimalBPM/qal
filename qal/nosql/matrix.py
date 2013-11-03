@@ -11,7 +11,7 @@ from qal.nosql.custom import Custom_Dataset
 
 class Matrix_Dataset(Custom_Dataset):
  
-    """The matrix dataset holds a multidimensional array of data"""
+    """The matrix dataset holds a two-dimensional array of data"""
     
     _dal = None
     
@@ -24,9 +24,13 @@ class Matrix_Dataset(Custom_Dataset):
         
         
     def load(self):
-        """Load data. Not implementet as it is not needed in the matrix descendant"""
+        """Load data. Not implemented as it is not needed in the matrix descendant"""
         pass
-
+    
+    def save (self):
+        """Save data. Not implemented as it is not needed in the matrix descendant"""
+        pass
+    
     def as_sql(self, _db_type):
         """Generate SQL"""
         # TODO: Review this code, as it is almost copied from the custom class. 

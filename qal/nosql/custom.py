@@ -36,6 +36,11 @@ class Custom_Dataset(object):
         raise Exception('Custom_Dataset.Load is not implemented in class: ' + self.classname)
         pass
     
+    def save(self):
+        """Save the data"""
+        raise Exception('Custom_Dataset.Save is not implemented in class: ' + self.classname)
+        pass
+        
     
     def as_sql(self, _db_type):
         """Generate SQL
