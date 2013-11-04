@@ -8,13 +8,13 @@
 		    <src_data_type>string</src_data_type>
 		    <src_cast_to>string</src_cast_to>
 		    <transformations>
-		    	<trim order=1/>
-		        <is_null order=2>NULL</is_null>
-		        <replace order=3>
+		    	<trim order="1">right</trim>
+		        <is_null order="2">NULL</is_null>
+		        <replace order="3">
 		        	<old> </old>
 		        	<new></new>
 		        </replace>
-		        <cast order=5>integer</cast>
+		        <cast order="5">integer</cast>
 		    </transformations>
 		    <dest_column>emp_no</dest_column>
 		  </field_mapping>
@@ -24,12 +24,12 @@
 		    <src_data_type>string</src_data_type>
 		    <src_cast_to>string</src_cast_to>
 		    <transformations>
-		        <trim order=1></trim>
-		        <replace order=3>
+		        <trim order="1"></trim>
+		        <replace order="3">
 		        	<old>mr. </old>
 		        	<new></new>
 		        </replace>	        
-		        <replace order=3>
+		        <replace order="3">
 		        	<old>ms. </old>
 		        	<new></new>
 		        </replace>	        
@@ -42,7 +42,7 @@
 		    <src_data_type>string</src_data_type>
 		    <src_cast_to>string</src_cast_to>
 		    <transformations>
-		        <trim order=1></trim>
+		        <trim order="1"></trim>
 		    </transformations>
 		    <dest_column>position</dest_column>
 		  </field_mapping>
@@ -52,8 +52,8 @@
 		    <src_data_type>string</src_data_type>
 		    <src_cast_to>string</src_cast_to>
 		    <transformations>
-		        <trim order=1></trim>
-		      	<cast order=5>integer</cast>
+		        <trim order="1"></trim>
+		      	<cast order="5">integer</cast>
 		    </transformations>
 		    <dest_column>manager</dest_column>
 		  </field_mapping>
@@ -63,8 +63,8 @@
 		    <src_data_type>string</src_data_type>
 		    <src_cast_to>string</src_cast_to>
 		    <transformations>
-		        <trim order=1></trim>
-		      	<cast order=5>timestamp</cast>
+		        <trim order="1"></trim>
+		      	<cast order="5">timestamp</cast>
 		    </transformations>
 		    <dest_column>hiredate</dest_column>
 		  </field_mapping>
@@ -74,12 +74,12 @@
 		    <src_data_type>string</src_data_type>
 		    <src_cast_to>string</src_cast_to>
 		    <transformations>
-		        <trim order=1></trim>
-		        <replace order=3>
+		        <trim order="1"></trim>
+		        <replace order="3">
 		        	<old>,</old>
 		        	<new>.</new>
 		        </replace>	 
-		      	<cast order=5>float</cast>
+		      	<cast order="5">float</cast>
 		    </transformations>
 		    <dest_column>salary</dest_column>
 		  </field_mapping>
@@ -89,12 +89,12 @@
 		    <src_data_type>string</src_data_type>
 		    <src_cast_to>string</src_cast_to>
 		    <transformations>
-		        <trim order=1></trim>
-		        <replace order=3>
+		        <trim order="1"></trim>
+		        <replace order="3">
 		        	<old>,</old>
 		        	<new>.</new>
 		        </replace>	 
-		        <cast order=5>float</cast>
+		        <cast order="5">float</cast>
 		    </transformations>
 		    <dest_column>comm</dest_column>
 		  </field_mapping>
@@ -104,12 +104,12 @@
 		    <src_data_type>string</src_data_type>
 		    <src_cast_to>string</src_cast_to>
 		    <transformations>
-		        <trim order=1></trim>
-		       	<replace order=3>
+		        <trim order="1"></trim>
+		       	<replace order="3">
 		        	<old> </old>
 		        	<new></new>
 		        </replace>	 
-		      	<cast order=5>integer</cast>
+		      	<cast order="5">integer</cast>
 		    </transformations>
 		    <dest_column>dep_no</dest_column>
 		  </field_mapping>

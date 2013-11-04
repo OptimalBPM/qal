@@ -13,11 +13,11 @@ class Transform_test(unittest.TestCase):
     def test_trim(self):
         """ Trim has no parameters"""
         _tree = etree.ElementTree()
-        _tree.parse('test_merge_two_files.xml')
-        _tree.find("./resources/resource[@uuid='source_uuid']")
-        _trim = Trim()
+        _tree.parse('resources/test_merge_two_files.xml')
+        _trim_node = _tree.find("mappings/field_mappings/field_mapping/transformations/trim")
+        _trim = Trim(_trim_node)
         _result = _trim.transform(' test ')
-        self.assertEqual(_result, 'test')
+        self.assertEqual(_result, ' test')
         
         
 
