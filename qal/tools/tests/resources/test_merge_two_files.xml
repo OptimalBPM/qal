@@ -8,11 +8,12 @@
 		    <src_data_type>string</src_data_type>
 		    <src_cast_to>string</src_cast_to>
 		    <transformations>
-		    	<trim order="1">right</trim>
+		    	<trim order="1">end</trim>
 		        <is_null order="2">NULL</is_null>
 		        <replace order="3">
-		        	<old> </old>
-		        	<new></new>
+		        	<old>ccc</old>
+		        	<new>cc</new>
+		        	<max>1</max>
 		        </replace>
 		        <cast order="5">integer</cast>
 		    </transformations>
