@@ -29,9 +29,9 @@ class Transform_test(unittest.TestCase):
         _tree = self._parse_xml('resources/test_merge_two_files.xml')
         _xml_def = _tree.find("mappings/field_mappings/field_mapping/transformations/replace")
         _tested = Replace(_xml_def)
-        _result = _tested.transform("unecccessary ccc")
-        self.assertEqual(_result, "uneccessary ccc", "Results differ")
-        self.assertEqual(etree.tostring(_xml_def, method="xml").strip(), etree.tostring(_tested.as_xml_node()), "XML in/out differ")        
+        _result = _tested.transform("unneccessary cc")
+        self.assertEqual(_result, "unnecessary cc", "Results differ")
+        self.assertEqual(etree.tostring(_xml_def).strip(), etree.tostring(_tested.as_xml_node()), "XML in/out differ")        
 
 
 if __name__ == "__main__":

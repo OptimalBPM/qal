@@ -11,8 +11,8 @@
 		    	<trim order="1">end</trim>
 		        <is_null order="2">NULL</is_null>
 		        <replace order="3">
-		        	<old>ccc</old>
-		        	<new>cc</new>
+		        	<old>cc</old>
+		        	<new>c</new>
 		        	<max>1</max>
 		        </replace>
 		        <cast order="5">integer</cast>
