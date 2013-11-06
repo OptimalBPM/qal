@@ -15,7 +15,10 @@
 		        	<new>c</new>
 		        	<max>1</max>
 		        </replace>
-		        <cast order="5">integer</cast>
+		        <cast order="5">
+		        	<dest_type>timestamp</dest_type>
+		        	<format_string>%d/%m/%Y %H:%M:%S</format_string>
+		        </cast>
 		    </transformations>
 		    <dest_column>emp_no</dest_column>
 		  </field_mapping>
