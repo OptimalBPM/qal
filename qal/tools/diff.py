@@ -57,55 +57,39 @@ def compare(_left, _right, _key_columns, _full):
     _left_len = len(_left_s)
     _right_len = len(_right_s)
     while _left_idx < _left_len and _right_idx < _right_len:
-        print("_left_idx :" + str(_left_idx) + " value: "+str(_left_s[_left_idx][_key_columns[0]]) + " | _right_idx : "  + str(_right_idx)+ " value: "+str(_right_s[_right_idx][_key_columns[0]]))
+        #print("_left_idx :" + str(_left_idx) + " value: "+str(_left_s[_left_idx][_key_columns[0]]) + " | _right_idx : "  + str(_right_idx)+ " value: "+str(_right_s[_right_idx][_key_columns[0]]))
         _cmp_res = cmp_key_columns(_left_s[_left_idx], _right_s[_right_idx], _key_columns)
-        print("_cmp_res :" + str(_cmp_res))
+        #print("_cmp_res :" + str(_cmp_res))
         if _cmp_res < 0:
-            print("_missing_right.append " + str(_left_s[_left_idx]))
+            #print("_missing_right.append " + str(_left_s[_left_idx]))
             _missing_right.append(_left_s[_left_idx])
             _left_idx+= 1
         elif _cmp_res > 0:
-            print("_missing_left.append " + str(_right_s[_right_idx]))
+            #print("_missing_left.append " + str(_right_s[_right_idx]))
             _missing_left.append(_right_s[_right_idx])            
             _right_idx+= 1
         else:
+            # Keys are the same and _full is set, check all data 
+
             if _full == True:
                 if match_all_columns(_left_s[_left_idx], _right_s[_right_idx]) != True:
+                    # Differing columns found, add _row to _different
                     _difference.append([_left_s[_left_idx], _right_s[_right_idx], _left_idx, _right_idx])
             _left_idx+= 1
             _right_idx+= 1
             
-            
-                #===============================================================
-                # # Keys differ, compare _right with next row from _left to see who is missing
-                # if _left_len < _left_idx + 1:
-                #     _missing_left.append(_right[_right_idx])
-                # # The next left matches
-                # elif (match_key_columns(_left[_left_idx +1], _right[_left_idx], _key_columns) == False):
-                #     _missing_left.append(_right[_right_idx])
-                #     _right_idx+=1
-                # else:
-                #     # Keys for _left[+1] = _right, add row to _missing_left
-                #     _missing_right.append(_left[_right_idx])
-                #     _left_idx+=1
-                #===============================================================
-                    
-        
-
-            
     # Add remainders to missing
     if _left_idx < _left_len:
-        print("_missing_right.append (post) " + str(_left_s[_left_idx: _left_len]))
+        # print("_missing_right.append (post) " + str(_left_s[_left_idx: _left_len]))
         _missing_right+= _left_s[_left_idx: _left_len]
     if _right_idx < _right_len:
-        print("_missing_left.append (post)" + str(_right_s[_right_idx: _right_len]))
+        # print("_missing_left.append (post)" + str(_right_s[_right_idx: _right_len]))
         _missing_left+=_right_s[_right_idx: _right_len]
                 
             
             
-        # Keys are the same and _full is set, check all data 
             
-            # Differing columns found, add _row to _different
+            
     
     
     return _missing_left, _missing_right, _difference
