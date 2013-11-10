@@ -10,7 +10,7 @@ from qal.tools.diff import compare
 class Diff_test(unittest.TestCase):
 
 
-    def testName(self):
+    def test_diff(self):
         _ff_source = Flatfile_Dataset(_filename = "resources/csv_source.csv", _has_header = True, _delimiter = ";", _csv_dialect = "excel-tab", _quoting = "MINIMAL")
         _dataset_source = _ff_source.load()
         _ff_dest = Flatfile_Dataset(_filename = "resources/csv_dest.csv", _has_header = True, _delimiter = ";", _csv_dialect = "excel-tab", _quoting = "MINIMAL")
