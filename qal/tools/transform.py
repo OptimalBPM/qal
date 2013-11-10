@@ -13,7 +13,28 @@ def isnone( _node):
         return ''
     else:
         return _node.text  
-
+    
+    
+def make_transformation_array_from_xml_node(_xml_node):
+    _result = []
+    for _curr_node in _xml_node:
+        if _curr_node.tag == 'trim':
+            _result.append(Trim(_curr_node))
+        elif _curr_node.tag == 'is_null':
+            _result.append(Is_null(_curr_node))
+        elif _curr_node.tag == 'cast':
+            _result.append(Cast(_curr_node))
+        elif _curr_node.tag == 'replace':
+            _result.append(Replace(_curr_node))
+    
+    return _result
+        
+def make_transformations_xml_node(_transformations):
+    _xml_node = etree.Element("transformations")
+    for _curr_transformation in _transformations:
+        _xml_node.append(_curr_transformation.as_xml_node())
+    
+    return _xml_node
 class Custom_Transformation(object):
     """
     This is the base class for all transformations

@@ -20,6 +20,7 @@
 		        	<format_string>%d/%m/%Y %H:%M:%S</format_string>
 		        </cast>
 		    </transformations>
+		    <result_cast_to></result_cast_to>
 		    <dest_column>emp_no</dest_column>
 		  </field_mapping>
 		  <field_mapping>
@@ -38,6 +39,7 @@
 		        	<new></new>
 		        </replace>	        
 		    </transformations>
+		    <result_cast_to></result_cast_to>
 		    <dest_column>name</dest_column>
 		  </field_mapping>
 		  <field_mapping>
@@ -48,6 +50,7 @@
 		    <transformations>
 		        <trim order="1"></trim>
 		    </transformations>
+		    <result_cast_to></result_cast_to>
 		    <dest_column>position</dest_column>
 		  </field_mapping>
 		  <field_mapping>
@@ -59,6 +62,7 @@
 		        <trim order="1"></trim>
 		      	<cast order="5">integer</cast>
 		    </transformations>
+		    <result_cast_to></result_cast_to>
 		    <dest_column>manager</dest_column>
 		  </field_mapping>
 		  <field_mapping>
@@ -70,6 +74,7 @@
 		        <trim order="1"></trim>
 		      	<cast order="5">timestamp</cast>
 		    </transformations>
+		    <result_cast_to/>
 		    <dest_column>hiredate</dest_column>
 		  </field_mapping>
 		  <field_mapping>
@@ -85,6 +90,7 @@
 		        </replace>	 
 		      	<cast order="5">float</cast>
 		    </transformations>
+		    <result_cast_to/>
 		    <dest_column>salary</dest_column>
 		  </field_mapping>
 		  <field_mapping>
@@ -100,6 +106,7 @@
 		        </replace>	 
 		        <cast order="5">float</cast>
 		    </transformations>
+		    <result_cast_to></result_cast_to>
 		    <dest_column>comm</dest_column>
 		  </field_mapping>
 		  <field_mapping>
@@ -115,6 +122,7 @@
 		        </replace>	 
 		      	<cast order="5">integer</cast>
 		    </transformations>
+		    <result_cast_to></result_cast_to>
 		    <dest_column>dep_no</dest_column>
 		  </field_mapping>
 	
