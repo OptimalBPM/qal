@@ -33,12 +33,15 @@ class Resource(object):
         self.caption = None    
         self.data = {}
         
-    def as_xml(self):
+    def as_xml_node(self):
         """This function encode an XML structure into resource objects. Uses lxml as opposed to parse_xml()."""
         _resource = etree.Element("resource")
-        _resource = etree.SubElement("uuid")
-        
-        add_xml_subitem(_resource, "uuid", self.uuid) 
+        _resource.set("caption", self.caption)
+        _resource.set("type", self.type)
+        _resource.set("uuid", self.uuid)
+        # Loop data. Sorted to be predictable enough for testing purposes
+        for _curr_data_key, _curr_data_value in sorted(self.data.items()):
+            add_xml_subitem(_resource, _curr_data_key, _curr_data_value) 
         
         
         return _resource
@@ -120,12 +123,11 @@ class Resources(XML_Translation):
             
                 self.local_resources[_new_resource.uuid] = _new_resource
                 self._debug_print("parse_xml: Append resource: "+_new_resource.caption + " uuid: " + _new_resource.uuid + " type: " + _new_resource.type  , 4)
-    def as_xml(self):
-        """This function encode an XML structure into resource objects. Uses lxml as opposed to parse_xml()."""
-        #_resources = 
-        
-        
-        
-        
-        
-        return _node
+    def as_xml_node(self):
+        """This function encode resources structure into an XML structure."""
+        _xml_node = etree.Element("resources")
+        # Loop resources. Sorted to be predictable enough for testing purposes
+        for _curr_resource_key, _curr_resource_value in sorted(self.local_resources.items()):
+            _xml_node.append(_curr_resource_value.as_xml_node())
+            
+        return _xml_node
