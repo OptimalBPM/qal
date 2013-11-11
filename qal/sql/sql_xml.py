@@ -283,8 +283,9 @@ class SQL_XML(XML_Translation):
         _resources_node = find_child_node(_node, 'resources')
         
         if _resources_node:  
-            self._debug_print("xml_to_sql_structure: Found resources.")      
-            self._resources = Resources(_resources_node = _resources_node)
+            self._debug_print("xml_to_sql_structure: Found resources.")
+            # Send XML here, since resources now uses lxml      
+            self._resources = Resources(_resources_xml= _resources_node.toxml())
         
         _verb = xml_find_non_text_child(_node)
         if (_verb == None):

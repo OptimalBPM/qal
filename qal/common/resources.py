@@ -4,7 +4,15 @@ Created on Sep 13, 2013
 @author: Nicklas Börjesson
 @note: This module contains access functionality for resources.
 """
-from qal.common.xml_utils import XML_Translation, xml_get_text, find_child_node
+from qal.common.xml_utils import XML_Translation
+
+from lxml import etree
+
+
+def add_xml_subitem(_parent, _nodename, _nodetext):
+    _curr_item = etree.SubElement(_parent, _nodename)
+    _curr_item.text = str(_nodetext)
+    return _curr_item
 
 
 def resource_types():
@@ -24,6 +32,16 @@ class Resource(object):
         self.type = None
         self.caption = None    
         self.data = {}
+        
+    def as_xml(self):
+        """This function encode an XML structure into resource objects. Uses lxml as opposed to parse_xml()."""
+        _resource = etree.Element("resource")
+        _resource = etree.SubElement("uuid")
+        
+        add_xml_subitem(_resource, "uuid", self.uuid) 
+        
+        
+        return _resource
     
 
 class Resources(XML_Translation):
@@ -67,38 +85,47 @@ class Resources(XML_Translation):
     
     
     def parse_xml(self, _resources_node=None, _resources_xml=None):
-        
+        """This function parses an XML structure into resource objects. Should use lxml."""
+
+
         if _resources_node == None:
-            _root_node = self.get_root_node('sql:statement', _resources_xml, _resources_node)
-            _resources_node = find_child_node(_root_node, "resources")
+            _parser = etree.XMLParser(remove_blank_text=True)
+            _resources_node = etree.fromstring(_resources_xml, _parser)            
+            
         
         
         self.local_resources = dict()
         
-        for _curr_resource_node in _resources_node.childNodes:
+        for _curr_resource_node in _resources_node.findall("resource"):
             
-            if _curr_resource_node.nodeType == _curr_resource_node.ELEMENT_NODE and _curr_resource_node.getAttribute("uuid") != '':
+            if _curr_resource_node.get("uuid") != None:
                 self._debug_print("parse_xml: Create new resource object")
                 _new_resource = Resource()
-                _new_resource.uuid = _curr_resource_node.getAttribute("uuid")
-                _new_resource.type = _curr_resource_node.getAttribute("type")
-                _new_resource.caption = _curr_resource_node.getAttribute("caption")
+                _new_resource.uuid = _curr_resource_node.get("uuid")
+                _new_resource.type = _curr_resource_node.get("type")
+                _new_resource.caption = _curr_resource_node.get("caption")
                 
-                for _curr_resource_data in _curr_resource_node.childNodes:
-                    if _curr_resource_data.nodeType == _curr_resource_data.ELEMENT_NODE:
-                        if _curr_resource_data.getElementsByTagName("item").length > 0:
-                            _new_data = []
-                            for _curr_item in _curr_resource_data.childNodes:
-                                if _curr_item.nodeType == _curr_item.ELEMENT_NODE:
-                                    _new_data.append(xml_get_text(_curr_item))
-                            _new_resource.data[_curr_resource_data.nodeName.lower()] = _new_data
-                            self._debug_print("parse_xml: Add datas "+ _curr_resource_data.nodeName.lower() + " " +  str(_new_resource.data[_curr_resource_data.nodeName.lower()]) , 1)
+                for _curr_resource_data in _curr_resource_node.findall("*"):
+                    _new_data = []
+                    if len(_curr_resource_data.findall("item")) > 0:
+                        for _curr_item in _curr_resource_data.findall("item"):
+                            _new_data.append(_curr_item.text)
+                        _new_resource.data[str(_curr_resource_data.tag).lower()] = _new_data
+                        self._debug_print("parse_xml: Add datas "+ str(_curr_resource_data.tag).lower() + " " +  str(_new_resource.data[str(_curr_resource_data.tag).lower()]) , 1)
                                     
-                        else:
-                            _new_resource.data[_curr_resource_data.nodeName.lower()] = xml_get_text(_curr_resource_data)
-                            self._debug_print("parse_xml: Add data "+ _curr_resource_data.nodeName.lower() + " " + _new_resource.data[_curr_resource_data.nodeName.lower()] , 1)
+                    else:
+                        _new_resource.data[str(_curr_resource_data.tag).lower()] = _curr_resource_data.text
+                        self._debug_print("parse_xml: Add data "+ str(_curr_resource_data.tag).lower() + " " + _new_resource.data[str(_curr_resource_data.tag).lower()] , 1)
                         
             
                 self.local_resources[_new_resource.uuid] = _new_resource
                 self._debug_print("parse_xml: Append resource: "+_new_resource.caption + " uuid: " + _new_resource.uuid + " type: " + _new_resource.type  , 4)
-    
+    def as_xml(self):
+        """This function encode an XML structure into resource objects. Uses lxml as opposed to parse_xml()."""
+        #_resources = 
+        
+        
+        
+        
+        
+        return _node
