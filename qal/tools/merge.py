@@ -61,6 +61,8 @@ class Field_Mapping(object):
 
 class Merge(object):
     mappings = []
+    source_table = None
+    dest_table = None
     """
     The merge class takes two datasets and merges them together.
     """
@@ -82,11 +84,20 @@ class Merge(object):
             _xml_node.append(_curr_mapping.as_xml_node())
         
         return _xml_node    
+
+    def _table_mappings_as_xml_node(self):
+        _xml_node = etree.Element("table_mappings")
+        etree.SubElement(_xml_node, "source_table").text = self.source_table
+        etree.SubElement(_xml_node, "dest_table").text = self.dest_table
+
+        
+        return _xml_node    
     
     def _mappings_as_xml_node(self):
         
         _xml_node = etree.Element("mappings")
         _xml_node.append(self._field_mappings_as_xml_node())
+        _xml_node.append(self._table_mappings_as_xml_node())
         return _xml_node
     
     def as_xml_node(self):
@@ -98,9 +109,7 @@ class Merge(object):
 
 
     
-    def load_table_mappings_from_xml_node(self, _xml_node):
-        if _xml_node != None:
-            pass
+
         
     def load_field_mappings_from_xml_node(self, _xml_node):
         if _xml_node != None:
@@ -109,10 +118,17 @@ class Merge(object):
         else:
             raise Exception("Merge.load_field_mappings_from_xml_node: Missing 'field_mappings'-node.")   
 
+    def load_table_mappings_from_xml_node(self, _xml_node):
+        if _xml_node != None:
+            self.source_table = isnone(_xml_node.find("source_table"))
+            self.dest_table = isnone(_xml_node.find("dest_table"))
+        else:
+            raise Exception("Merge.load_table_mappings_from_xml_node: Missing 'table_mappings'-node.")   
+
     def load_mappings_from_xml_node(self, _xml_node):
         if _xml_node != None:
             self.load_field_mappings_from_xml_node(_xml_node.find("field_mappings"))
-
+            self.load_table_mappings_from_xml_node(_xml_node.find("table_mappings"))
         else:
             raise Exception("Merge.load_field_mappings_from_xml_node: Missing 'mappings'-node.")   
 
