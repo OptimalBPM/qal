@@ -17,6 +17,7 @@ class Flatfile_Dataset(Custom_Dataset):
     filename = None
     has_header = None
     csv_dialect = None
+    quoting = None
 #    field_names = None
     
     def __init__(self, _delimiter = None, _filename = None, _has_header = None, _csv_dialect = None, _resource = None, _quoting = None):

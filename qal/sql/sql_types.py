@@ -26,7 +26,10 @@ def index_types():
     """Returns a list of the supported index types"""
     return ['UNIQUE', 'CLUSTERED', 'NONCLUSTERED'];
 
-
+def quoting_types():
+    """Returns a list of the supported quoting modes"""
+    return ['QUOTE_MINIMAL', 'QUOTE_ALL', 'QUOTE_NONE']
+        
 def data_types():
     """Returns a list of the supported data types"""
     # @note: string(3000) is added to give some leeway for DB2s default table page size of 4000. 
@@ -100,6 +103,9 @@ def sql_property_to_type(_property_name):
     elif _property_name == 'top_limit':
         return ['integer']    
     
+    elif _property_name == 'quoting':
+        return ['quoting', quoting_types()]
+
     # Simple types
     
     elif _property_name == 'datatype':
