@@ -10,7 +10,7 @@ from datetime import date, datetime
 
 def isnone( _node):
     if _node == None or _node.text == None:
-        return ''
+        return None
     else:
         return _node.text  
     
