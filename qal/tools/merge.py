@@ -6,6 +6,7 @@ Created on Nov 3, 2013
 
 
 from qal.sql.sql_macros import copy_to_table
+from qal.common.resources import Resources
 from qal.tools.transform import make_transformation_array_from_xml_node, make_transformations_xml_node
 from lxml import etree
 
@@ -100,9 +101,12 @@ class Merge(object):
         _xml_node.append(self._table_mappings_as_xml_node())
         return _xml_node
     
+    
+    
     def as_xml_node(self):
         _xml_node = etree.Element('merge')
         _xml_node.append(self._mappings_as_xml_node())
+        _xml_node.append(self.resources.as_xml_node())
 
         return _xml_node        
 
@@ -131,12 +135,13 @@ class Merge(object):
             self.load_table_mappings_from_xml_node(_xml_node.find("table_mappings"))
         else:
             raise Exception("Merge.load_field_mappings_from_xml_node: Missing 'mappings'-node.")   
-
+        
             
     def load_from_xml_node(self, _xml_node):
 
         if _xml_node != None:           
             self.load_mappings_from_xml_node(_xml_node.find("mappings"))
+            self.resources = Resources(_resources_node= _xml_node.find("resources"))
         else:
             raise Exception("Merge.load_from_xml_node: \"None\" is not a valid Merge node.")                  
     

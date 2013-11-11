@@ -18,11 +18,8 @@ class Merge_test(unittest.TestCase):
         _merge_xml = self._parse_xml('resources/test_merge_two_files.xml')
         _merge = Merge(_xml_node = _merge_xml)
 
-        #print(str(etree.tostring(_merge.as_xml_node(), pretty_print=True)).replace("\\n", "\n"))
-        #print(str(etree.tostring(_merge_xml, pretty_print=True)).replace("\\n", "\n"))
-        
-        print(etree.tostring(_merge.as_xml_node()))
-        print(etree.tostring(_merge_xml))
+        self.assertEqual(etree.tostring(_merge.as_xml_node()), etree.tostring(_merge_xml), "Input/output XML does not match")
+
         _merge.execute()
         
 
