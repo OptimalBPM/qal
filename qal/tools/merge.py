@@ -8,6 +8,8 @@ Created on Nov 3, 2013
 from qal.sql.sql_macros import copy_to_table
 from qal.common.resources import Resources
 from qal.tools.transform import make_transformation_array_from_xml_node, make_transformations_xml_node
+from qal.nosql.flatfile import Flatfile_Dataset
+from qal.nosql.xpath import XPath_Dataset
 from lxml import etree
 
 def isnone( _node):
@@ -64,6 +66,7 @@ class Merge(object):
     mappings = []
     source_table = None
     dest_table = None
+    resources = None
     """
     The merge class takes two datasets and merges them together.
     """
@@ -166,8 +169,43 @@ class Merge(object):
     def _generate_updates(self, _table_name, _id_columns, _delete_list):
         """Generates DELETE and INSERT instances populated with the indata
         @todo: Obviously a VERB_UPDATE will be better, implement that when test servers are back up."""     
-        pass        
+        pass    
+    
+    def load_file_dataset_from_resource(self, _resource):
+        if _resource.type.upper() == "FLATFILE":
+            return Flatfile_Dataset(_resource = _resource).load()
+        elif _resource.type.upper() == "XPATH":
+            return Flatfile_Dataset(_resource = _resource).load()
+        else: 
+            raise Exception("load_file_dataset_from_resource: Unsupported source resource type: " + str(_resource.type.upper()))
+
+            
+            
+        
+    def load_rdbms_dataset_from_resource(self, _resource):
+        pass
     
     def execute(self):
         """Merge"""
-        pass
+        _source_resource = self.resources.get_resource('source_uuid')
+        _dest_resource = self.resources.get_resource('dest_uuid')
+        
+        #load source resource
+        if _source_resource.type.upper() in ["CUSTOM", "FLATFILE", "MATRIX", "XPATH"]:
+            _source_dataset = self.load_file_dataset_from_resource(_source_resource)
+        elif _source_resource.type.upper() in ["RDBMS"]:
+            _source_dataset = self.load_rdbms_dataset_from_resource(_source_resource)
+        else: 
+            raise Exception("execute: Invalid source resource type: " + str(_source_resource.type.upper()))
+            
+        #load source resource
+        if _dest_resource.type.upper() in ["CUSTOM", "FLATFILE", "MATRIX", "XPATH"]:
+            _dest_dataset = self.load_file_dataset_from_resource(_dest_resource)
+        elif _dest_resource.type.upper() in ["RDBMS"]:
+            _dest_dataset = self.load_rdbms_dataset_from_resource(_dest_resource)
+        else: 
+            raise Exception("execute: Invalid destination resource type:" + str(_dest_resource.type.upper()))
+
+        print(_source_dataset)
+        print(_dest_dataset)
+        

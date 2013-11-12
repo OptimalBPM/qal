@@ -13,8 +13,8 @@ class Merge_test(unittest.TestCase):
         _tree = etree.ElementTree()
         return _tree.parse(_filename, _parser)
     
-    def test_Merge(self):
-        """Test merge"""
+    def test_Merge_files(self):
+        """Test merge two files"""
         _merge_xml = self._parse_xml('resources/test_merge_two_files.xml')
         _merge = Merge(_xml_node = _merge_xml)
 
