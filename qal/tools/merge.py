@@ -10,6 +10,8 @@ from qal.common.resources import Resources
 from qal.tools.transform import make_transformation_array_from_xml_node, make_transformations_xml_node
 from qal.nosql.flatfile import Flatfile_Dataset
 from qal.nosql.xpath import XPath_Dataset
+from qal.sql.sql_macros import select_all_skeleton
+from qal.dal.dal import Database_Abstraction_Layer
 from lxml import etree
 
 def isnone( _node):
@@ -104,19 +106,11 @@ class Merge(object):
         _xml_node.append(self._table_mappings_as_xml_node())
         return _xml_node
     
-    
-    
     def as_xml_node(self):
         _xml_node = etree.Element('merge')
         _xml_node.append(self._mappings_as_xml_node())
         _xml_node.append(self.resources.as_xml_node())
-
         return _xml_node        
-
-
-
-    
-
         
     def load_field_mappings_from_xml_node(self, _xml_node):
         if _xml_node != None:
@@ -178,12 +172,10 @@ class Merge(object):
             return Flatfile_Dataset(_resource = _resource).load()
         else: 
             raise Exception("load_file_dataset_from_resource: Unsupported source resource type: " + str(_resource.type.upper()))
-
-            
-            
         
-    def load_rdbms_dataset_from_resource(self, _resource):
-        pass
+    def load_rdbms_dataset_from_resource(self, _resource, _table_name):
+        _dal = Database_Abstraction_Layer(_resource = _resource)
+        return _dal.query(select_all_skeleton(_table_name).as_sql(_dal.db_type))
     
     def execute(self):
         """Merge"""
@@ -194,7 +186,7 @@ class Merge(object):
         if _source_resource.type.upper() in ["CUSTOM", "FLATFILE", "MATRIX", "XPATH"]:
             _source_dataset = self.load_file_dataset_from_resource(_source_resource)
         elif _source_resource.type.upper() in ["RDBMS"]:
-            _source_dataset = self.load_rdbms_dataset_from_resource(_source_resource)
+            _source_dataset = self.load_rdbms_dataset_from_resource(_source_resource, self.source_table)
         else: 
             raise Exception("execute: Invalid source resource type: " + str(_source_resource.type.upper()))
             
@@ -202,7 +194,7 @@ class Merge(object):
         if _dest_resource.type.upper() in ["CUSTOM", "FLATFILE", "MATRIX", "XPATH"]:
             _dest_dataset = self.load_file_dataset_from_resource(_dest_resource)
         elif _dest_resource.type.upper() in ["RDBMS"]:
-            _dest_dataset = self.load_rdbms_dataset_from_resource(_dest_resource)
+            _dest_dataset = self.load_rdbms_dataset_from_resource(_dest_resource, self.dest_table)
         else: 
             raise Exception("execute: Invalid destination resource type:" + str(_dest_resource.type.upper()))
 

@@ -15,9 +15,8 @@ class Merge_test(unittest.TestCase):
     
     def test_Merge_files(self):
         """Test merge two files"""
-        _merge_xml = self._parse_xml('resources/test_merge_two_files.xml')
+        _merge_xml = self._parse_xml('resources/test_merge_two_tables.xml')
         _merge = Merge(_xml_node = _merge_xml)
-
         self.assertEqual(etree.tostring(_merge.as_xml_node()), etree.tostring(_merge_xml), "Input/output XML does not match")
 
         _merge.execute()

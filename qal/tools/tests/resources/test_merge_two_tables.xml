@@ -2,21 +2,23 @@
 <merge>
   <mappings>
     <field_mappings>
-      <mapping>
+      <field_mapping>
         <is_key>1</is_key>
         <src_column>Table1ID</src_column>
         <src_data_type>integer</src_data_type>
         <src_cast_to>integer</src_cast_to>
         <transformations>
-	        <trim order=1></trim>
-	        <is_null order=2></is_null>
-	        <replace order=3>
+	        <trim order="1"></trim>
+	        <is_null order="2"></is_null>
+	        <replace order="3">
 	        	<old> </old>
 	        	<new></new>
+	        	<max/>
 	        </replace>
-	        <replace order=4>
+	        <replace order="4">
 	        	<old>,</old>
 	        	<new>.</new>
+	        	<max/>
 	        </replace>	   
 	        <cast order="5">
 		    	<dest_type>integer</dest_type>
@@ -24,71 +26,76 @@
 		     </cast>     
 
         </transformations>
+        <result_cast_to/>
         <dest_column>Table1ID</dest_column>
-      </mapping>
-      <mapping>
+      </field_mapping>
+      <field_mapping>
         <is_key>0</is_key>
         <src_column>Table1Name</src_column>
         <src_data_type>string</src_data_type>
         <src_cast_to>string</src_cast_to>
         <transformations>
-	        <trim order=1></trim>
-	        <replace order=3>
+	        <trim order="1"></trim>
+	        <replace order="3">
 	        	<old> </old>
-	        	<new></new>
+	        	<new/>
+	        	<max/>
 	        </replace>	        
-	        <cast order=4>
+	        <cast order="4">
 	        	<dest_type>integer</dest_type>
 		       	<format_string/>
-		     </cast>     
+		    </cast>     
         </transformations>
+        <result_cast_to/>
         <dest_column>Table1Name</dest_column>
-      </mapping>
-      <mapping>
+      </field_mapping>
+      <field_mapping>
         <is_key>0</is_key>
         <src_column>Table1Changed</src_column>
         <src_data_type>timestamp</src_data_type>
         <src_cast_to>timestamp</src_cast_to>
         <transformations>
-	        <cast order=1>integer</cast>
-	        <format order=3></trim>
-	        <cast order=4>
+	        <cast order="1">
+	        	<dest_type>integer</dest_type>
+		       	<format_string/>
+		    </cast>     
+	        <trim order="3"></trim>
+	        <cast order="4">
 	        	<dest_type>integer</dest_type>
 		       	<format_string/>
 		    </cast>     
         </transformations>
         <result_cast_to></result_cast_to>
         <dest_column>Table1Changed</dest_column>
-      </mapping>
-    </mappings>
-  </field_mappings>
-  <table_mappings>
-  	<source_table>table1</source_table>
-  	<dest_table>table1</dest_table>
-  </table_mappings>
+      </field_mapping>
+    </field_mappings>
+    <table_mappings>
+	  	<source_table>table1</source_table>
+	  	<dest_table>table1</dest_table>
+    </table_mappings>
+  </mappings>
   
   <resources>
-    <resource caption="destination" type="RDBMS" uuid="destination_uuid">
+    <resource caption="destination" type="RDBMS" uuid="dest_uuid">
    	  <autocommit>True</autocommit>
       <database>ubpmtest</database>
+      <db_type>MySQL</db_type>
       <instance></instance>
       <password>test</password>
-      <port>0</port>
-	  <username>ubpmuser</username>
+      <port></port>
       <server>localhost</server>
-      <type>1</type>
-      
+	  <username>ubpmuser</username>
     </resource>
     <resource caption="source" type="RDBMS" uuid="source_uuid">
       <autocommit>True</autocommit>
       <database>ubpmtest</database>
+      <db_type>PostgreSQL</db_type>
       <instance></instance>
       <password>test</password>
-      <port>0</port>
+      <port></port>
       <server>localhost</server>
-      <type>0</type>
       <username>ubpmuser</username>
     </resource>
 
   </resources>
-</root>
+</merge>
