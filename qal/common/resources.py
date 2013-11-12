@@ -11,7 +11,7 @@ from lxml import etree
 
 def add_xml_subitem(_parent, _nodename, _nodetext):
     _curr_item = etree.SubElement(_parent, _nodename)
-    _curr_item.text = str(_nodetext)
+    _curr_item.text = _nodetext
     return _curr_item
 
 
@@ -115,10 +115,9 @@ class Resources(XML_Translation):
                             _new_data.append(_curr_item.text)
                         _new_resource.data[str(_curr_resource_data.tag).lower()] = _new_data
                         self._debug_print("parse_xml: Add datas "+ str(_curr_resource_data.tag).lower() + " " +  str(_new_resource.data[str(_curr_resource_data.tag).lower()]) , 1)
-                                    
                     else:
                         _new_resource.data[str(_curr_resource_data.tag).lower()] = _curr_resource_data.text
-                        self._debug_print("parse_xml: Add data "+ str(_curr_resource_data.tag).lower() + " " + _new_resource.data[str(_curr_resource_data.tag).lower()] , 1)
+                        self._debug_print("parse_xml: Add data "+ str(_curr_resource_data.tag).lower() + " " + str(_new_resource.data[str(_curr_resource_data.tag).lower()]) , 1)
                         
             
                 self.local_resources[_new_resource.uuid] = _new_resource
