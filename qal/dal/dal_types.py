@@ -27,7 +27,7 @@ def string_to_db_type(_value):
     if result > -1:
         return result
     else:
-        raise Exception("string_to_db_type: Invalid database type.") 
+        raise Exception("string_to_db_type: Invalid database type:" + str(_value)) 
 
         
     
@@ -36,4 +36,4 @@ def db_type_to_string(_DBType):
     try:
         return unenumerate(db_types(), _DBType)
     except:
-        raise Exception("db_type_to_string: Invalid database type.")
+        raise Exception("db_type_to_string: Invalid database type:" + str(_DBType))
