@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<root>
-  <transformation>
-    <mappings>
+<merge>
+  <mappings>
+    <field_mappings>
       <mapping>
         <is_key>1</is_key>
         <src_column>Table1ID</src_column>
@@ -17,8 +17,12 @@
 	        <replace order=4>
 	        	<old>,</old>
 	        	<new>.</new>
-	        </replace>	        
-	        <cast order=5>integer</cast>
+	        </replace>	   
+	        <cast order="5">
+		    	<dest_type>integer</dest_type>
+		       	<format_string/>
+		     </cast>     
+
         </transformations>
         <dest_column>Table1ID</dest_column>
       </mapping>
@@ -33,7 +37,10 @@
 	        	<old> </old>
 	        	<new></new>
 	        </replace>	        
-	        <cast order=4>integer</cast>
+	        <cast order=4>
+	        	<dest_type>integer</dest_type>
+		       	<format_string/>
+		     </cast>     
         </transformations>
         <dest_column>Table1Name</dest_column>
       </mapping>
@@ -45,35 +52,43 @@
         <transformations>
 	        <cast order=1>integer</cast>
 	        <format order=3></trim>
-	        <cast order=4>integer</cast>
+	        <cast order=4>
+	        	<dest_type>integer</dest_type>
+		       	<format_string/>
+		    </cast>     
         </transformations>
         <result_cast_to></result_cast_to>
         <dest_column>Table1Changed</dest_column>
       </mapping>
     </mappings>
-    <source_table>table1</source_table>
-    <dest_table>table1</dest_table>
-  </transformation>
+  </field_mappings>
+  <table_mappings>
+  	<source_table>table1</source_table>
+  	<dest_table>table1</dest_table>
+  </table_mappings>
+  
   <resources>
-    <resource caption="source" type="RDBMS" uuid="source_uuid">
-      <type>0</type>
-      <server>localhost</server>
-      <database>ubpmtest</database>
-      <username>ubpmuser</username>
-      <password>test</password>
-      <port>0</port>
-      <autocommit>True</autocommit>
-      <instance></instance>
-    </resource>
     <resource caption="destination" type="RDBMS" uuid="destination_uuid">
-      <type>1</type>
-      <server>localhost</server>
+   	  <autocommit>True</autocommit>
       <database>ubpmtest</database>
-      <username>ubpmuser</username>
+      <instance></instance>
       <password>test</password>
       <port>0</port>
-      <autocommit>True</autocommit>
-      <instance></instance>
+	  <username>ubpmuser</username>
+      <server>localhost</server>
+      <type>1</type>
+      
     </resource>
+    <resource caption="source" type="RDBMS" uuid="source_uuid">
+      <autocommit>True</autocommit>
+      <database>ubpmtest</database>
+      <instance></instance>
+      <password>test</password>
+      <port>0</port>
+      <server>localhost</server>
+      <type>0</type>
+      <username>ubpmuser</username>
+    </resource>
+
   </resources>
 </root>
