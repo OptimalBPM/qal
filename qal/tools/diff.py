@@ -62,37 +62,33 @@ def compare(_left, _right, _key_columns, _full):
         #print("_cmp_res :" + str(_cmp_res))
         if _cmp_res < 0:
             #print("_missing_right.append " + str(_left_s[_left_idx]))
-            _missing_right.append(_left_s[_left_idx])
+            _missing_right.append([_left_idx,_right_idx,_left_s[_left_idx]])
             _left_idx+= 1
         elif _cmp_res > 0:
             #print("_missing_left.append " + str(_right_s[_right_idx]))
-            _missing_left.append(_right_s[_right_idx])            
+            _missing_left.append([_left_idx,_right_idx, _right_s[_right_idx]])            
             _right_idx+= 1
         else:
             # Keys are the same and _full is set, check all data 
 
             if _full == True:
                 if match_all_columns(_left_s[_left_idx], _right_s[_right_idx]) != True:
-                    # Differing columns found, add _row to _different
-                    _difference.append([_left_s[_left_idx], _right_s[_right_idx], _left_idx, _right_idx])
+                    # Differing columns found, add _row to _difference
+                    _difference.append([_left_idx, _right_idx, _left_s[_left_idx], _right_s[_right_idx]])
             _left_idx+= 1
             _right_idx+= 1
             
     # Add remainders to missing
     if _left_idx < _left_len:
         # print("_missing_right.append (post) " + str(_left_s[_left_idx: _left_len]))
-        _missing_right+= _left_s[_left_idx: _left_len]
+        for _curr_item in _left_s[_left_idx: _left_len]:
+            _missing_right.append([_left_s, len(_missing_right) + 1, _curr_item])
     if _right_idx < _right_len:
         # print("_missing_left.append (post)" + str(_right_s[_right_idx: _right_len]))
-        _missing_left+=_right_s[_right_idx: _right_len]
-                
-            
-            
-            
-            
-    
-    
-    return _missing_left, _missing_right, _difference
+        for _curr_item in _right_s[_right_idx: _right_len]:
+            _missing_left.append([len(_missing_left) + 1, _right_idx,_curr_item])
+
+    return _missing_left, _missing_right, _difference, _right_s
 
 
 def diff_to_text(_missing_left, _missing_right, _different):
