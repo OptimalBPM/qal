@@ -202,22 +202,32 @@ class Merge(object):
     
     def _apply_merge_to_dataset(self, _insert, _update, _delete, _sorted_dest):
         
+        print("_update: " + str(_update))
+        print("Before apply: " + str(_sorted_dest))
         
-        _do_delete = self.delete == "True"
-        _do_update = self.update == "True"
-        _do_insert = self.insert == "True"
+        _do_delete = str(self.delete).lower() == "true"
+        _do_update = str(self.update).lower() == "true"
+        _do_insert = str(self.insert).lower() == "true"
         
         _insert_idx = 0
         _delete_idx = 0
         _update_idx = 0
         # Loop the sorted destination dataset and apply changes
-        for _curr_row_idx in range(1, len(_sorted_dest)):
-            _actual_row_idx = _curr_row_idx - _delete_idx + _insert_idx
-            if _do_delete and _delete_idx <= len(_delete):
-                if _delete[_delete_idx][0] == _actual_row_idx:
-                    _sorted_dest.remove(_actual_row_idx)
-                    _delete_idx+=0
-                    
+        for _curr_row_idx in range(0, len(_sorted_dest)):
+            _actual_row_idx = _curr_row_idx - _delete_idx - _insert_idx
+            if _do_delete and _delete_idx < len(_delete):
+                if _delete[_delete_idx][1] == _curr_row_idx:
+                    print("deleting row " + str(_delete[_delete_idx][1])) 
+                    _sorted_dest.pop(_actual_row_idx)
+                    _delete_idx+=1
+        
+            if _do_update and _update_idx < len(_update):
+                if _update[_update_idx][1] == _curr_row_idx:
+                    print("updating row " + str(_update[_update_idx][1])) 
+                    _sorted_dest[_actual_row_idx] = _update[_update_idx][2]
+                    _update_idx+=1
+        
+        print("After apply:  " + str(_sorted_dest))            
         return _sorted_dest        
                     
                 
@@ -264,7 +274,7 @@ class Merge(object):
             pass
             #print("delete "  + str(_delete))
             # Update first, insert can then insert at position instead of looking up.
-            #return self._apply_merge_to_dataset(_delete, _insert, _update, _dest_sorted)            
+            return self._apply_merge_to_dataset(_insert, _update, _delete, _dest_sorted)            
         elif _dest_resource.type.upper() in ["XPATH"]:
             self._xpath_generate_updates(_update)
             self._xpath_generate_deletes(_delete)

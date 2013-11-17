@@ -155,7 +155,7 @@
   <settings>
   	<insert>true</insert>
   	<update>true</update>
-  	<delete>false</delete> 	
+  	<delete>true</delete> 	
   </settings>
   <resources>
     <resource caption="destination" type="flatfile" uuid="dest_uuid">
