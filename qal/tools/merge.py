@@ -8,6 +8,7 @@ Created on Nov 3, 2013
 from qal.sql.sql_macros import copy_to_table
 from qal.common.resources import Resources
 from qal.tools.transform import make_transformation_array_from_xml_node, make_transformations_xml_node
+from qal.tools.diff import compare
 from qal.nosql.flatfile import Flatfile_Dataset
 from qal.nosql.xpath import XPath_Dataset
 from qal.sql.sql_macros import select_all_skeleton
@@ -66,6 +67,7 @@ class Field_Mapping(object):
 
 class Merge(object):
     mappings = []
+    key_fields = []
     source_table = None
     dest_table = None
     resources = None
@@ -95,27 +97,39 @@ class Merge(object):
         _xml_node = etree.Element("table_mappings")
         etree.SubElement(_xml_node, "source_table").text = self.source_table
         etree.SubElement(_xml_node, "dest_table").text = self.dest_table
-
         
         return _xml_node    
     
     def _mappings_as_xml_node(self):
-        
         _xml_node = etree.Element("mappings")
         _xml_node.append(self._field_mappings_as_xml_node())
         _xml_node.append(self._table_mappings_as_xml_node())
         return _xml_node
     
+    def _settings_as_xml_node(self):
+        _xml_node = etree.Element("settings")
+        etree.SubElement(_xml_node, "insert").text = self.insert
+        etree.SubElement(_xml_node, "update").text = self.update
+        etree.SubElement(_xml_node, "delete").text = self.delete
+        return _xml_node    
+    
+    
     def as_xml_node(self):
         _xml_node = etree.Element('merge')
         _xml_node.append(self._mappings_as_xml_node())
+        _xml_node.append(self._settings_as_xml_node())
         _xml_node.append(self.resources.as_xml_node())
         return _xml_node        
         
     def load_field_mappings_from_xml_node(self, _xml_node):
         if _xml_node != None:
+            _mapping_idx = 0
             for _curr_mapping in _xml_node.findall("field_mapping"):
-                self.mappings.append(Field_Mapping(_curr_mapping))
+                _new_mapping = Field_Mapping(_xml_node = _curr_mapping)
+                self.mappings.append(_new_mapping)
+                if _new_mapping.is_key == "True":
+                    self.key_fields.append(_mapping_idx)  
+                _mapping_idx+= 1              
         else:
             raise Exception("Merge.load_field_mappings_from_xml_node: Missing 'field_mappings'-node.")   
 
@@ -133,16 +147,25 @@ class Merge(object):
         else:
             raise Exception("Merge.load_field_mappings_from_xml_node: Missing 'mappings'-node.")   
         
-            
+
+    def load_settings_from_xml_node(self, _xml_node):
+        if _xml_node != None:
+            self.insert = isnone(_xml_node.find("insert"))
+            self.update = isnone(_xml_node.find("update"))
+            self.delete = isnone(_xml_node.find("delete"))     
+        else:
+            raise Exception("Merge.load_settings_from_xml_node: Missing 'settings'-node.")     
+               
     def load_from_xml_node(self, _xml_node):
 
         if _xml_node != None:           
             self.load_mappings_from_xml_node(_xml_node.find("mappings"))
+            self.load_settings_from_xml_node(_xml_node.find("settings"))
             self.resources = Resources(_resources_node= _xml_node.find("resources"))
         else:
             raise Exception("Merge.load_from_xml_node: \"None\" is not a valid Merge node.")                  
     
-    def _generate_deletes(self,_table_name, _id_columns, _delete_list):
+    def _rdbms_generate_deletes(self, _delete_list):
         """Generates a Verb_DELETE instance populated with the indata"""
         
         """Create SELECTs and put them in a UNION:ed set"""
@@ -155,12 +178,12 @@ class Merge(object):
         #return _deletes
         pass
     
-    def _generate_inserts(self, _table_name, _id_columns, _delete_list):
+    def _rdbms_generate_inserts(self, _insert_list):
         """Generates a Verb_INSERT instance populated with the indata"""
         #copy_to_table
         pass
     
-    def _generate_updates(self, _table_name, _id_columns, _delete_list):
+    def _rdbms_generate_updates(self, _delete_list):
         """Generates DELETE and INSERT instances populated with the indata
         @todo: Obviously a VERB_UPDATE will be better, implement that when test servers are back up."""     
         pass    
@@ -177,27 +200,89 @@ class Merge(object):
         _dal = Database_Abstraction_Layer(_resource = _resource)
         return _dal.query(select_all_skeleton(_table_name).as_sql(_dal.db_type))
     
-    def execute(self):
-        """Merge"""
-        _source_resource = self.resources.get_resource('source_uuid')
-        _dest_resource = self.resources.get_resource('dest_uuid')
+    def _apply_merge_to_dataset(self, _insert, _update, _delete, _sorted_dest):
         
-        #load source resource
+        
+        _do_delete = self.delete == "True"
+        _do_update = self.update == "True"
+        _do_insert = self.insert == "True"
+        
+        _insert_idx = 0
+        _delete_idx = 0
+        _update_idx = 0
+        # Loop the sorted destination dataset and apply changes
+        for _curr_row_idx in range(1, len(_sorted_dest)):
+            _actual_row_idx = _curr_row_idx - _delete_idx + _insert_idx
+            if _do_delete and _delete_idx <= len(_delete):
+                if _delete[_delete_idx][0] == _actual_row_idx:
+                    _sorted_dest.remove(_actual_row_idx)
+                    _delete_idx+=0
+                    
+        return _sorted_dest        
+                    
+                
+                
+    
+    def _xpath_generate_updates(self, _update):
+        pass
+    def _xpath_generate_deletes(self, _delete):
+        pass
+    def _xpath_generate_inserts(self, _insert):
+        pass    
+    
+    def execute(self):
+        """Merge the datasets"""
+        
+        # Load source resource
+        _source_resource = self.resources.get_resource('source_uuid')
+        # Get source data set
         if _source_resource.type.upper() in ["CUSTOM", "FLATFILE", "MATRIX", "XPATH"]:
             _source_dataset = self.load_file_dataset_from_resource(_source_resource)
         elif _source_resource.type.upper() in ["RDBMS"]:
             _source_dataset = self.load_rdbms_dataset_from_resource(_source_resource, self.source_table)
         else: 
             raise Exception("execute: Invalid source resource type: " + str(_source_resource.type.upper()))
-            
-        #load source resource
+
+        # Load destination resource
+        _dest_resource = self.resources.get_resource('dest_uuid')
+        # Get destination data set
         if _dest_resource.type.upper() in ["CUSTOM", "FLATFILE", "MATRIX", "XPATH"]:
             _dest_dataset = self.load_file_dataset_from_resource(_dest_resource)
         elif _dest_resource.type.upper() in ["RDBMS"]:
             _dest_dataset = self.load_rdbms_dataset_from_resource(_dest_resource, self.dest_table)
         else: 
             raise Exception("execute: Invalid destination resource type:" + str(_dest_resource.type.upper()))
+        
+        # Compare data sets.
+        _delete, _insert, _update, _dest_sorted = compare(
+                                                          _left = _source_dataset, 
+                                                          _right =_dest_dataset, 
+                                                          _key_columns = self.key_fields, 
+                                                          _full = True)
+        
+        if _dest_resource.type.upper() in ["CUSTOM", "FLATFILE", "MATRIX"]:
+            pass
+            #print("delete "  + str(_delete))
+            # Update first, insert can then insert at position instead of looking up.
+            #return self._apply_merge_to_dataset(_delete, _insert, _update, _dest_sorted)            
+        elif _dest_resource.type.upper() in ["XPATH"]:
+            self._xpath_generate_updates(_update)
+            self._xpath_generate_deletes(_delete)
+            self._xpath_generate_inserts(_insert)        
+        else:
+            self._rdbms_generate_updates(_update)
+            self._rdbms_generate_deletes(_delete)
+            self._rdbms_generate_inserts(_insert)
+        
+        
+        # Merge updates into destination data set
+        print("update : " + str(_update))
+        
+        # Merge inserts into destination data set
+        print(str(_insert))
+        
+        # Merge delete into destination data set 
+        print(str(_delete))
+        
 
-        print(_source_dataset)
-        print(_dest_dataset)
         

@@ -3,7 +3,7 @@
   <mappings>
     <field_mappings>
       <field_mapping>
-        <is_key>1</is_key>
+        <is_key>True</is_key>
         <src_column>Table1ID</src_column>
         <src_data_type>integer</src_data_type>
         <src_cast_to>integer</src_cast_to>
@@ -30,7 +30,7 @@
         <dest_column>Table1ID</dest_column>
       </field_mapping>
       <field_mapping>
-        <is_key>0</is_key>
+        <is_key>False</is_key>
         <src_column>Table1Name</src_column>
         <src_data_type>string</src_data_type>
         <src_cast_to>string</src_cast_to>
@@ -50,7 +50,7 @@
         <dest_column>Table1Name</dest_column>
       </field_mapping>
       <field_mapping>
-        <is_key>0</is_key>
+        <is_key>False</is_key>
         <src_column>Table1Changed</src_column>
         <src_data_type>timestamp</src_data_type>
         <src_cast_to>timestamp</src_cast_to>

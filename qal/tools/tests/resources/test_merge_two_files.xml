@@ -3,7 +3,7 @@
 	<mappings>
 		<field_mappings>
 		  <field_mapping>
-		    <is_key>1</is_key>
+		    <is_key>True</is_key>
 		    <src_column>emp_no</src_column>
 		    <src_data_type>string</src_data_type>
 		    <src_cast_to>string</src_cast_to>
@@ -24,7 +24,7 @@
 		    <dest_column>emp_no</dest_column>
 		  </field_mapping>
 		  <field_mapping>
-		    <is_key>0</is_key>
+		    <is_key>False</is_key>
 		    <src_column>name</src_column>
 		    <src_data_type>string</src_data_type>
 		    <src_cast_to>string</src_cast_to>
@@ -45,7 +45,7 @@
 		    <dest_column>name</dest_column>
 		  </field_mapping>
 		  <field_mapping>
-		    <is_key>0</is_key>
+		    <is_key>False</is_key>
 		    <src_column>position</src_column>
 		    <src_data_type>string</src_data_type>
 		    <src_cast_to>string</src_cast_to>
@@ -56,7 +56,7 @@
 		    <dest_column>position</dest_column>
 		  </field_mapping>
 		  <field_mapping>
-		    <is_key>0</is_key>
+		    <is_key>False</is_key>
 		    <src_column>manager</src_column>
 		    <src_data_type>string</src_data_type>
 		    <src_cast_to>string</src_cast_to>
@@ -71,7 +71,7 @@
 		    <dest_column>manager</dest_column>
 		  </field_mapping>
 		  <field_mapping>
-		    <is_key>0</is_key>
+		    <is_key>False</is_key>
 		    <src_column>hiredate</src_column>
 		    <src_data_type>string</src_data_type>
 		    <src_cast_to>string</src_cast_to>
@@ -86,7 +86,7 @@
 		    <dest_column>hiredate</dest_column>
 		  </field_mapping>
 		  <field_mapping>
-		    <is_key>0</is_key>
+		    <is_key>False</is_key>
 		    <src_column>salary</src_column>
 		    <src_data_type>string</src_data_type>
 		    <src_cast_to>string</src_cast_to>
@@ -106,7 +106,7 @@
 		    <dest_column>salary</dest_column>
 		  </field_mapping>
 		  <field_mapping>
-		    <is_key>0</is_key>
+		    <is_key>False</is_key>
 		    <src_column>comm</src_column>
 		    <src_data_type>string</src_data_type>
 		    <src_cast_to>string</src_cast_to>
@@ -126,7 +126,7 @@
 		    <dest_column>comm</dest_column>
 		  </field_mapping>
 		  <field_mapping>
-		    <is_key>0</is_key>
+		    <is_key>False</is_key>
 		    <src_column>dep_no</src_column>
 		    <src_data_type>string</src_data_type>
 		    <src_cast_to>string</src_cast_to>
@@ -152,16 +152,21 @@
 	    <dest_table>table1</dest_table>
 	  </table_mappings>  
   </mappings>
+  <settings>
+  	<insert>true</insert>
+  	<update>true</update>
+  	<delete>false</delete> 	
+  </settings>
   <resources>
     <resource caption="destination" type="flatfile" uuid="dest_uuid">
      	<csv_dialect>excel-tab</csv_dialect>
-		<delimiter>,</delimiter>
+		<delimiter>;</delimiter>
 		<filename>resources/csv_dest.csv</filename>
 		<has_header>True</has_header>
 	</resource>	
     <resource caption="source" type="flatfile" uuid="source_uuid">
 		<csv_dialect>excel-tab</csv_dialect>
-		<delimiter>,</delimiter>
+		<delimiter>;</delimiter>
 		<filename>resources/csv_source.csv</filename>
 		<has_header>True</has_header>
 	</resource>	
