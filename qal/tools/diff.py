@@ -9,6 +9,7 @@ GNU diffutils does for files, but with datasets.
 
 def cmp_key_columns(_left, _right, _key_columns):
     for _curr_key_column in _key_columns:
+
         if _left[_curr_key_column] < _right[_curr_key_column]:
             return -1
         elif _left[_curr_key_column] > _right[_curr_key_column]:
@@ -17,7 +18,7 @@ def cmp_key_columns(_left, _right, _key_columns):
     return 0
 
 def match_all_columns(_left, _right):
-    for _curr_column in range(1, len(_right)):
+    for _curr_column in range(0, len(_right)):
         if _left[_curr_column] != _right[_curr_column]:
             return False
 
@@ -71,10 +72,9 @@ def compare(_left, _right, _key_columns, _full):
         else:
             # Keys are the same and _full is set, check all data 
 
-            if _full == True:
-                if match_all_columns(_left_s[_left_idx], _right_s[_right_idx]) != True:
-                    # Differing columns found, add _row to _difference
-                    _difference.append([_left_idx, _right_idx, _left_s[_left_idx], _right_s[_right_idx]])
+            if _full == True and match_all_columns(_left_s[_left_idx], _right_s[_right_idx]) != True:
+                # Differing columns found, add _row to _difference
+                _difference.append([_left_idx, _right_idx, _left_s[_left_idx], _right_s[_right_idx]])
             _left_idx+= 1
             _right_idx+= 1
             
