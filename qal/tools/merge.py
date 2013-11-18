@@ -202,8 +202,8 @@ class Merge(object):
     
     def _apply_merge_to_dataset(self, _insert, _update, _delete, _sorted_dest):
         
-        print("_update: " + str(_update))
-        print("Before apply: " + str(_sorted_dest))
+        #print("_insert: " + str(_insert))
+        #print("Before apply: " + str(_sorted_dest))
         
         _do_delete = str(self.delete).lower() == "true"
         _do_update = str(self.update).lower() == "true"
@@ -214,20 +214,31 @@ class Merge(object):
         _update_idx = 0
         # Loop the sorted destination dataset and apply changes
         for _curr_row_idx in range(0, len(_sorted_dest)):
-            _actual_row_idx = _curr_row_idx - _delete_idx - _insert_idx
+            _actual_row_idx = _curr_row_idx - _delete_idx + _insert_idx
+            # print("_actual_row_idx = _curr_row_idx - _delete_idx + _insert_idx = " + 
+            #      str(_curr_row_idx) + " - " +str(_delete_idx) + " + " + str(_insert_idx))
             if _do_delete and _delete_idx < len(_delete):
                 if _delete[_delete_idx][1] == _curr_row_idx:
-                    print("deleting row " + str(_delete[_delete_idx][1])) 
+                    #print("deleting row " + str(_delete[_delete_idx][1])) 
                     _sorted_dest.pop(_actual_row_idx)
                     _delete_idx+=1
         
             if _do_update and _update_idx < len(_update):
                 if _update[_update_idx][1] == _curr_row_idx:
-                    print("updating row " + str(_update[_update_idx][1])) 
+                    #print("updating row " + str(_update[_update_idx][1])) 
                     _sorted_dest[_actual_row_idx] = _update[_update_idx][2]
                     _update_idx+=1
+                    
         
-        print("After apply:  " + str(_sorted_dest))            
+            if _do_insert:
+                
+                # TODO: This while should insert these in reverse instead.
+                while _insert_idx < len(_insert) and _insert[_insert_idx][1] == _curr_row_idx:
+                    #print("inserting row " + str(_insert[_insert_idx][1])) 
+                    _sorted_dest.insert(_actual_row_idx,_insert[_insert_idx][2])
+                    _insert_idx+=1
+        
+        #print("After apply:  " + str(_sorted_dest))            
         return _sorted_dest        
                     
                 
@@ -286,13 +297,17 @@ class Merge(object):
         
         
         # Merge updates into destination data set
-        print("update : " + str(_update))
+        print("_update : " + str(_update))
         
         # Merge inserts into destination data set
-        print(str(_insert))
+        print("_insert : " + str(_insert))
         
         # Merge delete into destination data set 
-        print(str(_delete))
+        print("_delete : " + str(_delete))
         
 
-        
+    def write_result_csv(self, _file_output = None):
+        """ if _file_output:
+            self.
+        f = open('resources/csv_out.xml', w)
+        f.write(_result)"""
