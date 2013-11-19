@@ -18,7 +18,7 @@ class Flatfile_Dataset(Custom_Dataset):
     has_header = None
     csv_dialect = None
     quoting = None
-#    field_names = None
+    field_names = None
     
     def __init__(self, _delimiter = None, _filename = None, _has_header = None, _csv_dialect = None, _resource = None, _quoting = None):
         """Constructor"""
@@ -71,7 +71,7 @@ class Flatfile_Dataset(Custom_Dataset):
     def load(self):
         """Load data"""
         _tmp_dir_abs = os.getcwd() 
-        print("Flatfile_Dataset.load: Filename='"+str(os.path.normpath(_tmp_dir_abs +'/' + self.filename)) + "', Delimiter='"+str(self.delimiter)+"'")
+        print("Flatfile_Dataset.load: Filename='" + str(os.path.normpath(_tmp_dir_abs +'/' + self.filename)) + "', Delimiter='"+str(self.delimiter)+"'")
         
         _file = open(os.path.normpath(_tmp_dir_abs +'/' + self.filename), 'r')
         _reader = csv.reader(_file, delimiter=self.delimiter, quoting=self._quotestr_to_constants(self.quoting))
@@ -80,7 +80,7 @@ class Flatfile_Dataset(Custom_Dataset):
         for _row in _reader:
             # Save header row if existing.
             if (_first_row and self.has_header == True):
-                self.field_names = [_curr_col.replace("'", "") for _curr_col in _row]
+                self.field_names = [_curr_col.replace("'", "").replace("\"", "") for _curr_col in _row]
                 print("self.field_names :" + str(self.field_names))
                 _first_row = False
             else:
