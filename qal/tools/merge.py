@@ -202,7 +202,7 @@ class Merge(object):
         
     def load_rdbms_dataset_from_resource(self, _resource, _table_name):
         _dal = Database_Abstraction_Layer(_resource = _resource)
-        return _dal.query(select_all_skeleton(_table_name).as_sql(_dal.db_type))
+        return _dal.query(select_all_skeleton(_table_name).as_sql(_dal.db_type)), _dal.field_names
     
     def _apply_merge_to_dataset(self, _insert, _update, _delete, _sorted_dest):
         
@@ -298,7 +298,7 @@ class Merge(object):
         for _curr_idx in range(0, len(self.source_dataset)):
             _curr_mapped = []
             _curr_mapped.extend(None for x in self.dest_field_names)
-
+            
             _curr_row = self.source_dataset[_curr_idx]
             for _curr_shortcut in _shortcuts:
                 try:
@@ -308,7 +308,6 @@ class Merge(object):
                                     str(_curr_idx) + ", column \"" + self.dest_field_names[_curr_shortcut[0]] + 
                                     "\":\n" + str(e))
             
-                
                 _curr_mapped[_curr_shortcut[1]] = _value
             _mapped_source.append(_curr_mapped)
         
@@ -318,40 +317,35 @@ class Merge(object):
         
         # Load resources
         self._load_resources()
-        
-        
+        print(self.source_dataset)
         # Create a remapped source dataset, perform transformations
         _mapped_source = self._remap_and_transform()
         
 
         """Merge the datasets"""
         
-
-        
-        # TODO : Remap data sets according to mappings
-        
         # Compare data sets. 
         _delete, _insert, _update, _dest_sorted = compare(
                                                           _left = _mapped_source, 
-                                                          _right =self.dest_dataset, 
+                                                          _right = self.dest_dataset, 
                                                           _key_columns = self.key_fields, 
                                                           _full = True)
         
         if self.dest_resource.type.upper() in ["CUSTOM", "FLATFILE", "MATRIX"]:
-            pass
-            #print("delete "  + str(_delete))
-            # Update first, insert can then insert at position instead of looking up.
             return self._apply_merge_to_dataset(_insert, _update, _delete, _dest_sorted)            
         elif self.dest_resource.type.upper() in ["XPATH"]:
             self._xpath_generate_updates(_update)
             self._xpath_generate_deletes(_delete)
-            self._xpath_generate_inserts(_insert)        
+            self._xpath_generate_inserts(_insert)
+                    
         else:
             self._rdbms_generate_updates(_update)
             self._rdbms_generate_deletes(_delete)
             self._rdbms_generate_inserts(_insert)
+            
+            return self.load_rdbms_dataset_from_resource(self.dest_resource, self.dest_table)
         
-        
+        """
         # Merge updates into destination data set
         print("_update : " + str(_update))
         
@@ -360,6 +354,7 @@ class Merge(object):
         
         # Merge delete into destination data set 
         print("_delete : " + str(_delete))
+        """
         
         
     def write_result_csv(self, _file_output = None):

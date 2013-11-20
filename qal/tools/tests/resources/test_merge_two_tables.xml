@@ -8,13 +8,11 @@
         <src_data_type>integer</src_data_type>
         <src_cast_to>integer</src_cast_to>
         <transformations>
-	        <trim order="1"></trim>
-	        <if_empty order="2"></if_empty>
-	        <replace order="3">
-	        	<old> </old>
-	        	<new></new>
-	        	<max/>
-	        </replace>
+	        <if_empty order="2">0</if_empty>
+	        <cast order="3">
+		    	<dest_type>string</dest_type>
+		       	<format_string/>
+		     </cast>    
 	        <replace order="4">
 	        	<old>,</old>
 	        	<new>.</new>
@@ -42,7 +40,7 @@
 	        	<max/>
 	        </replace>	        
 	        <cast order="4">
-	        	<dest_type>integer</dest_type>
+	        	<dest_type>string</dest_type>
 		       	<format_string/>
 		    </cast>     
         </transformations>
@@ -56,14 +54,10 @@
         <src_cast_to>timestamp</src_cast_to>
         <transformations>
 	        <cast order="1">
-	        	<dest_type>integer</dest_type>
+	        	<dest_type>string</dest_type>
 		       	<format_string/>
 		    </cast>     
-	        <trim order="3"></trim>
-	        <cast order="4">
-	        	<dest_type>integer</dest_type>
-		       	<format_string/>
-		    </cast>     
+	        <trim order="3"></trim>     
         </transformations>
         <result_cast_to></result_cast_to>
         <dest_column>Table1Changed</dest_column>
@@ -74,7 +68,11 @@
 	  	<dest_table>table1</dest_table>
     </table_mappings>
   </mappings>
-  
+  <settings>
+  	<insert>true</insert>
+  	<update>true</update>
+  	<delete>true</delete> 	
+  </settings>  
   <resources>
     <resource caption="destination" type="RDBMS" uuid="dest_uuid">
    	  <autocommit>True</autocommit>

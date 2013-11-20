@@ -32,7 +32,7 @@ class Merge_test(unittest.TestCase):
         _tree = etree.ElementTree()
         return _tree.parse(_filename, _parser)
     
-    def test_Merge_files(self):
+    def _test_Merge_files(self):
         
         """Test merge two files"""
         _merge_xml = self._parse_xml('resources/test_merge_two_files.xml')
@@ -42,11 +42,20 @@ class Merge_test(unittest.TestCase):
 
         _result = _merge.execute()
         
-        print(_result)
-        print(c_file_result)
         #_merge.write_result('resources/csv_out.xml')
         self.assertEqual(_result, c_file_result)
 
+    def test_Merge_tables(self):
+        
+        """Test merge two files"""
+        _merge_xml = self._parse_xml('resources/test_merge_two_tables.xml')
+        _merge = Merge(_xml_node = _merge_xml)
+        self.assertEqual(etree.tostring(_merge.as_xml_node()), etree.tostring(_merge_xml), "Input/output XML does not match")
+
+        _result = _merge.execute()
+        
+        #_merge.write_result('resources/csv_out.xml')
+        self.assertEqual(_result, c_file_result)
 
         
 
