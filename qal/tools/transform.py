@@ -39,6 +39,8 @@ def make_transformations_xml_node(_transformations):
         _xml_node.append(_curr_transformation.as_xml_node())
     
     return _xml_node
+
+
 class Custom_Transformation(object):
     """
     This is the base class for all transformations
@@ -154,12 +156,14 @@ class Cast(Custom_Transformation):
                 return int(_value)
             elif self.dest_type in ['timestamp']:
                 if self.format_string != None:
-                    
                     return datetime.strptime(_value, self.format_string)
                 else:
                     return datetime.strptime(_value, "%Y-%m-%d %H:%M:%S")
             elif self.dest_type in ['boolean']:
                 return bool(_value)
+            else:
+                raise Exception("Invalid destination data type: " + str(self.dest_type))
+                
         except Exception as e:
             raise Exception("Error in Cast.transform: " + str(e))
 
