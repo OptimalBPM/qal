@@ -2,6 +2,10 @@
 Created on Nov 3, 2013
 
 @author: Nicklas Boerjesson
+@todo: 
+* Add input type checks for better error messages
+* Use format string for destination formatting as well (casting from any other primitive type to string)
+
 """
 from lxml import etree
 from datetime import date, datetime
