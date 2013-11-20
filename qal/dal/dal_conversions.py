@@ -85,7 +85,7 @@ def mysql_type_to_SQL_type(_type_code):
         raise Exception("mysql_type_to_SQL_type: _type_code \"" + str(_type_code) + "\"not supported") 
     
 def python_type_to_SQL_type(_python_type):
-    print("python_type_to_SQL_type:" + str(_python_type))
+
     if (_python_type == str):
         return 'string'
     elif (_python_type == bytes):
