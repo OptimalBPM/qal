@@ -13,15 +13,19 @@ def isnone( _node):
         return None
     else:
         return _node.text  
-    
+
+def perform_transformations(_input, _transformations):
+    for _curr_transformation in _transformations:
+        _input = _curr_transformation.transform(_input)
+    return _input    
     
 def make_transformation_array_from_xml_node(_xml_node):
     _result = []
     for _curr_node in _xml_node:
         if _curr_node.tag == 'trim':
             _result.append(Trim(_curr_node))
-        elif _curr_node.tag == 'is_null':
-            _result.append(Is_null(_curr_node))
+        elif _curr_node.tag == 'if_empty':
+            _result.append(If_empty(_curr_node))
         elif _curr_node.tag == 'cast':
             _result.append(Cast(_curr_node))
         elif _curr_node.tag == 'replace':
@@ -95,23 +99,23 @@ class Trim(Custom_Transformation):
         else:
             return _value.strip()
         
-class Is_null(Custom_Transformation):
-    """Is_null returns a specified value if the input value is NULL."""
+class If_empty(Custom_Transformation):
+    """If_empty returns a specified value if the input value is NULL."""
     value = None
     
     def load_from_xml_node(self, _xml_node):
-        super(Is_null, self ).load_from_xml_node(_xml_node)
+        super(If_empty, self ).load_from_xml_node(_xml_node)
         self.value = _xml_node.text
     
     def as_xml_node(self):
-        _xml_node = self.init_base_to_node("is_null")
+        _xml_node = self.init_base_to_node("if_empty")
         _xml_node.text = self.value
         
         return _xml_node
 
     def transform(self, _value):
         """Make transformation"""
-        if _value == None:
+        if _value == None or _value == "":
             return self.value
         else:
             return _value
@@ -139,20 +143,25 @@ class Cast(Custom_Transformation):
 
     def transform(self, _value):
         """Make cast"""
-        if self.dest_type in ['string', 'string(255)', 'string(3000)']:
-            return str(_value)
-        elif self.dest_type in ['float']:
-            return float(_value)
-        elif self.dest_type in ['integer', 'serial']:
-            return int(_value)
-        elif self.dest_type in ['timestamp']:
-            if self.format_string != None:
-                
-                return datetime.strptime(_value, self.format_string)
-            else:
-                return datetime.strptime(_value, "%Y-%m-%d %H:%M:%S")
-        elif self.dest_type in ['boolean']:
-            return bool(_value)
+        try:
+            if _value == None or _value =="":
+                return _value
+            if self.dest_type in ['string', 'string(255)', 'string(3000)']:
+                return str(_value)
+            elif self.dest_type in ['float']:
+                return float(_value)
+            elif self.dest_type in ['integer', 'serial']:
+                return int(_value)
+            elif self.dest_type in ['timestamp']:
+                if self.format_string != None:
+                    
+                    return datetime.strptime(_value, self.format_string)
+                else:
+                    return datetime.strptime(_value, "%Y-%m-%d %H:%M:%S")
+            elif self.dest_type in ['boolean']:
+                return bool(_value)
+        except Exception as e:
+            raise Exception("Error in Cast.transform: " + str(e))
 
 class Replace(Custom_Transformation):
     """Replace returns a copy of the string in which the occurrences of old have been replaced with new, optionally restricting the number of replacements to max."""
@@ -176,8 +185,17 @@ class Replace(Custom_Transformation):
 
     def transform(self, _value):
         """Make transformation"""
-        if self.max:
-            return _value.replace(self.old, self.new, int(self.max))
+        if self.old == None:
+            raise Exception("Replace.transform: old value has to have a value.")
         else:
-            return _value.replace(self.old, self.new)
+            _old = self.old
+        if self.new == None:
+            _new = ""
+        else:
+            _new = self.new
+        
+        if self.max:
+            return _value.replace(_old, _new, int(self.max))
+        else:
+            return _value.replace(_old, _new)
             

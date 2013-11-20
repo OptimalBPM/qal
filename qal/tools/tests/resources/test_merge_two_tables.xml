@@ -9,7 +9,7 @@
         <src_cast_to>integer</src_cast_to>
         <transformations>
 	        <trim order="1"></trim>
-	        <is_null order="2"></is_null>
+	        <if_empty order="2"></if_empty>
 	        <replace order="3">
 	        	<old> </old>
 	        	<new></new>

@@ -7,7 +7,7 @@ Created on Nov 3, 2013
 
 from qal.sql.sql_macros import copy_to_table
 from qal.common.resources import Resources
-from qal.tools.transform import make_transformation_array_from_xml_node, make_transformations_xml_node
+from qal.tools.transform import make_transformation_array_from_xml_node, make_transformations_xml_node, perform_transformations
 from qal.tools.diff import compare
 from qal.nosql.flatfile import Flatfile_Dataset
 from qal.nosql.xpath import XPath_Dataset
@@ -71,6 +71,7 @@ class Merge(object):
     source_table = None
     dest_table = None
     resources = None
+    
     """
     The merge class takes two datasets and merges them together.
     """
@@ -190,9 +191,12 @@ class Merge(object):
     
     def load_file_dataset_from_resource(self, _resource):
         if _resource.type.upper() == "FLATFILE":
-            return Flatfile_Dataset(_resource = _resource).load()
+            _ffds =  Flatfile_Dataset(_resource = _resource)
+            return _ffds.load(), _ffds.field_names
+            
         elif _resource.type.upper() == "XPATH":
-            return Flatfile_Dataset(_resource = _resource).load()
+            _ffds =  Flatfile_Dataset(_resource = _resource)
+            return _ffds.load(), _ffds.field_names
         else: 
             raise Exception("load_file_dataset_from_resource: Unsupported source resource type: " + str(_resource.type.upper()))
         
@@ -212,6 +216,7 @@ class Merge(object):
         _insert_idx = 0
         _delete_idx = 0
         _update_idx = 0
+        
         # Loop the sorted destination dataset and apply changes
         for _curr_row_idx in range(0, len(_sorted_dest)):
             _actual_row_idx = _curr_row_idx - _delete_idx + _insert_idx
@@ -251,42 +256,93 @@ class Merge(object):
     def _xpath_generate_inserts(self, _insert):
         pass    
     
-    def execute(self):
-        """Merge the datasets"""
-        
-        # Load source resource
-        _source_resource = self.resources.get_resource('source_uuid')
+    def _load_resources(self):
+                # Load source resource
+        self.source_resource = self.resources.get_resource('source_uuid')
         # Get source data set
-        if _source_resource.type.upper() in ["CUSTOM", "FLATFILE", "MATRIX", "XPATH"]:
-            _source_dataset = self.load_file_dataset_from_resource(_source_resource)
-        elif _source_resource.type.upper() in ["RDBMS"]:
-            _source_dataset = self.load_rdbms_dataset_from_resource(_source_resource, self.source_table)
+        if self.source_resource.type.upper() in ["CUSTOM", "FLATFILE", "MATRIX", "XPATH"]:
+            self.source_dataset, self.source_field_names = self.load_file_dataset_from_resource(self.source_resource)
+        elif self.source_resource.type.upper() in ["RDBMS"]:
+            self.source_dataset, self.source_field_names = self.load_rdbms_dataset_from_resource(self.source_resource, self.source_table)
         else: 
-            raise Exception("execute: Invalid source resource type: " + str(_source_resource.type.upper()))
+            raise Exception("execute: Invalid source resource type: " + str(self.source_resource.type.upper()))
 
         # Load destination resource
-        _dest_resource = self.resources.get_resource('dest_uuid')
+        self.dest_resource = self.resources.get_resource('dest_uuid')
         # Get destination data set
-        if _dest_resource.type.upper() in ["CUSTOM", "FLATFILE", "MATRIX", "XPATH"]:
-            _dest_dataset = self.load_file_dataset_from_resource(_dest_resource)
-        elif _dest_resource.type.upper() in ["RDBMS"]:
-            _dest_dataset = self.load_rdbms_dataset_from_resource(_dest_resource, self.dest_table)
+        if self.dest_resource.type.upper() in ["CUSTOM", "FLATFILE", "MATRIX", "XPATH"]:
+            self.dest_dataset, self.dest_field_names = self.load_file_dataset_from_resource(self.dest_resource)
+        elif self.dest_resource.type.upper() in ["RDBMS"]:
+            self.dest_dataset, self.dest_field_names = self.load_rdbms_dataset_from_resource(self.dest_resource, self.dest_table)
         else: 
-            raise Exception("execute: Invalid destination resource type:" + str(_dest_resource.type.upper()))
+            raise Exception("execute: Invalid destination resource type:" + str(self.dest_resource.type.upper()))
         
-        # Compare data sets.
+
+    def _make_shortcuts(self):
+        _shortcuts = []       
+
+        # Make mapping
+        for _curr_mapping in self.mappings:
+            _src_idx  = self.source_field_names.index(_curr_mapping.src_column)
+            _dest_idx = self.dest_field_names.index(_curr_mapping.dest_column)
+            _shortcuts.append([_src_idx, _dest_idx, _curr_mapping])
+            
+        return _shortcuts
+         
+
+    def _remap_and_transform(self):
+        _shortcuts = self._make_shortcuts()
+
+        _mapped_source = []
+
+        for _curr_idx in range(0, len(self.source_dataset)):
+            _curr_mapped = []
+            _curr_mapped.extend(None for x in self.dest_field_names)
+
+            _curr_row = self.source_dataset[_curr_idx]
+            for _curr_shortcut in _shortcuts:
+                try:
+                    _value = perform_transformations(_curr_row[_curr_shortcut[0]], _curr_shortcut[2].transformations)
+                except Exception as e:
+                    raise Exception("Merge._remap_and_transform:\nError in applying transformations for row " + 
+                                    str(_curr_idx) + ", column \"" + self.dest_field_names[_curr_shortcut[0]] + 
+                                    "\":\n" + str(e))
+            
+                
+                _curr_mapped[_curr_shortcut[1]] = _value
+            _mapped_source.append(_curr_mapped)
+        
+        return _mapped_source
+           
+    def execute(self):
+        
+        # Load resources
+        self._load_resources()
+        
+        
+        # Create a remapped source dataset, perform transformations
+        _mapped_source = self._remap_and_transform()
+        
+
+        """Merge the datasets"""
+        
+
+        
+        # TODO : Remap data sets according to mappings
+        
+        # Compare data sets. 
         _delete, _insert, _update, _dest_sorted = compare(
-                                                          _left = _source_dataset, 
-                                                          _right =_dest_dataset, 
+                                                          _left = _mapped_source, 
+                                                          _right =self.dest_dataset, 
                                                           _key_columns = self.key_fields, 
                                                           _full = True)
         
-        if _dest_resource.type.upper() in ["CUSTOM", "FLATFILE", "MATRIX"]:
+        if self.dest_resource.type.upper() in ["CUSTOM", "FLATFILE", "MATRIX"]:
             pass
             #print("delete "  + str(_delete))
             # Update first, insert can then insert at position instead of looking up.
             return self._apply_merge_to_dataset(_insert, _update, _delete, _dest_sorted)            
-        elif _dest_resource.type.upper() in ["XPATH"]:
+        elif self.dest_resource.type.upper() in ["XPATH"]:
             self._xpath_generate_updates(_update)
             self._xpath_generate_deletes(_delete)
             self._xpath_generate_inserts(_insert)        
@@ -305,7 +361,7 @@ class Merge(object):
         # Merge delete into destination data set 
         print("_delete : " + str(_delete))
         
-
+        
     def write_result_csv(self, _file_output = None):
         """ if _file_output:
             self.

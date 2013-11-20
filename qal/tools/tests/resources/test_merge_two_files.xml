@@ -9,16 +9,12 @@
 		    <src_cast_to>string</src_cast_to>
 		    <transformations>
 		    	<trim order="1">end</trim>
-		        <is_null order="2">NULL</is_null>
+		        <if_empty order="2">NULL</if_empty>
 		        <replace order="3">
 		        	<old>cc</old>
 		        	<new>c</new>
 		        	<max>1</max>
 		        </replace>
-		        <cast order="5">
-		        	<dest_type>integer</dest_type>
-		        	<format_string/>
-		        </cast>
 		    </transformations>
 		    <result_cast_to></result_cast_to>
 		    <dest_column>emp_no</dest_column>
@@ -103,7 +99,7 @@
 		        </cast>
 		    </transformations>
 		    <result_cast_to/>
-		    <dest_column>salary</dest_column>
+		    <dest_column>comm</dest_column>
 		  </field_mapping>
 		  <field_mapping>
 		    <is_key>False</is_key>
@@ -111,19 +107,21 @@
 		    <src_data_type>string</src_data_type>
 		    <src_cast_to>string</src_cast_to>
 		    <transformations>
+		    	
 		        <trim order="1"></trim>
 		        <replace order="3">
 		        	<old>,</old>
 		        	<new>.</new>
 		        	<max/>
-		        </replace>	 
+		        </replace>
+		        <if_empty order="4">0</if_empty>	 
 		        <cast order="5">
 		        	<dest_type>float</dest_type>
 		        	<format_string/>
 		        </cast>
 		    </transformations>
 		    <result_cast_to></result_cast_to>
-		    <dest_column>comm</dest_column>
+		    <dest_column>salary</dest_column>
 		  </field_mapping>
 		  <field_mapping>
 		    <is_key>False</is_key>
@@ -163,12 +161,14 @@
 		<delimiter>;</delimiter>
 		<filename>resources/csv_dest.csv</filename>
 		<has_header>True</has_header>
+		<quoting>ALL</quoting>
 	</resource>	
     <resource caption="source" type="flatfile" uuid="source_uuid">
 		<csv_dialect>excel-tab</csv_dialect>
 		<delimiter>;</delimiter>
 		<filename>resources/csv_source.csv</filename>
 		<has_header>True</has_header>
+		<quoting>ALL</quoting>
 	</resource>	
 
   </resources>

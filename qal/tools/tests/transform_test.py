@@ -4,7 +4,7 @@ Created on Nov 3, 2013
 @author: Nicklas Boerjesson
 """
 import unittest
-from qal.tools.transform import Trim, Replace, Is_null, Cast
+from qal.tools.transform import Trim, Replace, If_empty, Cast
 from lxml import etree
 from datetime import datetime
 
@@ -25,11 +25,11 @@ class Transform_test(unittest.TestCase):
         self.assertEqual(_result, ' test', "Results differ")
         self.assertEqual(etree.tostring(_xml_def).strip(), etree.tostring(_tested.as_xml_node()), "XML in/out differ")
         
-    def test_is_null(self):
+    def test_if_empty(self):
         """Test trim transformation input/output and XML encoding/decoding"""
         _tree = self._parse_xml('resources/test_merge_two_files.xml')
-        _xml_def = _tree.find("mappings/field_mappings/field_mapping/transformations/is_null")
-        _tested = Is_null(_xml_def)
+        _xml_def = _tree.find("mappings/field_mappings/field_mapping/transformations/if_empty")
+        _tested = If_empty(_xml_def)
         _result = _tested.transform(None)
         self.assertEqual(_result, 'NULL', "Results differ")
         self.assertEqual(etree.tostring(_xml_def).strip(), etree.tostring(_tested.as_xml_node()), "XML in/out differ")
