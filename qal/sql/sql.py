@@ -893,7 +893,7 @@ class Verb_UPDATE(Parameter_Base):
         if _table_identifier != None:
             self.table_identifier = _table_identifier  
         else:
-            self.destination_identifier = None
+            self.table_identifier = None
         
         if _assignments != None:
             self.assignments    = _assignments
