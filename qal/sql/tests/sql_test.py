@@ -9,7 +9,6 @@ from qal.sql.sql_types import *
 from qal.dal.dal_types import *
 from qal.sql.sql import *
 
-
 global r_create_table_mysql 
 r_create_table_mysql = "CREATE TABLE Table1 ("+DEFAULT_ROWSEP + "\
 `Table1ID` INTEGER AUTO_INCREMENT NOT NULL,"+DEFAULT_ROWSEP + "\
@@ -84,6 +83,16 @@ r_SELECT_oracle = "SELECT (T1.\"CountryPrefix\" + '+' + T1.\"PhoneNumber\" + Sim
 global r_SELECT_SQL_Server 
 r_SELECT_SQL_Server= "SELECT TOP 1 (T1.CountryPrefix + '+' + T1.PhoneNumber + Simple(CAST((T2.CountryPrefix + '+' + T2.PhoneNumber) AS varchar(200)), (T2.CountryPrefix + '+' + T2.PhoneNumber))) AS Field1, (T2.CountryPrefix + '+' + T2.PhoneNumber) AS Field2 FROM testtable AS T1 JOIN testtable AS T2 ON ((1.3 > 2.4) AND (T1.firstname LIKE '%icklas')) WHERE ((1.3 > 2.4) AND (T1.firstname LIKE '%icklas')) ORDER BY T1.Field1 desc, T2.Field1 asc"
 
+global r_UPDATE_my_sql
+r_UPDATE_my_sql = "SET"+DEFAULT_ROWSEP+ "dest_column = 'Hello'" + DEFAULT_ROWSEP + "WHERE ((col_1 = '1') AND (col_2 = '1'))"
+global r_UPDATE_DB2
+r_UPDATE_DB2 = "SET" + DEFAULT_ROWSEP + "\"dest_column\" = 'Hello'" + DEFAULT_ROWSEP + "WHERE ((\"col_1\" = '1') AND (\"col_2\" = '1'))"
+global r_UPDATE_postgresql
+r_UPDATE_postgresql = "SET" + DEFAULT_ROWSEP + "\"dest_column\" = 'Hello'" + DEFAULT_ROWSEP + "WHERE ((\"col_1\" = '1') AND (\"col_2\" = '1'))"
+global r_UPDATE_oracle
+r_UPDATE_oracle = "SET" + DEFAULT_ROWSEP + "\"dest_column\" = 'Hello'" + DEFAULT_ROWSEP + "WHERE ((\"col_1\" = '1') AND (\"col_2\" = '1'))"
+global r_UPDATE_SQL_Server
+r_UPDATE_SQL_Server = "SET" + DEFAULT_ROWSEP + "dest_column = 'Hello'" + DEFAULT_ROWSEP + "WHERE ((col_1 = '1') AND (col_2 = '1'))"
 
 # Utils
 
@@ -237,6 +246,23 @@ def gen_simple_insert():
     insert.column_identifiers.append(Parameter_Identifier("Table1Changed"))
     return insert
 
+def gen_simple_update():
+ 
+    _table_identifier = Parameter_Identifier("test")
+    
+    _a_1 = Parameter_Condition(Parameter_Identifier("col_1"), Parameter_String("1"), "=")
+    _a_2 = Parameter_Condition(Parameter_Identifier("col_2"), Parameter_String("1"), "=", "AND")
+    _conditions = Parameter_Conditions()
+    _conditions.append(_a_1)
+    _conditions.append(_a_2)
+    
+    
+    _assignments = []
+    _assignments.append(Parameter_Assignment(_left = Parameter_Identifier("dest_column"), _right = Parameter_String("Hello")))
+
+    _update = Verb_UPDATE(_table_identifier =Parameter_Identifier("test"),_assignments = _assignments, _where_conditions = _conditions)
+    return _update
+
 def gen_simple_create(): 
   
     col1_constraint1 = Parameter_Constraint('PK_Table1_Table1ID', "PRIMARY KEY", [Parameter_Identifier('Table1ID')])
@@ -268,7 +294,7 @@ def gen_simple_create():
 class parameter_test(unittest.TestCase):
 
 
-    def test_parameter_condition_simple(self):
+    def test_00_parameter_condition_simple(self):
         self.maxDiff = None
         param = gen_simple_condition_1()
         paramclass = param.__class__.__name__
@@ -279,7 +305,7 @@ class parameter_test(unittest.TestCase):
         self.assertEqual(param.as_sql(DB_DB2), testvalue, paramclass +'.as_sql(DB_DB2) failed.')
         self.assertEqual(param.as_sql(DB_SQLSERVER), testvalue, paramclass +'.as_sql(DB_SQLSERVER) failed.')
 
-    def test_parameter_condition_complex(self):
+    def test_01_parameter_condition_complex(self):
         self.maxDiff = None
         param = gen_complex_conditions()
         paramclass = param.__class__.__name__
@@ -294,7 +320,7 @@ class parameter_test(unittest.TestCase):
         self.assertEqual(param.as_sql(DB_DB2), testvalue_DB2, paramclass +'.as_sql(DB_DB2) failed.')
         self.assertEqual(param.as_sql(DB_SQLSERVER), testvalue, paramclass +'.as_sql(DB_SQLSERVER) failed.')
 
-    def test_parameter_expression_simple(self):
+    def test_02_parameter_expression_simple(self):
         self.maxDiff = None
         param = gen_simpleexpression_1()
         testvalue = "(T1.CountryPrefix + '+' + T1.PhoneNumber + Simple(CAST((T2.CountryPrefix + '+' + T2.PhoneNumber) AS varchar(200)), (T2.CountryPrefix + '+' + T2.PhoneNumber)))"
@@ -310,7 +336,7 @@ class parameter_test(unittest.TestCase):
         self.assertEqual(param.as_sql(DB_DB2), db2testvalue, paramclass +'.as_sql(DB_DB2) failed.')
         self.assertEqual(param.as_sql(DB_SQLSERVER), testvalue, paramclass +'.as_sql(DB_SQLSERVER) failed.')
 
-    def test_parameter_cast_simple(self):
+    def test_03_parameter_cast_simple(self):
         self.maxDiff = None
         param = gen_simple_cast()
         testvalue = "CAST((T2.CountryPrefix + '+' + T2.PhoneNumber) AS varchar(200))"
@@ -325,7 +351,7 @@ class parameter_test(unittest.TestCase):
         self.assertEqual(param.as_sql(DB_DB2), db2testvalue, paramclass +'.as_sql(DB_DB2) failed.')
         self.assertEqual(param.as_sql(DB_SQLSERVER), testvalue, paramclass +'.as_sql(DB_SQLSERVER) failed.')
         
-    def test_parameter_function_simple(self):
+    def test_04_parameter_function_simple(self):
         self.maxDiff = None
         param = gen_simple_function()
         testvalue = "Simple(CAST((T2.CountryPrefix + '+' + T2.PhoneNumber) AS varchar(200)), (T2.CountryPrefix + '+' + T2.PhoneNumber))"
@@ -341,7 +367,7 @@ class parameter_test(unittest.TestCase):
         self.assertEqual(param.as_sql(DB_SQLSERVER), testvalue, paramclass +'.as_sql(DB_SQLSERVER) failed.')
 
 
-    def test_parameter_case(self):
+    def test_05_parameter_case(self):
         self.maxDiff = None
         param = gen_simple_case()
         testvalue = "CASE WHEN ((1.3 > 2.4) AND (T1.firstname LIKE '%icklas')) THEN (T1.CountryPrefix + '+' + T1.PhoneNumber + Simple(CAST((T2.CountryPrefix + '+' + T2.PhoneNumber) AS varchar(200)), (T2.CountryPrefix + '+' + T2.PhoneNumber))) WHEN ((1.3 > 2.4) AND (T1.firstname LIKE '%icklas')) THEN (T2.CountryPrefix + '+' + T2.PhoneNumber) else_statement (T2.CountryPrefix + '+' + T2.PhoneNumber) END"
@@ -357,7 +383,7 @@ class parameter_test(unittest.TestCase):
         self.assertEqual(param.as_sql(DB_DB2), DB2testvalue, paramclass +'.as_sql(DB_DB2) failed.')
         self.assertEqual(param.as_sql(DB_SQLSERVER), testvalue, paramclass +'.as_sql(DB_SQLSERVER) failed.')
 
-    def test_parameter_SELECT(self):
+    def test_06_VERB_SELECT(self):
         self.maxDiff = None
         param = gen_simple_select()
         paramclass = param.__class__.__name__
@@ -368,7 +394,7 @@ class parameter_test(unittest.TestCase):
         self.assertEqual(param.as_sql(DB_DB2), r_SELECT_DB_DB2, paramclass +'.as_sql(DB_DB2) failed.')
         self.assertEqual(param.as_sql(DB_SQLSERVER), r_SELECT_SQL_Server, paramclass +'.as_sql(DB_SQLSERVER) failed.')
 
-    def test_parameter_create_table(self):
+    def test_07_parameter_create_table(self):
         self.maxDiff = None
         param = gen_simple_create()
         paramclass = param.__class__.__name__
@@ -378,7 +404,7 @@ class parameter_test(unittest.TestCase):
         self.assertEqual(param.as_sql(DB_DB2), r_create_table_db2, paramclass +'.as_sql(DB_DB2) failed.')
         self.assertEqual(param.as_sql(DB_SQLSERVER), r_create_table_sqlserver, paramclass +'.as_sql(DB_SQLSERVER) failed.')
 
-    def test_parameter_insert(self):
+    def test_08_VERB_INSERT(self):
         self.maxDiff = None
         param = gen_simple_insert()
 
@@ -392,8 +418,24 @@ class parameter_test(unittest.TestCase):
         self.assertEqual(param.as_sql(DB_DB2), quotedtestvalue + DEFAULT_ROWSEP + r_SELECT_DB_DB2, paramclass +'.as_sql(DB_DB2) failed.')
         self.assertEqual(param.as_sql(DB_SQLSERVER), testvalue + DEFAULT_ROWSEP + r_SELECT_SQL_Server, paramclass +'.as_sql(DB_SQLSERVER) failed.')
         
+    def test_09_VERB_UPDATE(self):
+        self.maxDiff = None
+        param = gen_simple_update()
 
-    def test_parameter_create_index(self):
+        testvalue = "UPDATE test"
+        quotedtestvalue = 'UPDATE "test"'
+        paramclass = param.__class__.__name__#        self.assertEqual(param.as_sql(DB_MYSQL), testvalue, paramclass +'.as_sql(DB_MYSQL) failed.')
+
+        self.assertEqual(param.as_sql(DB_MYSQL), testvalue + DEFAULT_ROWSEP + r_UPDATE_my_sql, paramclass +'.as_sql(DB_MYSQL) failed.')
+        self.assertEqual(param.as_sql(DB_ORACLE), quotedtestvalue + DEFAULT_ROWSEP + r_UPDATE_oracle, paramclass +'.as_sql(DB_ORACLE) failed.')
+        
+        self.assertEqual(param.as_sql(DB_POSTGRESQL), quotedtestvalue + DEFAULT_ROWSEP + r_UPDATE_postgresql, paramclass +'.as_sql(DB_POSTGRESQL) failed.')
+        self.assertEqual(param.as_sql(DB_DB2), quotedtestvalue + DEFAULT_ROWSEP + r_UPDATE_DB2, paramclass +'.as_sql(DB_DB2) failed.')
+        self.assertEqual(param.as_sql(DB_SQLSERVER), testvalue + DEFAULT_ROWSEP + r_UPDATE_SQL_Server, paramclass +'.as_sql(DB_SQLSERVER) failed.')
+        
+
+
+    def test_10_parameter_create_index(self):
         self.maxDiff = None
         param = Verb_CREATE_INDEX('ind_Table1ID', "CLUSTERED", 'Table1', ['Table1Name', 'Table1Date'])
         paramclass = param.__class__.__name__

@@ -528,12 +528,39 @@ class Parameter_Condition(Parameter_Base):
         """Note that the Parameter_Base.as_sql is not called, this is because 1) Conditions are in context 2) Needs _index argument"""
         # TODO: Handle ILIKE for PostgreSQL.
         if (_index != 0):
+            error_on_blank(self.and_or ,'Parameter_Condition: Conditions must be separated by a logical operator. "and_or" is not set.')
             _result = ' ' + self.and_or + ' '
+                
         else:
             _result = ''
         
         _result+= parenthesise(self.left.as_sql(_db_type)  + ' ' + db_specific_operator(self.operator, _db_type) + ' ' + self.right.as_sql(_db_type))  
         return _result
+
+class Parameter_Assignment(Parameter_Base):
+    """This class holds a assignment, that is assign the result of the expression to the right to the identifier on the left."""
+    left = None
+    right = None
+
+    
+    def __init__(self, _left = None, _right = None):
+        super(Parameter_Assignment, self ).__init__()
+        if _left != None:
+            self.left     = _left
+        else:
+            self.left     = None
+        if _right != None:
+            self.right     = _right
+        else:
+            self.right     = None
+
+    def as_sql(self, _db_type):
+        """Generate SQL for specified database engine"""
+        # TODO: Handle ILIKE for PostgreSQL.
+        
+        _result = self.left.as_sql(_db_type)  + ' = ' + self.right.as_sql(_db_type)  
+        return _result
+        
 
 class Parameter_Conditions(SQL_List):
     """This class holds a list of condition or list of conditions ((A=B AND C=D) OR (E=F))"""
@@ -854,11 +881,54 @@ class Verb_INSERT(Parameter_Base):
                    
         return result  
     
+class Verb_UPDATE(Parameter_Base):
+    """This class holds an INSERT statement"""
+    
+    table_identifier = None
+    assignments = None
+    where_conditions = None
+
+    def __init__(self, _table_identifier = None, _assignments = None, _where_conditions = None):
+        super(Verb_UPDATE, self ).__init__()
+        if _table_identifier != None:
+            self.table_identifier = _table_identifier  
+        else:
+            self.destination_identifier = None
+        
+        if _assignments != None:
+            self.assignments    = _assignments
+        else:
+            self.assignments    = None 
+                               
+        if _where_conditions != None:        
+            self.where_conditions = _where_conditions
+        else:
+            self.where_conditions = None            
+
+    def _generate_assignments_sql(self, _db_type):
+        _results = [] 
+        for _curr_assignment in self.assignments:
+            _results.append( _curr_assignment.as_sql(_db_type))
+        
+        return ", ".join(_results)
+        
+    def _generate_sql(self, _db_type):
+        """Generate SQL for specified database engine"""
+        
+        if len(self.assignments) > 0:
+            _result = 'UPDATE '+ self.table_identifier.as_sql(_db_type) + DEFAULT_ROWSEP
+            _result+= 'SET' + DEFAULT_ROWSEP + self._generate_assignments_sql(_db_type)+ DEFAULT_ROWSEP 
+            _result+= 'WHERE ' + self.where_conditions.as_sql(_db_type)
+        else:
+            raise Exception('.as_sql(_db_type) + DEFAULT_ROWSEP.as_sql: No column_identifiers specified!')
+                   
+        return _result  
+    
 class Verb_DELETE(Parameter_Base):
     """This class holds a DELETE statement"""
     sources = None
     """
-       @warning: Important! The first source must have a parameter_identifier that specifies the target table.
+       @warning: Important! The first source must have a parameter_identifier as expression that specifies the target table.
     """
 
     
