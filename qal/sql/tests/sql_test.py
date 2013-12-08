@@ -260,7 +260,7 @@ def gen_simple_update():
     _assignments = []
     _assignments.append(Parameter_Assignment(_left = Parameter_Identifier("dest_column"), _right = Parameter_String("Hello")))
 
-    _update = Verb_UPDATE(_table_identifier =Parameter_Identifier("test"),_assignments = _assignments, _where_conditions = _conditions)
+    _update = Verb_UPDATE(_table_identifier =Parameter_Identifier("test"),_assignments = _assignments, _conditions = _conditions)
     return _update
 
 def gen_simple_create(): 

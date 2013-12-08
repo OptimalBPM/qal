@@ -886,9 +886,9 @@ class Verb_UPDATE(Parameter_Base):
     
     table_identifier = None
     assignments = None
-    where_conditions = None
+    conditions = None
 
-    def __init__(self, _table_identifier = None, _assignments = None, _where_conditions = None):
+    def __init__(self, _table_identifier = None, _assignments = None, _conditions = None):
         super(Verb_UPDATE, self ).__init__()
         if _table_identifier != None:
             self.table_identifier = _table_identifier  
@@ -900,10 +900,10 @@ class Verb_UPDATE(Parameter_Base):
         else:
             self.assignments    = None 
                                
-        if _where_conditions != None:        
-            self.where_conditions = _where_conditions
+        if _conditions != None:        
+            self.conditions = _conditions
         else:
-            self.where_conditions = None            
+            self.conditions = None            
 
     def _generate_assignments_sql(self, _db_type):
         _results = [] 
@@ -918,7 +918,7 @@ class Verb_UPDATE(Parameter_Base):
         if len(self.assignments) > 0:
             _result = 'UPDATE '+ self.table_identifier.as_sql(_db_type) + DEFAULT_ROWSEP
             _result+= 'SET' + DEFAULT_ROWSEP + self._generate_assignments_sql(_db_type)+ DEFAULT_ROWSEP 
-            _result+= 'WHERE ' + self.where_conditions.as_sql(_db_type)
+            _result+= 'WHERE ' + self.conditions.as_sql(_db_type)
         else:
             raise Exception('.as_sql(_db_type) + DEFAULT_ROWSEP.as_sql: No column_identifiers specified!')
                    
