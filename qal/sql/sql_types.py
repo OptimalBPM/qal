@@ -157,7 +157,7 @@ def sql_property_to_type(_property_name):
     elif _property_name == 'columns':
         return ['Array_Parameter_ColumnDefinition']
     
-    elif _property_name == 'destination_identifier':
+    elif _property_name in ['destination_identifier', 'table_identifier']:
         return ['Parameter_Identifier']
 
     elif _property_name in ['column_identifiers','references']:
@@ -183,7 +183,9 @@ def sql_property_to_type(_property_name):
     elif _property_name == 'when_statements':
         return ['Array_Parameter_WHEN']  
     elif _property_name == 'order_by':
-        return ['Array_Parameter_ORDER_BY_item']  
+        return ['Array_Parameter_ORDER_BY_item'] 
+    elif _property_name == 'assignments':
+        return ['Array_Parameter_Assignment']  
     else:
         raise Exception("sql_property_to_type: Unrecognized property:" + _property_name)
     

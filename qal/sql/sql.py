@@ -898,12 +898,12 @@ class Verb_UPDATE(Parameter_Base):
         if _assignments != None:
             self.assignments    = _assignments
         else:
-            self.assignments    = None 
+            self.assignments    = SQL_List("Parameter_Assignment")
                                
         if _conditions != None:        
             self.conditions = _conditions
         else:
-            self.conditions = None            
+            self.conditions = Parameter_Conditions()            
 
     def _generate_assignments_sql(self, _db_type):
         _results = [] 

@@ -122,6 +122,7 @@ class SQL_XML(XML_Translation):
         self._add_child_array_of(_document, _parent_node, 'Array_Parameter_ORDER_BY_item', ["Parameter_ORDER_BY_item"])
         self._add_child_array_of(_document, _parent_node, 'Array_Parameter_Condition', ["Parameter_Condition"])
         self._add_child_array_of(_document, _parent_node, 'Array_Parameter_Field', ["Parameter_Field"])
+        self._add_child_array_of(_document, _parent_node, 'Array_Parameter_Assignment', ["Parameter_Assignment"])
         self._add_child_array_of(_document, _parent_node, 'Array_expression_item', expression_item_types())
         self._add_child_array_of(_document, _parent_node, 'Array_tabular_expression_item', tabular_expression_item_types())    
         self._add_child_array_of(_document, _parent_node, 'Array_list', '*')        
@@ -265,8 +266,9 @@ class SQL_XML(XML_Translation):
                                 _obj.__dict__[_curr_itemkey] = xml_get_allowed_value(_curr_node, currtype)
                                 
                         else:
-                            if _curr_node.hasChildNodes():
-                                _obj.__dict__[_curr_itemkey] = self._parse_class_xml_node(_curr_node, currtype[0], _obj)  
+                            _curr_child = xml_find_non_text_child(_curr_node)
+                            if (_curr_child):
+                                _obj.__dict__[_curr_itemkey] = self._parse_class_xml_node(_curr_child, currtype[0], _obj)  
                
                   
         if self._resources and hasattr(_obj, 'resource_uuid') and _obj.resource_uuid != None and _obj.resource_uuid != '':

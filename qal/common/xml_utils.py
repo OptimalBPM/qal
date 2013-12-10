@@ -156,6 +156,7 @@ class XML_Translation(object):
             return self.prefix_own + ':' + _value
         else:
             return _value
+        
     def _strip_own(self, _value):
         ps_len = len(self.prefix_own + ':')
         if _value[0:ps_len] == self.prefix_own + ':':

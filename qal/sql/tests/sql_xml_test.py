@@ -11,7 +11,7 @@ in the sql_test for convenience and that those tests use datasets.
 '''
 import unittest
 from qal.sql.sql_xml import SQL_XML
-from qal.sql.tests.sql_test import my_diff #, gen_simple_insert, gen_simple_select, gen_simple_create
+from qal.sql.tests.sql_test import my_diff
 from qal.dal.dal_types import db_types, DB_POSTGRESQL
 
 
@@ -248,7 +248,34 @@ class class_SQL_Meta_XML_Test(unittest.TestCase):
 
         self.assertEqual(_str_xml_comp[:-2],_str_xml_out[:-1], 'test_7_delete: The generated XML file differs.\n'+ my_diff(_str_xml_comp, _str_xml_out))
 
-    def test_8_resource(self):
+
+
+    def test_8_update(self):
+        
+        _meta_xml = SQL_XML()
+        _meta_xml.schema_uri = '../../dal/SQL.xsd'      
+
+        f = open(Test_Resource_Dir +"/_test_UPDATE_in.xml","r")
+        _str_xml_in = f.read()
+        _structure = _meta_xml.xml_to_sql_structure(_str_xml_in)
+
+        # Compare with all SQL flavours
+        self._compare_sql_files_for_all_db_types(_structure,"_test_UPDATE", _overwrite = True)
+        
+        # Compare compare-file with XML output file
+        _xml_out = _meta_xml.sql_structure_to_xml(_structure)
+        _str_xml_out = _xml_out.toxml()
+        f_out = open(Test_Resource_Dir +"/_test_UPDATE_out.xml","w")
+        print(_str_xml_out, file=f_out)
+        f_out.close()
+        
+        f_comp = open(Test_Resource_Dir +"/_test_UPDATE_in.xml","r")
+        _str_xml_comp = f_comp.read()
+
+
+        self.assertEqual(_str_xml_comp[:-2],_str_xml_out[:-1], 'test_8_update: The generated XML file differs.\n'+ my_diff(_str_xml_comp, _str_xml_out))
+
+    def test_9_resource(self):
         # TODO: Describe the requirements for the test.
         
         _meta_xml = SQL_XML()

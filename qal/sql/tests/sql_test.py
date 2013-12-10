@@ -257,7 +257,7 @@ def gen_simple_update():
     _conditions.append(_a_2)
     
     
-    _assignments = []
+    _assignments = SQL_List()
     _assignments.append(Parameter_Assignment(_left = Parameter_Identifier("dest_column"), _right = Parameter_String("Hello")))
 
     _update = Verb_UPDATE(_table_identifier =Parameter_Identifier("test"),_assignments = _assignments, _conditions = _conditions)
