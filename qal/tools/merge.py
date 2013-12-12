@@ -5,7 +5,7 @@ Created on Nov 3, 2013
 """
 
 
-from qal.sql.sql_macros import copy_to_table
+from qal.sql.sql_macros import copy_to_table, make_update_skeleton
 from qal.common.resources import Resources
 from qal.tools.transform import make_transformation_array_from_xml_node, make_transformations_xml_node, perform_transformations
 from qal.tools.diff import compare
@@ -14,6 +14,8 @@ from qal.nosql.xpath import XPath_Dataset
 from qal.sql.sql_macros import select_all_skeleton
 from qal.dal.dal import Database_Abstraction_Layer
 from lxml import etree
+from qal.sql.sql import Parameter_Assignment, Parameter_Identifier, Parameter_Parameter,\
+    Parameter_Condition, Verb_UPDATE, Parameter_Conditions, SQL_List
 
 def isnone( _node):
     if _node == None or _node.text == None:
@@ -69,7 +71,9 @@ class Merge(object):
     mappings = []
     key_fields = []
     source_table = None
+    source_field_types = None
     dest_table = None
+    dest_field_types = None
     resources = None
     
     """
@@ -184,10 +188,68 @@ class Merge(object):
         #copy_to_table
         pass
     
-    def _rdbms_generate_updates(self, _delete_list):
-        """Generates DELETE and INSERT instances populated with the indata
-        @todo: Obviously a VERB_UPDATE will be better, implement that when test servers are back up."""     
-        pass    
+    def _extract_key_columns(self, _diff_list):
+        _result = []
+        for _curr_row in _diff_list:
+            _curr_row_out = []
+            for _curr_field in self.key_fields:
+                _curr_row_out.append(_curr_row[2][_curr_field])
+            _result.append(_curr_row_out)
+        return _result
+            
+    
+    def _rdbms_generate_updates(self, _update_list):
+        """Generates DELETE and INSERT instances populated with the indata """
+        
+        # extract 
+        
+        _key_columns = self._extract_key_columns(_update_list)
+        print("_key_columns "  + str(_key_columns))
+        print("_update_list " + str(_update_list))
+        
+        
+        
+        
+        # Add assignments to all fields except the key fields and add conditions for all key fields.
+        
+        
+        _field_names_ex_keys = []
+        _field_names_ex_keys_data_types = []
+        _key_field_names = []
+        _key_field_data_types = []
+        
+        for _curr_field_idx in range(len(self.dest_field_names)):
+            if _curr_field_idx in self.key_fields:
+                _key_field_names.append(self.dest_field_names[_curr_field_idx])
+                _key_field_data_types.append(self.dest_field_types[_curr_field_idx])
+            else:
+                _field_names_ex_keys.append(self.dest_field_names[_curr_field_idx])
+                _field_names_ex_keys_data_types.append(self.dest_field_types[_curr_field_idx])
+        
+        print("_field_names_ex_keys" + str(_field_names_ex_keys))
+        print("_key_field_names" + str(_key_field_names))
+        print("_field_names_ex_keys_data_types" + str(_field_names_ex_keys_data_types))
+
+        
+        _assignments = SQL_List("Parameter_Assignment")
+        
+        for _curr_field_idx in range(len(_field_names_ex_keys)):
+            _left = Parameter_Identifier(_identifier = _field_names_ex_keys[_curr_field_idx])
+            _right = Parameter_Parameter(_data_type = _field_names_ex_keys_data_types[_curr_field_idx])
+            _assignments.append(Parameter_Assignment(_left, _right))
+
+        _conditions = Parameter_Conditions()    
+        
+        for _curr_field_idx in range(len(_key_field_names)):
+            _left = Parameter_Identifier(_identifier = _key_field_names[_curr_field_idx])
+            _right = Parameter_Parameter(_data_type = _key_field_data_types[_curr_field_idx])
+            _conditions.append(Parameter_Condition( _left, _right, _operator = "="))
+            
+        _table_identifier =  Parameter_Identifier(_identifier = self.dest_table)
+        
+        _update = Verb_UPDATE(_table_identifier = _table_identifier, _conditions = _conditions, _assignments = _assignments)            
+        
+        print(_update.as_sql(0))    
     
     def load_file_dataset_from_resource(self, _resource):
         if _resource.type.upper() == "FLATFILE":
@@ -202,7 +264,7 @@ class Merge(object):
         
     def load_rdbms_dataset_from_resource(self, _resource, _table_name):
         _dal = Database_Abstraction_Layer(_resource = _resource)
-        return _dal.query(select_all_skeleton(_table_name).as_sql(_dal.db_type)), _dal.field_names
+        return _dal.query(select_all_skeleton(_table_name).as_sql(_dal.db_type)), _dal.field_names, _dal.field_types
     
     def _apply_merge_to_dataset(self, _insert, _update, _delete, _sorted_dest):
         
@@ -257,13 +319,13 @@ class Merge(object):
         pass    
     
     def _load_resources(self):
-                # Load source resource
+        # Load source resource
         self.source_resource = self.resources.get_resource('source_uuid')
         # Get source data set
         if self.source_resource.type.upper() in ["CUSTOM", "FLATFILE", "MATRIX", "XPATH"]:
             self.source_dataset, self.source_field_names = self.load_file_dataset_from_resource(self.source_resource)
         elif self.source_resource.type.upper() in ["RDBMS"]:
-            self.source_dataset, self.source_field_names = self.load_rdbms_dataset_from_resource(self.source_resource, self.source_table)
+            self.source_dataset, self.source_field_names, self.source_field_types = self.load_rdbms_dataset_from_resource(self.source_resource, self.source_table)
         else: 
             raise Exception("execute: Invalid source resource type: " + str(self.source_resource.type.upper()))
 
@@ -273,12 +335,13 @@ class Merge(object):
         if self.dest_resource.type.upper() in ["CUSTOM", "FLATFILE", "MATRIX", "XPATH"]:
             self.dest_dataset, self.dest_field_names = self.load_file_dataset_from_resource(self.dest_resource)
         elif self.dest_resource.type.upper() in ["RDBMS"]:
-            self.dest_dataset, self.dest_field_names = self.load_rdbms_dataset_from_resource(self.dest_resource, self.dest_table)
+            self.dest_dataset, self.dest_field_names, self.dest_field_types = self.load_rdbms_dataset_from_resource(self.dest_resource, self.dest_table)
         else: 
             raise Exception("execute: Invalid destination resource type:" + str(self.dest_resource.type.upper()))
         
 
     def _make_shortcuts(self):
+        """Make a list of which source column index maps to which destination column index""" 
         _shortcuts = []       
 
         # Make mapping
@@ -291,6 +354,8 @@ class Merge(object):
          
 
     def _remap_and_transform(self):
+        """Create a remapped source dataset that has the same data in the same columns as the destination dataset.
+        Also applies transformations."""
         _shortcuts = self._make_shortcuts()
 
         _mapped_source = []
@@ -317,7 +382,7 @@ class Merge(object):
         
         # Load resources
         self._load_resources()
-        print(self.source_dataset)
+        
         # Create a remapped source dataset, perform transformations
         _mapped_source = self._remap_and_transform()
         
@@ -343,9 +408,9 @@ class Merge(object):
             self._rdbms_generate_deletes(_delete)
             self._rdbms_generate_inserts(_insert)
             
-            return self.load_rdbms_dataset_from_resource(self.dest_resource, self.dest_table)
+            #return self.load_rdbms_dataset_from_resource(self.dest_resource, self.dest_table)
         
-        """
+        
         # Merge updates into destination data set
         print("_update : " + str(_update))
         
@@ -354,7 +419,7 @@ class Merge(object):
         
         # Merge delete into destination data set 
         print("_delete : " + str(_delete))
-        """
+        
         
         
     def write_result_csv(self, _file_output = None):
