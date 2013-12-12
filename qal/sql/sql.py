@@ -102,6 +102,25 @@ class Parameter_Numeric(Parameter_Expression_Item):
                 raise Exception("A numeric parameter must be numeric. Value:" + self.numeric_value)
         return str(self.numeric_value)   
     # TODO: Check if any flavors allow other decimal signs.
+
+class Parameter_Parameter(Parameter_Expression_Item):
+    """Holds a parameter to be used in prepared statements."""
+    
+    data_type = ''  
+  
+    def __init__(self, _data_type = '', _operator = None):
+        super(Parameter_Parameter, self ).__init__(_operator)
+        self.data_type = _data_type  
+        
+    
+    def _generate_sql(self, _db_type):
+        """Generate SQL for specified database engine"""
+        if (self.data_type in ["string", "blob", "timestamp"]):
+            return "%s"
+        elif (self.data_type in ["float", "integer"]):
+            return "%d"
+    
+
     
 class Parameter_IN(Parameter_Expression_Item):
     """Hold an SQL IN-statement"""
