@@ -115,11 +115,15 @@ class Parameter_Parameter(Parameter_Expression_Item):
     
     def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
-        if (self.data_type in ["string", "blob", "timestamp"]):
+        # This is temporary, awaiting proper PyMySQL support for %d.
+        if _db_type == DB_MYSQL:
+            return "%s"
+        elif (self.data_type in ["string", "blob", "timestamp"]):
             return "%s"
         elif (self.data_type in ["float", "integer"]):
             return "%d"
-    
+        else:
+            raise Exception("Parameter_Parameter._generate_sql, unsupported data_type: " + str(self.data_type))
 
     
 class Parameter_IN(Parameter_Expression_Item):
