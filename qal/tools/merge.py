@@ -170,7 +170,7 @@ class Merge(object):
         else:
             raise Exception("Merge.load_from_xml_node: \"None\" is not a valid Merge node.")                  
     
-    def _rdbms_generate_deletes(self, _delete_list):
+    def _rdbms_apply_deletes(self, _delete_list):
         """Generates a Verb_DELETE instance populated with the indata"""
         
         """Create SELECTs and put them in a UNION:ed set"""
@@ -183,41 +183,34 @@ class Merge(object):
         #return _deletes
         pass
     
-    def _rdbms_generate_inserts(self, _insert_list):
+    def _rdbms_apply_inserts(self, _insert_list):
         """Generates a Verb_INSERT instance populated with the indata"""
         #copy_to_table
         pass
     
-    def _extract_key_columns(self, _diff_list):
+
+    
+    def _extract_data_columns_from_diff_list(self, _field_indexes, _diff_list):    
+        """Extracts columns specified in _field_indexes from _diff_list"""
         _result = []
         for _curr_row in _diff_list:
             _curr_row_out = []
-            for _curr_field in self.key_fields:
+            for _curr_field in _field_indexes:
                 _curr_row_out.append(_curr_row[2][_curr_field])
             _result.append(_curr_row_out)
-        return _result
-            
+        return _result        
     
-    def _rdbms_generate_updates(self, _update_list):
+    def _rdbms_apply_updates(self, _update_list):
         """Generates DELETE and INSERT instances populated with the indata """
         
-        # extract 
-        
-        _key_columns = self._extract_key_columns(_update_list)
-        print("_key_columns "  + str(_key_columns))
-        print("_update_list " + str(_update_list))
-        
-        
-        
-        
         # Add assignments to all fields except the key fields and add conditions for all key fields.
-        
-        
+                
         _field_names_ex_keys = []
         _field_names_ex_keys_data_types = []
         _key_field_names = []
         _key_field_data_types = []
         
+        # Create lists of field names and types excluding and including keys
         for _curr_field_idx in range(len(self.dest_field_names)):
             if _curr_field_idx in self.key_fields:
                 _key_field_names.append(self.dest_field_names[_curr_field_idx])
@@ -226,17 +219,18 @@ class Merge(object):
                 _field_names_ex_keys.append(self.dest_field_names[_curr_field_idx])
                 _field_names_ex_keys_data_types.append(self.dest_field_types[_curr_field_idx])
         
-        print("_field_names_ex_keys" + str(_field_names_ex_keys))
-        print("_key_field_names" + str(_key_field_names))
-        print("_field_names_ex_keys_data_types" + str(_field_names_ex_keys_data_types))
-
         
         _assignments = SQL_List("Parameter_Assignment")
         
+        # Instantiate the assignments
+                
         for _curr_field_idx in range(len(_field_names_ex_keys)):
             _left = Parameter_Identifier(_identifier = _field_names_ex_keys[_curr_field_idx])
             _right = Parameter_Parameter(_data_type = _field_names_ex_keys_data_types[_curr_field_idx])
             _assignments.append(Parameter_Assignment(_left, _right))
+
+
+        # Create the WHERE conditions.
 
         _conditions = Parameter_Conditions()    
         
@@ -244,14 +238,38 @@ class Merge(object):
             _left = Parameter_Identifier(_identifier = _key_field_names[_curr_field_idx])
             _right = Parameter_Parameter(_data_type = _key_field_data_types[_curr_field_idx])
             _conditions.append(Parameter_Condition( _left, _right, _operator = "="))
+        
+        # Specify target table
             
         _table_identifier =  Parameter_Identifier(_identifier = self.dest_table)
         
+        # Create Verb_UPDATE instance with all parameters
+        
         _update = Verb_UPDATE(_table_identifier = _table_identifier, _conditions = _conditions, _assignments = _assignments)            
         
-        print(_update.as_sql(0))    
+        
+        # To satisfy the Verb_UPDATE instance, create a two-dimensional array, leftmost columns are data, rightmost are keys.
+                 
+        _field_idx_ex_keys = list(set(range(len(self.dest_field_names))) - set(self.key_fields))
+        _execute_many_data = self._extract_data_columns_from_diff_list(_field_idx_ex_keys + self.key_fields, _update_list)
+        
+        # Create a DAL for the destination resource        
+                
+        _dal = Database_Abstraction_Layer(_resource = self.dest_resource)
+        
+        # Generate the SQL with all parameter place holders
+        
+        _update_sql = _update.as_sql(_dal.db_type)
+        
+        # Apply and commit changes to the structure
+        
+        _dal.executemany(_update_sql, _execute_many_data)  
+        _dal.commit()
+       
+         
     
     def load_file_dataset_from_resource(self, _resource):
+        """Get a dataset from a file resource"""
         if _resource.type.upper() == "FLATFILE":
             _ffds =  Flatfile_Dataset(_resource = _resource)
             return _ffds.load(), _ffds.field_names
@@ -263,6 +281,7 @@ class Merge(object):
             raise Exception("load_file_dataset_from_resource: Unsupported source resource type: " + str(_resource.type.upper()))
         
     def load_rdbms_dataset_from_resource(self, _resource, _table_name):
+        """Query all values from a table from a RDBMS resource"""
         _dal = Database_Abstraction_Layer(_resource = _resource)
         return _dal.query(select_all_skeleton(_table_name).as_sql(_dal.db_type)), _dal.field_names, _dal.field_types
     
@@ -284,19 +303,21 @@ class Merge(object):
             _actual_row_idx = _curr_row_idx - _delete_idx + _insert_idx
             # print("_actual_row_idx = _curr_row_idx - _delete_idx + _insert_idx = " + 
             #      str(_curr_row_idx) + " - " +str(_delete_idx) + " + " + str(_insert_idx))
+
+            # Make deletes
             if _do_delete and _delete_idx < len(_delete):
                 if _delete[_delete_idx][1] == _curr_row_idx:
                     #print("deleting row " + str(_delete[_delete_idx][1])) 
                     _sorted_dest.pop(_actual_row_idx)
                     _delete_idx+=1
-        
+            # Make updates
             if _do_update and _update_idx < len(_update):
                 if _update[_update_idx][1] == _curr_row_idx:
                     #print("updating row " + str(_update[_update_idx][1])) 
                     _sorted_dest[_actual_row_idx] = _update[_update_idx][2]
                     _update_idx+=1
                     
-        
+            # Make inserts
             if _do_insert:
                 
                 # TODO: This while should insert these in reverse instead.
@@ -359,12 +380,15 @@ class Merge(object):
         _shortcuts = self._make_shortcuts()
 
         _mapped_source = []
-
+        # Loop all rows in the source dataset
         for _curr_idx in range(0, len(self.source_dataset)):
+            # Create an empty row with None-values to fill later
             _curr_mapped = []
             _curr_mapped.extend(None for x in self.dest_field_names)
             
             _curr_row = self.source_dataset[_curr_idx]
+            # Loop all the shortcuts to remap the data from the source structure into the destinations 
+            # structure while applying transformations.
             for _curr_shortcut in _shortcuts:
                 try:
                     _value = perform_transformations(_curr_row[_curr_shortcut[0]], _curr_shortcut[2].transformations)
@@ -372,7 +396,7 @@ class Merge(object):
                     raise Exception("Merge._remap_and_transform:\nError in applying transformations for row " + 
                                     str(_curr_idx) + ", column \"" + self.dest_field_names[_curr_shortcut[0]] + 
                                     "\":\n" + str(e))
-            
+                # Set the correct field in the destination dataset
                 _curr_mapped[_curr_shortcut[1]] = _value
             _mapped_source.append(_curr_mapped)
         
@@ -404,9 +428,9 @@ class Merge(object):
             self._xpath_generate_inserts(_insert)
                     
         else:
-            self._rdbms_generate_updates(_update)
-            self._rdbms_generate_deletes(_delete)
-            self._rdbms_generate_inserts(_insert)
+            self._rdbms_apply_updates(_update)
+            self._rdbms_apply_deletes(_delete)
+            self._rdbms_apply_inserts(_insert)
             
             #return self.load_rdbms_dataset_from_resource(self.dest_resource, self.dest_table)
         

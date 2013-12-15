@@ -2,12 +2,11 @@
 Created on Sep 1, 2013
 
 @author: Nicklas Boerjesson
-@note:  The functions are just stubs, so far. This module will contain code for doing what 
-GNU diffutils does for files, but with datasets.
 
 """
 
 def cmp_key_columns(_left, _right, _key_columns):
+    """This functions compares the columns in the specified key fields only and returns data usable in a </=/>-comparer"""
     for _curr_key_column in _key_columns:
 
         if _left[_curr_key_column] < _right[_curr_key_column]:
@@ -18,6 +17,8 @@ def cmp_key_columns(_left, _right, _key_columns):
     return 0
 
 def match_all_columns(_left, _right):
+    # Match all columns in two arrays 
+    # TODO: Check if this can be done pythonically
     for _curr_column in range(0, len(_right)):
         if _left[_curr_column] != _right[_curr_column]:
             return False
