@@ -57,7 +57,11 @@
 	        	<dest_type>string</dest_type>
 		       	<format_string/>
 		    </cast>     
-	        <trim order="3"></trim>     
+	        <trim order="3"></trim>
+	        <cast order="1">
+	        	<dest_type>timestamp</dest_type>
+		       	<format_string>%Y-%m-%d %H:%M:%S</format_string>
+		    </cast> 	             
         </transformations>
         <result_cast_to></result_cast_to>
         <dest_column>Table1Changed</dest_column>

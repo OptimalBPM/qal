@@ -153,7 +153,13 @@ class Cast(Custom_Transformation):
             if _value == None or _value =="":
                 return _value
             if self.dest_type in ['string', 'string(255)', 'string(3000)']:
-                return str(_value)
+                if isinstance(_value, date):
+                    if self.format_string != None:
+                        return _value.strftime(self.format_string)
+                    else:
+                        return _value.strftime("%Y-%m-%d %H:%M:%S")
+                else:
+                    return str(_value)
             elif self.dest_type in ['float']:
                 return float(_value)
             elif self.dest_type in ['integer', 'serial']:
@@ -163,6 +169,7 @@ class Cast(Custom_Transformation):
                     return datetime.strptime(_value, self.format_string)
                 else:
                     return datetime.strptime(_value, "%Y-%m-%d %H:%M:%S")
+                
             elif self.dest_type in ['boolean']:
                 return bool(_value)
             else:
