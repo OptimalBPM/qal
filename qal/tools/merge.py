@@ -5,7 +5,7 @@ Created on Nov 3, 2013
 """
 
 
-from qal.sql.sql_macros import copy_to_table, make_update_skeleton
+from qal.sql.sql_macros import make_insert_skeleton
 from qal.common.resources import Resources
 from qal.tools.transform import make_transformation_array_from_xml_node, make_transformations_xml_node, perform_transformations
 from qal.tools.diff import compare
@@ -15,7 +15,8 @@ from qal.sql.sql_macros import select_all_skeleton
 from qal.dal.dal import Database_Abstraction_Layer
 from lxml import etree
 from qal.sql.sql import Parameter_Assignment, Parameter_Identifier, Parameter_Parameter,\
-    Parameter_Condition, Verb_UPDATE, Parameter_Conditions, SQL_List
+    Parameter_Condition, Verb_UPDATE, Parameter_Conditions, SQL_List,\
+    Parameter_Source, Verb_DELETE
 
 def isnone( _node):
     if _node == None or _node.text == None:
@@ -169,25 +170,7 @@ class Merge(object):
             self.resources = Resources(_resources_node= _xml_node.find("resources"))
         else:
             raise Exception("Merge.load_from_xml_node: \"None\" is not a valid Merge node.")                  
-    
-    def _rdbms_apply_deletes(self, _delete_list):
-        """Generates a Verb_DELETE instance populated with the indata"""
-        
-        """Create SELECTs and put them in a UNION:ed set"""
-        
-        """Put the set in an insert and add joins on the ID columns """
-            
-        #_source = Parameter_Source("""_expression = None, _conditions = None, _alias = '', _join_type = None""")
-        #_deletes = Verb_DELETE("""_sources = None, _operator = None""")
-        #_deletes.sources.append(_source)
-        #return _deletes
-        pass
-    
-    def _rdbms_apply_inserts(self, _insert_list):
-        """Generates a Verb_INSERT instance populated with the indata"""
-        #copy_to_table
-        pass
-    
+
 
     
     def _extract_data_columns_from_diff_list(self, _field_indexes, _diff_list):    
@@ -200,6 +183,44 @@ class Merge(object):
             _result.append(_curr_row_out)
         return _result        
     
+    
+    def _rdbms_apply_deletes(self, _delete_list):
+        """Generates a Verb_DELETE instance populated with the indata"""
+        
+        
+        # Extract the key data
+        _key_values = self._extract_data_columns_from_diff_list(self.key_fields, _delete_list)
+                 
+        _source = Parameter_Source()
+        _source.expression.append(Parameter_Identifier(self.dest_table))
+        
+        # Add the WHERE statement
+        for _field_idx in self.key_fields:
+            _new_cond = Parameter_Condition(_left = Parameter_Identifier(_identifier= self.dest_field_names[_field_idx]), 
+                                            _right = Parameter_Parameter(_data_type = self.dest_field_types[_field_idx]), 
+                                             _operator = '=', _and_or = 'AND')
+            _source.conditions.append(_new_cond)
+        
+        # Make the Verb_DELETE skeleton
+        _delete = Verb_DELETE()
+        _delete.sources.append(_source)
+        
+        # Fetch the resource
+        _dal = Database_Abstraction_Layer(_resource = self.dest_resource)
+        _delete_sql = _delete.as_sql(_dal.db_type)
+        # Make the deletes
+        _dal.executemany(_delete_sql, _key_values)
+        _dal.commit()
+
+    
+    def _rdbms_apply_inserts(self, _insert_list):
+        """Generates a Verb_INSERT instance populated with the indata"""
+        
+        _insert = make_insert_skeleton(_table_name = self.table_name, _field_names = self.dest_field_names)
+        #copy_to_table
+        pass
+    
+
     def _rdbms_apply_updates(self, _update_list):
         """Generates DELETE and INSERT instances populated with the indata """
         
@@ -421,11 +442,14 @@ class Merge(object):
                                                           _full = True)
         
         if self.dest_resource.type.upper() in ["CUSTOM", "FLATFILE", "MATRIX"]:
-            return self._apply_merge_to_dataset(_insert, _update, _delete, _dest_sorted)            
+            _dataset = self._apply_merge_to_dataset(_insert, _update, _delete, _dest_sorted)
+            # Save to relevant data format
+                    
+                
         elif self.dest_resource.type.upper() in ["XPATH"]:
             self._xpath_generate_updates(_update)
             self._xpath_generate_deletes(_delete)
-            self._xpath_generate_inserts(_insert)
+            self._xpath_generate_inserts(_insert)   
                     
         else:
             self._rdbms_apply_updates(_update)
