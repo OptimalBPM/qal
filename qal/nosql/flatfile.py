@@ -93,4 +93,31 @@ class Flatfile_Dataset(Custom_Dataset):
                 self.field_names.append("Field_"+ str(_curr_idx))   
             
         return self.data_table   
+    
+    
+    def save(self):
+        """Save data"""
+        _tmp_dir_abs = os.getcwd() 
+        print("Flatfile_Dataset.load: Filename='" + str(self.filename) + "', Delimiter='"+str(self.delimiter)+"'")
+        
+        _file = open(self.filename, 'r')
+        _reader = csv.reader(_file, delimiter=self.delimiter, quoting=self._quotestr_to_constants(self.quoting))
+        _first_row = True
+        self.data_table = []
+        for _row in _reader:
+            # Save header row if existing.
+            if (_first_row and self.has_header == True):
+                self.field_names = [_curr_col.replace("'", "").replace("\"", "") for _curr_col in _row]
+                print("self.field_names :" + str(self.field_names))
+                _first_row = False
+            else:
+                self.data_table.append(_row)
+                    
+            
+        _file.close()    
+        if (self.has_header == False):
+            for _curr_idx in range(0,len(_reader[0])):
+                self.field_names.append("Field_"+ str(_curr_idx))   
+            
+        return self.data_table   
        
