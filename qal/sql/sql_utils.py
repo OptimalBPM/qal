@@ -225,3 +225,13 @@ def handle_temp_table_ref(_identifier, _db_type):
     else:
         return _identifier
     
+def datatype_to_parameter(_db_type, _datatype):
+    if _db_type == DB_MYSQL:
+        return "%s"
+    elif (_datatype in ["string", "blob", "timestamp"]):
+        return "%s"
+    elif (_datatype in ["float", "integer"]):
+        return "%d"
+    else:
+        raise Exception("datatype_to_parameter, unsupported data_type: " + str(_datatype))            
+    

@@ -5,7 +5,7 @@
 		  <field_mapping>
 		    <is_key>True</is_key>
 		    <src_column>emp_no</src_column>
-		    <src_data_type>string</src_data_type>
+		    <src_datatype>string</src_datatype>
 		    <src_cast_to>string</src_cast_to>
 		    <transformations>
 		    	<trim order="1">end</trim>
@@ -22,7 +22,7 @@
 		  <field_mapping>
 		    <is_key>False</is_key>
 		    <src_column>name</src_column>
-		    <src_data_type>string</src_data_type>
+		    <src_datatype>string</src_datatype>
 		    <src_cast_to>string</src_cast_to>
 		    <transformations>
 		        <trim order="1"></trim>
@@ -43,7 +43,7 @@
 		  <field_mapping>
 		    <is_key>False</is_key>
 		    <src_column>position</src_column>
-		    <src_data_type>string</src_data_type>
+		    <src_datatype>string</src_datatype>
 		    <src_cast_to>string</src_cast_to>
 		    <transformations>
 		        <trim order="1"></trim>
@@ -54,7 +54,7 @@
 		  <field_mapping>
 		    <is_key>False</is_key>
 		    <src_column>manager</src_column>
-		    <src_data_type>string</src_data_type>
+		    <src_datatype>string</src_datatype>
 		    <src_cast_to>string</src_cast_to>
 		    <transformations>
 		        <trim order="1"></trim>
@@ -69,7 +69,7 @@
 		  <field_mapping>
 		    <is_key>False</is_key>
 		    <src_column>hiredate</src_column>
-		    <src_data_type>string</src_data_type>
+		    <src_datatype>string</src_datatype>
 		    <src_cast_to>string</src_cast_to>
 		    <transformations>
 		        <trim order="1"></trim>
@@ -84,7 +84,7 @@
 		  <field_mapping>
 		    <is_key>False</is_key>
 		    <src_column>salary</src_column>
-		    <src_data_type>string</src_data_type>
+		    <src_datatype>string</src_datatype>
 		    <src_cast_to>string</src_cast_to>
 		    <transformations>
 		        <trim order="1"></trim>
@@ -104,7 +104,7 @@
 		  <field_mapping>
 		    <is_key>False</is_key>
 		    <src_column>comm</src_column>
-		    <src_data_type>string</src_data_type>
+		    <src_datatype>string</src_datatype>
 		    <src_cast_to>string</src_cast_to>
 		    <transformations>
 		    	
@@ -126,7 +126,7 @@
 		  <field_mapping>
 		    <is_key>False</is_key>
 		    <src_column>dep_no</src_column>
-		    <src_data_type>string</src_data_type>
+		    <src_datatype>string</src_datatype>
 		    <src_cast_to>string</src_cast_to>
 		    <transformations>
 		        <trim order="1"></trim>

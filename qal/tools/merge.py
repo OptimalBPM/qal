@@ -5,7 +5,7 @@ Created on Nov 3, 2013
 """
 
 
-from qal.sql.sql_macros import make_insert_skeleton
+from qal.sql.sql_macros import make_insert_sql_with_parameters
 from qal.common.resources import Resources
 from qal.tools.transform import make_transformation_array_from_xml_node, make_transformations_xml_node, perform_transformations
 from qal.tools.diff import compare
@@ -27,7 +27,7 @@ def isnone( _node):
 class Field_Mapping(object):
     is_key = None 
     src_column = None
-    src_data_type = None
+    src_datatype = None
     src_cast_to = None
     result_cast_to = None
     dest_column = None
@@ -46,7 +46,7 @@ class Field_Mapping(object):
         if _xml_node != None:
             self.is_key = isnone(_xml_node.find("is_key"))
             self.src_column = isnone(_xml_node.find("src_column"))
-            self.src_data_type = isnone(_xml_node.find("src_data_type"))
+            self.src_datatype = isnone(_xml_node.find("src_datatype"))
             self.src_cast_to = isnone(_xml_node.find("src_cast_to"))
             self.result_cast_to = isnone(_xml_node.find("result_cast_to"))
             self.dest_column = isnone(_xml_node.find("dest_column"))
@@ -58,7 +58,7 @@ class Field_Mapping(object):
         _xml_node = etree.Element("field_mapping")        
         etree.SubElement(_xml_node, "is_key").text = self.is_key
         etree.SubElement(_xml_node, "src_column").text = self.src_column
-        etree.SubElement(_xml_node, "src_data_type").text = self.src_data_type
+        etree.SubElement(_xml_node, "src_datatype").text = self.src_datatype
         etree.SubElement(_xml_node, "src_cast_to").text = self.src_cast_to
         _xml_node.append(make_transformations_xml_node(self.transformations))
         etree.SubElement(_xml_node, "result_cast_to").text = self.result_cast_to
@@ -197,7 +197,7 @@ class Merge(object):
         # Add the WHERE statement
         for _field_idx in self.key_fields:
             _new_cond = Parameter_Condition(_left = Parameter_Identifier(_identifier= self.dest_field_names[_field_idx]), 
-                                            _right = Parameter_Parameter(_data_type = self.dest_field_types[_field_idx]), 
+                                            _right = Parameter_Parameter(_datatype = self.dest_field_types[_field_idx]), 
                                              _operator = '=', _and_or = 'AND')
             _source.conditions.append(_new_cond)
         
@@ -215,30 +215,42 @@ class Merge(object):
     
     def _rdbms_apply_inserts(self, _insert_list):
         """Generates a Verb_INSERT instance populated with the indata"""
-        
-        _insert = make_insert_skeleton(_table_name = self.table_name, _field_names = self.dest_field_names)
-        #copy_to_table
-        pass
-    
 
+        # Create a DAL for the destination resource, also we need to know the database type       
+                
+        _dal = Database_Abstraction_Layer(_resource = self.dest_resource)   
+        
+        _insert_sql = make_insert_sql_with_parameters(self.dest_table, self.dest_field_names, _dal.db_type, self.dest_field_types)
+
+        _execute_many_data = self._extract_data_columns_from_diff_list(range(len(self.dest_field_names)), _insert_list)
+        
+        # Create a DAL for the destination resource        
+                
+        _dal = Database_Abstraction_Layer(_resource = self.dest_resource)   
+         
+        # Apply and commit changes to the structure
+        
+        _dal.executemany(_insert_sql, _execute_many_data)  
+        _dal.commit()
+        
     def _rdbms_apply_updates(self, _update_list):
         """Generates DELETE and INSERT instances populated with the indata """
         
         # Add assignments to all fields except the key fields and add conditions for all key fields.
                 
         _field_names_ex_keys = []
-        _field_names_ex_keys_data_types = []
+        _field_names_ex_keys_datatypes = []
         _key_field_names = []
-        _key_field_data_types = []
+        _key_field_datatypes = []
         
         # Create lists of field names and types excluding and including keys
         for _curr_field_idx in range(len(self.dest_field_names)):
             if _curr_field_idx in self.key_fields:
                 _key_field_names.append(self.dest_field_names[_curr_field_idx])
-                _key_field_data_types.append(self.dest_field_types[_curr_field_idx])
+                _key_field_datatypes.append(self.dest_field_types[_curr_field_idx])
             else:
                 _field_names_ex_keys.append(self.dest_field_names[_curr_field_idx])
-                _field_names_ex_keys_data_types.append(self.dest_field_types[_curr_field_idx])
+                _field_names_ex_keys_datatypes.append(self.dest_field_types[_curr_field_idx])
         
         
         _assignments = SQL_List("Parameter_Assignment")
@@ -247,7 +259,7 @@ class Merge(object):
                 
         for _curr_field_idx in range(len(_field_names_ex_keys)):
             _left = Parameter_Identifier(_identifier = _field_names_ex_keys[_curr_field_idx])
-            _right = Parameter_Parameter(_data_type = _field_names_ex_keys_data_types[_curr_field_idx])
+            _right = Parameter_Parameter(_datatype = _field_names_ex_keys_datatypes[_curr_field_idx])
             _assignments.append(Parameter_Assignment(_left, _right))
 
 
@@ -257,7 +269,7 @@ class Merge(object):
         
         for _curr_field_idx in range(len(_key_field_names)):
             _left = Parameter_Identifier(_identifier = _key_field_names[_curr_field_idx])
-            _right = Parameter_Parameter(_data_type = _key_field_data_types[_curr_field_idx])
+            _right = Parameter_Parameter(_datatype = _key_field_datatypes[_curr_field_idx])
             _conditions.append(Parameter_Condition( _left, _right, _operator = "="))
         
         # Specify target table
@@ -282,7 +294,7 @@ class Merge(object):
         
         _update_sql = _update.as_sql(_dal.db_type)
         
-        # Apply and commit changes to the structure
+        # Apply and commit changes to the database
         
         _dal.executemany(_update_sql, _execute_many_data)  
         _dal.commit()

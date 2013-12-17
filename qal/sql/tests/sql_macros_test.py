@@ -4,7 +4,7 @@ Created on Sep 26, 2013
 @author: Nicklas Boerjesson
 '''
 import unittest
-from qal.sql.sql_macros import create_table_skeleton, make_insert_skeleton,copy_to_table,select_all_skeleton
+from qal.sql.sql_macros import create_table_skeleton, make_insert_sql_with_parameters, copy_to_table,select_all_skeleton
 from qal.dal.dal_types import DB_POSTGRESQL, DB_MYSQL, db_type_to_string,\
     DB_SQLSERVER
 from qal.sql.sql_types import DEFAULT_ROWSEP
@@ -27,8 +27,8 @@ create_temporary_table_SQL+= citate(handle_temp_table_ref(table_name, db_type), 
  + db_specific_object_reference("column1", db_type) + " " +db_specific_datatype("string", db_type) + "," + DEFAULT_ROWSEP \
  + db_specific_object_reference("column2", db_type) + " " +db_specific_datatype("string", db_type) + DEFAULT_ROWSEP + ")"
 
-make_insert_skeleton_SQL = "INSERT INTO " + citate(handle_temp_table_ref(table_name, db_type), db_type)  \
- +  " (" + citate("column1", db_type) + ", " + citate("column2", db_type) + ")"+DEFAULT_ROWSEP 
+make_insert_sql_with_parameters_SQL = "INSERT INTO " + citate(handle_temp_table_ref(table_name, db_type), db_type)  \
+ +  " (" + citate("column1", db_type) + ", " + citate("column2", db_type) + ")" + DEFAULT_ROWSEP + "VALUES (%s, %s)"
 
 
 make_select_all_skeleton_SQL = "SELECT * FROM "+ citate("test", db_type)
@@ -51,10 +51,10 @@ class Test(unittest.TestCase):
         self.assertEqual(create_table_skeleton(table_name, _field_names = field_names,
                      _field_types = field_types).as_sql(db_type), create_temporary_table_SQL)
         
-    def test_2_make_insert_skeleton(self):
-        _sql = make_insert_skeleton(table_name, _field_names = field_names, ).as_sql(db_type)
+    def test_2_make_insert_sql_with_parameters(self):
+        _sql = make_insert_sql_with_parameters(table_name, field_names, db_type, field_types)
         print(_sql)
-        self.assertEqual(_sql, make_insert_skeleton_SQL)
+        self.assertEqual(_sql, make_insert_sql_with_parameters_SQL)
        
     def test_3_copy_to_temp_table(self):
         copy_to_table(_dal = self._dal, _values = values, _field_names = field_names, _field_types = field_types, _table_name = table_name, _create_table= True)

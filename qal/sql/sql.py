@@ -22,7 +22,7 @@ from qal.sql.sql_remotable import Parameter_Remotable
 from qal.sql.sql_utils import add_operator, parenthesise, oracle_add_escape, add_comma, make_operator, check_for_param_content,\
                                 none_as_sql, error_on_blank, comma_separate, make_function, db_specific_operator, db_specific_object_reference,\
                                 citate,check_not_null, curr_user, db_specific_datatype, curr_datetime, add_comma_rs, oracle_create_auto_increment,\
-                                handle_temp_table_ref
+                                handle_temp_table_ref, datatype_to_parameter
 from qal.sql.sql_types import condition_part
 from qal.nosql.flatfile import Flatfile_Dataset
 from qal.nosql.xpath import XPath_Dataset
@@ -106,24 +106,18 @@ class Parameter_Numeric(Parameter_Expression_Item):
 class Parameter_Parameter(Parameter_Expression_Item):
     """Holds a parameter to be used in prepared statements."""
     
-    data_type = ''  
+    datatype = ''  
   
-    def __init__(self, _data_type = '', _operator = None):
+    def __init__(self, _datatype = '', _operator = None):
         super(Parameter_Parameter, self ).__init__(_operator)
-        self.data_type = _data_type  
-        
+        self.datatype = _datatype  
     
+
     def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
+       
         # This is temporary, awaiting proper PyMySQL support for %d.
-        if _db_type == DB_MYSQL:
-            return "%s"
-        elif (self.data_type in ["string", "blob", "timestamp"]):
-            return "%s"
-        elif (self.data_type in ["float", "integer"]):
-            return "%d"
-        else:
-            raise Exception("Parameter_Parameter._generate_sql, unsupported data_type: " + str(self.data_type))
+        return datatype_to_parameter(_db_type, self.datatype)
 
     
 class Parameter_IN(Parameter_Expression_Item):

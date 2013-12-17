@@ -4,8 +4,11 @@ Created on Sep 26, 2013
 @author: Nicklas Boerjesson
 """
 
-from qal.sql.sql import Verb_CREATE_TABLE, Verb_SELECT, Verb_INSERT, SQL_List, \
+
+from qal.sql.sql import Verb_CREATE_TABLE, Verb_SELECT, Verb_INSERT, Verb_DELETE, Verb_UPDATE,SQL_List, \
     Parameter_ColumnDefinition,Parameter_Identifier, Parameter_Source
+    
+from qal.sql.sql_utils import datatype_to_parameter
 
 
 def make_column_definitions(_field_names, _field_types):
@@ -33,10 +36,29 @@ def make_column_identifiers(_field_names):
         _columns.append(Parameter_Identifier(_identifier = _field_names[_field_counter]))
     return _columns
 
-def make_insert_skeleton(_table_name, _field_names):
+def make_delete_skeleton(_table_name, _key_fields):
+    _destination_identifier = Parameter_Identifier(_identifier = _table_name)
+    
+    _column_identifiers = make_column_identifiers(_key_fields)
+    return Verb_DELETE()
+
+def make_update_skeleton(_table_name):
+    _table_identifier = Parameter_Identifier(_identifier = _table_name)
+    return Verb_UPDATE(_table_identifier =  _table_identifier)
+
+def make_insert_sql_with_parameters(_table_name, _field_names, _db_type, _field_types):
+    """Make a prepared statement-type INSERT INTO ...VALUES-SQL."""
     _destination_identifier = Parameter_Identifier(_identifier = _table_name)
     _column_identifiers = make_column_identifiers(_field_names)
-    return Verb_INSERT(_destination_identifier = _destination_identifier, _column_identifiers = _column_identifiers)
+    _insert = Verb_INSERT(_destination_identifier = _destination_identifier, _column_identifiers = _column_identifiers)
+    _refs = []
+    # The VALUES-part of INSERT INTO looks the same on all platforms and we don't have to care about escaping.
+    for _curr_idx in range(0, len(_field_names)):
+        _refs.append(datatype_to_parameter(_db_type, _field_types[_curr_idx]))
+    
+    _values_sql = "VALUES (" +", ".join(_refs) + ")"
+    
+    return _insert.as_sql(_db_type) + _values_sql
 
 def copy_to_table(_dal, _values, _field_names, _field_types, _table_name, _create_table = None):
     """Move datatable into a table on the resource, return the table name. """
@@ -50,24 +72,15 @@ def copy_to_table(_dal, _values, _field_names, _field_types, _table_name, _creat
     if len(_values) == 0:
         print("copy_to_table: No source data, inserting no rows.")
     else:        
-        _insert = make_insert_skeleton(_table_name = _table_name, _field_names = _field_names)
-         
-        _refs = []
-        for _curr_idx in range(0, len(_field_names)):
-            if _field_types[_curr_idx] in ["float", "integer"]:
-                _refs.append("%d")
-            else:
-                _refs.append("%s")
-
-#            else:
-#                raise Exception("copy_to_table -error: Invalid field type: " + _field_types[_curr_idx])
         
-        _values_sql = "VALUES (" +", ".join(_refs) + ")"
+         
+        _insert_sql = make_insert_sql_with_parameters(_table_name, _field_names, _dal.db_type, _field_types)
         
         print("Inserting " + str(len(_values)) + " rows (" + str(len(_values[0])) + " columns)")
-        _dal.executemany(_insert.as_sql(_dal.db_type) + _values_sql, _values)
+        _dal.executemany(_insert_sql, _values)
         
     return _table_name
+
     
 def select_all_skeleton(_table_name):
     """Returns a "SELECT * FROM _table_name"-structure. """

@@ -5,7 +5,7 @@
       <field_mapping>
         <is_key>True</is_key>
         <src_column>Table1ID</src_column>
-        <src_data_type>integer</src_data_type>
+        <src_datatype>integer</src_datatype>
         <src_cast_to>integer</src_cast_to>
         <transformations>
 	        <if_empty order="2">0</if_empty>
@@ -30,7 +30,7 @@
       <field_mapping>
         <is_key>False</is_key>
         <src_column>Table1Name</src_column>
-        <src_data_type>string</src_data_type>
+        <src_datatype>string</src_datatype>
         <src_cast_to>string</src_cast_to>
         <transformations>
 	        <trim order="1"></trim>
@@ -50,7 +50,7 @@
       <field_mapping>
         <is_key>False</is_key>
         <src_column>Table1Changed</src_column>
-        <src_data_type>timestamp</src_data_type>
+        <src_datatype>timestamp</src_datatype>
         <src_cast_to>timestamp</src_cast_to>
         <transformations>
 	        <cast order="1">
