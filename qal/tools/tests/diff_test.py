@@ -7,14 +7,19 @@ import unittest
 from qal.nosql.flatfile import Flatfile_Dataset
 from qal.tools.diff import compare
 
+import os
+Test_Script_Dir = os.path.dirname(__file__)
+Test_Resource_Dir = Test_Script_Dir + '/resources'
+
+
 class Diff_test(unittest.TestCase):
 
 
     def test_diff(self):
         """Test comparison of two data sets, fetched from .csv files."""
-        _ff_source = Flatfile_Dataset(_filename = "resources/csv_source.csv", _has_header = True, _delimiter = ";", _csv_dialect = "excel-tab", _quoting = "MINIMAL")
+        _ff_source = Flatfile_Dataset(_filename = Test_Resource_Dir + "/csv_source.csv", _has_header = True, _delimiter = ";", _csv_dialect = "excel-tab", _quoting = "MINIMAL")
         _dataset_source = _ff_source.load()
-        _ff_dest = Flatfile_Dataset(_filename = "resources/csv_dest.csv", _has_header = True, _delimiter = ";", _csv_dialect = "excel-tab", _quoting = "MINIMAL")
+        _ff_dest = Flatfile_Dataset(_filename = Test_Resource_Dir + "/csv_dest.csv", _has_header = True, _delimiter = ";", _csv_dialect = "excel-tab", _quoting = "MINIMAL")
         _dataset_dest = _ff_dest.load()
         #print(str(_dataset_dest))
         _missing_left, _missing_right, _difference, _sorted = compare(_dataset_source, _dataset_dest, [0], True)

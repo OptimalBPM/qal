@@ -8,6 +8,10 @@ from qal.tools.transform import Trim, Replace, If_empty, Cast
 from lxml import etree
 from datetime import datetime
 
+import os
+Test_Script_Dir = os.path.dirname(__file__)
+Test_Resource_Dir = Test_Script_Dir + '/resources'
+
 class Transform_test(unittest.TestCase):
     
     def _parse_xml(self, _filename):
@@ -18,7 +22,7 @@ class Transform_test(unittest.TestCase):
 
     def test_trim(self):
         """Test trim transformation input/output and XML encoding/decoding"""
-        _tree = self._parse_xml('resources/test_merge_two_files.xml')
+        _tree = self._parse_xml(Test_Resource_Dir + "/test_merge_two_files.xml")
         _xml_def = _tree.find("mappings/field_mappings/field_mapping/transformations/trim")
         _tested = Trim(_xml_def)
         _result = _tested.transform(' test ')
@@ -27,7 +31,7 @@ class Transform_test(unittest.TestCase):
         
     def test_if_empty(self):
         """Test trim transformation input/output and XML encoding/decoding"""
-        _tree = self._parse_xml('resources/test_merge_two_files.xml')
+        _tree = self._parse_xml(Test_Resource_Dir + "/test_merge_two_files.xml")
         _xml_def = _tree.find("mappings/field_mappings/field_mapping/transformations/if_empty")
         _tested = If_empty(_xml_def)
         _result = _tested.transform(None)
@@ -36,7 +40,7 @@ class Transform_test(unittest.TestCase):
         
     def test_replace(self):
         """Test replace transformation input/output and XML encoding/decoding"""
-        _tree = self._parse_xml('resources/test_merge_two_files.xml')
+        _tree = self._parse_xml(Test_Resource_Dir + "/test_merge_two_files.xml")
         _xml_def = _tree.find("mappings/field_mappings/field_mapping/transformations/replace")
         _tested = Replace(_xml_def)
         _result = _tested.transform("unneccessary cc")
@@ -45,7 +49,7 @@ class Transform_test(unittest.TestCase):
         
     def test_cast(self):
         """Test trim transformation input/output and XML encoding/decoding"""
-        _tree = self._parse_xml('resources/test_merge_two_files.xml')
+        _tree = self._parse_xml(Test_Resource_Dir + "/test_merge_two_files.xml")
         _xml_def = _tree.find("mappings/field_mappings/field_mapping[src_column='hiredate']/transformations/cast[@order='5']")
         _tested = Cast(_xml_def)
         _result = _tested.transform("2010-01-02 00:00:01")

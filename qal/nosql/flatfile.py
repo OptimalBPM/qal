@@ -71,9 +71,9 @@ class Flatfile_Dataset(Custom_Dataset):
     def load(self):
         """Load data"""
         _tmp_dir_abs = os.getcwd() 
-        print("Flatfile_Dataset.load: Filename='" + str(os.path.normpath(_tmp_dir_abs +'/' + self.filename)) + "', Delimiter='"+str(self.delimiter)+"'")
+        print("Flatfile_Dataset.load: Filename='" + str(self.filename) + "', Delimiter='"+str(self.delimiter)+"'")
         
-        _file = open(os.path.normpath(_tmp_dir_abs +'/' + self.filename), 'r')
+        _file = open(self.filename, 'r')
         _reader = csv.reader(_file, delimiter=self.delimiter, quoting=self._quotestr_to_constants(self.quoting))
         _first_row = True
         self.data_table = []
@@ -92,4 +92,5 @@ class Flatfile_Dataset(Custom_Dataset):
             for _curr_idx in range(0,len(_reader[0])):
                 self.field_names.append("Field_"+ str(_curr_idx))   
             
-        return self.data_table        
+        return self.data_table   
+       

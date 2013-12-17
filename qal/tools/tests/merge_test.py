@@ -8,6 +8,9 @@ from qal.tools.merge import Merge
 from lxml import etree
 import datetime
 
+import os
+Test_Script_Dir = os.path.dirname(__file__)
+Test_Resource_Dir = Test_Script_Dir + '/resources'
 
 c_file_result = [
                 ['7369', 'SMITH', 'CLERK', 7902, datetime.datetime(1980, 12, 17, 0, 0), 0.0, 800.0, 20.0], 
@@ -35,7 +38,7 @@ class Merge_test(unittest.TestCase):
     def _test_Merge_files(self):
         
         """Test merge two files"""
-        _merge_xml = self._parse_xml('resources/test_merge_two_files.xml')
+        _merge_xml = self._parse_xml(Test_Resource_Dir + "/test_merge_two_files.xml")
         _merge = Merge(_xml_node = _merge_xml)
         
         self.assertEqual(etree.tostring(_merge.as_xml_node()), etree.tostring(_merge_xml), "Input/output XML does not match")
@@ -48,7 +51,7 @@ class Merge_test(unittest.TestCase):
     def test_Merge_tables(self):
         
         """Test merge two files"""
-        _merge_xml = self._parse_xml('resources/test_merge_two_tables.xml')
+        _merge_xml = self._parse_xml(Test_Resource_Dir + "/test_merge_two_tables.xml")
         _merge = Merge(_xml_node = _merge_xml)
         self.assertEqual(etree.tostring(_merge.as_xml_node()), etree.tostring(_merge_xml), "Input/output XML does not match")
 
