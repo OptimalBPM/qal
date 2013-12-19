@@ -4,10 +4,11 @@ Created on May 23, 2010
 @author: Nicklas Boerjesson
 '''
 import unittest
-import difflib
+
 from qal.sql.sql_types import *
 from qal.dal.dal_types import *
 from qal.sql.sql import *
+#from qal.tools.diff import diff_strings  # Use when debugging tests
 
 global r_create_table_mysql 
 r_create_table_mysql = "CREATE TABLE Table1 ("+DEFAULT_ROWSEP + "\
@@ -94,20 +95,8 @@ r_UPDATE_oracle = "SET" + DEFAULT_ROWSEP + "\"dest_column\" = 'Hello'" + DEFAULT
 global r_UPDATE_SQL_Server
 r_UPDATE_SQL_Server = "SET" + DEFAULT_ROWSEP + "dest_column = 'Hello'" + DEFAULT_ROWSEP + "WHERE ((col_1 = '1') AND (col_2 = '1'))"
 
-# Utils
 
-def my_diff(a,b):
-    result= '---------- String A-----------' + DEFAULT_ROWSEP
-    result+= a + DEFAULT_ROWSEP
-    result+= '---------- String B-----------' + DEFAULT_ROWSEP
-    result+= b + DEFAULT_ROWSEP
- 
-    result+= '---------- Diff between A and B-----------' + DEFAULT_ROWSEP
-    for line in difflib.context_diff(a,b):
-        result+= line 
-        
-    return result
-    
+     
 
 # Generate test objects.
 def gen_simple_condition_1():

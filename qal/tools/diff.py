@@ -5,6 +5,34 @@ Created on Sep 1, 2013
 
 """
 
+import difflib
+
+# General diffutils
+
+def diff_strings(_a,_b):
+    result= "---------- String A-----------\n"
+    result+= _a + "\n"
+    result+= "---------- String B-----------\n"
+    result+= _b + "\n"
+ 
+    result+= "---------- Diff between A and B-----------\n" + "\n"
+    for line in difflib.context_diff(_a,_b):
+        result+= line 
+        
+    return result
+
+def diff_files(_file_a, _file_b):
+    _f_a = open(_file_a, "r")
+    _f_b = open(_file_b, "r")
+    _a = _f_a.read()
+    _b = _f_b.read()
+    _f_a.close()
+    _f_b.close()
+    
+    return diff_strings(_a = _a, _b = _b)
+
+
+
 def cmp_key_columns(_left, _right, _key_columns):
     """This functions compares the columns in the specified key fields only and returns data usable in a </=/>-comparer"""
     for _curr_key_column in _key_columns:

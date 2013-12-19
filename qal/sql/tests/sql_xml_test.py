@@ -11,7 +11,7 @@ in the sql_test for convenience and that those tests use datasets.
 '''
 import unittest
 from qal.sql.sql_xml import SQL_XML
-from qal.sql.tests.sql_test import my_diff
+from qal.tools.diff import diff_strings
 from qal.dal.dal_types import db_types, DB_POSTGRESQL
 
 
@@ -50,7 +50,7 @@ class class_SQL_Meta_XML_Test(unittest.TestCase):
                 
                 # TODO: FIXME: Using offsets to handle weird endline handling is not good.
                 self.assertEqual(_str_sql_in[:-2], _str_sql_out[:-1],
-                                 _filename_part + " differs from in-file.\n"+ my_diff(_str_sql_in, _str_sql_out))
+                                 _filename_part + " differs from in-file.\n"+ diff_strings(_str_sql_in, _str_sql_out))
             else:         
     
                 _str_sql_out = _structure.as_sql(_curr_db_type_idx)
@@ -101,7 +101,7 @@ class class_SQL_Meta_XML_Test(unittest.TestCase):
         
         self.assertEqual(_str_xml_in,_str_xml_out)
 #        
-#        print(my_diff(_str_xml_in,_str_xml_out))
+#        print(diff_strings(_str_xml_in,_str_xml_out))
         #self.assertEqual(_str_xml_in,_str_xml_out)
            
         # sql_for_all_databases(_XMLOut)
@@ -136,7 +136,7 @@ class class_SQL_Meta_XML_Test(unittest.TestCase):
         self.assertEqual(_str_xml_in,_str_xml_out)
         
 #        if _str_xml_in != _str_xml_out:
-#            print(my_diff(_str_xml_in, _str_xml_out))
+#            print(diff_strings(_str_xml_in, _str_xml_out))
 #        else:
 #            print("Identical!")
 #        sql_for_all_databases(param)
@@ -222,7 +222,7 @@ class class_SQL_Meta_XML_Test(unittest.TestCase):
         _str_xml_comp = f_comp.read()
 
 
-        self.assertEqual(_str_xml_comp[:-2],_str_xml_out[:-1], 'test_6_insert_matrix_csv: The generated XML file differs.\n'+ my_diff(_str_xml_comp, _str_xml_out))
+        self.assertEqual(_str_xml_comp[:-2],_str_xml_out[:-1], 'test_6_insert_matrix_csv: The generated XML file differs.\n'+ diff_strings(_str_xml_comp, _str_xml_out))
 
     def test_7_delete(self):
         _meta_xml = SQL_XML()
@@ -246,7 +246,7 @@ class class_SQL_Meta_XML_Test(unittest.TestCase):
         _str_xml_comp = f_comp.read()
 
 
-        self.assertEqual(_str_xml_comp[:-2],_str_xml_out[:-1], 'test_7_delete: The generated XML file differs.\n'+ my_diff(_str_xml_comp, _str_xml_out))
+        self.assertEqual(_str_xml_comp[:-2],_str_xml_out[:-1], 'test_7_delete: The generated XML file differs.\n'+ diff_strings(_str_xml_comp, _str_xml_out))
 
 
 
@@ -273,7 +273,7 @@ class class_SQL_Meta_XML_Test(unittest.TestCase):
         _str_xml_comp = f_comp.read()
 
 
-        self.assertEqual(_str_xml_comp[:-2],_str_xml_out[:-1], 'test_8_update: The generated XML file differs.\n'+ my_diff(_str_xml_comp, _str_xml_out))
+        self.assertEqual(_str_xml_comp[:-2],_str_xml_out[:-1], 'test_8_update: The generated XML file differs.\n'+ diff_strings(_str_xml_comp, _str_xml_out))
 
     def test_9_resource(self):
         # TODO: Describe the requirements for the test.
@@ -305,7 +305,7 @@ class class_SQL_Meta_XML_Test(unittest.TestCase):
 #        _str_xml_comp = f_comp.read()
 
 
-#        self.assertEqual(_str_xml_comp[:-2],_str_xml_out[:-1], 'test_insert_matrix_csv: The generated XML file differs.\n'+ my_diff(_str_xml_comp, _str_xml_out))
+#        self.assertEqual(_str_xml_comp[:-2],_str_xml_out[:-1], 'test_insert_matrix_csv: The generated XML file differs.\n'+ diff_strings(_str_xml_comp, _str_xml_out))
 
 
 if __name__ == "__main__":
