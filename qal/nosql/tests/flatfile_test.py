@@ -21,7 +21,7 @@ class Test(unittest.TestCase):
 
 
     def test_1_Load_Save(self):
-        _resources_node = load_xml(Test_Resource_Dir + "/file_resources.xml").find("resources")
+        _resources_node = load_xml(Test_Resource_Dir + "/resources.xml").find("resources")
         _resources = Resources(_resources_node = _resources_node)
         _da = Flatfile_Dataset(_resource= _resources.get_resource("{86470370-FF78-48A4-9759-A3BAE4EE22FE}"))
         _da.load()
