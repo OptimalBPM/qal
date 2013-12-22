@@ -24,12 +24,15 @@ class Custom_Dataset(object):
         self.data_table = [] 
         
     def cast_text_to_type(self, _text, _field_idx):
-        if  self.field_types[_field_idx] == "integer":
-            return int(_text)
-        if  self.field_types[_field_idx] == "float":
-            return float(_text)
-        else:
-            return _text
+        try:
+            if  self.field_types[_field_idx] == "integer":
+                return int(_text)
+            if  self.field_types[_field_idx] == "float":
+                return float(_text)
+            else:
+                return _text
+        except Exception as e:
+            raise Exception("cast_text_to_type raised an error for \"" + _text +"\": " + str(e) )
         
     def load(self):
         """Load the data"""
