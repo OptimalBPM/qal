@@ -46,7 +46,7 @@
 		<resource type="xpath" uuid="{969A610A-FCA6-4837-B33A-BAA8F13D8B70}" caption="xml-file">
 			<!-- Source(Microsoft's books.xml) : http://msdn.microsoft.com/en-us/library/ms762271%28v=vs.85%29.aspx -->
 			<filename>resources/xml_in.xml</filename>
-			<rows_xpath>/catalog[@sdf='sdf]e']/book[@id='bk111']</rows_xpath>
+			<rows_xpath>/catalog[@id="d"]/book[@id='bk111']</rows_xpath>
 			<xpath_data_format>XML</xpath_data_format>
 			<field_xpaths>
 				<item>title</item>

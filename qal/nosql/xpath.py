@@ -5,6 +5,14 @@ Created on Sep 14, 2012
 '''
 
 from qal.nosql.custom import Custom_Dataset
+from docutils.parsers.rst.states import _upperalpha_to_int
+from qal.common.parsing import parse_balanced_delimiters
+from lxml import _elementpath
+import xml.etree 
+
+from xml.etree.ElementTree import SubElement, ElementTree    
+from xml import etree
+
 
 def xpath_data_formats():
     return ["XML", "XHTML", "HTML"] # "UNTIDY_HTML"]
@@ -52,7 +60,8 @@ class XPath_Dataset(Custom_Dataset):
         self.xpath_data_format =  _resource.data.get("xpath_data_format")
         self.field_names = _resource.data.get("field_names")
         self.field_xpaths = _resource.data.get("field_xpaths")       
-        self.field_types = _resource.data.get("field_types")  
+        self.field_types = _resource.data.get("field_types") 
+        self.xpath_text_qualifier = _resource.data.get("xpath_text_qualifier")   
               
     def file_to_tree(self, _data_format, _reference):
         print("format_to_tree : " + _data_format)
@@ -64,6 +73,15 @@ class XPath_Dataset(Custom_Dataset):
             return etree.parse(_reference)
         else:
             raise Exception("file_to_tree: " + _data_format + " is not supported")
+        
+    def _parse_ubpm_xpath(self, _ubpm_xpath):
+        """Parse the trailing attribute identifier from the ubpm xpath string. ":" isn't allowed in xpath."""
+        _parts = _ubpm_xpath.split("::")
+        if len(_parts) == 2:
+            return _parts[0], _parts[1]
+        else:
+            return _ubpm_xpath, None       
+            
             
     
 
@@ -83,16 +101,167 @@ class XPath_Dataset(Custom_Dataset):
         for _curr_row in _root_nodes:
             _row_data = []
             for _field_idx in range(0, len(self.field_names)):
-                _item_data = _curr_row.xpath(self.field_xpaths[_field_idx])
+                _curr_path, _curr_attribute = self._parse_ubpm_xpath(self.field_xpaths[_field_idx])
+                print("_curr_path      :" + str(_curr_path))
+                print("_curr_attribute :" + str(_curr_attribute))
+                # Handle special case with only an attribute reference
+                if _curr_path:
+                    _item_data = _curr_row.xpath(_curr_path)
+                else:
+                    _row_data.append(self.cast_text_to_type(_curr_row.get(_curr_attribute), _field_idx))
+
                 if len(_item_data) > 0:
-                    
-                    _row_data.append(self.cast_text_to_type(_item_data[0].text, _field_idx))
+                    if _curr_attribute:
+                        _row_data.append(self.cast_text_to_type(_item_data[0].get(_curr_attribute), _field_idx))
+                    else:
+                        _row_data.append(self.cast_text_to_type(_item_data[0].text, _field_idx))
                 else:
                     _row_data.append("")
             
             print(str(_row_data))
             _data.append(_row_data)
             
-        return _data        
+        self.data_table = _data
+        return _data  
+    
+    def _create_xpath_nodes(self, _node, _xpath):   
+        """Used an xpath to create nodes that match the path(names, attributes and so forth)"""
+        
+        print("_create_xpath_nodes: " + str(_xpath))
+        _curr_node = _node
+        _tokens =  list(_elementpath.xpath_tokenizer(_xpath))
+        _token_idx = 0
+        print(str(_tokens))        
+        while _token_idx < len(_tokens):
+            print("_tokens[_token_idx][0]:" + str(_tokens[_token_idx][0]))
+            #Is this a new level?
+            if _tokens[_token_idx][0] == "/":
+                # Then the next is the name of the node
+                _token_idx+=1
+                _next_name = _tokens[_token_idx][1]
+
+                #Is the next token a condition? And is it an exact
+                
+                if _token_idx < len(_tokens) and _tokens[_token_idx + 1][0] == "[" :
+                    #It was, move on
+                    _token_idx+=1
+                    
+                    #Then check if it exists
+                    #Create relative path
+                    
+                    _check_path = "".join((_a[0]+_a[1] for _a in _tokens[_token_idx -1:_token_idx + 6]))
+                    print("_check_path:" + str(_check_path))
+                    _found_nodes = _curr_node.xpath(_check_path)
+                    
+                    # Node found, move on
+                    if len(_found_nodes) == 1:
+                        _token_idx+=1
+                        _curr_node = _found_nodes[0]
+                    else:
+                        # If not found create node 
+                        print("add node: " + str(_next_name)) 
+                        _curr_node = SubElement(_curr_node, _next_name)
+                        
+                        # If they can be discerned(@id=value), add attributes
+                        if _tokens[_token_idx + 3][0] == "=" and _tokens[_token_idx + 1][0] == "@":
+                            print("set attribute to satisfy this path: " + str(_check_path)) 
+                            _curr_node.set(_tokens[_token_idx + 2][1], _tokens[_token_idx + 4][0])
+                        
+                    _token_idx+=5
+                else:
+                    _found_nodes = _curr_node.xpath(_next_name)
+                    # Node found, move on
+                    if len(_found_nodes) == 1:
+                        _curr_node = _found_nodes[0]
+                    else:
+                        print("Create new node: " + str(_next_name))
+                        _curr_node = SubElement(_curr_node, _next_name)
+
+            _token_idx+=1
+        return _curr_node
+    def _prepare_root_path(self, _root_path):
+        """To make the XPath usable for specifying the destination and creating new nodes, 
+        if needed _prepare_root_path removes all conditions and if there are multiple paths, 
+        only uses the first one. """
+        
+
+        # Use only first path for destination
+        _split_xpath = _root_path.split(' | ')
+        if len(_split_xpath) > 1:
+            print("_prepare_root_path: Multiple XPaths, using first.")
+            _relevant_path =  _split_xpath[0]
+        else:
+            _relevant_path =  _root_path
+
+        # Remove all conditions
+        _conditions, _no_conditions = parse_balanced_delimiters(_relevant_path, "[", "]", "'")
+
+
+
+    def save(self, _save_as = None):
+        """Use root XPath to find a node to iterate over and then add field data via field_xpaths, and save resulting file"""
+        
+        if _save_as:
+            _filename = _save_as
+        else:
+            _filename = self.filename
+        
+        print("Saving : " + _filename)    
+
+        # Load destination file    
+        
+        import os
+        if not os.path.exists(_filename):
+            print("XPath_Dataset.save - Destination file does not exist, using source file for structure")
+            _structure_file = self.filename
+        else:
+            _structure_file = _filename
+        
+        try:
+            
+            _tree = self.file_to_tree(self.xpath_data_format, _structure_file)
+        except Exception as e:
+            raise Exception("XPath_Dataset.save - error parsing " + self.xpath_data_format + " file : " + str(e))
+        
+        #         
+        
+        _root_node = self._create_xpath_nodes(_tree.getroot(), self.rows_xpath)
+        #_prepared_path = self._prepare_root_path(self.rows_xpath)
+
+        print(etree.ElementTree.tostring(_tree.getroot(), method="xml"))
+        # Sort and add indexes. Sorting is made to handle several levels of data in the right order.
+        _sorted_xpaths = [[self.field_xpaths.index(x), x] for x in sorted(self.field_xpaths)]
+        print(str(_sorted_xpaths))
+        
+        # Find parent of root path. 
+        
+        
+        
+        for _curr_row in self.data_table:
+            # Find parent of root path. 
+            
+            for _field_idx in range(0, len(_sorted_xpaths)):
+                
+                _curr_path, _curr_attribute = self._parse_ubpm_xpath(_sorted_xpaths[_field_idx])
+                print("_curr_path      :" + str(_curr_path))
+                print("_curr_attribute :" + str(_curr_attribute))
+                # Handle special case with only an attribute reference
+                if _curr_path:
+                    _item_data = _curr_row.xpath(_curr_path)
+                else:
+                    _row_data.append(self.cast_text_to_type(_curr_row.get(_curr_attribute), _field_idx))
+
+                if len(_item_data) > 0:
+                    if _curr_attribute:
+                        _row_data.append(self.cast_text_to_type(_item_data[0].get(_curr_attribute), _field_idx))
+                    else:
+                        _row_data.append(self.cast_text_to_type(_item_data[0].text, _field_idx))
+                else:
+                    _row_data.append("")
+            print(str(_row_data))
+            _data.append(_row_data)
+            
+        return _data  
+    
 
         
