@@ -126,17 +126,21 @@ class XPath_Dataset(Custom_Dataset):
         return _data  
     
     def _create_xpath_nodes(self, _node, _xpath):   
-        """Used an xpath to create nodes that match the path(names, attributes and so forth)"""
-        
+        """Used an xpath to create nodes that match the path and its conditions(names, attributes and so forth)"""
+        #
         print("_create_xpath_nodes: " + str(_xpath))
         _curr_node = _node
+        # Break up the string in its tokens
         _tokens =  list(_elementpath.xpath_tokenizer(_xpath))
         print(str(_tokens))   
+        
+        # Iterate through tokens, until we have gone through the entire XPath.
         _token_idx = 0 
         
-        # Move past any root reference.
-        if (_tokens[0][0] == "/") and (_tokens[1][1] == _node.tag):
-            print("_create_xpath_nodes: Ignoring root node path.")
+        # But first, move past any root reference and conditions. 
+        # TODO: This is a bit ugly, perhaps.
+        if len(_tokens) > 1 and (_tokens[0][0] == "/") and (_tokens[1][1] == _node.tag):
+            print("_create_xpath_nodes: Ignoring root node path and condition.")
             _token_idx+=1
             while _token_idx < len(_tokens) and _tokens[_token_idx][0] != "/": 
                 _token_idx+=1
@@ -145,14 +149,18 @@ class XPath_Dataset(Custom_Dataset):
         while _token_idx < len(_tokens):
             print("_tokens[" + str(_token_idx) + "][0]:" + str(_tokens[_token_idx][0]))
             #Is this a new level?
+            
             if _tokens[_token_idx][0] == "/":
                 # Then the next is the name of the node
-                _token_idx+=1
+                _token_idx+=1                
+            
+            if _tokens[_token_idx][0] == "":
+
                 _next_name = _tokens[_token_idx][1]
 
                 #Is the next token a condition?
                 
-                if _token_idx < len(_tokens) and _tokens[_token_idx + 1][0] == "[" :
+                if _token_idx + 1 < len(_tokens) and _tokens[_token_idx + 1][0] == "[" :
                     #It was, move on
                     _token_idx+=1
                     
@@ -217,8 +225,6 @@ class XPath_Dataset(Custom_Dataset):
         else:
             _filename = self.filename
         
-        print("Saving : " + _filename)    
-
         # Load destination file    
         
         import os
@@ -252,7 +258,9 @@ class XPath_Dataset(Custom_Dataset):
         _root_node = self._create_xpath_nodes(_top_node, self.rows_xpath)
 
         
-        # Sort and add indexes. Sorting is made to handle several levels of data in the right order.
+        # Sort and add index references. 
+        # The reason for sorting is made to handle several levels of data in the right order, 
+        # to minimize the need for node creation.
         _sorted_xpaths = [[self.field_xpaths.index(x), x] for x in sorted(self.field_xpaths)]
         print(str(_sorted_xpaths))
         print(str(self.data_table))
@@ -273,11 +281,8 @@ class XPath_Dataset(Custom_Dataset):
                 if _curr_attribute:
                     _curr_node.set(_curr_attribute, _curr_row[_sorted_xpaths[_field_idx][0]])
                 else:
-                    _curr_node.text = _curr_row[_sorted_xpaths[_field_idx][0]]
+                    _curr_node.text = str(_curr_row[_sorted_xpaths[_field_idx][0]])
                     
-                
-        print(etree.tostring(_top_node))    
+        print("Saving : " + _filename)                    
+        _tree.write(_filename)  
         return _top_node  
-    
-
-        

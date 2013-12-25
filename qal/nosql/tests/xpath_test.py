@@ -26,10 +26,10 @@ class Test(unittest.TestCase):
         _da = XPath_Dataset(_resource= _resources.get_resource("{969A610A-FCA6-4837-B33A-BAA8F13D8B70}"))
         _da.load()
         print(str(_da.data_table))
-        _da.save(_save_as = Test_Resource_Dir + "/xml_out.csv")
+        _da.save(_save_as = Test_Resource_Dir + "/xml_out.xml")
         
-        _f_a = open(Test_Resource_Dir + "/xml_out.csv", "r")
-        _f_b = open(Test_Resource_Dir + "/xml_cmp.csv", "r")
+        _f_a = open(Test_Resource_Dir + "/xml_out.xml", "r")
+        _f_b = open(Test_Resource_Dir + "/xml_cmp.xml", "r")
         _a = _f_a.read()
         _b = _f_b.read()
         _f_a.close()
