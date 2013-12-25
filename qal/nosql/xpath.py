@@ -4,14 +4,14 @@ Created on Sep 14, 2012
 @author: Nicklas Boerjesson
 '''
 
+import io
+
 from qal.nosql.custom import Custom_Dataset
-from docutils.parsers.rst.states import _upperalpha_to_int
 from qal.common.parsing import parse_balanced_delimiters
 from lxml import _elementpath
-import xml.etree 
+from lxml import etree
+from xml.etree.ElementTree import SubElement    
 
-from xml.etree.ElementTree import SubElement, ElementTree    
-from xml import etree
 
 
 def xpath_data_formats():
@@ -61,7 +61,8 @@ class XPath_Dataset(Custom_Dataset):
         self.field_names = _resource.data.get("field_names")
         self.field_xpaths = _resource.data.get("field_xpaths")       
         self.field_types = _resource.data.get("field_types") 
-        self.xpath_text_qualifier = _resource.data.get("xpath_text_qualifier")   
+        self.xpath_text_qualifier = _resource.data.get("xpath_text_qualifier") 
+        self.encoding = _resource.data.get("encoding")  
               
     def file_to_tree(self, _data_format, _reference):
         print("format_to_tree : " + _data_format)
@@ -130,17 +131,26 @@ class XPath_Dataset(Custom_Dataset):
         print("_create_xpath_nodes: " + str(_xpath))
         _curr_node = _node
         _tokens =  list(_elementpath.xpath_tokenizer(_xpath))
-        _token_idx = 0
-        print(str(_tokens))        
+        print(str(_tokens))   
+        _token_idx = 0 
+        
+        # Move past any root reference.
+        if (_tokens[0][0] == "/") and (_tokens[1][1] == _node.tag):
+            print("_create_xpath_nodes: Ignoring root node path."
+            _token_idx+=1
+            while _token_idx < len(_tokens) and _tokens[_token_idx][0] != "/": 
+                _token_idx+=1
+        
+     
         while _token_idx < len(_tokens):
-            print("_tokens[_token_idx][0]:" + str(_tokens[_token_idx][0]))
+            print("_tokens[" + str(_token_idx) + "][0]:" + str(_tokens[_token_idx][0]))
             #Is this a new level?
             if _tokens[_token_idx][0] == "/":
                 # Then the next is the name of the node
                 _token_idx+=1
                 _next_name = _tokens[_token_idx][1]
 
-                #Is the next token a condition? And is it an exact
+                #Is the next token a condition?
                 
                 if _token_idx < len(_tokens) and _tokens[_token_idx + 1][0] == "[" :
                     #It was, move on
@@ -154,7 +164,7 @@ class XPath_Dataset(Custom_Dataset):
                     _found_nodes = _curr_node.xpath(_check_path)
                     
                     # Node found, move on
-                    if len(_found_nodes) == 1:
+                    if _found_nodes and len(_found_nodes) == 1:
                         _token_idx+=1
                         _curr_node = _found_nodes[0]
                     else:
@@ -179,6 +189,7 @@ class XPath_Dataset(Custom_Dataset):
 
             _token_idx+=1
         return _curr_node
+    
     def _prepare_root_path(self, _root_path):
         """To make the XPath usable for specifying the destination and creating new nodes, 
         if needed _prepare_root_path removes all conditions and if there are multiple paths, 
@@ -198,7 +209,7 @@ class XPath_Dataset(Custom_Dataset):
 
 
 
-    def save(self, _save_as = None):
+    def save(self, _save_as = None, _update = None, _delete = None):
         """Use root XPath to find a node to iterate over and then add field data via field_xpaths, and save resulting file"""
         
         if _save_as:
@@ -211,24 +222,36 @@ class XPath_Dataset(Custom_Dataset):
         # Load destination file    
         
         import os
-        if not os.path.exists(_filename):
-            print("XPath_Dataset.save - Destination file does not exist, using source file for structure")
-            _structure_file = self.filename
-        else:
-            _structure_file = _filename
-        
-        try:
+        if _update:
             
-            _tree = self.file_to_tree(self.xpath_data_format, _structure_file)
-        except Exception as e:
-            raise Exception("XPath_Dataset.save - error parsing " + self.xpath_data_format + " file : " + str(e))
-        
-        #         
-        
-        _root_node = self._create_xpath_nodes(_tree.getroot(), self.rows_xpath)
-        #_prepared_path = self._prepare_root_path(self.rows_xpath)
+            if not os.path.exists(_filename):
+                print("XPath_Dataset.save - Destination file does not exist, using source file for structure")
+                _structure_file = self.filename
+            else:
+                _structure_file = _filename
+            try:
+                
+                _tree = self.file_to_tree(self.xpath_data_format, _structure_file)
+            except Exception as e:
+                raise Exception("XPath_Dataset.save - error parsing " + self.xpath_data_format + " file : " + str(e))
 
-        print(etree.ElementTree.tostring(_tree.getroot(), method="xml"))
+        else:
+            # Create a tree with root node based on the first  
+            _tokens =  list(_elementpath.xpath_tokenizer(self.rows_xpath))
+            if len(_tokens) > 1 and _tokens[0][0] == "/" and _tokens[1][1] != "":
+                if self.encoding:
+                    _encoding = self.encoding
+                else:
+                    _encoding = "UTF-8"
+                          
+                _tree = etree.parse(io.StringIO("<?xml version='1.0' ?>\n<" + _tokens[1][1] + "/>")) 
+            else:
+                raise Exception("XPath_Dataset.save - rows_xpath("+ str(self.rows_xpath)+") must be absolute and have at least the name of the root node. Example: \"root_node\" ")
+
+        # Where not existing, create a node structure from the information in the xpath.
+        _root_node = self._create_xpath_nodes(_tree.getroot(), self.rows_xpath)
+
+        print(etree.tostring(_tree.getroot()))
         # Sort and add indexes. Sorting is made to handle several levels of data in the right order.
         _sorted_xpaths = [[self.field_xpaths.index(x), x] for x in sorted(self.field_xpaths)]
         print(str(_sorted_xpaths))
