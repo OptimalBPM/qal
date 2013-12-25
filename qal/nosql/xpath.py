@@ -136,7 +136,7 @@ class XPath_Dataset(Custom_Dataset):
         
         # Move past any root reference.
         if (_tokens[0][0] == "/") and (_tokens[1][1] == _node.tag):
-            print("_create_xpath_nodes: Ignoring root node path."
+            print("_create_xpath_nodes: Ignoring root node path.")
             _token_idx+=1
             while _token_idx < len(_tokens) and _tokens[_token_idx][0] != "/": 
                 _token_idx+=1
@@ -247,15 +247,15 @@ class XPath_Dataset(Custom_Dataset):
                 _tree = etree.parse(io.StringIO("<?xml version='1.0' ?>\n<" + _tokens[1][1] + "/>")) 
             else:
                 raise Exception("XPath_Dataset.save - rows_xpath("+ str(self.rows_xpath)+") must be absolute and have at least the name of the root node. Example: \"root_node\" ")
-
+        _top_node =_tree.getroot()
         # Where not existing, create a node structure from the information in the xpath.
-        _root_node = self._create_xpath_nodes(_tree.getroot(), self.rows_xpath)
+        _root_node = self._create_xpath_nodes(_top_node, self.rows_xpath)
 
-        print(etree.tostring(_tree.getroot()))
+        
         # Sort and add indexes. Sorting is made to handle several levels of data in the right order.
         _sorted_xpaths = [[self.field_xpaths.index(x), x] for x in sorted(self.field_xpaths)]
         print(str(_sorted_xpaths))
-        
+        print(str(self.data_table))
         # Find parent of root path. 
         
         
@@ -265,26 +265,19 @@ class XPath_Dataset(Custom_Dataset):
             
             for _field_idx in range(0, len(_sorted_xpaths)):
                 
-                _curr_path, _curr_attribute = self._parse_ubpm_xpath(_sorted_xpaths[_field_idx])
+                _curr_path, _curr_attribute = self._parse_ubpm_xpath(_sorted_xpaths[_field_idx][1])
+                _curr_node = self._create_xpath_nodes(_root_node, _curr_path)
                 print("_curr_path      :" + str(_curr_path))
                 print("_curr_attribute :" + str(_curr_attribute))
                 # Handle special case with only an attribute reference
-                if _curr_path:
-                    _item_data = _curr_row.xpath(_curr_path)
+                if _curr_attribute:
+                    _curr_node.set(_curr_attribute, _curr_row[_sorted_xpaths[_field_idx][0]])
                 else:
-                    _row_data.append(self.cast_text_to_type(_curr_row.get(_curr_attribute), _field_idx))
-
-                if len(_item_data) > 0:
-                    if _curr_attribute:
-                        _row_data.append(self.cast_text_to_type(_item_data[0].get(_curr_attribute), _field_idx))
-                    else:
-                        _row_data.append(self.cast_text_to_type(_item_data[0].text, _field_idx))
-                else:
-                    _row_data.append("")
-            print(str(_row_data))
-            _data.append(_row_data)
-            
-        return _data  
+                    _curr_node.text = _curr_row[_sorted_xpaths[_field_idx][0]]
+                    
+                
+        print(etree.tostring(_top_node))    
+        return _top_node  
     
 
         
