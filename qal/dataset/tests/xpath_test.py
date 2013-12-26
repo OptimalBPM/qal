@@ -6,7 +6,7 @@ Created on Dec 17, 2013
 
 import unittest
 
-from qal.nosql.xpath import XPath_Dataset
+from qal.dataset.xpath import XPath_Dataset
 from qal.common.resources import Resources
 from lxml import etree
 from qal.tools.diff import diff_files

@@ -87,7 +87,7 @@
   <xsd:complexType name="tabular_expression_item">
     <xsd:choice>
       <xsd:element name="Verb_SELECT" type="Verb_SELECT"/>
-      <xsd:element name="Parameter_NoSQL" type="Parameter_NoSQL"/>
+      <xsd:element name="Parameter_Dataset" type="Parameter_Dataset"/>
       <xsd:element name="Parameter_Set" type="Parameter_Set"/>
     </xsd:choice>
   </xsd:complexType>
@@ -158,7 +158,7 @@
   <xsd:complexType name="Array_tabular_expression_item">
     <xsd:choice>
       <xsd:element maxOccurs="unbounded" minOccurs="0" name="Verb_SELECT" type="Verb_SELECT"/>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_NoSQL" type="Parameter_NoSQL"/>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_Dataset" type="Parameter_Dataset"/>
       <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_Set" type="Parameter_Set"/>
     </xsd:choice>
   </xsd:complexType>
@@ -185,7 +185,7 @@
       <xsd:element minOccurs="0" name="operator" type="xsd:string"/>
     </xsd:all>
   </xsd:complexType>
-  <xsd:complexType name="Parameter_NoSQL">
+  <xsd:complexType name="Parameter_Dataset">
     <xsd:all>
       <xsd:element minOccurs="0" name="data_source" type="data_source_types"/>
       <xsd:element minOccurs="0" name="operator" type="xsd:string"/>

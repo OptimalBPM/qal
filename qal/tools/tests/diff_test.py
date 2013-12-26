@@ -4,7 +4,7 @@ Created on Nov 3, 2013
 @author: Nicklas Boerjesson
 """
 import unittest
-from qal.nosql.flatfile import Flatfile_Dataset
+from qal.dataset.flatfile import Flatfile_Dataset
 from qal.tools.diff import compare
 
 import os

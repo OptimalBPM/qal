@@ -195,11 +195,11 @@
 				<sql:join_type>INNER</sql:join_type>
 				<sql:alias>CSV</sql:alias>
 				<sql:expression>
-					<sql:Parameter_NoSQL>
+					<sql:Parameter_Dataset>
 						<sql:data_source>Flatfile_Dataset</sql:data_source>
 						<sql:operator></sql:operator>
 						<sql:resource_uuid>{86470370-FF78-48A4-9759-A3BAE4EE22FE}</sql:resource_uuid>
-					</sql:Parameter_NoSQL>
+					</sql:Parameter_Dataset>
 				</sql:expression>
 				<sql:resource_uuid></sql:resource_uuid>
 			</sql:Parameter_Source>
@@ -208,11 +208,11 @@
 				<sql:join_type>CROSS</sql:join_type>
 				<sql:alias>HTML</sql:alias>
 				<sql:expression>
-					<sql:Parameter_NoSQL>
+					<sql:Parameter_Dataset>
 						<sql:data_source>XPath_Dataset</sql:data_source>
 						<sql:operator></sql:operator>
 						<sql:resource_uuid>{0B8B71C1-D3A8-4F16-B8E1-9C73E196254C}</sql:resource_uuid>
-					</sql:Parameter_NoSQL>
+					</sql:Parameter_Dataset>
 				</sql:expression>
 				<sql:resource_uuid></sql:resource_uuid>
 			</sql:Parameter_Source>
@@ -238,11 +238,11 @@
 				<sql:join_type>INNER</sql:join_type>
 				<sql:alias>XML</sql:alias>
 				<sql:expression>
-					<sql:Parameter_NoSQL>
+					<sql:Parameter_Dataset>
 						<sql:data_source>XPath_Dataset</sql:data_source>
 						<sql:operator></sql:operator>
 						<sql:resource_uuid>{969A610A-FCA6-4837-B33A-BAA8F13D8B70}</sql:resource_uuid>
-					</sql:Parameter_NoSQL>
+					</sql:Parameter_Dataset>
 				</sql:expression>
 				<sql:resource_uuid></sql:resource_uuid>
 			</sql:Parameter_Source>

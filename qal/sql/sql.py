@@ -24,9 +24,9 @@ from qal.sql.sql_utils import add_operator, parenthesise, oracle_add_escape, add
                                 citate,check_not_null, curr_user, db_specific_datatype, curr_datetime, add_comma_rs, oracle_create_auto_increment,\
                                 handle_temp_table_ref, datatype_to_parameter
 from qal.sql.sql_types import condition_part
-from qal.nosql.flatfile import Flatfile_Dataset
-from qal.nosql.xpath import XPath_Dataset
-from qal.nosql.matrix import Matrix_Dataset
+from qal.dataset.flatfile import Flatfile_Dataset
+from qal.dataset.xpath import XPath_Dataset
+from qal.dataset.matrix import Matrix_Dataset
 from qal.dal.dal_types import DB_SQLSERVER
 
 
@@ -142,7 +142,7 @@ class Parameter_IN(Parameter_Expression_Item):
 
         
 
-class Parameter_NoSQL(Parameter_Expression_Item, Parameter_Remotable):  
+class Parameter_Dataset(Parameter_Expression_Item, Parameter_Remotable):  
     """Holds a dataset from an external, non-SQL source"""
     data_source = None
 
@@ -177,7 +177,7 @@ class Parameter_NoSQL(Parameter_Expression_Item, Parameter_Remotable):
             self.data_source.load()
             return "("+ self.data_source.as_sql(_db_type) + ")"       
         else:
-            raise Exception('Parameter_NoSQLas_sql : data_source not set.');
+            raise Exception('Parameter_Datasetas_sql : data_source not set.');
 
 class Parameter_Identifier(Parameter_Expression_Item):
     """Holds an identifier(column-, table or other reference)"""

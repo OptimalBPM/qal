@@ -11,7 +11,7 @@ Created on Sep 20, 2010
 DEFAULT_ROWSEP = chr(13)
 
 from csv import list_dialects
-from qal.nosql.xpath import xpath_data_formats
+from qal.dataset.xpath import xpath_data_formats
 
 """
  Global types:
@@ -61,11 +61,11 @@ def expression_item_types():
     return ['Verb_SELECT','Parameter_Expression',
                 'Parameter_String','Parameter_Numeric',
                 'Parameter_Identifier','Parameter_Cast',
-                'Parameter_Function', 'Parameter_IN', 'Parameter_NoSQL', 'Parameter_CASE', 'Parameter_Set']
+                'Parameter_Function', 'Parameter_IN', 'Parameter_dataset', 'Parameter_CASE', 'Parameter_Set']
     
 def tabular_expression_item_types(): 
     """Returns a list of the supported tabular expression types""" 
-    return ['Verb_SELECT','Parameter_NoSQL', 'Parameter_Set']
+    return ['Verb_SELECT','Parameter_dataset', 'Parameter_Set']
 
 def in_types():
     """Returns a list of what is supported in a IN-statement""" 

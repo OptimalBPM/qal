@@ -67,7 +67,7 @@ class Parameter_Remotable(object):
             
         elif self._resource.type.upper() in ["FLATFILE"]:
 
-            from qal.nosql.flatfile import Flatfile_Dataset
+            from qal.dataset.flatfile import Flatfile_Dataset
             
             self._data_source = Flatfile_Dataset(_resource = self._resource)
             
@@ -76,7 +76,7 @@ class Parameter_Remotable(object):
             _field_types = ["string"] * len(_field_names)
             
         elif self._resource.type.upper() in ["XPATH"]:    
-            from qal.nosql.xpath import XPath_Dataset
+            from qal.dataset.xpath import XPath_Dataset
             
             self._data_source = XPath_Dataset(_resource = self._resource)
             

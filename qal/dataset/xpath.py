@@ -6,7 +6,7 @@ Created on Sep 14, 2012
 
 import io
 
-from qal.nosql.custom import Custom_Dataset
+from qal.dataset.custom import Custom_Dataset
 from qal.common.parsing import parse_balanced_delimiters
 from lxml import _elementpath
 from lxml import etree

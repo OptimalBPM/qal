@@ -9,8 +9,8 @@ from qal.sql.sql_macros import make_insert_sql_with_parameters
 from qal.common.resources import Resources
 from qal.tools.transform import make_transformation_array_from_xml_node, make_transformations_xml_node, perform_transformations
 from qal.tools.diff import compare
-from qal.nosql.flatfile import Flatfile_Dataset
-from qal.nosql.xpath import XPath_Dataset
+from qal.dataset.flatfile import Flatfile_Dataset
+from qal.dataset.xpath import XPath_Dataset
 from qal.sql.sql_macros import select_all_skeleton
 from qal.dal.dal import Database_Abstraction_Layer
 from lxml import etree

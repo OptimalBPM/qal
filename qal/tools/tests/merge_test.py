@@ -46,7 +46,7 @@ class Merge_test(unittest.TestCase):
         _result = _merge.execute()
         
         #_merge.write_result('resources/csv_out.xml')
-        self.assertEqual(_result, c_file_result)
+        self.assertEqual(_result, c_file_result, "Merge result differs")
 
     def test_Merge_tables(self):
         

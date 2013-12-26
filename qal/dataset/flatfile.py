@@ -5,7 +5,7 @@ Created on Sep 14, 2012
 '''
 
 
-from qal.nosql.custom import Custom_Dataset
+from qal.dataset.custom import Custom_Dataset
 
 import csv
 
@@ -17,6 +17,11 @@ class Flatfile_Dataset(Custom_Dataset):
     has_header = None
     csv_dialect = None
     quoting = None
+    escapechar = None
+    lineterminator = None
+    quotechar = "\""
+    skipinitialspace = None
+    
     field_names = None
     
     def __init__(self, _delimiter = None, _filename = None, _has_header = None, _csv_dialect = None, _resource = None, _quoting = None):
