@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <!-- This file is also used as a template for resource definitions, they are copied from here to other test suites. -->
-<sql:statement xmlns:sql="http://www.unifiedbpm.se/XMLschema/DAL/SQL" xmlns:xsi="http://www.w3.org/2001/XMLSchema" xsi:schemaLocation="http://www.unifiedbpm.se/XMLschema/DAL/SQL ../SQL.xsd">
+<sql:statement xmlns:sql="http://www.optimalbpm.se/XMLschema/DAL/SQL" xmlns:xsi="http://www.w3.org/2001/XMLSchema" xsi:schemaLocation="http://www.optimalbpm.se/XMLschema/DAL/SQL ../SQL.xsd">
 
 	<sql:VERB_SELECT/>
 	<resources>

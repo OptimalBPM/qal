@@ -220,8 +220,8 @@ def make_function(_name, _value):
 
 
 def handle_temp_table_ref(_identifier, _db_type):
-    if _identifier[0] == "#" and  _db_type != DB_SQLSERVER:
-        return _identifier[1:len(_identifier)]
+    if len(_identifier) > 0 and _identifier[0] == "#" and  _db_type != DB_SQLSERVER:
+        return _identifier[1:]
     else:
         return _identifier
     

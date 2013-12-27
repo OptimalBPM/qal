@@ -42,8 +42,8 @@ class SQL_XML(XML_Translation):
         Constructor
         '''
         super(SQL_XML, self ).__init__()
-        self.namespace = 'http://www.unifiedbpm.se/XMLschema/DAL/SQL'
-        self.schema_uri = 'http://www.unifiedbpm.se/XMLschema/DAL/SQL.xsd'
+        self.namespace = 'http://www.optimalbpm.se/XMLschema/DAL/SQL'
+        self.schema_uri = 'http://www.optimalbpm.se/XMLschema/DAL/SQL.xsd'
         self.prefix_own = 'sql'
         self.debuglevel = 2
         self.nestinglevel = 0

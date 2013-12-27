@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<sql:statement xmlns:sql="http://www.unifiedbpm.se/XMLschema/DAL/SQL" xmlns:xsi="http://www.w3.org/2001/XMLSchema" xsi:schemaLocation="http://www.unifiedbpm.se/XMLschema/DAL/SQL ../../dal/SQL.xsd">
+<sql:statement xmlns:sql="http://www.optimalbpm.se/XMLschema/DAL/SQL" xmlns:xsi="http://www.w3.org/2001/XMLSchema" xsi:schemaLocation="http://www.optimalbpm.se/XMLschema/DAL/SQL ../../dal/SQL.xsd">
 	<resources>
 		<resource type="rdbms" uuid="{1D62083E-88F7-4442-920D-0B6CC59BA2FF}" caption="localhost_pg">
 			<server>localhost</server>
