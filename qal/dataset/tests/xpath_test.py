@@ -51,7 +51,7 @@ class Test(unittest.TestCase):
         _f_b.close()
         self.assertEqual(_a, _b, "test_1_Load_Save: Files are not equal")
         
-        #TODO: Add more tests. Especially against no existing destination 
+        #TODO: Add more tests. Especially against no existing destination and more complex files, more levels.
         
 
 
