@@ -261,7 +261,7 @@ class XPath_Dataset(Custom_Dataset):
 
 
 
-    def save(self, _apply_to = None, _update = None, _delete = None):
+    def save(self, _apply_to = None, _do_not_insert = None, _do_not_update = None, _do_not_delete = None):
         """Use root XPath to find a node to iterate over and then add field data via field_xpaths, and save resulting file"""
         
         if _apply_to:
@@ -275,7 +275,7 @@ class XPath_Dataset(Custom_Dataset):
         # Load destination file    
         
         import os
-        if _update:
+        if _apply_to:
             
             if not os.path.exists(_filename):
                 print("XPath_Dataset.save - Destination file does not exist, using source file for structure")
@@ -314,46 +314,66 @@ class XPath_Dataset(Custom_Dataset):
         print(str(self.data_table))
         
         # Create a list of row nodes which should not be deleted
-        if _delete:
-            _do_not_delete = []
+        if not _do_not_delete:
+            _spare_these = []
         
         _curr_path, _row_id_attribute = self._parse_obpm_xpath( _sorted_xpaths[0][1])
+        if not _row_id_attribute and _apply_to:
+            raise Exception("xpath.save(_apply_to=\""+ str(_filename) +"\")):\nCannot apply a dataset to an existing file without identifying attributes in the the row node level.")
         
         for _curr_row in self.data_table:
-            
+            _row_node = None
             if _row_id_attribute:
-                print("before"  + str(_curr_row[_sorted_xpaths[0][0]]))
-                _row_node = self._create_xpath_nodes(_row_node_parent, 
-                                                     "/"+_row_node_name + "[@"+ 
-                                                     _row_id_attribute + "='" + 
-                                                     str(_curr_row[_sorted_xpaths[0][0]]) + 
-                                                     "']"
-                                                     )
-                print("after")
-                _start_idx = 1 
+                # Create an XPath for finding existing row nodes 
+                _row_xpath = _row_node_name + \
+                    "[@"+ _row_id_attribute + "='" + str(_curr_row[_sorted_xpaths[0][0]]) + "']"
+                # Lookup existing node
+                _existing_node = _row_node_parent.xpath(_row_xpath)
+                if len(_existing_node) > 1:
+                    raise Exception("xpath.save: error: Non-unique key at "+ str(_row_xpath) + ", " + str(len(_existing_node)) + " matching nodes encountered.")
+                elif len(_existing_node) == 0:
+                    if _do_not_insert:
+                        print("xpath.save(_do_not_insert=True): Skipping creating new node at "+ str(_row_xpath))
+                    else:
+                        _row_node = self._create_xpath_nodes(_row_node_parent, _row_xpath)
+                else:
+                    if _do_not_update:        
+                        print("xpath.save(_do_not_delete=True): Skipping updating node at "+ str(_row_xpath))
+                    else:
+                        _row_node = _existing_node[0]
+
+                _start_idx = 1
             else:
+                # XML is empty, always create new row nodes
                 _row_node = SubElement(_row_node_parent, _row_node_name)
                 _start_idx = 0
-            
-            for _field_idx in range(_start_idx, len(_sorted_xpaths)):
                 
-                # TODO: Optimize, generate a list of paths and attributes to use instead of calling _parse_obpm_xpath each time
-                _curr_path, _curr_attribute = self._parse_obpm_xpath( _sorted_xpaths[_field_idx][1])
-                _curr_node = self._create_xpath_nodes(_row_node, _curr_path)
-                print("_curr_path      :" + str(_curr_path))
-                print("_curr_attribute :" + str(_curr_attribute))
-                # Handle special case with only an attribute reference
-                if _curr_attribute:
-                    _curr_node.set(_curr_attribute, _curr_row[_sorted_xpaths[_field_idx][0]])
-                else:
-                    _curr_node.text = str(_curr_row[_sorted_xpaths[_field_idx][0]])
+            if _do_not_delete:
+                # The actual decision is later, this is just for logging
+                print("xpath.save(_do_not_delete=True): Skipping deleting node at "+ str(_row_xpath))
+            else:
+                _spare_these.append(_row_node)          
+                  
+            if _row_node != None:
+                for _field_idx in range(_start_idx, len(_sorted_xpaths)):
                     
-            if _delete:
-                _do_not_delete.append(_row_node)
+                    # TODO: Optimize, generate a list of paths and attributes to use instead of calling _parse_obpm_xpath each time
+                    _curr_path, _curr_attribute = self._parse_obpm_xpath( _sorted_xpaths[_field_idx][1])
+                    _curr_node = self._create_xpath_nodes(_row_node, _curr_path)
+                    print("_curr_path      :" + str(_curr_path))
+                    print("_curr_attribute :" + str(_curr_attribute))
+                    # Handle special case with only an attribute reference
+                    if _curr_attribute:
+                        _curr_node.set(_curr_attribute, _curr_row[_sorted_xpaths[_field_idx][0]])
+                    else:
+                        _curr_node.text = str(_curr_row[_sorted_xpaths[_field_idx][0]])
+                    
+
         
-        if _delete:        
+        if not _do_not_delete:
+            # Delete all nodes not in source data
             for _delete_node in _row_node_parent.getchildren():
-                if not(_delete_node in _do_not_delete):
+                if not(_delete_node in _spare_these):
                     _row_node_parent.remove(_delete_node)
         
         print("Saving : " + _filename)                    

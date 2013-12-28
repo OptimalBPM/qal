@@ -23,6 +23,9 @@ def load_xml(_filename):
 
 
 class Test(unittest.TestCase):
+    def __init__(self, methodName='runTest' ):
+        self.maxDiff = None
+        super(Test, self ).__init__( methodName)
 
 
     def test_1_Load_Save_update_delete(self):
@@ -41,7 +44,7 @@ class Test(unittest.TestCase):
         _da = XPath_Dataset(_resource= _resources.get_resource("{969A610A-FCA6-4837-B33A-BAA8F13D8B70}"))
         _da.load()
         print(str(_da.data_table))
-        _da.save(_apply_to = Test_Resource_Dir + "/xml_out.xml", _update = True, _delete = True)
+        _da.save(_apply_to = Test_Resource_Dir + "/xml_out.xml")
         
         _f_a = open(Test_Resource_Dir + "/xml_out.xml", "r")
         _f_b = open(Test_Resource_Dir + "/xml_cmp.xml", "r")
