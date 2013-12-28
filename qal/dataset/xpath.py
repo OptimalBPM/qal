@@ -75,17 +75,13 @@ class XPath_Dataset(Custom_Dataset):
         else:
             raise Exception("file_to_tree: " + _data_format + " is not supported")
         
-    def _parse_ubpm_xpath(self, _ubpm_xpath):
+    def _parse_obpm_xpath(self, _obpm_xpath):
         """Parse the trailing attribute identifier from the ubpm xpath string. ":" isn't allowed in xpath."""
-        _parts = _ubpm_xpath.split("::")
+        _parts = _obpm_xpath.split("::")
         if len(_parts) == 2:
             return _parts[0], _parts[1]
         else:
-            return _ubpm_xpath, None       
-            
-            
-    
-
+            return _obpm_xpath, None      
         
     def load(self):
         """Parse file, apply root XPath to iterate over and then collect field data via field_xpaths."""
@@ -102,7 +98,7 @@ class XPath_Dataset(Custom_Dataset):
         for _curr_row in _root_nodes:
             _row_data = []
             for _field_idx in range(0, len(self.field_names)):
-                _curr_path, _curr_attribute = self._parse_ubpm_xpath(self.field_xpaths[_field_idx])
+                _curr_path, _curr_attribute = self._parse_obpm_xpath(self.field_xpaths[_field_idx])
                 print("_curr_path      :" + str(_curr_path))
                 print("_curr_attribute :" + str(_curr_attribute))
                 # Handle special case with only an attribute reference
@@ -124,6 +120,18 @@ class XPath_Dataset(Custom_Dataset):
             
         self.data_table = _data
         return _data  
+    
+    def _find_next_match(self, _list, _start_idx, _match):
+        for _curr_idx in range(_start_idx, len(_list)):
+            if _list[_curr_idx] == _match:
+                return _curr_idx
+        return -1
+    
+    def _find_previous_match(self, _list, _start_idx, _match):
+        for _curr_idx in range(_start_idx, 0, -1):
+            if _list[_curr_idx] == _match:
+                return _curr_idx
+        return -1
     
     def _create_xpath_nodes(self, _node, _xpath):   
         """Used an xpath to create nodes that match the path and its conditions(names, attributes and so forth)"""
@@ -164,10 +172,15 @@ class XPath_Dataset(Custom_Dataset):
                     #It was, move on
                     _token_idx+=1
                     
-                    #Then check if it exists
+                    #Find ending of condition
+                    _end_cond_idx = self._find_next_match(_tokens, _token_idx, ("]",""))
+
+                    if _end_cond_idx == -1: 
+                        raise Exception("_create_xpath_nodes: Cannot find end of condition.\nXPath = " + _xpath) 
                     #Create relative path
-                    
-                    _check_path = "".join((_a[0]+_a[1] for _a in _tokens[_token_idx -1:_token_idx + 6]))
+                    _check_path = "".join((_a[0]+_a[1] for _a in _tokens[_token_idx -1:_end_cond_idx + 1]))
+
+                    #Then check if it exists
                     print("_check_path:" + str(_check_path))
                     _found_nodes = _curr_node.xpath(_check_path)
                     
@@ -183,7 +196,7 @@ class XPath_Dataset(Custom_Dataset):
                         # If they can be discerned(@id=value), add attributes
                         if _tokens[_token_idx + 3][0] == "=" and _tokens[_token_idx + 1][0] == "@":
                             print("set attribute to satisfy this path: " + str(_check_path)) 
-                            _curr_node.set(_tokens[_token_idx + 2][1], _tokens[_token_idx + 4][0])
+                            _curr_node.set(_tokens[_token_idx + 2][1], str(_tokens[_token_idx + 4][0]).strip("\"'"))
                         
                     _token_idx+=5
                 else:
@@ -198,33 +211,67 @@ class XPath_Dataset(Custom_Dataset):
             _token_idx+=1
         return _curr_node
     
-    def _prepare_root_path(self, _root_path):
-        """To make the XPath usable for specifying the destination and creating new nodes, 
-        if needed _prepare_root_path removes all conditions and if there are multiple paths, 
-        only uses the first one. """
+    def _parse_root_path(self, _root_path):
+        """Extract information from the root path to get sufficient information 
+        for specifying the destination and creating new nodes. \n 
+        * If many xpaths in the string, it uses the first one 
+        * Parses the root node name
+        * Parses the row parent node path
+        * Parses the row node name"""
         
-
+        if _root_path == "":
+            raise Exception("_parse_root_path: Root path cannot be empty")
+        # Parse XPath tokens
+        _root_xpath_tokens =  list(_elementpath.xpath_tokenizer(self.rows_xpath))
+        print(str(_root_xpath_tokens))
         # Use only first path for destination
-        _split_xpath = _root_path.split(' | ')
-        if len(_split_xpath) > 1:
-            print("_prepare_root_path: Multiple XPaths, using first.")
-            _relevant_path =  _split_xpath[0]
+        try:
+            _first_splitter = _root_xpath_tokens.index(('', '|'))
+            print("_parse_root_path: Multiple XPaths, using first.")
+            _split_xpath = "".join((_a[0]+_a[1] for _a in _root_xpath_tokens[0:_first_splitter]))
+        except ValueError:
+            _split_xpath = self.rows_xpath
+
+
+        # Get the root node name
+        if _root_xpath_tokens[0][0] == "/":
+            _root_node_name = _root_xpath_tokens[1][1]
         else:
-            _relevant_path =  _root_path
+            raise Exception("_parse_root_path: It is necessary to have an absolute (\"/node\") top node name in the XPath")
+        print("_root_node_name=" + str(_root_node_name))
+        # Get the row node name
 
-        # Remove all conditions
-        _conditions, _no_conditions = parse_balanced_delimiters(_relevant_path, "[", "]", "'")
+        _row_node_name_idx = self._find_previous_match(_root_xpath_tokens, len(_root_xpath_tokens) -1, ("/", ""))
+        if _row_node_name_idx == -1:
+            raise Exception("_parse_root_path: Cannot find start of condition.\nXPath = " + _root_path)
+        else:
+            _row_node_name = _root_xpath_tokens[_row_node_name_idx + 1][1]
+            
+        if _row_node_name_idx == 0:
+            raise Exception("_parse_root_path: The row node cannot be the root node.\nXPath = " + _root_path)
+        
+        print("_row_node_name=" + str(_row_node_name))
+        # Move on backward, what's left is the path to the parent of the row node, we need it to be able 
+        # to create rows, as the path may not return a node to find a parent from
+        _row_node_parent_xpath = "".join((_a[0]+_a[1] for _a in _root_xpath_tokens[0:_row_node_name_idx])) 
+        
+        print("_row_node_parent_xpath=" + str(_row_node_parent_xpath))
+        
+        return _root_node_name, _row_node_name, _row_node_parent_xpath
 
 
 
-    def save(self, _save_as = None, _update = None, _delete = None):
+    def save(self, _apply_to = None, _update = None, _delete = None):
         """Use root XPath to find a node to iterate over and then add field data via field_xpaths, and save resulting file"""
         
-        if _save_as:
-            _filename = _save_as
+        if _apply_to:
+            _filename = _apply_to
         else:
             _filename = self.filename
         
+        # Find the 
+        _root_node_name, _row_node_name, _parent_xpath = self._parse_root_path(self.rows_xpath)
+               
         # Load destination file    
         
         import os
@@ -236,45 +283,63 @@ class XPath_Dataset(Custom_Dataset):
             else:
                 _structure_file = _filename
             try:
-                
                 _tree = self.file_to_tree(self.xpath_data_format, _structure_file)
             except Exception as e:
                 raise Exception("XPath_Dataset.save - error parsing " + self.xpath_data_format + " file : " + str(e))
 
         else:
             # Create a tree with root node based on the first  
-            _tokens =  list(_elementpath.xpath_tokenizer(self.rows_xpath))
-            if len(_tokens) > 1 and _tokens[0][0] == "/" and _tokens[1][1] != "":
+            
+            if _root_node_name != "":
                 if self.encoding:
                     _encoding = self.encoding
                 else:
                     _encoding = "UTF-8"
                           
-                _tree = etree.parse(io.StringIO("<?xml version='1.0' ?>\n<" + _tokens[1][1] + "/>")) 
+                _tree = etree.parse(io.StringIO("<?xml version='1.0' ?>\n<" + _root_node_name + "/>")) 
             else:
-                raise Exception("XPath_Dataset.save - rows_xpath("+ str(self.rows_xpath)+") must be absolute and have at least the name of the root node. Example: \"root_node\" ")
+                raise Exception("XPath_Dataset.save - rows_xpath("+ str(self.rows_xpath)+") must be absolute and have at least the name of the root node. Example: \"/root_node\" ")
         _top_node =_tree.getroot()
-        # Where not existing, create a node structure from the information in the xpath.
-        _root_node = self._create_xpath_nodes(_top_node, self.rows_xpath)
+        
+        # Where not existing, create a node structure up to the parent or the row nodes
+        # from the information in the xpath.
+        _row_node_parent = self._create_xpath_nodes(_top_node, _parent_xpath)
 
         
         # Sort and add index references. 
         # The reason for sorting is made to handle several levels of data in the right order, 
-        # to minimize the need for node creation.
+        # this way the structure is gradually built with the right attributes.
         _sorted_xpaths = [[self.field_xpaths.index(x), x] for x in sorted(self.field_xpaths)]
         print(str(_sorted_xpaths))
         print(str(self.data_table))
-        # Find parent of root path. 
         
+        # Create a list of row nodes which should not be deleted
+        if _delete:
+            _do_not_delete = []
         
+        _curr_path, _row_id_attribute = self._parse_obpm_xpath( _sorted_xpaths[0][1])
         
         for _curr_row in self.data_table:
-            # Find parent of root path. 
             
-            for _field_idx in range(0, len(_sorted_xpaths)):
+            if _row_id_attribute:
+                print("before"  + str(_curr_row[_sorted_xpaths[0][0]]))
+                _row_node = self._create_xpath_nodes(_row_node_parent, 
+                                                     "/"+_row_node_name + "[@"+ 
+                                                     _row_id_attribute + "='" + 
+                                                     str(_curr_row[_sorted_xpaths[0][0]]) + 
+                                                     "']"
+                                                     )
+                print("after")
+                _start_idx = 1 
+            else:
+                _row_node = SubElement(_row_node_parent, _row_node_name)
+                _start_idx = 0
+            
+            for _field_idx in range(_start_idx, len(_sorted_xpaths)):
                 
-                _curr_path, _curr_attribute = self._parse_ubpm_xpath(_sorted_xpaths[_field_idx][1])
-                _curr_node = self._create_xpath_nodes(_root_node, _curr_path)
+                # TODO: Optimize, generate a list of paths and attributes to use instead of calling _parse_obpm_xpath each time
+                _curr_path, _curr_attribute = self._parse_obpm_xpath( _sorted_xpaths[_field_idx][1])
+                _curr_node = self._create_xpath_nodes(_row_node, _curr_path)
                 print("_curr_path      :" + str(_curr_path))
                 print("_curr_attribute :" + str(_curr_attribute))
                 # Handle special case with only an attribute reference
@@ -283,6 +348,14 @@ class XPath_Dataset(Custom_Dataset):
                 else:
                     _curr_node.text = str(_curr_row[_sorted_xpaths[_field_idx][0]])
                     
+            if _delete:
+                _do_not_delete.append(_row_node)
+        
+        if _delete:        
+            for _delete_node in _row_node_parent.getchildren():
+                if not(_delete_node in _do_not_delete):
+                    _row_node_parent.remove(_delete_node)
+        
         print("Saving : " + _filename)                    
         _tree.write(_filename)  
         return _top_node  

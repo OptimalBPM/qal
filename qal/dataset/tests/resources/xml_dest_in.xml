@@ -10,7 +10,11 @@
 	<book id="bk103">
 		<price>5.95</price>
 		<test_tag>Test data</test_tag>
-		<title>Maeve Ascendant</title>
+		<title>Maeve Ascensnt_FIXMEFIXME</title>
+	</book>
+	<book id="bk103.3">
+		<price>5.95</price>
+		<title>Maeve Tests</title>
 	</book>
 	<book id="bk104">
 		<price>5.95</price>
@@ -18,7 +22,7 @@
 	</book>
 	<book id="bk105">
 		<price>5.95</price>
-		<title>The Sundered Grail</title>
+		<title>The Sundered Grail_FIXMEFIXME</title>
 	</book>
 	<book id="bk106">
 		<price>4.95</price>
@@ -41,7 +45,7 @@
 		<title>MSXML3: A Comprehensive Guide</title>
 	</book>
 	<book id="bk112">
-		<price>49.95</price>
+		<price>49.05</price>
 		<title>Visual Studio 7: A Comprehensive Guide</title>
 	</book>
-<book id="bk110"><price>36.95</price><title>Microsoft .NET: The Programming Bible</title></book></catalog>
+</catalog>
