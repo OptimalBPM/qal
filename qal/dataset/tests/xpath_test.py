@@ -10,6 +10,7 @@ from shutil import copyfile
 
 from qal.dataset.xpath import XPath_Dataset
 from qal.common.resources import Resources
+from qal.dataset.custom import DATASET_LOGLEVEL_DETAIL
 from lxml import etree
 from qal.tools.diff import diff_files
 import os
@@ -42,6 +43,7 @@ class Test(unittest.TestCase):
         _resources_node = load_xml(Test_Resource_Dir + "/resources.xml").find("resources")
         _resources = Resources(_resources_node = _resources_node)
         _da = XPath_Dataset(_resource= _resources.get_resource("{969A610A-FCA6-4837-B33A-BAA8F13D8B70}"))
+        _da.log_level = DATASET_LOGLEVEL_DETAIL
         _da.load()
         print(str(_da.data_table))
         _da.save(_apply_to = Test_Resource_Dir + "/xml_out.xml")

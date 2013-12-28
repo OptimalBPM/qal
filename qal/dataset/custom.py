@@ -6,6 +6,14 @@ Created on Sep 14, 2012
 
 from qal.dal.dal_types import DB_DB2,DB_ORACLE, DB_POSTGRESQL
 from qal.sql.sql_utils import db_specific_object_reference
+from urllib.parse import quote
+from datetime import datetime
+
+DATASET_LOGLEVEL_NONE = 0
+DATASET_LOGLEVEL_LOW = 1
+DATASET_LOGLEVEL_MEDIUM = 2
+DATASET_LOGLEVEL_DETAIL = 3
+DATASET_LOGLEVEL_ALL = 4
 
 
 class Custom_Dataset(object):
@@ -21,7 +29,9 @@ class Custom_Dataset(object):
     def __init__(self):
         """Constructor""" 
         self.field_names = []
-        self.data_table = [] 
+        self.data_table = []
+        self._log = [] 
+        self.log_level = DATASET_LOGLEVEL_MEDIUM
         
     def cast_text_to_type(self, _text, _field_idx):
         try:
@@ -33,6 +43,27 @@ class Custom_Dataset(object):
                 return _text
         except Exception as e:
             raise Exception("cast_text_to_type raised an error for \"" + _text +"\": " + str(e) )
+        
+    def log_update_field(self, _row_key, _fieldref, _old_val, _new_val):
+        if self.log_level >= DATASET_LOGLEVEL_DETAIL:
+            self._log.append(self.__class__.__name__ + ".update;"+quote(str(_row_key)) + ";"+quote(str(_fieldref)) + ";"+quote(str(_old_val)) + ";"+quote(str(_new_val)))
+
+    
+    def log_insert(self, _row_key, row_value):
+        if self.log_level >= DATASET_LOGLEVEL_DETAIL:
+            self._log.append(self.__class__.__name__ + ".insert;"+quote(str(_row_key)) + ";"+quote(str(row_value)))
+
+    def log_delete(self, _row_key, row_value):
+        if self.log_level >= DATASET_LOGLEVEL_DETAIL:
+            self._log.append(self.__class__.__name__ + ".delete;"+quote(str(_row_key)) + ";"+quote(str(row_value)))
+    def log_save(self, _filename):
+        if self.log_level >= DATASET_LOGLEVEL_LOW:
+            self._log.append(self.__class__.__name__ + ".save;"+quote(str(_filename)) + ";" + str(datetime.now().isoformat()))
+                
+    def log_load(self, _filename):
+        if self.log_level >= DATASET_LOGLEVEL_LOW:
+            self._log.append(self.__class__.__name__ + ".load;"+quote(str(_filename)) + ";" + str(datetime.now().isoformat()))
+               
         
     def load(self):
         """Load the data"""

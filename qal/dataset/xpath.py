@@ -86,7 +86,7 @@ class XPath_Dataset(Custom_Dataset):
     def load(self):
         """Parse file, apply root XPath to iterate over and then collect field data via field_xpaths."""
         print("Loading : " + self.filename)
-        
+        self.log_load(self.filename)  
         try:
             _tree = self.file_to_tree(self.xpath_data_format, self.filename)
         except Exception as e:
@@ -119,6 +119,7 @@ class XPath_Dataset(Custom_Dataset):
             _data.append(_row_data)
             
         self.data_table = _data
+        
         return _data  
     
     def _find_next_match(self, _list, _start_idx, _match):
@@ -321,6 +322,8 @@ class XPath_Dataset(Custom_Dataset):
         if not _row_id_attribute and _apply_to:
             raise Exception("xpath.save(_apply_to=\""+ str(_filename) +"\")):\nCannot apply a dataset to an existing file without identifying attributes in the the row node level.")
         
+        _log = []
+        
         for _curr_row in self.data_table:
             _row_node = None
             if _row_id_attribute:
@@ -336,6 +339,7 @@ class XPath_Dataset(Custom_Dataset):
                         print("xpath.save(_do_not_insert=True): Skipping creating new node at "+ str(_row_xpath))
                     else:
                         _row_node = self._create_xpath_nodes(_row_node_parent, _row_xpath)
+                        self.log_insert(_row_node.get(_row_id_attribute), etree.tostring(_row_node))
                 else:
                     if _do_not_update:        
                         print("xpath.save(_do_not_delete=True): Skipping updating node at "+ str(_row_xpath))
@@ -346,6 +350,7 @@ class XPath_Dataset(Custom_Dataset):
             else:
                 # XML is empty, always create new row nodes
                 _row_node = SubElement(_row_node_parent, _row_node_name)
+                self.log_insert("N/A", etree.tostring(_row_node))
                 _start_idx = 0
                 
             if _do_not_delete:
@@ -363,19 +368,32 @@ class XPath_Dataset(Custom_Dataset):
                     print("_curr_path      :" + str(_curr_path))
                     print("_curr_attribute :" + str(_curr_attribute))
                     # Handle special case with only an attribute reference
+                    _new_value = str(_curr_row[_sorted_xpaths[_field_idx][0]])
                     if _curr_attribute:
-                        _curr_node.set(_curr_attribute, _curr_row[_sorted_xpaths[_field_idx][0]])
+                        _curr_value = _curr_node.get(_curr_attribute)
+                        if _curr_value != _new_value:
+                            self.log_update_field(_curr_row[_sorted_xpaths[0][0]],_sorted_xpaths[_field_idx][1], _curr_value, _new_value)
+                            _curr_node.set(_curr_attribute, _new_value)
+                            
+                        
                     else:
-                        _curr_node.text = str(_curr_row[_sorted_xpaths[_field_idx][0]])
-                    
-
+                        _curr_value = _curr_node.text
+                        if _curr_node.text != _new_value:
+                            self.log_update_field(_curr_row[_sorted_xpaths[0][0]],_sorted_xpaths[_field_idx][1], _curr_value, _new_value)
+                            _curr_node.text = _new_value 
         
         if not _do_not_delete:
             # Delete all nodes not in source data
             for _delete_node in _row_node_parent.getchildren():
                 if not(_delete_node in _spare_these):
+                    if _row_id_attribute:
+                        self.log_delete(_delete_node.get(_row_id_attribute), etree.tostring(_delete_node))
+                    else:
+                        self.log_delete('N/A',  etree.tostring(_delete_node))
                     _row_node_parent.remove(_delete_node)
         
-        print("Saving : " + _filename)                    
-        _tree.write(_filename)  
-        return _top_node  
+        
+                          
+        _tree.write(_filename)
+        self.log_save(_filename)  
+        return _top_node, self._log
