@@ -9,7 +9,7 @@ from qal.dataset.custom import Custom_Dataset
 
 class Spreadsheet_Dataset(Custom_Dataset):
  
-    """The matrix dataset holds a two-dimensional array of data"""
+    """The Spreadsheet dataset holds a spreadsheet"""
     
     _dal = None
     
