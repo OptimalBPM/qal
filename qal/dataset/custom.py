@@ -3,11 +3,13 @@ Created on Sep 14, 2012
 
 @author: Nicklas Boerjesson
 """
+from urllib.parse import quote
+from datetime import datetime
+
 
 from qal.dal.dal_types import DB_DB2,DB_ORACLE, DB_POSTGRESQL
 from qal.sql.sql_utils import db_specific_object_reference
-from urllib.parse import quote
-from datetime import datetime
+from qal.tools.diff import compare 
 
 DATASET_LOGLEVEL_NONE = 0
 DATASET_LOGLEVEL_LOW = 1
@@ -44,9 +46,14 @@ class Custom_Dataset(object):
         except Exception as e:
             raise Exception("cast_text_to_type raised an error for \"" + _text +"\": " + str(e) )
         
-    def log_update_field(self, _row_key, _fieldref, _old_val, _new_val):
+    def log_update_row(self, _row_key, _old_row, _new_row):
         if self.log_level >= DATASET_LOGLEVEL_DETAIL:
-            self._log.append(self.__class__.__name__ + ".update;"+quote(str(_row_key)) + ";"+quote(str(_fieldref)) + ";"+quote(str(_old_val)) + ";"+quote(str(_new_val)))
+            _field_diffs = []
+            for _field_idx in range(len(_new_row)):
+                if _old_row[_field_idx] != _new_row[_field_idx]:
+                    _field_diffs.append(self.field_names[_field_idx] + " : " + quote(str(_old_row[_field_idx])) + " =>" + quote(str(_new_row[_field_idx]))) 
+                
+            self._log.append(self.__class__.__name__ + ".update;"+quote(str(_row_key)) + ";"+";" +"|".join(_field_diffs))
 
     
     def log_insert(self, _row_key, row_value):
@@ -74,6 +81,71 @@ class Custom_Dataset(object):
         """Save the data"""
         raise Exception('Custom_Dataset.Save is not implemented in class: ' + self.classname)
         pass
+    
+    def _structure_insert_row(self, _row_idx, _row_data):
+        raise Exception("Custom_Dataset._structure_add_row should never be called directly, is implemented in subclasses.")
+
+    def _structure_update_row(self, _row_idx, _row_data):
+        raise Exception("Custom_Dataset._structure_update_row should never be called directly, is implemented in subclasses.")
+
+    def _structure_delete_row(self, _row_idx):
+        raise Exception("Custom_Dataset._structure_delete_row should never be called directly, is implemented in subclasses.")
+
+
+        
+    def _apply_merge_to_structure(self, _insert, _update, _delete, _sorted_dest):
+        
+        #print("_insert: " + str(_insert))
+        #print("Before apply: " + str(_sorted_dest))
+
+        _insert_idx = 0
+        _delete_idx = 0
+        _update_idx = 0
+        
+        self.data_table = _sorted_dest
+        # Loop the sorted destination dataset and apply changes
+        for _curr_row_idx in range(0, len(self.data_table)):
+            _actual_row_idx = _curr_row_idx - _delete_idx + _insert_idx
+            # print("_actual_row_idx = _curr_row_idx - _delete_idx + _insert_idx = " + 
+            #      str(_curr_row_idx) + " - " +str(_delete_idx) + " + " + str(_insert_idx))
+
+            # Make deletes
+            if _delete and _delete_idx < len(_delete):
+                if _delete[_delete_idx][1] == _curr_row_idx:
+                    #print("deleting row " + str(_delete[_delete_idx][1])) 
+                    self._structure_delete_row(_actual_row_idx)
+                    _delete_idx+=1
+            # Make updates
+            if _update and _update_idx < len(_update):
+                if _update[_update_idx][1] == _curr_row_idx:
+                    #print("updating row " + str(_update[_update_idx][1])) 
+                    self.log_update_row(_actual_row_idx, self.data_table[_actual_row_idx], _update[_update_idx][2])
+                    self._structure_update_row(_actual_row_idx, _update[_update_idx][2])
+                    _update_idx+=1
+                    
+            # Make inserts
+            if _insert and len(_insert) > 0:
+                
+                # TODO: This while should insert these in reverse instead.
+                while _insert_idx < len(_insert) and _insert[_insert_idx][1] == _curr_row_idx:
+                    #print("inserting row " + str(_insert[_insert_idx][1]))
+                    self._structure_insert_row(_actual_row_idx, _insert[_insert_idx][2]) 
+                    _insert_idx+=1
+        
+        #print("After apply:  " + str(_sorted_dest))            
+        return self.data_table        
+    
+    def apply_new_data(self, _new_data_table, _key_fields):
+        _delete, _insert, _update, _dest_sorted = compare(
+                                                          _left = _new_data_table, 
+                                                          _right = self.data_table, 
+                                                          _key_columns = _key_fields, 
+                                                          _full = True)
+        self.data_table = self._apply_merge_to_structure(_insert, _update, _delete, _dest_sorted)
+        
+        return self.data_table
+                            
+                
         
     
     def as_sql(self, _db_type):

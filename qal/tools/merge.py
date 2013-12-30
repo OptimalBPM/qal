@@ -76,6 +76,7 @@ class Merge(object):
     dest_table = None
     dest_field_types = None
     resources = None
+    dest_dataset_log_level = None
     
     """
     The merge class takes two datasets and merges them together.
@@ -168,6 +169,7 @@ class Merge(object):
             self.load_mappings_from_xml_node(_xml_node.find("mappings"))
             self.load_settings_from_xml_node(_xml_node.find("settings"))
             self.resources = Resources(_resources_node= _xml_node.find("resources"))
+            
         else:
             raise Exception("Merge.load_from_xml_node: \"None\" is not a valid Merge node.")                  
 
@@ -301,67 +303,32 @@ class Merge(object):
        
          
     
-    def load_file_dataset_from_resource(self, _resource):
+    def loaded_dataset_from_resource(self, _resource):
         """Get a dataset from a file resource"""
         if _resource.type.upper() == "FLATFILE":
             _ffds =  Flatfile_Dataset(_resource = _resource)
-            return _ffds.load(), _ffds.field_names
+            try:
+                _ffds.load()
+            except IOError:
+                print("loaded_dataset_from_resource: Flatfile_Dataset - File node found, will write to new file.")
+            return _ffds, _ffds.field_names
             
         elif _resource.type.upper() == "XPATH":
-            _ffds =  Flatfile_Dataset(_resource = _resource)
-            return _ffds.load(), _ffds.field_names
+            _ffds =  XPath_Dataset(_resource = _resource)
+            try:
+                _ffds.load()
+            except IOError:
+                print("loaded_dataset_from_resource: XPath_Dataset - File node found, will write to new file.")
+            return _ffds, _ffds.field_names
         else: 
-            raise Exception("load_file_dataset_from_resource: Unsupported source resource type: " + str(_resource.type.upper()))
+            raise Exception("loaded_dataset_from_resource: Unsupported source resource type: " + str(_resource.type.upper()))
         
     def load_rdbms_dataset_from_resource(self, _resource, _table_name):
         """Query all values from a table from a RDBMS resource"""
         _dal = Database_Abstraction_Layer(_resource = _resource)
         return _dal.query(select_all_skeleton(_table_name).as_sql(_dal.db_type)), _dal.field_names, _dal.field_types
     
-    def _apply_merge_to_dataset(self, _insert, _update, _delete, _sorted_dest):
-        
-        #print("_insert: " + str(_insert))
-        #print("Before apply: " + str(_sorted_dest))
-        
-        _do_delete = str(self.delete).lower() == "true"
-        _do_update = str(self.update).lower() == "true"
-        _do_insert = str(self.insert).lower() == "true"
-        
-        _insert_idx = 0
-        _delete_idx = 0
-        _update_idx = 0
-        
-        # Loop the sorted destination dataset and apply changes
-        for _curr_row_idx in range(0, len(_sorted_dest)):
-            _actual_row_idx = _curr_row_idx - _delete_idx + _insert_idx
-            # print("_actual_row_idx = _curr_row_idx - _delete_idx + _insert_idx = " + 
-            #      str(_curr_row_idx) + " - " +str(_delete_idx) + " + " + str(_insert_idx))
 
-            # Make deletes
-            if _do_delete and _delete_idx < len(_delete):
-                if _delete[_delete_idx][1] == _curr_row_idx:
-                    #print("deleting row " + str(_delete[_delete_idx][1])) 
-                    _sorted_dest.pop(_actual_row_idx)
-                    _delete_idx+=1
-            # Make updates
-            if _do_update and _update_idx < len(_update):
-                if _update[_update_idx][1] == _curr_row_idx:
-                    #print("updating row " + str(_update[_update_idx][1])) 
-                    _sorted_dest[_actual_row_idx] = _update[_update_idx][2]
-                    _update_idx+=1
-                    
-            # Make inserts
-            if _do_insert:
-                
-                # TODO: This while should insert these in reverse instead.
-                while _insert_idx < len(_insert) and _insert[_insert_idx][1] == _curr_row_idx:
-                    #print("inserting row " + str(_insert[_insert_idx][1])) 
-                    _sorted_dest.insert(_actual_row_idx,_insert[_insert_idx][2])
-                    _insert_idx+=1
-        
-        #print("After apply:  " + str(_sorted_dest))            
-        return _sorted_dest        
-                    
                 
                 
     
@@ -377,7 +344,7 @@ class Merge(object):
         self.source_resource = self.resources.get_resource('source_uuid')
         # Get source data set
         if self.source_resource.type.upper() in ["CUSTOM", "FLATFILE", "MATRIX", "XPATH"]:
-            self.source_dataset, self.source_field_names = self.load_file_dataset_from_resource(self.source_resource)
+            self.source_dataset, self.source_field_names = self.loaded_dataset_from_resource(self.source_resource)
         elif self.source_resource.type.upper() in ["RDBMS"]:
             self.source_dataset, self.source_field_names, self.source_field_types = self.load_rdbms_dataset_from_resource(self.source_resource, self.source_table)
         else: 
@@ -387,13 +354,15 @@ class Merge(object):
         self.dest_resource = self.resources.get_resource('dest_uuid')
         # Get destination data set
         if self.dest_resource.type.upper() in ["CUSTOM", "FLATFILE", "MATRIX", "XPATH"]:
-            self.dest_dataset, self.dest_field_names = self.load_file_dataset_from_resource(self.dest_resource)
+            self.dest_dataset, self.dest_field_names = self.loaded_dataset_from_resource(self.dest_resource)
         elif self.dest_resource.type.upper() in ["RDBMS"]:
             self.dest_dataset, self.dest_field_names, self.dest_field_types = self.load_rdbms_dataset_from_resource(self.dest_resource, self.dest_table)
         else: 
             raise Exception("execute: Invalid destination resource type:" + str(self.dest_resource.type.upper()))
         
-
+        if self.dest_dataset_log_level:
+             self.dest_dataset.log_level = self.dest_dataset_log_level
+             
     def _make_shortcuts(self):
         """Make a list of which source column index maps to which destination column index""" 
         _shortcuts = []       
@@ -414,12 +383,12 @@ class Merge(object):
 
         _mapped_source = []
         # Loop all rows in the source dataset
-        for _curr_idx in range(0, len(self.source_dataset)):
+        for _curr_idx in range(0, len(self.source_dataset.data_table)):
             # Create an empty row with None-values to fill later
             _curr_mapped = []
             _curr_mapped.extend(None for x in self.dest_field_names)
             
-            _curr_row = self.source_dataset[_curr_idx]
+            _curr_row = self.source_dataset.data_table[_curr_idx]
             # Loop all the shortcuts to remap the data from the source structure into the destinations 
             # structure while applying transformations.
             for _curr_shortcut in _shortcuts:
@@ -446,17 +415,17 @@ class Merge(object):
 
         """Merge the datasets"""
         
-        # Compare data sets. 
-        _delete, _insert, _update, _dest_sorted = compare(
-                                                          _left = _mapped_source, 
-                                                          _right = self.dest_dataset, 
-                                                          _key_columns = self.key_fields, 
-                                                          _full = True)
+        _merged_dataset = self.dest_dataset.apply_new_data(_mapped_source, self.key_fields)
+        self.dest_dataset.save()
         
+
+        return _merged_dataset
+
+        """        
         if self.dest_resource.type.upper() in ["CUSTOM", "FLATFILE", "MATRIX"]:
-            _dataset = self._apply_merge_to_dataset(_insert, _update, _delete, _dest_sorted)
+            
             # Save to relevant data format
-                    
+                   
                 
         elif self.dest_resource.type.upper() in ["XPATH"]:
             self._xpath_generate_updates(_update)
@@ -479,7 +448,7 @@ class Merge(object):
         
         # Merge delete into destination data set 
         print("_delete : " + str(_delete))
-        
+        """
         
         
     def write_result_csv(self, _file_output = None):

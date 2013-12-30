@@ -5,7 +5,9 @@ Created on Nov 3, 2013
 """
 import unittest
 from qal.tools.merge import Merge 
+from qal.dataset.custom import DATASET_LOGLEVEL_DETAIL
 from lxml import etree
+from shutil import copyfile
 import datetime
 
 import os
@@ -35,20 +37,25 @@ class Merge_test(unittest.TestCase):
         _tree = etree.ElementTree()
         return _tree.parse(_filename, _parser)
     
-    def _test_Merge_files(self):
+    def test_Merge_files(self):
         
         """Test merge two files"""
+        
+        copyfile(Test_Resource_Dir + "/csv_dest_orig.csv", Test_Resource_Dir + "/csv_out.csv")
+        
         _merge_xml = self._parse_xml(Test_Resource_Dir + "/test_merge_two_files.xml")
         _merge = Merge(_xml_node = _merge_xml)
-        
+        _merge.dest_dataset_log_level = DATASET_LOGLEVEL_DETAIL
         self.assertEqual(etree.tostring(_merge.as_xml_node()), etree.tostring(_merge_xml), "Input/output XML does not match")
 
+
         _result = _merge.execute()
+        print(str(_merge.dest_dataset._log)) 
         
         #_merge.write_result('resources/csv_out.xml')
         self.assertEqual(_result, c_file_result, "Merge result differs")
 
-    def test_Merge_tables(self):
+    def _test_Merge_tables(self):
         
         """Test merge two files"""
         _merge_xml = self._parse_xml(Test_Resource_Dir + "/test_merge_two_tables.xml")
@@ -56,6 +63,8 @@ class Merge_test(unittest.TestCase):
         self.assertEqual(etree.tostring(_merge.as_xml_node()), etree.tostring(_merge_xml), "Input/output XML does not match")
 
         _result = _merge.execute()
+        
+        _result
         
         #_merge.write_result('resources/csv_out.xml')
         self.assertEqual(_result, c_file_result)

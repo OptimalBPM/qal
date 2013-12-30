@@ -159,7 +159,7 @@
     <resource caption="destination" type="flatfile" uuid="dest_uuid">
      	<csv_dialect>excel-tab</csv_dialect>
 		<delimiter>;</delimiter>
-		<filename>resources/csv_dest.csv</filename>
+		<filename>resources/csv_out.csv</filename>
 		<has_header>True</has_header>
 		<quoting>ALL</quoting>
 	</resource>	
