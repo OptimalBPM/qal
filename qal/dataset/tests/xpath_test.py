@@ -12,7 +12,6 @@ from qal.dataset.xpath import XPath_Dataset
 from qal.common.resources import Resources
 from qal.dataset.custom import DATASET_LOGLEVEL_DETAIL
 from lxml import etree
-from qal.tools.diff import diff_files
 import os
 Test_Script_Dir = os.path.dirname(__file__)
 Test_Resource_Dir = Test_Script_Dir + '/resources'
