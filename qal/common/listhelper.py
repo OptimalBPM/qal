@@ -18,13 +18,13 @@ def unenumerate(value, _Type):
     """Returns the value of a specific type""" 
     return value[_Type]   
 
-def find_next_match(self, _list, _start_idx, _match):
+def find_next_match(_list, _start_idx, _match):
     for _curr_idx in range(_start_idx, len(_list)):
         if _list[_curr_idx] == _match:
             return _curr_idx
     return -1
 
-def find_previous_match(self, _list, _start_idx, _match):
+def find_previous_match(_list, _start_idx, _match):
     for _curr_idx in range(_start_idx, 0, -1):
         if _list[_curr_idx] == _match:
             return _curr_idx
