@@ -259,6 +259,20 @@ class XPath_Dataset(Custom_Dataset):
         print("_row_node_parent_xpath=" + str(_row_node_parent_xpath))
         
         return _root_node_name, _row_node_name, _row_node_parent_xpath
+    
+    
+    def _structure_insert_row(self, _row_idx, _row_data):
+        """Override parent to add XML handling"""
+        self.super(XPath_Dataset, self)._structure_insert_row(_row_idx,_row_data)
+        #self.data_table.insert(_row_idx,_row_data)
+        
+    def _structure_update_row(self, _row_idx, _row_data):
+        self.super(XPath_Dataset, self)._structure_update_row(_row_idx,_row_data)
+        #self.data_table[_row_idx] = _row_data
+
+    def _structure_delete_row(self, _row_idx):
+        self.super(XPath_Dataset, self)._structure_delete_row(_row_idx)
+        #self.data_table.pop(_row_idx)
 
 
 

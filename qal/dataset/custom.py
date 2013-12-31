@@ -78,25 +78,38 @@ class Custom_Dataset(object):
         pass
     
     def save(self):
-        """Save the data"""
+        """Save the data to the underlying target."""
         raise Exception('Custom_Dataset.Save is not implemented in class: ' + self.classname)
-        pass
+
     
     def _structure_insert_row(self, _row_idx, _row_data):
-        raise Exception("Custom_Dataset._structure_add_row should never be called directly, is implemented in subclasses.")
-
+        """Inserts a row at _row_idx in the self.data_table, containing _row_data\
+        Overridden by subclasses"""
+        self.data_table.insert(_row_idx,_row_data)
+        
     def _structure_update_row(self, _row_idx, _row_data):
-        raise Exception("Custom_Dataset._structure_update_row should never be called directly, is implemented in subclasses.")
+        """Updates the row at _row_idx in the self.data_table with _row_data.\
+        Overridden by subclasses"""
+        self.data_table[_row_idx] = _row_data
 
     def _structure_delete_row(self, _row_idx):
-        raise Exception("Custom_Dataset._structure_delete_row should never be called directly, is implemented in subclasses.")
-
+        """Deletes a row at _row_idx from the self.data_table.\
+        Overridden by subclasses"""
+        self.data_table.pop(_row_idx)
+        
+    def _structure_init(self):
+        """Initialize underlying structure before applying data to it.\
+        Overridden by subclasses."""
+        pass
 
         
-    def _apply_merge_to_structure(self, _insert, _update, _delete, _sorted_dest):
+    def _structure_apply_merge(self, _insert, _update, _delete, _sorted_dest):
         
         #print("_insert: " + str(_insert))
         #print("Before apply: " + str(_sorted_dest))
+        
+        
+        self._structure_init()
 
         _insert_idx = 0
         _delete_idx = 0
@@ -141,7 +154,7 @@ class Custom_Dataset(object):
                                                           _right = self.data_table, 
                                                           _key_columns = _key_fields, 
                                                           _full = True)
-        self.data_table = self._apply_merge_to_structure(_insert, _update, _delete, _dest_sorted)
+        self.data_table = self._structure_apply_merge(_insert, _update, _delete, _dest_sorted)
         
         return self.data_table
                             

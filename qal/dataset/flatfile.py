@@ -111,14 +111,7 @@ class Flatfile_Dataset(Custom_Dataset):
             
         return self.data_table   
     
-    def _structure_insert_row(self, _row_idx, _row_data):
-        self.data_table.insert(_row_idx,_row_data)
-        
-    def _structure_update_row(self, _row_idx, _row_data):
-        self.data_table[_row_idx] = _row_data
 
-    def _structure_delete_row(self, _row_idx):
-        self.data_table.pop(_row_idx)
 
     
     def save(self, _save_as = None):
