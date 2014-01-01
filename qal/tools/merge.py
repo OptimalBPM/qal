@@ -361,7 +361,7 @@ class Merge(object):
             raise Exception("execute: Invalid destination resource type:" + str(self.dest_resource.type.upper()))
         
         if self.dest_dataset_log_level:
-             self.dest_dataset.log_level = self.dest_dataset_log_level
+             self.dest_dataset._log_level = self.dest_dataset_log_level
              
     def _make_shortcuts(self):
         """Make a list of which source column index maps to which destination column index""" 

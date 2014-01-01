@@ -7,7 +7,7 @@ Created on Sep 14, 2012
 import io
 
 from qal.dataset.custom import Custom_Dataset
-from qal.common.parsing import parse_balanced_delimiters
+from qal.common.listhelper import find_next_match, find_previous_match
 from lxml import _elementpath
 from lxml import etree
 from xml.etree.ElementTree import SubElement    
@@ -75,7 +75,7 @@ class XPath_Dataset(Custom_Dataset):
         else:
             raise Exception("file_to_tree: " + _data_format + " is not supported")
         
-    def _parse_obpm_xpath(self, _obpm_xpath):
+    def _structure_parse_obpm_xpath(self, _obpm_xpath):
         """Parse the trailing attribute identifier from the ubpm xpath string. ":" isn't allowed in xpath."""
         _parts = _obpm_xpath.split("::")
         if len(_parts) == 2:
@@ -98,7 +98,7 @@ class XPath_Dataset(Custom_Dataset):
         for _curr_row in _root_nodes:
             _row_data = []
             for _field_idx in range(0, len(self.field_names)):
-                _curr_path, _curr_attribute = self._parse_obpm_xpath(self.field_xpaths[_field_idx])
+                _curr_path, _curr_attribute = self._structure_parse_obpm_xpath(self.field_xpaths[_field_idx])
                 print("_curr_path      :" + str(_curr_path))
                 print("_curr_attribute :" + str(_curr_attribute))
                 # Handle special case with only an attribute reference
@@ -122,19 +122,9 @@ class XPath_Dataset(Custom_Dataset):
         
         return _data  
     
-    def _find_next_match(self, _list, _start_idx, _match):
-        for _curr_idx in range(_start_idx, len(_list)):
-            if _list[_curr_idx] == _match:
-                return _curr_idx
-        return -1
+
     
-    def _find_previous_match(self, _list, _start_idx, _match):
-        for _curr_idx in range(_start_idx, 0, -1):
-            if _list[_curr_idx] == _match:
-                return _curr_idx
-        return -1
-    
-    def _create_xpath_nodes(self, _node, _xpath):   
+    def _structure_create_xpath_nodes(self, _node, _xpath):   
         """Used an xpath to create nodes that match the path and its conditions(names, attributes and so forth)"""
         #
         print("_create_xpath_nodes: " + str(_xpath))
@@ -174,7 +164,7 @@ class XPath_Dataset(Custom_Dataset):
                     _token_idx+=1
                     
                     #Find ending of condition
-                    _end_cond_idx = self._find_next_match(_tokens, _token_idx, ("]",""))
+                    _end_cond_idx = self.find_next_match(_tokens, _token_idx, ("]",""))
 
                     if _end_cond_idx == -1: 
                         raise Exception("_create_xpath_nodes: Cannot find end of condition.\nXPath = " + _xpath) 
@@ -212,7 +202,7 @@ class XPath_Dataset(Custom_Dataset):
             _token_idx+=1
         return _curr_node
     
-    def _parse_root_path(self, _root_path):
+    def _structure_parse_root_path(self, _root_path):
         """Extract information from the root path to get sufficient information 
         for specifying the destination and creating new nodes. \n 
         * If many xpaths in the string, it uses the first one 
@@ -242,7 +232,7 @@ class XPath_Dataset(Custom_Dataset):
         print("_root_node_name=" + str(_root_node_name))
         # Get the row node name
 
-        _row_node_name_idx = self._find_previous_match(_root_xpath_tokens, len(_root_xpath_tokens) -1, ("/", ""))
+        _row_node_name_idx = find_previous_match(_root_xpath_tokens, len(_root_xpath_tokens) -1, ("/", ""))
         if _row_node_name_idx == -1:
             raise Exception("_parse_root_path: Cannot find start of condition.\nXPath = " + _root_path)
         else:
@@ -264,16 +254,72 @@ class XPath_Dataset(Custom_Dataset):
     def _structure_insert_row(self, _row_idx, _row_data):
         """Override parent to add XML handling"""
         self.super(XPath_Dataset, self)._structure_insert_row(_row_idx,_row_data)
+        
         #self.data_table.insert(_row_idx,_row_data)
         
     def _structure_update_row(self, _row_idx, _row_data):
+        """Override parent to add XML handling"""
         self.super(XPath_Dataset, self)._structure_update_row(_row_idx,_row_data)
         #self.data_table[_row_idx] = _row_data
 
     def _structure_delete_row(self, _row_idx):
+        """Override parent to add XML handling"""
         self.super(XPath_Dataset, self)._structure_delete_row(_row_idx)
         #self.data_table.pop(_row_idx)
 
+    def _structure_init(self):
+        """Initialize underlying structure before applying data to it.\
+        Overridden by subclasses."""
+        
+        _filename = self.filename
+        
+        # Find the 
+        _root_node_name, _row_node_name, _parent_xpath = self._structure_parse_root_path(self.rows_xpath)
+               
+        # Load destination file    
+        
+        import os
+        if os.path.exists(_filename):
+            
+            try:
+                _tree = self.file_to_tree(self.xpath_data_format, _filename)
+            except Exception as e:
+                raise Exception("XPath_Dataset.save - error parsing " + self.xpath_data_format + " file : " + str(e))
+
+        else:
+            # Create a tree with root node based on the first  
+            
+            if _root_node_name != "":
+                if self.encoding:
+                    _encoding = self.encoding
+                else:
+                    _encoding = "UTF-8"
+                          
+                _tree = etree.parse(io.StringIO("<?xml version='1.0' ?>\n<" + _root_node_name + "/>")) 
+            else:
+                raise Exception("XPath_Dataset.save - rows_xpath("+ str(self.rows_xpath)+") must be absolute and have at least the name of the root node. Example: \"/root_node\" ")
+
+        _top_node =_tree.getroot()
+        
+        # Where not existing, create a node structure up to the parent or the row nodes
+        # from the information in the xpath.
+        _row_node_parent = self._structure_create_xpath_nodes(_top_node, _parent_xpath)
+
+        
+        # Sort and add index references. 
+        # The reason for sorting is to handle several levels of data in the right order, 
+        # this way the structure is gradually built with the right attributes.
+        self._structure_sorted_xpaths = [[self.field_xpaths.index(x), x] for x in sorted(self.field_xpaths)]
+        print(str(self._structure_sorted_xpaths))
+        print(str(self.data_table))
+        
+        # Create a list of row nodes which should not be deleted
+        if not _do_not_delete:
+            _spare_these = []
+        
+        _curr_path, _row_id_attribute = self._parse_obpm_xpath( _sorted_xpaths[0][1])
+        if not _row_id_attribute and _apply_to:
+            raise Exception("xpath.save(_apply_to=\""+ str(_filename) +"\")):\nCannot apply a dataset to an existing file without identifying attributes in the the row node level.")
 
 
     def save(self, _apply_to = None, _do_not_insert = None, _do_not_update = None, _do_not_delete = None):

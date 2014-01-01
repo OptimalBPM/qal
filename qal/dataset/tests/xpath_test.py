@@ -43,11 +43,11 @@ class Test(unittest.TestCase):
         _resources = Resources(_resources_node = _resources_node)
         
         _source = XPath_Dataset(_resource= _resources.get_resource("{969A610A-FCA6-4837-B33A-BAA8F13D8B70}"))
-        _source.log_level = DATASET_LOGLEVEL_DETAIL
+        _source._log_level = DATASET_LOGLEVEL_DETAIL
         _source.load()        
         
         _destination = XPath_Dataset(_resource= _resources.get_resource("{969A610A-FCA6-4837-B33A-BAA8F13D8B71}"))
-        _destination.log_level = DATASET_LOGLEVEL_DETAIL
+        _destination._log_level = DATASET_LOGLEVEL_DETAIL
         _destination.load()
         _destination.apply_new_data(_source.data_table, [0])
 

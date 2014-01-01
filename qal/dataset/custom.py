@@ -26,6 +26,8 @@ class Custom_Dataset(object):
     field_names = []
     field_types = []
     data_table = [] 
+    
+    _log_level = DATASET_LOGLEVEL_MEDIUM
 
 
     def __init__(self):
@@ -33,7 +35,7 @@ class Custom_Dataset(object):
         self.field_names = []
         self.data_table = []
         self._log = [] 
-        self.log_level = DATASET_LOGLEVEL_MEDIUM
+        self._log_level = DATASET_LOGLEVEL_MEDIUM
         
     def cast_text_to_type(self, _text, _field_idx):
         try:
@@ -47,7 +49,7 @@ class Custom_Dataset(object):
             raise Exception("cast_text_to_type raised an error for \"" + _text +"\": " + str(e) )
         
     def log_update_row(self, _row_key, _old_row, _new_row):
-        if self.log_level >= DATASET_LOGLEVEL_DETAIL:
+        if self._log_level >= DATASET_LOGLEVEL_DETAIL:
             _field_diffs = []
             for _field_idx in range(len(_new_row)):
                 if _old_row[_field_idx] != _new_row[_field_idx]:
@@ -57,18 +59,18 @@ class Custom_Dataset(object):
 
     
     def log_insert(self, _row_key, row_value):
-        if self.log_level >= DATASET_LOGLEVEL_DETAIL:
+        if self._log_level >= DATASET_LOGLEVEL_DETAIL:
             self._log.append(self.__class__.__name__ + ".insert;"+quote(str(_row_key)) + ";"+quote(str(row_value)))
 
     def log_delete(self, _row_key, row_value):
-        if self.log_level >= DATASET_LOGLEVEL_DETAIL:
+        if self._log_level >= DATASET_LOGLEVEL_DETAIL:
             self._log.append(self.__class__.__name__ + ".delete;"+quote(str(_row_key)) + ";"+quote(str(row_value)))
     def log_save(self, _filename):
-        if self.log_level >= DATASET_LOGLEVEL_LOW:
+        if self._log_level >= DATASET_LOGLEVEL_LOW:
             self._log.append(self.__class__.__name__ + ".save;"+quote(str(_filename)) + ";" + str(datetime.now().isoformat()))
                 
     def log_load(self, _filename):
-        if self.log_level >= DATASET_LOGLEVEL_LOW:
+        if self._log_level >= DATASET_LOGLEVEL_LOW:
             self._log.append(self.__class__.__name__ + ".load;"+quote(str(_filename)) + ";" + str(datetime.now().isoformat()))
                
         

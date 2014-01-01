@@ -100,7 +100,7 @@ def sql_property_to_type(_property_name):
     elif _property_name in ['notnull', 'has_header']:
         return ['boolean']    
     
-    elif _property_name == 'top_limit':
+    elif _property_name in ['top_limit']:
         return ['integer']    
     
     elif _property_name == 'quoting':

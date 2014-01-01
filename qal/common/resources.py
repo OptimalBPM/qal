@@ -98,7 +98,10 @@ class Resources(XML_Translation):
         if _resources_node == None:
             _parser = etree.XMLParser(remove_blank_text=True)
             _root_node = etree.fromstring(_resources_xml, _parser) 
-            _resources_node = _root_node.find("resources")           
+            if _root_node.tag != "resources":
+                _resources_node = _root_node.find("resources")
+            else:
+                _resources_node = _root_node            
             
         
         
