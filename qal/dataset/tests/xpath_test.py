@@ -28,7 +28,7 @@ class Test(unittest.TestCase):
         super(Test, self ).__init__( methodName)
 
 
-    def test_1_Load_Save_update_delete(self):
+    def test_1_apply_new_data(self):
         """This tests checks so that(by the id-attribute):
         1. bk103 and bk105:s titles and bk112: price is corrected (_update=True)
         2. that bk103:s "test_tag" is unaffected by the update
@@ -37,15 +37,22 @@ class Test(unittest.TestCase):
         4. And that the visual layout of the destination file is kept. 
         """
         
-        copyfile(Test_Resource_Dir + "/xml_dest_in.xml", Test_Resource_Dir + "/xml_out.xml")
+        #copyfile(Test_Resource_Dir + "/xml_dest_in.xml", Test_Resource_Dir + "/xml_out.xml")
         
         _resources_node = load_xml(Test_Resource_Dir + "/resources.xml").find("resources")
         _resources = Resources(_resources_node = _resources_node)
-        _da = XPath_Dataset(_resource= _resources.get_resource("{969A610A-FCA6-4837-B33A-BAA8F13D8B70}"))
-        _da.log_level = DATASET_LOGLEVEL_DETAIL
-        _da.load()
-        print(str(_da.data_table))
-        _da.save(_apply_to = Test_Resource_Dir + "/xml_out.xml")
+        
+        _source = XPath_Dataset(_resource= _resources.get_resource("{969A610A-FCA6-4837-B33A-BAA8F13D8B70}"))
+        _source.log_level = DATASET_LOGLEVEL_DETAIL
+        _source.load()        
+        
+        _destination = XPath_Dataset(_resource= _resources.get_resource("{969A610A-FCA6-4837-B33A-BAA8F13D8B71}"))
+        _destination.log_level = DATASET_LOGLEVEL_DETAIL
+        _destination.load()
+        _destination.apply_new_data(_source.data_table, [0])
+
+        print(str(_destination.data_table))
+        _destination.save(_save_as = Test_Resource_Dir + "/xml_out.xml")
         
         _f_a = open(Test_Resource_Dir + "/xml_out.xml", "r")
         _f_b = open(Test_Resource_Dir + "/xml_cmp.xml", "r")

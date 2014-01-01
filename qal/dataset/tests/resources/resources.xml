@@ -64,5 +64,26 @@
 				<item>string</item>
 			</field_types> 
 		</resource>		
+		<resource type="xpath" uuid="{969A610A-FCA6-4837-B33A-BAA8F13D8B71}" caption="xml-file">
+			<!-- Source(Microsoft's books.xml) : http://msdn.microsoft.com/en-us/library/ms762271%28v=vs.85%29.aspx -->
+			<filename>resources/xml_dest_in.xml</filename>
+			<rows_xpath>/catalog/book</rows_xpath>
+			<xpath_data_format>XML</xpath_data_format>
+			<field_xpaths>
+				<item>title</item>
+				<item>price</item>		
+				<item>::id</item>			
+			</field_xpaths>
+			<field_names>
+				<item>file_xmltitle</item>
+				<item>file_xmlprice</item>	
+				<item>file_id</item>	
+			</field_names>
+			<field_types>
+				<item>string</item>
+				<item>float</item>
+				<item>string</item>
+			</field_types> 
+		</resource>	
 	</resources>
 </sql:statement>
