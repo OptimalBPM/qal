@@ -1,10 +1,10 @@
-'''
-Created on Sep 13, 2013
+"""
+    Tests for resources
+    
+    :copyright: Copyright 2010-2013 by Nicklas Börjesson
+    :license: BSD, see LICENSE for details.
+"""
 
-@author: Nicklas Boerjesson
-@note: 
-
-'''
 import unittest
 from qal.common.resources import Resources
 

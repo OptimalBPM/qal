@@ -1,13 +1,14 @@
 '''
-Created on May 8, 2010
+Contains functionality for reading settings from ini-files
 
-@author: Nicklas Boerjesson
+:copyright: Copyright 2010-2013 by Nicklas Börjesson
+:license: BSD, see LICENSE for details. 
 '''
 
 import configparser
 
 class UBPMSettings(object):
-    """This class is responsible for reading settings from the ini-files and holding them in memory."""
+    """This class is responsible for reading settings from ini-files and holding them in memory."""
     
     global Parser
     

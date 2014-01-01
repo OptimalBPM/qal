@@ -1,9 +1,11 @@
 """
-Created on Sep 13, 2013
+    Helper library for XML operations and their debugging. 
+    
+    .. note::
+    Will probably be deprecated or at least rewritten when QAL switches completely to lxml.
 
-@author: Nicklas Börjesson
-@note: Helper library for XML operations and their debugging.
-
+    :copyright: Copyright 2010-2013 by Nicklas Börjesson
+    :license: BSD, see LICENSE for details. 
 """
 
 
@@ -117,7 +119,7 @@ class XML_Translation(object):
     schema_uri = None
     encoding = 'utf-8'
     
-    """Debugging"""
+    #Debugging
     debuglevel = 2
     nestinglevel = 0
     

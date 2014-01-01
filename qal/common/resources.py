@@ -1,8 +1,8 @@
 """
-Created on Sep 13, 2013
-
-@author: Nicklas Börjesson
-@note: This module contains access functionality for resources.
+    Access functionality for resources.
+    
+    :copyright: Copyright 2010-2013 by Nicklas Börjesson
+    :license: BSD, see LICENSE for details. 
 """
 from qal.common.xml_utils import XML_Translation
 
@@ -20,6 +20,9 @@ def resource_types():
     return ["CUSTOM", "FLATFILE", "MATRIX", "XPATH", "RDBMS"]
 
 class Resource(object):
+    """The resource class represents a QAL resource. 
+    Could be any entity like a database server, flat file or a web page.
+    Resources have a globally unique resource uuid"""
     
     uuid = None
     type = None
@@ -69,6 +72,7 @@ class Resources(XML_Translation):
             self.parse_xml(_resources_node, _resources_xml)
                     
     def get_resource(self, _uuid):
+        """Returns the resource with the corresponding uuid"""
         
         _resource = None
         
@@ -88,7 +92,7 @@ class Resources(XML_Translation):
     
     
     def parse_xml(self, _resources_node=None, _resources_xml=None):
-        """This function parses an XML structure into resource objects. Should use lxml."""
+        """Parses an XML structure into resource objects. Uses lxml."""
 
 
         if _resources_node == None:

@@ -1,10 +1,9 @@
-'''
-Created on Dec 22, 2013
-
-@author: Nicklas Boerjesson
-
-@summary: This module contains miscellaneous parsing functions.
-'''
+"""
+    Contains miscellaneous parsing functions.
+    
+    :copyright: Copyright 2010-2013 by Nicklas Börjesson
+    :license: BSD, see LICENSE for details. 
+"""
 
 def parse_balanced_delimiters(_input, _d_left, _d_right, _text_qualifier):
     """Removes all balanced delimiters. Handles multiple levels and ignores those contained within text delimiters."""
