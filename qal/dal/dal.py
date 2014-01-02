@@ -38,15 +38,18 @@ class Database_Abstraction_Layer(object):
     
     def read_ini_settings(self, _ini_parser):
         """Read setting from the settings.Parser object"""
-        self.db_type        = string_to_db_type(_ini_parser.Parser.get("database", "type"))
-        self.db_server      = _ini_parser.Parser.get("database", "server")   
-        self.db_databasename= _ini_parser.Parser.get("database", "database_name")   
-        self.db_username    = _ini_parser.Parser.get("database", "username")
-        self.db_password    = _ini_parser.Parser.get("database", "password")
-        self.db_port        = _ini_parser.Parser.get("database", "port")
-        self.autocommit     = _ini_parser.get("database", "autocommit", True)        
-        if _ini_parser.Parser.has_option("database", "instance"):
-            self.db_instance    = _ini_parser.Parser.get("database", "instance")
+        if _ini_parser.Parser.has_option("database", "type"):
+            self.db_type        = string_to_db_type(_ini_parser.Parser.get("database", "type"))
+            self.db_server      = _ini_parser.Parser.get("database", "server")   
+            self.db_databasename= _ini_parser.Parser.get("database", "database_name")   
+            self.db_username    = _ini_parser.Parser.get("database", "username")
+            self.db_password    = _ini_parser.Parser.get("database", "password")
+            self.db_port        = _ini_parser.Parser.get("database", "port")
+            self.autocommit     = _ini_parser.get("database", "autocommit", True)        
+            if _ini_parser.Parser.has_option("database", "instance"):
+                self.db_instance    = _ini_parser.Parser.get("database", "instance")
+        else:
+            print("read_ini_settings: Settings not valid, not raising error.")
             
             
     def read_resource_settings(self, _resource):
