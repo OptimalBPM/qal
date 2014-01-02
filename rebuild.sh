@@ -27,5 +27,14 @@ if [ X"$1" = X"upload" ]; then
   sudo pip-3.2 install qal
 else
   echo "Installing from local .egg-file..."
-  sudo easy_install3 dist/qal-0.1-py3.2.egg
+
+
+  for file in ./dist/qal*.egg ; do 
+    if [ -e "$file" ] ; then
+      sudo easy_install3 $file
+      exit
+  	fi
+  done
+  
+  
 fi

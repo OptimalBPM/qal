@@ -8,10 +8,11 @@ Created on Aug 11, 2013
 
 
 from setuptools import setup
+from qal import __release__
 
 setup(
     name='qal',
-    version='0.1',
+    version=__release__,
     description='QAL is a Python library for mixing data sources into SQL statements.',
     author='Nicklas Boerjesson',
     author_email='nicklasb_attheold_gmaildotcom',
