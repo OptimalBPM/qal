@@ -1,7 +1,7 @@
 """
     Access functionality for resources.
     
-    :copyright: Copyright 2010-2013 by Nicklas Börjesson
+    :copyright: Copyright 2010-2013 by Nicklas Boerjesson
     :license: BSD, see LICENSE for details. 
 """
 from qal.common.xml_utils import XML_Translation

@@ -2,9 +2,9 @@
     Helper library for XML operations and their debugging. 
     
     .. note::
-    Will probably be deprecated or at least rewritten when QAL switches completely to lxml.
+        Will probably be deprecated or at least rewritten when QAL switches completely to lxml.
 
-    :copyright: Copyright 2010-2013 by Nicklas Börjesson
+    :copyright: Copyright 2010-2013 by Nicklas Boerjesson
     :license: BSD, see LICENSE for details. 
 """
 

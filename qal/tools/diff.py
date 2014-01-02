@@ -1,7 +1,8 @@
 """
-Created on Sep 1, 2013
-
-@author: Nicklas Boerjesson
+    Helper library for QAL diff operations.
+     
+    :copyright: Copyright 2010-2013 by Nicklas Boerjesson
+    :license: BSD, see LICENSE for details. 
 
 """
 
@@ -45,11 +46,14 @@ def cmp_key_columns(_left, _right, _key_columns):
     return 0
 
 def match_all_columns(_left, _right):
-    """Match all columns in two arrays
-    .. note::
-    This function is a *little bit* taylored to QAL needs. 
-    The left column *has* to be used for column iteration, since _right might have extra columns for references to underlying structures that should not be compared.
+    """Match all columns in two arrays, return false if they differ anywhere.
     
+    :param array _left: The left array
+    :param array _right: The right array
+    
+    .. note::
+        This function is a *little bit* tailored to QAL needs. 
+        The left column *has* to be used for column iteration, since _right might have extra columns for references to underlying structures that should not be compared.
     """
     
     # TODO: Check if this can be done more pythonically
@@ -64,12 +68,19 @@ def compare(_left, _right, _key_columns, _full):
         _left and _right, matches them using the columns in _key_colums,
         and returns a tuple of the results.
         
-        The first two results are _missing_left, and _missing_right, 
-        which indicates if any rows are missing completely in either dataset.
+        :param 2d-array _left: The left matrix
+        :param 2d-array _right: The right matrix
+        :param array _key_columns: An array with the key columns
+        :param bool _full: If the _full parameter is True, also the values in the rows are compared, and the third result, _different is populated with a list of rows where the values differ.
         
-        If the _full parameter is True, also the values in the rows are compared, 
-        and the third result, _different is populated with a list of rows
-        where the values differ.
+        
+        :return array _missing_left: rows present in _right, but not in _left
+        :return array _missing_right: rows present in _left, but not in _right
+        :return array _difference: rows that by keys are present in _left and _right, but differ with in rows
+        :return 2d-array _right_s: The _right matrix, but sorted by keys, often useful when one wants to continue massaging the data.
+        
+        .. note::
+            The results are not in original order, but sorted by their keys.
     """    
     _missing_left = []
     _missing_right = []
@@ -129,7 +140,12 @@ def compare(_left, _right, _key_columns, _full):
 
 
 def diff_to_text(_missing_left, _missing_right, _different):
-    """Creates a textual representation of the differences"""
+    """Creates a textual representation of the differences
+    
+        .. note::
+            Not implemented.
+    
+    """
     _diff_text = ""
         
     return _diff_text
