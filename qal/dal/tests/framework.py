@@ -12,9 +12,9 @@ import os
 
 
 def get_default_dal(_db_type, _db_name = ""):
-
-    # Read from environment variable first, then assume files are in /config/subdirectory.
-    # TODO: Fix so it uses \ on the windows platform.
+    """Returns a default database connection for the given db typ.
+    Read from environment variable first, then assume files are in /config/subdirectory.
+    # TODO: Fix so it uses \ on the windows platform. """
     cfg_Path = os.getenv('UBPM_TESTCFG', os.path.dirname(os.path.realpath( __file__ )) + '/config/')
     print("Testing config path set to: "+ cfg_Path)
         
@@ -44,8 +44,9 @@ def get_default_dal(_db_type, _db_name = ""):
         settings.Parser.set("database", "database_name", _db_name)  
     return Database_Abstraction_Layer(settings)
 
-''' default_dal is a class decorator that sets the self.dal property of the class. '''
+
 def default_dal(DB_Type):
+    """ default_dal is a class decorator that sets the self.dal property of the class. """
     def decorator_dal(instance):
         if (DB_Type == None):
             instance._dal = get_default_dal(DB_POSTGRESQL)

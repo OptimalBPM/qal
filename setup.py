@@ -15,9 +15,9 @@ setup(
     version=__release__,
     description='QAL is a Python library for mixing data sources into SQL statements.',
     author='Nicklas Boerjesson',
-    author_email='nicklasb_attheold_gmaildotcom',
+    author_email='nicklas_attheold_optimalbpm.se',
     maintainer='Nicklas Boerjesson',
-    maintainer_email='nicklasb_attheold_gmaildotcom',
+    maintainer_email='nicklas_attheold_optimalbpm.se',
     long_description="""Query Abstraction Layer is a Python library for mixing data from different data sources into SQL statements.\
       It supports several database backends and file formats.
       """,

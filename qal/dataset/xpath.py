@@ -24,18 +24,29 @@ class XPath_Dataset(Custom_Dataset):
     """
 
     filename = None
-    """The XPath of the "row" nodes of the data set"""
+    """The name of the file to be loaded"""
+
     rows_xpath = None
-    """The data format"""
+    """The XPath to the "row" nodes of the data set. Ex: /books/book"""
+
+    field_xpaths  = []
+    """A list of XPaths relative to the rows_xpath leading to each field. Ex: ["title", "id"]"""
+
     xpath_data_format = None
+    """The data format. Can be either "XML", "XHTML" or "HTML"."""
     
-    field_names = None
-    field_types = None
-    field_xpaths  = None
+
+    _tree = None
+    """A private reference to the node tree, when load is called with _add_node_ref=True, an instance
+    is kept for more efficient merging with diff data"""
 
     def __init__(self, _filename = None, _rows_xpath = None,  _resource = None):
 
-        """Constructor"""
+        """Constructor.
+        :param str _filename: Name of the file to parser
+        :param str _rows_xpath: Path to nodes holding the rows.
+        :param Resource _resource : An instance of a :py:class: qal.common.resource.resource
+        """
         super(XPath_Dataset, self ).__init__()
         
         if _resource:
@@ -75,30 +86,40 @@ class XPath_Dataset(Custom_Dataset):
         else:
             raise Exception("file_to_tree: " + _data_format + " is not supported")
         
-    def _structure_parse_obpm_xpath(self, _obpm_xpath):
-        """Parse the trailing attribute identifier from the ubpm xpath string. ":" isn't allowed in xpath."""
-        _parts = _obpm_xpath.split("::")
+    def _structure_parse_qal_xpath(self, _qal_xpath):
+        """Parse the trailing attribute identifier from the QAL xpath string. ":" isn't allowed in xpath.
+        :param str _qal_xpath: QAL xpath string. Ex. "library/books/book | library/books"
+        """
+        _parts = _qal_xpath.split("::")
         if len(_parts) == 2:
             return _parts[0], _parts[1]
         else:
-            return _obpm_xpath, None      
+            return _qal_xpath, None      
         
-    def load(self):
-        """Parse file, apply root XPath to iterate over and then collect field data via field_xpaths."""
+    def load(self, _add_node_ref = None):
+        """Parse file, apply root XPath to iterate over and then collect field data via field_xpaths.
+            
+        :param bool add_node_ref: If set, add an extra column with references to the underlying XML nodes, \
+        used to efficiently apply new data.
+        """
         print("Loading : " + self.filename)
         self.log_load(self.filename)  
         try:
             _tree = self.file_to_tree(self.xpath_data_format, self.filename)
+            # Keep the node reference
+            if _add_node_ref:
+                self._tree = _tree
+            
         except Exception as e:
             raise Exception("XPath_Dataset.load - error parsing " + self.xpath_data_format + " file : " + str(e))
         
         #_root_nodes = _tree.xpath("/html/body/form/table/tr[4]/td[2]/table/tr[2]/td/table[2]/tr/td/table/tr[10]/td/table/tr")
-        _root_nodes = _tree.xpath(self.rows_xpath)
+        _root_nodes = self._tree.xpath(self.rows_xpath)
         _data = []
         for _curr_row in _root_nodes:
             _row_data = []
             for _field_idx in range(0, len(self.field_names)):
-                _curr_path, _curr_attribute = self._structure_parse_obpm_xpath(self.field_xpaths[_field_idx])
+                _curr_path, _curr_attribute = self._structure_parse_qal_xpath(self.field_xpaths[_field_idx])
                 print("_curr_path      :" + str(_curr_path))
                 print("_curr_attribute :" + str(_curr_attribute))
                 # Handle special case with only an attribute reference
@@ -114,6 +135,9 @@ class XPath_Dataset(Custom_Dataset):
                         _row_data.append(self.cast_text_to_type(_item_data[0].text, _field_idx))
                 else:
                     _row_data.append("")
+            # Add reference to XML structure.
+            if _add_node_ref:
+                _row_data.append(_curr_row)
             
             print(str(_row_data))
             _data.append(_row_data)
@@ -126,7 +150,7 @@ class XPath_Dataset(Custom_Dataset):
     
     def _structure_create_xpath_nodes(self, _node, _xpath):   
         """Used an xpath to create nodes that match the path and its conditions(names, attributes and so forth)"""
-        #
+
         print("_create_xpath_nodes: " + str(_xpath))
         _curr_node = _node
         # Break up the string in its tokens
@@ -205,7 +229,7 @@ class XPath_Dataset(Custom_Dataset):
     def _structure_parse_root_path(self, _root_path):
         """Extract information from the root path to get sufficient information 
         for specifying the destination and creating new nodes. \n 
-        * If many xpaths in the string, it uses the first one 
+        * If many XPaths in the string, it uses the first one 
         * Parses the root node name
         * Parses the row parent node path
         * Parses the row node name"""
@@ -255,6 +279,8 @@ class XPath_Dataset(Custom_Dataset):
         """Override parent to add XML handling"""
         self.super(XPath_Dataset, self)._structure_insert_row(_row_idx,_row_data)
         
+        
+        
         #self.data_table.insert(_row_idx,_row_data)
         
     def _structure_update_row(self, _row_idx, _row_data):
@@ -270,6 +296,8 @@ class XPath_Dataset(Custom_Dataset):
     def _structure_init(self):
         """Initialize underlying structure before applying data to it.\
         Overridden by subclasses."""
+        if not self._tree:
+            self.load(_add_node_ref=True)
         
         _filename = self.filename
         
@@ -299,11 +327,11 @@ class XPath_Dataset(Custom_Dataset):
             else:
                 raise Exception("XPath_Dataset.save - rows_xpath("+ str(self.rows_xpath)+") must be absolute and have at least the name of the root node. Example: \"/root_node\" ")
 
-        _top_node =_tree.getroot()
+        self._structure_top_node =_tree.getroot()
         
         # Where not existing, create a node structure up to the parent or the row nodes
         # from the information in the xpath.
-        _row_node_parent = self._structure_create_xpath_nodes(_top_node, _parent_xpath)
+        self._structure_row_node_parent = self._structure_create_xpath_nodes(self._structure_top_node, _parent_xpath)
 
         
         # Sort and add index references. 
@@ -312,14 +340,11 @@ class XPath_Dataset(Custom_Dataset):
         self._structure_sorted_xpaths = [[self.field_xpaths.index(x), x] for x in sorted(self.field_xpaths)]
         print(str(self._structure_sorted_xpaths))
         print(str(self.data_table))
+  
         
-        # Create a list of row nodes which should not be deleted
-        if not _do_not_delete:
-            _spare_these = []
-        
-        _curr_path, _row_id_attribute = self._parse_obpm_xpath( _sorted_xpaths[0][1])
-        if not _row_id_attribute and _apply_to:
-            raise Exception("xpath.save(_apply_to=\""+ str(_filename) +"\")):\nCannot apply a dataset to an existing file without identifying attributes in the the row node level.")
+#        _curr_path, _row_id_attribute = self._parse_optimal_bpm_xpath(self._structure_sorted_xpaths[0][1])
+#        if not _row_id_attribute:
+#            raise Exception("xpath._structure_init - _filename=\""+ str(_filename) +"\":\nCannot apply a dataset to an existing file without identifying attributes in the the row node level.")
 
 
     def save(self, _apply_to = None, _do_not_insert = None, _do_not_update = None, _do_not_delete = None):
@@ -378,7 +403,7 @@ class XPath_Dataset(Custom_Dataset):
         if not _do_not_delete:
             _spare_these = []
         
-        _curr_path, _row_id_attribute = self._parse_obpm_xpath( _sorted_xpaths[0][1])
+        _curr_path, _row_id_attribute = self._parse_optimal_bpm_xpath( _sorted_xpaths[0][1])
         if not _row_id_attribute and _apply_to:
             raise Exception("xpath.save(_apply_to=\""+ str(_filename) +"\")):\nCannot apply a dataset to an existing file without identifying attributes in the the row node level.")
         
@@ -422,8 +447,8 @@ class XPath_Dataset(Custom_Dataset):
             if _row_node != None:
                 for _field_idx in range(_start_idx, len(_sorted_xpaths)):
                     
-                    # TODO: Optimize, generate a list of paths and attributes to use instead of calling _parse_obpm_xpath each time
-                    _curr_path, _curr_attribute = self._parse_obpm_xpath( _sorted_xpaths[_field_idx][1])
+                    # TODO: Optimize, generate a list of paths and attributes to use instead of calling _parse_optimal_bpm_xpath each time
+                    _curr_path, _curr_attribute = self._parse_optimal_bpm_xpath( _sorted_xpaths[_field_idx][1])
                     _curr_node = self._create_xpath_nodes(_row_node, _curr_path)
                     print("_curr_path      :" + str(_curr_path))
                     print("_curr_attribute :" + str(_curr_attribute))

@@ -110,7 +110,6 @@ class Custom_Dataset(object):
         #print("_insert: " + str(_insert))
         #print("Before apply: " + str(_sorted_dest))
         
-        
         self._structure_init()
 
         _insert_idx = 0

@@ -45,9 +45,15 @@ def cmp_key_columns(_left, _right, _key_columns):
     return 0
 
 def match_all_columns(_left, _right):
-    # Match all columns in two arrays 
-    # TODO: Check if this can be done pythonically
-    for _curr_column in range(0, len(_right)):
+    """Match all columns in two arrays
+    .. note::
+    This function is a *little bit* taylored to QAL needs. 
+    The left column *has* to be used for column iteration, since _right might have extra columns for references to underlying structures that should not be compared.
+    
+    """
+    
+    # TODO: Check if this can be done more pythonically
+    for _curr_column in range(0, len(_left)):
         if _left[_curr_column] != _right[_curr_column]:
             return False
 
