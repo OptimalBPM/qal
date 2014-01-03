@@ -1,7 +1,7 @@
 """
-    ************************************************
-    qal.sql is an interpretation of the SQL language
-    ************************************************ 
+    ***********************************************************
+    qal.sql.sql holds the class structure representation of SQL
+    ***********************************************************
     .. note:: 
         * The mySQL DDL implementation defaults to using innoDB, since stuff like foreign keys and other very important security features are lacking from myISAM.
         * All Parameter_Base descendants property names are named in a specific way, so that one from that name can discern what types are allowed. For example: sources means that it is a list of Parameter_Source.

@@ -1,6 +1,11 @@
 """
+    ******************************
+    qal.dataset - Data set classes
+    ******************************
     The dataset package contains different data sets, all inheriting from the :py:class:qal.dataset.custom.custom class.
-    They provide a generalized way of reading and writing to a multitude of data sources. 
+    They provide a generalized way of reading and writing to a multitude of data sources.
+    Currenctly, there are: flat file, matrix, XPath(XML/HTML/XHTML) and spreadsheet(Excel-formats/.odt)
     
-    Copyright 2010-2013, Nicklas Boerjesson
+    :copyright: Copyright 2010-2013 by Nicklas Boerjesson
+    :license: BSD, see LICENSE for details.
 """

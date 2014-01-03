@@ -1,1 +1,3 @@
-"""Contains all the files needed for qal.tools.tests to work."""
+"""
+    Contains all the files needed for qal.tools.tests to work.
+"""

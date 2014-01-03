@@ -1,8 +1,13 @@
-'''
-Created on May 8, 2010
-
-@author: Nicklas Boerjesson
-'''
+"""
+    ************************************
+    qal.dal - Database Abstraction Layer
+    ************************************
+    
+    The goal with DAL is to hide the connection-related differences between the most common database backends.
+    
+    :copyright: Copyright 2010-2013 by Nicklas Boerjesson
+    :license: BSD, see LICENSE for details.
+"""
 
 from qal.dal.dal_types import DB_MYSQL, DB_POSTGRESQL, DB_ORACLE, DB_DB2, DB_SQLSERVER, string_to_db_type
 from qal.dal.dal_conversions import parse_description, python_type_to_SQL_type

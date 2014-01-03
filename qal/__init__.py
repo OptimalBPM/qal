@@ -1,14 +1,15 @@
 """
-*****************************************
-The Query Abstraction Layer(QAL) package.
-*****************************************
+    *****************************************
+    The Query Abstraction Layer(QAL) package.
+    *****************************************
 
-QAL is designed to be a general library of data and database management functions.
-
-Copyright 2010-2013, Nicklas Boerjesson
+    QAL is designed to be a general library of data, data mining and database management functions.
+    
+    :copyright: Copyright 2010-2013 by Nicklas Boerjesson
+    :license: BSD, see LICENSE for details.
 
 """
-# Version and release information for sphinx documentation
+# Version and release information used by Sphinx for documentation and setuptools for package generation. 
 __version__ = '0.2'
 __release__ = '0.2.0'
 __copyright__ = '2010-2013, Nicklas Boerjesson'
