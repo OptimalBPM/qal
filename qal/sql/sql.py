@@ -1,15 +1,15 @@
 """
-Created on May 23, 2010
+    ************************************************
+    qal.sql is an interpretation of the SQL language
+    ************************************************ 
+    .. note:: 
+        * The mySQL DDL implementation defaults to using innoDB, since stuff like foreign keys and other very important security features are lacking from myISAM.
+        * All Parameter_Base descendants property names are named in a specific way, so that one from that name can discern what types are allowed. For example: sources means that it is a list of Parameter_Source.
+        * Parameter_* means that it is some form of input, Verb_* means that this statement can be executed stand alone.
 
-@author: Nicklas Boerjesson
-@note: 
-* The mySQL DDL implementation defaults to using innoDB, since stuff like foreign keys and other very important security features are lacking from myISAM.
-* All Parameter_Base descendants property names are named in a specific way, so that one from that name can discern what types are allowed.
-For example: sources means that it is a list of Parameter_Source.
-* Parameter_ means that it is some form of input, Verb_ means that this statement can be executed stand alone.
- 
-@warning: Changes and new classes must satisfy both the import/export of data structures and schema generation.
-
+    :warning: Changes and new classes must satisfy both the import/export of data structures and schema generation.
+    :copyright: Copyright 2010-2013 by Nicklas Boerjesson
+    :license: BSD, see LICENSE for details.
 """
 
 from qal.sql.sql_types import DEFAULT_ROWSEP, expression_item_types,tabular_expression_item_types
@@ -614,7 +614,7 @@ class Parameter_Conditions(SQL_List):
         return _result
 
 class Parameter_Field(Parameter_Base):
-    """Holds a field definition (SELECT _FIELD1 AS FIELD_) """
+    """Holds a field definition (SELECT _FIELD1 AS _FIELD) """
     expression = None
     alias = ''
     

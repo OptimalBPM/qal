@@ -2,7 +2,7 @@
 Created on Sep 19, 2010
 
 @author: Nicklas Boerjesson
-@note: This module accesses the Parameter_ and Verb_ classes 
+@note: This module accesses the Parameter_* and Verb_* classes 
 from the SQL.py and generates meta data by analyzing its objects.
 '''
 
