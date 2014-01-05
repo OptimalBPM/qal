@@ -36,9 +36,16 @@ class XPath_Dataset(Custom_Dataset):
     """The data format. Can be either "XML", "XHTML" or "HTML"."""
     
 
-    _tree = None
+    _structure_tree = None
     """A private reference to the node tree, when load is called with _add_node_ref=True, an instance
     is kept for more efficient merging with diff data"""
+
+    _structure_row_node_parent = None
+    """A private reference to the parent node of the row nodes in the structure """     
+    
+    _structure_key_fields = []
+    """A private list of key fields."""
+
 
     def __init__(self, _filename = None, _rows_xpath = None,  _resource = None):
 
@@ -59,7 +66,8 @@ class XPath_Dataset(Custom_Dataset):
             if _rows_xpath != None: 
                 self.rows_xpath = _rows_xpath
             else:
-                self.rows_xpath = None         
+                self.rows_xpath = None  
+                
 
 
     def read_resource_settings(self, _resource):
@@ -107,14 +115,18 @@ class XPath_Dataset(Custom_Dataset):
         try:
             _tree = self.file_to_tree(self.xpath_data_format, self.filename)
             # Keep the node reference
-            if _add_node_ref:
-                self._tree = _tree
+
             
         except Exception as e:
             raise Exception("XPath_Dataset.load - error parsing " + self.xpath_data_format + " file : " + str(e))
         
         #_root_nodes = _tree.xpath("/html/body/form/table/tr[4]/td[2]/table/tr[2]/td/table[2]/tr/td/table/tr[10]/td/table/tr")
-        _root_nodes = self._tree.xpath(self.rows_xpath)
+        _root_nodes = _tree.xpath(self.rows_xpath)
+        if len(_root_nodes) > 0 and _add_node_ref:
+            self._structure_tree = _tree
+            self._structure_row_node_parent = _root_nodes[0].getparent()
+            self._structure_top_node = _tree.getroot()
+        
         _data = []
         for _curr_row in _root_nodes:
             _row_data = []
@@ -274,66 +286,46 @@ class XPath_Dataset(Custom_Dataset):
         
         return _root_node_name, _row_node_name, _row_node_parent_xpath
     
-    
-    def _structure_insert_row(self, _row_idx, _row_data):
-        """Override parent to add XML handling"""
-        self.super(XPath_Dataset, self)._structure_insert_row(_row_idx,_row_data)
-        
-        
-        
-        #self.data_table.insert(_row_idx,_row_data)
-        
-    def _structure_update_row(self, _row_idx, _row_data):
-        """Override parent to add XML handling"""
-        self.super(XPath_Dataset, self)._structure_update_row(_row_idx,_row_data)
-        #self.data_table[_row_idx] = _row_data
-
-    def _structure_delete_row(self, _row_idx):
-        """Override parent to add XML handling"""
-        self.super(XPath_Dataset, self)._structure_delete_row(_row_idx)
-        #self.data_table.pop(_row_idx)
-
     def _structure_init(self):
-        """Initialize underlying structure before applying data to it.\
-        Overridden by subclasses."""
-        if not self._tree:
-            self.load(_add_node_ref=True)
-        
-        _filename = self.filename
-        
-        # Find the 
+        """Initializes XML structure that data is to be applied to."""
+        print("XPath_Dataset._structure_init")
+        super(XPath_Dataset, self)._structure_init()
+
+        # Parse important information data from XPath 
         _root_node_name, _row_node_name, _parent_xpath = self._structure_parse_root_path(self.rows_xpath)
-               
-        # Load destination file    
         
-        import os
-        if os.path.exists(_filename):
+        # If the structure already loaded?
+        if not self._structure_row_node_parent:
             
-            try:
-                _tree = self.file_to_tree(self.xpath_data_format, _filename)
-            except Exception as e:
-                raise Exception("XPath_Dataset.save - error parsing " + self.xpath_data_format + " file : " + str(e))
-
-        else:
-            # Create a tree with root node based on the first  
+            # If not try to load, or create file.    
             
-            if _root_node_name != "":
-                if self.encoding:
-                    _encoding = self.encoding
-                else:
-                    _encoding = "UTF-8"
-                          
-                _tree = etree.parse(io.StringIO("<?xml version='1.0' ?>\n<" + _root_node_name + "/>")) 
+            import os
+            if os.path.exists(self.filename):
+                
+                try:
+                    self.load(_add_node_ref=True)
+                except Exception as e:
+                    raise Exception("XPath_Dataset.save - error parsing " + self.xpath_data_format + " file : " + str(e))
             else:
-                raise Exception("XPath_Dataset.save - rows_xpath("+ str(self.rows_xpath)+") must be absolute and have at least the name of the root node. Example: \"/root_node\" ")
+                # Create a tree with root node based on the first  
+                
+                if _root_node_name != "":
+                    if self.encoding:
+                        _encoding = self.encoding
+                    else:
+                        _encoding = "UTF-8"
+                              
+                    _tree = etree.parse(io.StringIO("<?xml version='1.0' ?>\n<" + _root_node_name + "/>")) 
+                else:
+                    raise Exception("XPath_Dataset.save - rows_xpath("+ str(self.rows_xpath)+") must be absolute and have at least the name of the root node. Example: \"/root_node\" ")
 
-        self._structure_top_node =_tree.getroot()
-        
-        # Where not existing, create a node structure up to the parent or the row nodes
-        # from the information in the xpath.
-        self._structure_row_node_parent = self._structure_create_xpath_nodes(self._structure_top_node, _parent_xpath)
+        # If the structure there yet? It could be an XML file with only a top node. 
+        if self._structure_row_node_parent is not None:
+            # If not existing, create a node structure up to the parent or the row nodes
+            # from the information in the xpath.
+            self._structure_top_node = self._structure_create_xpath_nodes(self._structure_top_node, self.rows_xpath)
+            
 
-        
         # Sort and add index references. 
         # The reason for sorting is to handle several levels of data in the right order, 
         # this way the structure is gradually built with the right attributes.
@@ -345,6 +337,40 @@ class XPath_Dataset(Custom_Dataset):
 #        _curr_path, _row_id_attribute = self._parse_optimal_bpm_xpath(self._structure_sorted_xpaths[0][1])
 #        if not _row_id_attribute:
 #            raise Exception("xpath._structure_init - _filename=\""+ str(_filename) +"\":\nCannot apply a dataset to an existing file without identifying attributes in the the row node level.")
+
+
+    def _structure_find_row(self, _row_data):
+        # loop key field XPaths
+        for _curr_field_xpath in (self.field_xpaths[x]  for x in self._structure_key_fields):
+            _curr_nodes = (for x in self._structure_row_node_parent.xpath(_curr_field_xpath))
+            print("_curr_field " + str(_curr_field))
+        
+        
+         
+        
+    
+    
+    def _structure_insert_row(self, _row_idx, _row_data):
+        """Override parent to add XML handling"""
+        super(XPath_Dataset, self)._structure_insert_row(_row_idx,_row_data)
+        _row_node = self._structure_find_row(_row_data)
+        
+        
+        
+        #self.data_table.insert(_row_idx,_row_data)
+        
+    def _structure_update_row(self, _row_idx, _row_data):
+        """Override parent to add XML handling"""
+        super(XPath_Dataset, self)._structure_update_row(_row_idx,_row_data)
+        #self.data_table[_row_idx] = _row_data
+
+    def _structure_delete_row(self, _row_idx):
+        """Override parent to add XML handling"""
+        super(XPath_Dataset, self)._structure_delete_row(_row_idx)
+        #self.data_table.pop(_row_idx)
+
+
+
 
 
     def save(self, _apply_to = None, _do_not_insert = None, _do_not_update = None, _do_not_delete = None):

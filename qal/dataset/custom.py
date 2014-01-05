@@ -24,8 +24,11 @@ class Custom_Dataset(object):
     """
 
     field_names = []
+    """These are, if applicable, the field names of the dataset"""
     field_types = []
+    """The data types of the fields"""
     data_table = [] 
+    """The actual data, in the form of a two-dimensional array"""
     
     _log_level = DATASET_LOGLEVEL_MEDIUM
 
@@ -150,11 +153,25 @@ class Custom_Dataset(object):
         return self.data_table        
     
     def apply_new_data(self, _new_data_table, _key_fields):
+        """This function applies a new data table unto the existing, matches are made using the key fields.
+      
+        
+        :parameter 2D-list _new_data_table: A two-dimensional list contains the data. Must match the existing column-wise.
+        :parameter list _key_fields: An array with the indices of the fields that should be used to match source rows to destination rows. 
+        
+        -- note:
+            If there are different data types in the _new_data_table columns and the existing dataset.data_table, they will be considered different and be updated. 
+            It is also possible that the keys will not match. So cast these before applying.
+        """
+         
+        
+        
         _delete, _insert, _update, _dest_sorted = compare(
                                                           _left = _new_data_table, 
                                                           _right = self.data_table, 
                                                           _key_columns = _key_fields, 
                                                           _full = True)
+        self._structure_key_fields = _key_fields
         self.data_table = self._structure_apply_merge(_insert, _update, _delete, _dest_sorted)
         
         return self.data_table
