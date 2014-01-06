@@ -72,7 +72,7 @@ class Flatfile_Dataset(Custom_Dataset):
             raise Exception("Flatfile_Dataset.read_resource_settings.parse_resource error: Wrong resource type: " + _resource.type)
         self.filename =    _resource.data.get("filename")
         self.delimiter =   _resource.data.get("delimiter")
-        self.has_header =  bool(_resource.data.get("has_header"))
+        self.has_header =  bool(_resource.data.get("has_header").lower() == "true")
         self.csv_dialect = _resource.data.get("csv_dialect")
         self.quoting    = _resource.data.get("quoting")
         self.escapechar    = _resource.data.get("escapechar")

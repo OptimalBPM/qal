@@ -28,7 +28,7 @@ class Spreadsheet_Dataset(Custom_Dataset):
             raise Exception("Spreadsheet_Dataset.read_resource_settings.parse_resource error: Wrong resource type: " + _resource.type)
         self.filename =    _resource.data.get("filename")
         self.delimiter =   _resource.data.get("delimiter")
-        self.has_header =  bool(_resource.data.get("has_header"))
+        self.has_header =  bool(_resource.data.get("has_header").lower() == "true")
         self.sheet_name = _resource.data.get("sheet_name")
         self.x_offset = _resource.data.get("x_offset")
         self.y_offset = _resource.data.get("y_offset")
@@ -80,18 +80,19 @@ class Spreadsheet_Dataset(Custom_Dataset):
                     self.x_offset = 0
                     
                 if self.y_offset is None:
-                    self.y_offset = 1
+                    self.y_offset = 0
               
                 if self.has_header:
-                    self.field_names = _sheet.row_values(self.y_offset, start_colx=self.x_offset, end_colx= _sheet.ncols)
+                    self.field_names = _sheet.row_values(self.y_offset, start_colx = self.x_offset, end_colx = _sheet.ncols)
                     _has_header_offset = 1
                 else:
+                    self.field_names = list("Column_" +str(x) for x in range(self.y_offset, _sheet.ncols))
                     _has_header_offset = 0
 
                 self.data_table = []
 
                 for _curr_y in range(self.y_offset + _has_header_offset, _sheet.nrows):
-                    self.data_table.append(_sheet.row_values(_curr_y, start_colx=0, end_colx= _sheet.ncols))
+                    self.data_table.append(_sheet.row_values(_curr_y, start_colx= self.x_offset, end_colx= _sheet.ncols))
 
             except IOError as e:
                 raise Exception("Spreadsheet_Dataset.load: Error reading file:" + str(e))
