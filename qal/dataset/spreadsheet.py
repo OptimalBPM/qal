@@ -7,8 +7,7 @@ Created on Dec 28, 2013
 
 from qal.dataset.custom import Custom_Dataset
 
-import os
-from xlrd import Workbook
+
 
 class Spreadsheet_Dataset(Custom_Dataset):
  
