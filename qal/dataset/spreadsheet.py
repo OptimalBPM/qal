@@ -11,7 +11,7 @@ from qal.dataset.custom import Custom_Dataset
 
 class Spreadsheet_Dataset(Custom_Dataset):
  
-    """The Spreadsheet dataset holds a spreadsheet, currently only XLS."""
+    """The Spreadsheet dataset can read data from a spreadsheet, currently only Excel files, and store that data in its."""
     
     has_header = None
     """True if data begins with a header row containing field names."""
@@ -21,7 +21,10 @@ class Spreadsheet_Dataset(Custom_Dataset):
     """The names of the fields(if applicable, see has_header)."""
     sheet_name = None
     """The name of the worksheet to use, typically "Sheet1"."""
-    
+    x_offset = None
+    """The leftmost column where data is held"""
+    y_offset = None
+    """The topmost row where data is held, *including the header row*."""
     
     def read_resource_settings(self, _resource):
         if _resource.type.upper() != 'SPREADSHEET':
