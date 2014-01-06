@@ -51,7 +51,7 @@
 			<field_xpaths>
 				<item>title</item>
 				<item>price</item>		
-				<item>::id</item>			
+				<item>::@id</item>			
 			</field_xpaths>
 			<field_names>
 				<item>file_xmltitle</item>
@@ -72,7 +72,7 @@
 			<field_xpaths>
 				<item>title</item>
 				<item>price</item>		
-				<item>::id</item>			
+				<item>::@id</item>			
 			</field_xpaths>
 			<field_names>
 				<item>file_xmltitle</item>

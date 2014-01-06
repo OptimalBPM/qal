@@ -10,7 +10,7 @@ from qal.dataset.custom import Custom_Dataset
 from qal.common.listhelper import find_next_match, find_previous_match
 from lxml import _elementpath
 from lxml import etree
-from xml.etree.ElementTree import SubElement    
+from xml.etree.ElementTree import SubElement, _Element  
 
 
 
@@ -45,7 +45,16 @@ class XPath_Dataset(Custom_Dataset):
     
     _structure_key_fields = []
     """A private list of key fields."""
-
+    
+    _structure_row_node_name = None
+    """
+        A private variable holding the tag name of the row node.
+        
+        .. todo::
+            Should this be able to hold an XML?
+    """
+        
+    
 
     def __init__(self, _filename = None, _rows_xpath = None,  _resource = None):
 
@@ -102,7 +111,11 @@ class XPath_Dataset(Custom_Dataset):
         if len(_parts) == 2:
             return _parts[0], _parts[1]
         else:
-            return _qal_xpath, None      
+            return _qal_xpath, None
+        
+            
+            
+          
         
     def load(self, _add_node_ref = None):
         """Parse file, apply root XPath to iterate over and then collect field data via field_xpaths.
@@ -134,19 +147,25 @@ class XPath_Dataset(Custom_Dataset):
                 _curr_path, _curr_attribute = self._structure_parse_qal_xpath(self.field_xpaths[_field_idx])
                 print("_curr_path      :" + str(_curr_path))
                 print("_curr_attribute :" + str(_curr_attribute))
-                # Handle special case with only an attribute reference
-                if _curr_path:
-                    _item_data = _curr_row.xpath(_curr_path)
+                if _curr_path != "":
+                    _item_data = _curr_row.xpath(_curr_path)[0]
                 else:
-                    _row_data.append(self.cast_text_to_type(_curr_row.get(_curr_attribute), _field_idx))
-
-                if len(_item_data) > 0:
+                    _item_data = _curr_row
+                    
+                if _item_data is not None:
                     if _curr_attribute:
-                        _row_data.append(self.cast_text_to_type(_item_data[0].get(_curr_attribute), _field_idx))
+                        if _curr_attribute[0] == "@":
+                            _row_data.append(self.cast_text_to_type(_item_data.get(_curr_attribute[1:]), _field_idx))
+                        elif _curr_attribute.lower() == "xml":
+                            _row_data.append(self.cast_text_to_type(_item_data.tostring(), _field_idx))
+                        else:
+                            raise Exception("Param_XPath.load: Error, attribute references must have the ::@AttributeName- format or ::XML. The attribute was \""+_curr_attribute + "\"")
                     else:
-                        _row_data.append(self.cast_text_to_type(_item_data[0].text, _field_idx))
+                        _row_data.append(self.cast_text_to_type(_item_data.text, _field_idx))
                 else:
                     _row_data.append("")
+
+
             # Add reference to XML structure.
             if _add_node_ref:
                 _row_data.append(_curr_row)
@@ -277,7 +296,7 @@ class XPath_Dataset(Custom_Dataset):
         if _row_node_name_idx == 0:
             raise Exception("_parse_root_path: The row node cannot be the root node.\nXPath = " + _root_path)
         
-        print("_row_node_name=" + str(_row_node_name))
+        print("_structure_row_node_name=" + str(_row_node_name))
         # Move on backward, what's left is the path to the parent of the row node, we need it to be able 
         # to create rows, as the path may not return a node to find a parent from
         _row_node_parent_xpath = "".join((_a[0]+_a[1] for _a in _root_xpath_tokens[0:_row_node_name_idx])) 
@@ -287,18 +306,17 @@ class XPath_Dataset(Custom_Dataset):
         return _root_node_name, _row_node_name, _row_node_parent_xpath
     
     def _structure_init(self):
-        """Initializes XML structure that data is to be applied to."""
+        """Initializes the XML structure that data is to be applied to."""
         print("XPath_Dataset._structure_init")
         super(XPath_Dataset, self)._structure_init()
 
         # Parse important information data from XPath 
-        _root_node_name, _row_node_name, _parent_xpath = self._structure_parse_root_path(self.rows_xpath)
+        _root_node_name, self._structure_row_node_name, _parent_xpath = self._structure_parse_root_path(self.rows_xpath)
         
         # If the structure already loaded?
         if not self._structure_row_node_parent:
             
             # If not try to load, or create file.    
-            
             import os
             if os.path.exists(self.filename):
                 
@@ -320,7 +338,7 @@ class XPath_Dataset(Custom_Dataset):
                     raise Exception("XPath_Dataset.save - rows_xpath("+ str(self.rows_xpath)+") must be absolute and have at least the name of the root node. Example: \"/root_node\" ")
 
         # If the structure there yet? It could be an XML file with only a top node. 
-        if self._structure_row_node_parent is not None:
+        if self._structure_row_node_parent is None:
             # If not existing, create a node structure up to the parent or the row nodes
             # from the information in the xpath.
             self._structure_top_node = self._structure_create_xpath_nodes(self._structure_top_node, self.rows_xpath)
@@ -338,173 +356,225 @@ class XPath_Dataset(Custom_Dataset):
 #        if not _row_id_attribute:
 #            raise Exception("xpath._structure_init - _filename=\""+ str(_filename) +"\":\nCannot apply a dataset to an existing file without identifying attributes in the the row node level.")
 
+# 
+#     def _structure_find_row(self, _row_data):
+#         # loop key field XPaths
+#         _matching_nodes = None
+#         for _curr_field_idx in self._structure_key_fields:
+#             # Match against current identifier
+#             _xpath, _id_field = self._structure_parse_qal_xpath(self.field_xpaths[_curr_field_idx])
+#             
+#             _select_new = self._structure_row_node_parent.xpath(self._structure_row_node_name +_xpath + "[" + _id_field + "='" +str(_row_data[_curr_field_idx]) + "']")
+#             if not _matching_nodes:                                                       
+#                 _matching_nodes = _select_new
+#             else:
+#                 _matching_nodes = set(_matching_nodes) & set(_select_new)
+#                 
+#         print(str(_curr_field_idx) + "_matching_nodes " + str(_matching_nodes))
+#         
+#         if _matching_nodes and len(_matching_nodes) > 1:        
+#             raise Exception("XPath_dataset._structure_find_row: Key fields " + self._structure_key_fields +" doesn't uniquely identify single rows in the destinations data set.\nDuplicate matches found, _row_data = " + str(_row_data))
+#         elif len(_matching_nodes) == 1:
+#             return _matching_nodes[0]
+#         else:
+#             return None
+        
+        
+        
+    def _structure_populate_row(self, _node, _row_data):
+        for _field_idx in range(len(_row_data)):
+            _curr_path, _curr_attribute = self._structure_parse_qal_xpath(self.field_xpaths[_field_idx])
+            _curr_node = self._structure_create_xpath_nodes(_node, _curr_path)
+            _new_value = str(_row_data[_field_idx])
 
-    def _structure_find_row(self, _row_data):
-        # loop key field XPaths
-        for _curr_field_xpath in (self.field_xpaths[x]  for x in self._structure_key_fields):
-            _curr_nodes = (for x in self._structure_row_node_parent.xpath(_curr_field_xpath))
-            print("_curr_field " + str(_curr_field))
-        
-        
-         
-        
-    
-    
+            print("_curr_path      :" + str(_curr_path))
+            print("_curr_attribute :" + str(_curr_attribute))
+            print("_new_value :" + str(_new_value))
+            #TODO: Support XML?
+            if _curr_attribute:
+                _curr_node.set(_curr_attribute[1:], _new_value)
+            else:
+                _curr_node.text = _new_value 
+            
+             
     def _structure_insert_row(self, _row_idx, _row_data):
         """Override parent to add XML handling"""
+
+        # Last column is a reference
+        print("_row_data: " + str(_row_data))
+        _row_node = self.data_table[_row_idx][len(self.data_table[_row_idx]) -1]
+        
+        _new_element = etree.Element(self._structure_row_node_name)
+        
+        # Insert row node
+        self._structure_row_node_parent.insert(_row_idx, _new_element)
+        
+        self._structure_populate_row(_new_element, _row_data)
+
+        # Call parent
         super(XPath_Dataset, self)._structure_insert_row(_row_idx,_row_data)
-        _row_node = self._structure_find_row(_row_data)
-        
-        
-        
-        #self.data_table.insert(_row_idx,_row_data)
         
     def _structure_update_row(self, _row_idx, _row_data):
         """Override parent to add XML handling"""
+
+        # Last column is a reference
+        print("_row_data: " + str(_row_data))
+        _row_node = self.data_table[_row_idx][len(self.data_table[_row_idx]) -1]
+        
+       
+        self._structure_populate_row(_row_node, _row_data)
+        
+        # Call parent
         super(XPath_Dataset, self)._structure_update_row(_row_idx,_row_data)
         #self.data_table[_row_idx] = _row_data
 
     def _structure_delete_row(self, _row_idx):
         """Override parent to add XML handling"""
+        _row_node = self.data_table[_row_idx][len(self.data_table[_row_idx]) -1]
+        self._structure_row_node_parent.remove(_row_node)
+        # Call parent
         super(XPath_Dataset, self)._structure_delete_row(_row_idx)
         #self.data_table.pop(_row_idx)
 
-
-
-
-
-    def save(self, _apply_to = None, _do_not_insert = None, _do_not_update = None, _do_not_delete = None):
-        """Use root XPath to find a node to iterate over and then add field data via field_xpaths, and save resulting file"""
+    def save(self, _save_as = None):
+        """Save the document"""
         
-        if _apply_to:
-            _filename = _apply_to
-        else:
-            _filename = self.filename
-        
-        # Find the 
-        _root_node_name, _row_node_name, _parent_xpath = self._parse_root_path(self.rows_xpath)
-               
-        # Load destination file    
-        
-        import os
-        if _apply_to:
+        if not _save_as:
+            _save_as = self.filename
             
-            if not os.path.exists(_filename):
-                print("XPath_Dataset.save - Destination file does not exist, using source file for structure")
-                _structure_file = self.filename
-            else:
-                _structure_file = _filename
-            try:
-                _tree = self.file_to_tree(self.xpath_data_format, _structure_file)
-            except Exception as e:
-                raise Exception("XPath_Dataset.save - error parsing " + self.xpath_data_format + " file : " + str(e))
-
-        else:
-            # Create a tree with root node based on the first  
+        self._structure_tree.write(_save_as)
             
-            if _root_node_name != "":
-                if self.encoding:
-                    _encoding = self.encoding
-                else:
-                    _encoding = "UTF-8"
-                          
-                _tree = etree.parse(io.StringIO("<?xml version='1.0' ?>\n<" + _root_node_name + "/>")) 
-            else:
-                raise Exception("XPath_Dataset.save - rows_xpath("+ str(self.rows_xpath)+") must be absolute and have at least the name of the root node. Example: \"/root_node\" ")
-        _top_node =_tree.getroot()
-        
-        # Where not existing, create a node structure up to the parent or the row nodes
-        # from the information in the xpath.
-        _row_node_parent = self._create_xpath_nodes(_top_node, _parent_xpath)
-
-        
-        # Sort and add index references. 
-        # The reason for sorting is made to handle several levels of data in the right order, 
-        # this way the structure is gradually built with the right attributes.
-        _sorted_xpaths = [[self.field_xpaths.index(x), x] for x in sorted(self.field_xpaths)]
-        print(str(_sorted_xpaths))
-        print(str(self.data_table))
-        
-        # Create a list of row nodes which should not be deleted
-        if not _do_not_delete:
-            _spare_these = []
-        
-        _curr_path, _row_id_attribute = self._parse_optimal_bpm_xpath( _sorted_xpaths[0][1])
-        if not _row_id_attribute and _apply_to:
-            raise Exception("xpath.save(_apply_to=\""+ str(_filename) +"\")):\nCannot apply a dataset to an existing file without identifying attributes in the the row node level.")
-        
-        _log = []
-        
-        for _curr_row in self.data_table:
-            _row_node = None
-            if _row_id_attribute:
-                # Create an XPath for finding existing row nodes 
-                _row_xpath = _row_node_name + \
-                    "[@"+ _row_id_attribute + "='" + str(_curr_row[_sorted_xpaths[0][0]]) + "']"
-                # Lookup existing node
-                _existing_node = _row_node_parent.xpath(_row_xpath)
-                if len(_existing_node) > 1:
-                    raise Exception("xpath.save: error: Non-unique key at "+ str(_row_xpath) + ", " + str(len(_existing_node)) + " matching nodes encountered.")
-                elif len(_existing_node) == 0:
-                    if _do_not_insert:
-                        print("xpath.save(_do_not_insert=True): Skipping creating new node at "+ str(_row_xpath))
-                    else:
-                        _row_node = self._create_xpath_nodes(_row_node_parent, _row_xpath)
-                        self.log_insert(_row_node.get(_row_id_attribute), etree.tostring(_row_node))
-                else:
-                    if _do_not_update:        
-                        print("xpath.save(_do_not_delete=True): Skipping updating node at "+ str(_row_xpath))
-                    else:
-                        _row_node = _existing_node[0]
-
-                _start_idx = 1
-            else:
-                # XML is empty, always create new row nodes
-                _row_node = SubElement(_row_node_parent, _row_node_name)
-                self.log_insert("N/A", etree.tostring(_row_node))
-                _start_idx = 0
-                
-            if _do_not_delete:
-                # The actual decision is later, this is just for logging
-                print("xpath.save(_do_not_delete=True): Skipping deleting node at "+ str(_row_xpath))
-            else:
-                _spare_these.append(_row_node)          
-                  
-            if _row_node != None:
-                for _field_idx in range(_start_idx, len(_sorted_xpaths)):
-                    
-                    # TODO: Optimize, generate a list of paths and attributes to use instead of calling _parse_optimal_bpm_xpath each time
-                    _curr_path, _curr_attribute = self._parse_optimal_bpm_xpath( _sorted_xpaths[_field_idx][1])
-                    _curr_node = self._create_xpath_nodes(_row_node, _curr_path)
-                    print("_curr_path      :" + str(_curr_path))
-                    print("_curr_attribute :" + str(_curr_attribute))
-                    # Handle special case with only an attribute reference
-                    _new_value = str(_curr_row[_sorted_xpaths[_field_idx][0]])
-                    if _curr_attribute:
-                        _curr_value = _curr_node.get(_curr_attribute)
-                        if _curr_value != _new_value:
-                            self.log_update_field(_curr_row[_sorted_xpaths[0][0]],_sorted_xpaths[_field_idx][1], _curr_value, _new_value)
-                            _curr_node.set(_curr_attribute, _new_value)
-                            
-                        
-                    else:
-                        _curr_value = _curr_node.text
-                        if _curr_node.text != _new_value:
-                            self.log_update_field(_curr_row[_sorted_xpaths[0][0]],_sorted_xpaths[_field_idx][1], _curr_value, _new_value)
-                            _curr_node.text = _new_value 
-        
-        if not _do_not_delete:
-            # Delete all nodes not in source data
-            for _delete_node in _row_node_parent.getchildren():
-                if not(_delete_node in _spare_these):
-                    if _row_id_attribute:
-                        self.log_delete(_delete_node.get(_row_id_attribute), etree.tostring(_delete_node))
-                    else:
-                        self.log_delete('N/A',  etree.tostring(_delete_node))
-                    _row_node_parent.remove(_delete_node)
-        
-        
-                          
-        _tree.write(_filename)
-        self.log_save(_filename)  
-        return _top_node, self._log
+        self.log_save(_save_as)  
+        return self._log
+#         if _apply_to:
+#             _filename = _apply_to
+#         else:
+#             _filename = self.filename
+#         
+#         # Find the 
+#         _root_node_name, self._row_node_name, _parent_xpath = self._parse_root_path(self.rows_xpath)
+#                
+#         # Load destination file    
+#         
+#         import os
+#         if _apply_to:
+#             
+#             if not os.path.exists(_filename):
+#                 print("XPath_Dataset.save - Destination file does not exist, using source file for structure")
+#                 _structure_file = self.filename
+#             else:
+#                 _structure_file = _filename
+#             try:
+#                 _tree = self.file_to_tree(self.xpath_data_format, _structure_file)
+#             except Exception as e:
+#                 raise Exception("XPath_Dataset.save - error parsing " + self.xpath_data_format + " file : " + str(e))
+# 
+#         else:
+#             # Create a tree with root node based on the first  
+#             
+#             if _root_node_name != "":
+#                 if self.encoding:
+#                     _encoding = self.encoding
+#                 else:
+#                     _encoding = "UTF-8"
+#                           
+#                 _tree = etree.parse(io.StringIO("<?xml version='1.0' ?>\n<" + _root_node_name + "/>")) 
+#             else:
+#                 raise Exception("XPath_Dataset.save - rows_xpath("+ str(self.rows_xpath)+") must be absolute and have at least the name of the root node. Example: \"/root_node\" ")
+#         _top_node =_tree.getroot()
+#         
+#         # Where not existing, create a node structure up to the parent or the row nodes
+#         # from the information in the xpath.
+#         _row_node_parent = self._create_xpath_nodes(_top_node, _parent_xpath)
+# 
+#         
+#         # Sort and add index references. 
+#         # The reason for sorting is made to handle several levels of data in the right order, 
+#         # this way the structure is gradually built with the right attributes.
+#         _sorted_xpaths = [[self.field_xpaths.index(x), x] for x in sorted(self.field_xpaths)]
+#         print(str(_sorted_xpaths))
+#         print(str(self.data_table))
+#         
+#         # Create a list of row nodes which should not be deleted
+#         if not _do_not_delete:
+#             _spare_these = []
+#         
+#         _curr_path, _row_id_attribute = self._parse_optimal_bpm_xpath( _sorted_xpaths[0][1])
+#         if not _row_id_attribute and _apply_to:
+#             raise Exception("xpath.save(_apply_to=\""+ str(_filename) +"\")):\nCannot apply a dataset to an existing file without identifying attributes in the the row node level.")
+#         
+#         _log = []
+#         
+#         for _curr_row in self.data_table:
+#             _row_node = None
+#             if _row_id_attribute:
+#                 # Create an XPath for finding existing row nodes 
+#                 _row_xpath = _row_node_name + \
+#                     "[@"+ _row_id_attribute + "='" + str(_curr_row[_sorted_xpaths[0][0]]) + "']"
+#                 # Lookup existing node
+#                 _existing_node = _row_node_parent.xpath(_row_xpath)
+#                 if len(_existing_node) > 1:
+#                     raise Exception("xpath.save: error: Non-unique key at "+ str(_row_xpath) + ", " + str(len(_existing_node)) + " matching nodes encountered.")
+#                 elif len(_existing_node) == 0:
+#                     if _do_not_insert:
+#                         print("xpath.save(_do_not_insert=True): Skipping creating new node at "+ str(_row_xpath))
+#                     else:
+#                         _row_node = self._create_xpath_nodes(_row_node_parent, _row_xpath)
+#                         self.log_insert(_row_node.get(_row_id_attribute), etree.tostring(_row_node))
+#                 else:
+#                     if _do_not_update:        
+#                         print("xpath.save(_do_not_delete=True): Skipping updating node at "+ str(_row_xpath))
+#                     else:
+#                         _row_node = _existing_node[0]
+# 
+#                 _start_idx = 1
+#             else:
+#                 # XML is empty, always create new row nodes
+#                 _row_node = SubElement(_row_node_parent, _row_node_name)
+#                 self.log_insert("N/A", etree.tostring(_row_node))
+#                 _start_idx = 0
+#                 
+#             if _do_not_delete:
+#                 # The actual decision is later, this is just for logging
+#                 print("xpath.save(_do_not_delete=True): Skipping deleting node at "+ str(_row_xpath))
+#             else:
+#                 _spare_these.append(_row_node)          
+#                   
+#             if _row_node != None:
+#                 for _field_idx in range(_start_idx, len(_sorted_xpaths)):
+#                     
+#                     # TODO: Optimize, generate a list of paths and attributes to use instead of calling _parse_optimal_bpm_xpath each time
+#                     _curr_path, _curr_attribute = self._parse_optimal_bpm_xpath( _sorted_xpaths[_field_idx][1])
+#                     _curr_node = self._create_xpath_nodes(_row_node, _curr_path)
+#                     print("_curr_path      :" + str(_curr_path))
+#                     print("_curr_attribute :" + str(_curr_attribute))
+#                     # Handle special case with only an attribute reference
+#                     _new_value = str(_curr_row[_sorted_xpaths[_field_idx][0]])
+#                     if _curr_attribute:
+#                         _curr_value = _curr_node.get(_curr_attribute)
+#                         if _curr_value != _new_value:
+#                             self.log_update_field(_curr_row[_sorted_xpaths[0][0]],_sorted_xpaths[_field_idx][1], _curr_value, _new_value)
+#                             _curr_node.set(_curr_attribute, _new_value)
+#                             
+#                         
+#                     else:
+#                         _curr_value = _curr_node.text
+#                         if _curr_node.text != _new_value:
+#                             self.log_update_field(_curr_row[_sorted_xpaths[0][0]],_sorted_xpaths[_field_idx][1], _curr_value, _new_value)
+#                             _curr_node.text = _new_value 
+#         
+#         if not _do_not_delete:
+#             # Delete all nodes not in source data
+#             for _delete_node in _row_node_parent.getchildren():
+#                 if not(_delete_node in _spare_these):
+#                     if _row_id_attribute:
+#                         self.log_delete(_delete_node.get(_row_id_attribute), etree.tostring(_delete_node))
+#                     else:
+#                         self.log_delete('N/A',  etree.tostring(_delete_node))
+#                     _row_node_parent.remove(_delete_node)
+#         
+#         
+#                           
+#         _tree.write(_filename)
+#         self.log_save(_filename)  
+#         return _top_node, self._log

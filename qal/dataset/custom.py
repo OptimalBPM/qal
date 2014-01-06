@@ -113,41 +113,48 @@ class Custom_Dataset(object):
         #print("_insert: " + str(_insert))
         #print("Before apply: " + str(_sorted_dest))
         
-        self._structure_init()
 
-        _insert_idx = 0
-        _delete_idx = 0
-        _update_idx = 0
+        if _insert:
+            _insert_idx = len(_insert) - 1
+        else:
+            _insert_idx = -1
+            
+        if _delete:
+            _delete_idx = len(_delete) - 1
+        else:
+            _delete_idx = -1
+            
+        if _update:
+            _update_idx = len(_update) - 1
+        else:
+            _update_idx = -1
+
         
         self.data_table = _sorted_dest
-        # Loop the sorted destination dataset and apply changes
-        for _curr_row_idx in range(0, len(self.data_table)):
-            _actual_row_idx = _curr_row_idx - _delete_idx + _insert_idx
-            # print("_actual_row_idx = _curr_row_idx - _delete_idx + _insert_idx = " + 
-            #      str(_curr_row_idx) + " - " +str(_delete_idx) + " + " + str(_insert_idx))
-
+        # Loop the sorted destination dataset backwards and apply changes
+        for _curr_row_idx in range(len(self.data_table), -1, -1):
+  
             # Make deletes
-            if _delete and _delete_idx < len(_delete):
+            if _delete_idx > -1:
                 if _delete[_delete_idx][1] == _curr_row_idx:
                     #print("deleting row " + str(_delete[_delete_idx][1])) 
-                    self._structure_delete_row(_actual_row_idx)
-                    _delete_idx+=1
+                    self._structure_delete_row(_curr_row_idx)
+                    _delete_idx-= 1
             # Make updates
-            if _update and _update_idx < len(_update):
+            if _update_idx > -1:
                 if _update[_update_idx][1] == _curr_row_idx:
                     #print("updating row " + str(_update[_update_idx][1])) 
-                    self.log_update_row(_actual_row_idx, self.data_table[_actual_row_idx], _update[_update_idx][2])
-                    self._structure_update_row(_actual_row_idx, _update[_update_idx][2])
-                    _update_idx+=1
+                    self._structure_update_row(_curr_row_idx, _update[_update_idx][2])
+                    _update_idx-= 1
                     
             # Make inserts
-            if _insert and len(_insert) > 0:
+            if _insert_idx > -1:
                 
                 # TODO: This while should insert these in reverse instead.
-                while _insert_idx < len(_insert) and _insert[_insert_idx][1] == _curr_row_idx:
+                if _insert[_insert_idx][1] == _curr_row_idx:
                     #print("inserting row " + str(_insert[_insert_idx][1]))
-                    self._structure_insert_row(_actual_row_idx, _insert[_insert_idx][2]) 
-                    _insert_idx+=1
+                    self._structure_insert_row(_curr_row_idx, _insert[_insert_idx][2]) 
+                    _insert_idx-= 1
         
         #print("After apply:  " + str(_sorted_dest))            
         return self.data_table        
@@ -164,7 +171,7 @@ class Custom_Dataset(object):
             It is also possible that the keys will not match. So cast these before applying.
         """
          
-        
+        self._structure_init()        
         
         _delete, _insert, _update, _dest_sorted = compare(
                                                           _left = _new_data_table, 
