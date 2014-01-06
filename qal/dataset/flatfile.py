@@ -10,19 +10,31 @@ from qal.dataset.custom import Custom_Dataset
 import csv
 
 class Flatfile_Dataset(Custom_Dataset):
- 
-    """This class loads a flat file into an array."""
+    """This class loads a flat file into an array, self.data_table."""
     delimiter = None
-    filename = None
+    """The delimiter, typically ";", "," or "|"."""
     has_header = None
-    csv_dialect = None
-    quoting = None
-    escapechar = None
-    lineterminator = None
-    quotechar = "\""
-    skipinitialspace = None
-    
+    """True if data begins with a header row containing field names."""
+    filename = None
+    """The name of the file"""
     field_names = None
+    """The names of the fields(if applicable, see has_header)"""
+    csv_dialect = None
+    """Specifies the csv dialect"""
+    quoting = None
+    """To what degree does the file employ quoting, values:
+     * None = No quoting at all, quotes will be treated as values
+     * "MINIMAL" = Quoting is only used when necessary
+     * "ALL" = Quoting is applied used on all fields.
+     * "NONNUMERIC" = Non-numeric fields are quoted."""
+    quotechar = "\""
+    """What character to use for quoting. Normally "\\"\"."""
+    escapechar = None
+    """What character is used to escape special characters, typically "\\"."""
+    lineterminator = None
+    """What character is used to indicate the end of a line. typically "\\n"."""
+    skipinitialspace = None
+    """True if initial spaces should be disregarded."""
     
     def __init__(self, _delimiter = None, _filename = None, _has_header = None, _csv_dialect = None, _resource = None, _quoting = None):
         """Constructor"""
