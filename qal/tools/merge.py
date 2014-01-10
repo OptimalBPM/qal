@@ -5,7 +5,7 @@ Created on Nov 3, 2013
 """
 
 
-from qal.sql.sql_macros import make_insert_sql_with_parameters
+
 from qal.common.resources import Resources
 from qal.tools.transform import make_transformation_array_from_xml_node, make_transformations_xml_node, perform_transformations
 from qal.tools.diff import compare
@@ -14,9 +14,7 @@ from qal.dataset.xpath import XPath_Dataset
 from qal.sql.sql_macros import select_all_skeleton
 from qal.dal.dal import Database_Abstraction_Layer
 from lxml import etree
-from qal.sql.sql import Parameter_Assignment, Parameter_Identifier, Parameter_Parameter,\
-    Parameter_Condition, Verb_UPDATE, Parameter_Conditions, SQL_List,\
-    Parameter_Source, Verb_DELETE
+
 
 def isnone( _node):
     if _node == None or _node.text == None:
@@ -175,133 +173,15 @@ class Merge(object):
 
 
     
-    def _extract_data_columns_from_diff_list(self, _field_indexes, _diff_list):    
+    def _extract_data_columns_from_diff_row(self, _field_indexes, _diff_row):    
         """Extracts columns specified in _field_indexes from _diff_list"""
         _result = []
-        for _curr_row in _diff_list:
-            _curr_row_out = []
-            for _curr_field in _field_indexes:
-                _curr_row_out.append(_curr_row[2][_curr_field])
-            _result.append(_curr_row_out)
+
+        for _curr_field in _field_indexes:
+            _result.append(_diff_row[2][_curr_field])
         return _result        
     
     
-    def _rdbms_apply_deletes(self, _delete_list):
-        """Generates a Verb_DELETE instance populated with the indata"""
-        
-        
-        # Extract the key data
-        _key_values = self._extract_data_columns_from_diff_list(self.key_fields, _delete_list)
-                 
-        _source = Parameter_Source()
-        _source.expression.append(Parameter_Identifier(self.dest_table))
-        
-        # Add the WHERE statement
-        for _field_idx in self.key_fields:
-            _new_cond = Parameter_Condition(_left = Parameter_Identifier(_identifier= self.dest_field_names[_field_idx]), 
-                                            _right = Parameter_Parameter(_datatype = self.dest_field_types[_field_idx]), 
-                                             _operator = '=', _and_or = 'AND')
-            _source.conditions.append(_new_cond)
-        
-        # Make the Verb_DELETE skeleton
-        _delete = Verb_DELETE()
-        _delete.sources.append(_source)
-        
-        # Fetch the resource
-        _dal = Database_Abstraction_Layer(_resource = self.dest_resource)
-        _delete_sql = _delete.as_sql(_dal.db_type)
-        # Make the deletes
-        _dal.executemany(_delete_sql, _key_values)
-        _dal.commit()
-
-    
-    def _rdbms_apply_inserts(self, _insert_list):
-        """Generates a Verb_INSERT instance populated with the indata"""
-
-        # Create a DAL for the destination resource, also we need to know the database type       
-                
-        _dal = Database_Abstraction_Layer(_resource = self.dest_resource)   
-        
-        _insert_sql = make_insert_sql_with_parameters(self.dest_table, self.dest_field_names, _dal.db_type, self.dest_field_types)
-
-        _execute_many_data = self._extract_data_columns_from_diff_list(range(len(self.dest_field_names)), _insert_list)
-        
-        # Create a DAL for the destination resource        
-                
-        _dal = Database_Abstraction_Layer(_resource = self.dest_resource)   
-         
-        # Apply and commit changes to the structure
-        
-        _dal.executemany(_insert_sql, _execute_many_data)  
-        _dal.commit()
-        
-    def _rdbms_apply_updates(self, _update_list):
-        """Generates DELETE and INSERT instances populated with the indata """
-        
-        # Add assignments to all fields except the key fields and add conditions for all key fields.
-                
-        _field_names_ex_keys = []
-        _field_names_ex_keys_datatypes = []
-        _key_field_names = []
-        _key_field_datatypes = []
-        
-        # Create lists of field names and types excluding and including keys
-        for _curr_field_idx in range(len(self.dest_field_names)):
-            if _curr_field_idx in self.key_fields:
-                _key_field_names.append(self.dest_field_names[_curr_field_idx])
-                _key_field_datatypes.append(self.dest_field_types[_curr_field_idx])
-            else:
-                _field_names_ex_keys.append(self.dest_field_names[_curr_field_idx])
-                _field_names_ex_keys_datatypes.append(self.dest_field_types[_curr_field_idx])
-        
-        
-        _assignments = SQL_List("Parameter_Assignment")
-        
-        # Instantiate the assignments
-                
-        for _curr_field_idx in range(len(_field_names_ex_keys)):
-            _left = Parameter_Identifier(_identifier = _field_names_ex_keys[_curr_field_idx])
-            _right = Parameter_Parameter(_datatype = _field_names_ex_keys_datatypes[_curr_field_idx])
-            _assignments.append(Parameter_Assignment(_left, _right))
-
-
-        # Create the WHERE conditions.
-
-        _conditions = Parameter_Conditions()    
-        
-        for _curr_field_idx in range(len(_key_field_names)):
-            _left = Parameter_Identifier(_identifier = _key_field_names[_curr_field_idx])
-            _right = Parameter_Parameter(_datatype = _key_field_datatypes[_curr_field_idx])
-            _conditions.append(Parameter_Condition( _left, _right, _operator = "="))
-        
-        # Specify target table
-            
-        _table_identifier =  Parameter_Identifier(_identifier = self.dest_table)
-        
-        # Create Verb_UPDATE instance with all parameters
-        
-        _update = Verb_UPDATE(_table_identifier = _table_identifier, _conditions = _conditions, _assignments = _assignments)            
-        
-        
-        # To satisfy the Verb_UPDATE instance, create a two-dimensional array, leftmost columns are data, rightmost are keys.
-                 
-        _field_idx_ex_keys = list(set(range(len(self.dest_field_names))) - set(self.key_fields))
-        _execute_many_data = self._extract_data_columns_from_diff_list(_field_idx_ex_keys + self.key_fields, _update_list)
-        
-        # Create a DAL for the destination resource        
-                
-        _dal = Database_Abstraction_Layer(_resource = self.dest_resource)
-        
-        # Generate the SQL with all parameter place holders
-        
-        _update_sql = _update.as_sql(_dal.db_type)
-        
-        # Apply and commit changes to the database
-        
-        _dal.executemany(_update_sql, _execute_many_data)  
-        _dal.commit()
-       
-         
     
     def loaded_dataset_from_resource(self, _resource):
         """Get a dataset from a file resource"""
@@ -327,17 +207,7 @@ class Merge(object):
         """Query all values from a table from a RDBMS resource"""
         _dal = Database_Abstraction_Layer(_resource = _resource)
         return _dal.query(select_all_skeleton(_table_name).as_sql(_dal.db_type)), _dal.field_names, _dal.field_types
-    
-
-                
-                
-    
-    def _xpath_generate_updates(self, _update):
-        pass
-    def _xpath_generate_deletes(self, _delete):
-        pass
-    def _xpath_generate_inserts(self, _insert):
-        pass    
+  
     
     def _load_resources(self):
         # Load source resource
@@ -361,7 +231,7 @@ class Merge(object):
             raise Exception("execute: Invalid destination resource type:" + str(self.dest_resource.type.upper()))
         
         if self.dest_dataset_log_level:
-             self.dest_dataset._log_level = self.dest_dataset_log_level
+            self.dest_dataset._log_level = self.dest_dataset_log_level
              
     def _make_shortcuts(self):
         """Make a list of which source column index maps to which destination column index""" 
@@ -377,12 +247,12 @@ class Merge(object):
          
 
     def _remap_and_transform(self):
-        """Create a remapped source dataset that has the same data in the same columns as the destination dataset.
+        """Create a remapped source data set that has the same data in the same columns as the destination data set.
         Also applies transformations."""
         _shortcuts = self._make_shortcuts()
 
         _mapped_source = []
-        # Loop all rows in the source dataset
+        # Loop all rows in the source data set
         for _curr_idx in range(0, len(self.source_dataset.data_table)):
             # Create an empty row with None-values to fill later
             _curr_mapped = []
@@ -398,7 +268,7 @@ class Merge(object):
                     raise Exception("Merge._remap_and_transform:\nError in applying transformations for row " + 
                                     str(_curr_idx) + ", column \"" + self.dest_field_names[_curr_shortcut[0]] + 
                                     "\":\n" + str(e))
-                # Set the correct field in the destination dataset
+                # Set the correct field in the destination data set
                 _curr_mapped[_curr_shortcut[1]] = _value
             _mapped_source.append(_curr_mapped)
         
@@ -414,8 +284,8 @@ class Merge(object):
         
 
         """Merge the datasets"""
-        
-        _merged_dataset = self.dest_dataset.apply_new_data(_mapped_source, self.key_fields)
+        if self.dest_resource.type.upper() in ["CUSTOM", "FLATFILE", "MATRIX"]:
+            _merged_dataset = self.dest_dataset.apply_new_data(_mapped_source, self.key_fields)
         self.dest_dataset.save()
         
 
@@ -427,10 +297,6 @@ class Merge(object):
             # Save to relevant data format
                    
                 
-        elif self.dest_resource.type.upper() in ["XPATH"]:
-            self._xpath_generate_updates(_update)
-            self._xpath_generate_deletes(_delete)
-            self._xpath_generate_inserts(_insert)   
                     
         else:
             self._rdbms_apply_updates(_update)
