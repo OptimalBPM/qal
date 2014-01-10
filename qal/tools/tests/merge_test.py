@@ -63,8 +63,7 @@ class Merge_test(unittest.TestCase):
         self.assertEqual(etree.tostring(_merge.as_xml_node()), etree.tostring(_merge_xml), "Input/output XML does not match")
 
         _result = _merge.execute()
-        
-        _result
+
         
         #_merge.write_result('resources/csv_out.xml')
         self.assertEqual(_result, c_file_result)
