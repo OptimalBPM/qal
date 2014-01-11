@@ -20,7 +20,26 @@ class RDBMS_Dataset(Custom_Dataset):
     """The RDMBS Data set holds a two-dimensional array of data, typically representing a table in a database.
     If the data set is not a table but based on a more complex query, data will not be possibly to apply to it."""
     
-    _dal = None
+    dal = None
+    """An instance of the Database Abstraction Layer(DAL)"""
+    table_name = None
+    """If set, all data in table "table_name" is loaded in its entirety into the data_table."""
+    query = None
+    """If set, and table name is not, then the SQL statement contained is executed. 
+    It is a text string. 
+
+    .. todo::
+    Make it possible for it to be a backend agnostic qal.sql.sql.VERB_SELECT object parser from an XML structure.""" 
+
+    def read_resource_settings(self, _resource):
+        if _resource.type.upper() != 'RDBMS':
+            raise Exception("RDBMS_Dataset.read_resource_settings.parse_resource error: Wrong resource type: " + _resource.type)
+        
+        self.dal = Database_Abstraction_Layer(_resource = _resource)
+        
+        self.table_name = _resource.data.get("table_name")
+        
+        self.query =   _resource.data.get("query") 
     
     def __init__(self, _resource = None):
         '''
@@ -59,19 +78,14 @@ class RDBMS_Dataset(Custom_Dataset):
         _delete.sources.append(_source)
         
         # Fetch the resource
-        _dal = Database_Abstraction_Layer(_resource = self.dest_resource)
-        self._structure_delete_sql = _delete.as_sql(_dal.db_type)
+        self._structure_delete_sql = _delete.as_sql(self.dal.db_type)
 
 
     
     def _rdbms_init_inserts(self, _insert_list):
         """Generates a Verb_INSERT instance populated with the indata"""
 
-        # Create a DAL for the destination resource, also we need to know the database type       
-                
-        _dal = Database_Abstraction_Layer(_resource = self.dest_resource)   
-        
-        self._structure_insert_sql = make_insert_sql_with_parameters(self.dest_table, self.dest_field_names, _dal.db_type, self.dest_field_types)
+        self._structure_insert_sql = make_insert_sql_with_parameters(self.dest_table, self.dest_field_names,self.dal.db_type, self.dest_field_types)
 
 
         
@@ -124,7 +138,7 @@ class RDBMS_Dataset(Custom_Dataset):
         
         # Generate the SQL with all parameter place holders
         
-        self._structure_update_sql = self._update.as_sql(self._dal.db_type)        
+        self._structure_update_sql = self._update.as_sql(self.dal.db_type)        
        
    
              
@@ -132,14 +146,11 @@ class RDBMS_Dataset(Custom_Dataset):
         """Override parent to add SQL handling"""
         _execute_many_data = self._extract_data_columns_from_diff_row(range(len(self.dest_field_names)), _row_data)
         
-        # Create a DAL for the destination resource        
-                
-        _dal = Database_Abstraction_Layer(_resource = self.dest_resource)   
          
         # Apply and commit changes to the structure
         
-        _dal.executemany(self._structure_insert_sql, _execute_many_data)  
-        _dal.commit()
+        self.dal.executemany(self._structure_insert_sql, _execute_many_data)  
+        self.dal.commit()
         # Call parent
         super(RDBMS_Dataset, self)._structure_insert_row(_row_idx,_row_data)
         
@@ -154,8 +165,8 @@ class RDBMS_Dataset(Custom_Dataset):
 
         
         # Apply and commit changes to the database        
-        self._dal.executemany(self._structure_update_sql, _execute_data)  
-        self._dal.commit()
+        self.dal.executemany(self._structure_update_sql, _execute_data)  
+        self.dal.commit()
         # Call parent
         super(RDBMS_Dataset, self)._structure_update_row(_row_idx,_row_data)
 
@@ -164,14 +175,15 @@ class RDBMS_Dataset(Custom_Dataset):
                 
         # Extract the key data
         _key_values = self._extract_data_columns_from_diff_row(self.key_fields, self.data_table[_row_idx])
-                # Make the deletes
-        self._dal.executemany(self._structure_delete_sql, [_key_values])
-        self._dal.commit()
+        # Make the deletes
+        self.dal.executemany(self._structure_delete_sql, [_key_values])
+        self.dal.commit()
         # Call parent
         super(RDBMS_Dataset, self)._structure_delete_row(_row_idx)
         #self.data_table.pop(_row_idx)
                 
     def load(self):
+            
         
         pass
     

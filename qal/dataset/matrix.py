@@ -13,7 +13,7 @@ class Matrix_Dataset(Custom_Dataset):
  
     """The matrix dataset holds a two-dimensional array of data"""
     
-    _dal = None
+    dal = None
     
     def __init__(self):
         '''
