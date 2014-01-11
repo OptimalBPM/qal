@@ -4,14 +4,14 @@ Created on Jan 8, 2012
 @author: Nicklas Boerjesson
 '''
 
-from qal.dal.dal_types import DB_DB2,DB_ORACLE, DB_POSTGRESQL
-from qal.sql.sql_utils import db_specific_object_reference
+from qal.dal.types import DB_DB2,DB_ORACLE, DB_POSTGRESQL
+from qal.sql.utils import db_specific_object_reference
 from qal.sql.sql import Verb_INSERT, Verb_DELETE, Verb_UPDATE, Parameter_Conditions
 from qal.sql.sql import Parameter_Source, Parameter_Identifier, Parameter_Parameter,Parameter_Condition, Parameter_Assignment
 from qal.dal.dal import Database_Abstraction_Layer
-from qal.sql.sql_base import SQL_List
+from qal.sql.base import SQL_List
 
-from qal.sql.sql_macros import make_insert_sql_with_parameters
+from qal.sql.macros import make_insert_sql_with_parameters
 
 from qal.dataset.custom import Custom_Dataset
 

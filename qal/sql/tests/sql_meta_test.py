@@ -9,7 +9,7 @@ Therefore, they have been commented out.
 
 '''
 import unittest
-from qal.sql.sql_meta import list_parameter_classes, list_verb_classes, list_class_properties
+from qal.sql.meta import list_parameter_classes, list_verb_classes, list_class_properties
 
 class Test(unittest.TestCase):
 

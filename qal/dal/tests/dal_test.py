@@ -5,7 +5,7 @@ Created on May 20, 2010
 '''
 import unittest
 
-from qal.dal.dal_types import DB_MYSQL, DB_POSTGRESQL, DB_ORACLE, DB_DB2, DB_SQLSERVER
+from qal.dal.types import DB_MYSQL, DB_POSTGRESQL, DB_ORACLE, DB_DB2, DB_SQLSERVER
 from qal.dal.tests.framework import get_default_dal 
 
 def _connect_test(_db_type):

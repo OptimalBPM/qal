@@ -12,7 +12,7 @@
 
 from urllib.request import quote, unquote
 from xml.dom.minidom import Text
-from qal.sql.sql_utils import check_for_param_content
+from qal.sql.utils import check_for_param_content
 from xml.dom.minidom import Document, parseString
 
 def xml_set_cdata(_node, _value, _lowercase=False):

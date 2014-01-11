@@ -10,7 +10,7 @@ This module contains all the base classes for the SQL-related code.
 The reason is simply to make things more manageable and split things up a bit.
 """
 
-from qal.sql.sql_types import DEFAULT_ROWSEP
+from qal.sql.types import DEFAULT_ROWSEP
 
 
 

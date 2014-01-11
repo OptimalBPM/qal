@@ -8,7 +8,7 @@ Created on Sep 26, 2013
 from qal.sql.sql import Verb_CREATE_TABLE, Verb_SELECT, Verb_INSERT, Verb_DELETE, Verb_UPDATE,SQL_List, \
     Parameter_ColumnDefinition,Parameter_Identifier, Parameter_Source
     
-from qal.sql.sql_utils import datatype_to_parameter
+from qal.sql.utils import datatype_to_parameter
 
 
 def make_column_definitions(_field_names, _field_types):

@@ -12,22 +12,22 @@
     :license: BSD, see LICENSE for details.
 """
 
-from qal.sql.sql_types import DEFAULT_ROWSEP, expression_item_types,tabular_expression_item_types
-from qal.dal.dal_types import DB_POSTGRESQL, DB_MYSQL, DB_ORACLE, DB_DB2 # , DB_SQLSERVER 
+from qal.sql.types import DEFAULT_ROWSEP, expression_item_types,tabular_expression_item_types
+from qal.dal.types import DB_POSTGRESQL, DB_MYSQL, DB_ORACLE, DB_DB2 # , DB_SQLSERVER 
 
-from qal.sql.sql_base import Parameter_Base, SQL_List, Parameter_Expression_Item
-from qal.sql.sql_remotable import Parameter_Remotable
+from qal.sql.base import Parameter_Base, SQL_List, Parameter_Expression_Item
+from qal.sql.remotable import Parameter_Remotable
 
 
-from qal.sql.sql_utils import add_operator, parenthesise, oracle_add_escape, add_comma, make_operator, check_for_param_content,\
+from qal.sql.utils import add_operator, parenthesise, oracle_add_escape, add_comma, make_operator, check_for_param_content,\
                                 none_as_sql, error_on_blank, comma_separate, make_function, db_specific_operator, db_specific_object_reference,\
                                 citate,check_not_null, curr_user, db_specific_datatype, curr_datetime, add_comma_rs, oracle_create_auto_increment,\
                                 handle_temp_table_ref, datatype_to_parameter
-from qal.sql.sql_types import condition_part
+from qal.sql.types import condition_part
 from qal.dataset.flatfile import Flatfile_Dataset
 from qal.dataset.xpath import XPath_Dataset
 from qal.dataset.matrix import Matrix_Dataset
-from qal.dal.dal_types import DB_SQLSERVER
+from qal.dal.types import DB_SQLSERVER
 
 
 

@@ -8,8 +8,8 @@ from the SQL.py and generates meta data by analyzing its objects.
 
 # Import the entire SQL namespace to make it searchable and supress warnings.
 from qal.sql.sql import * #@UnusedWildImport #IGNORE:W0401
-from qal.sql.sql_base import *
-from qal.sql.sql_remotable import *
+from qal.sql.base import *
+from qal.sql.remotable import *
 from qal.dataset.flatfile import Flatfile_Dataset #@UnusedWildImport #IGNORE:W0401
 from qal.dataset.xpath import XPath_Dataset #@UnusedWildImport #IGNORE:W0401
 from qal.dataset.matrix import Matrix_Dataset #@UnusedWildImport #IGNORE:W0401

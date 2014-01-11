@@ -4,13 +4,13 @@ Created on Sep 26, 2013
 @author: Nicklas Boerjesson
 '''
 import unittest
-from qal.sql.sql_macros import create_table_skeleton, make_insert_sql_with_parameters, copy_to_table,select_all_skeleton
-from qal.dal.dal_types import DB_POSTGRESQL, DB_MYSQL, db_type_to_string,\
+from qal.sql.macros import create_table_skeleton, make_insert_sql_with_parameters, copy_to_table,select_all_skeleton
+from qal.dal.types import DB_POSTGRESQL, DB_MYSQL, db_type_to_string,\
     DB_SQLSERVER
-from qal.sql.sql_types import DEFAULT_ROWSEP
+from qal.sql.types import DEFAULT_ROWSEP
 from qal.dal.tests.framework import default_dal
 from qal.sql.sql import Parameter_Identifier
-from qal.sql.sql_utils import handle_temp_table_ref, citate, db_specific_object_reference, db_specific_datatype
+from qal.sql.utils import handle_temp_table_ref, citate, db_specific_object_reference, db_specific_datatype
 
 
 db_type = DB_POSTGRESQL

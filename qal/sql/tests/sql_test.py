@@ -5,8 +5,8 @@ Created on May 23, 2010
 '''
 import unittest
 
-from qal.sql.sql_types import *
-from qal.dal.dal_types import *
+from qal.sql.types import *
+from qal.dal.types import *
 from qal.sql.sql import *
 #from qal.tools.diff import diff_strings  # Use when debugging tests
 

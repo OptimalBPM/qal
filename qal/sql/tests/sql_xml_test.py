@@ -10,9 +10,9 @@ From test 6 and forward, also SQL:s for all platforms are being tested in the sa
 in the sql_test for convenience and that those tests use datasets.
 '''
 import unittest
-from qal.sql.sql_xml import SQL_XML
+from qal.sql.xml import SQL_XML
 from qal.tools.diff import diff_strings
-from qal.dal.dal_types import db_types, DB_POSTGRESQL
+from qal.dal.types import db_types, DB_POSTGRESQL
 
 
 import os

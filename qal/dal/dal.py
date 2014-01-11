@@ -9,8 +9,8 @@
     :license: BSD, see LICENSE for details.
 """
 
-from qal.dal.dal_types import DB_MYSQL, DB_POSTGRESQL, DB_ORACLE, DB_DB2, DB_SQLSERVER, string_to_db_type
-from qal.dal.dal_conversions import parse_description, python_type_to_SQL_type
+from qal.dal.types import DB_MYSQL, DB_POSTGRESQL, DB_ORACLE, DB_DB2, DB_SQLSERVER, string_to_db_type
+from qal.dal.conversions import parse_description, python_type_to_SQL_type
 
 class Database_Abstraction_Layer(object):
     """This class abstracts the different peculiarities of the different database backends with regards to connection details"""

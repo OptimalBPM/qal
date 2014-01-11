@@ -98,7 +98,7 @@ class Parameter_Remotable(object):
             self._out_of_context_parent._dal = _parent_dal
             
         """ The sql_macros library is imported locally, to not interfere with the qal.sql.* structure."""
-        from qal.sql.sql_macros import copy_to_table             
+        from qal.sql.macros import copy_to_table             
         """Copy the data into the parents' context so the parent can access it."""
         _table_name = copy_to_table(_dal = _parent_dal, _values =_data, _field_names = _field_names, _field_types = _field_types, _table_name = _tmp_table_name, _create_table = True)
         

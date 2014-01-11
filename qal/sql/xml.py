@@ -4,12 +4,12 @@ Created on Sep 21, 2010
 @author: Nicklas Boerjesson
 
 '''
-from qal.sql.sql_meta import list_class_properties, list_parameter_classes, list_verb_classes, find_class
-from qal.sql.sql_types import sql_property_to_type, and_or, \
+from qal.sql.meta import list_class_properties, list_parameter_classes, list_verb_classes, find_class
+from qal.sql.types import sql_property_to_type, and_or, \
     constraint_types, index_types, verbs, expression_item_types, \
     condition_part,set_operator, tabular_expression_item_types, data_source_types
 
-from qal.dal.dal_types import db_types
+from qal.dal.types import db_types
 from xml.dom.minidom import Document
 from xml.sax.saxutils import escape
 from qal.common.xml_utils import XML_Translation, xml_base_type_value, find_child_node, xml_get_text,\

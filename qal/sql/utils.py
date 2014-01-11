@@ -3,7 +3,7 @@ Created on Oct 2, 2012
 
 @author: Nicklas Boerjesson
 '''
-from qal.dal.dal_types import DB_POSTGRESQL, DB_MYSQL, DB_ORACLE, DB_DB2, DB_SQLSERVER 
+from qal.dal.types import DB_POSTGRESQL, DB_MYSQL, DB_ORACLE, DB_DB2, DB_SQLSERVER 
 from qal.common.listhelper import unenumerate
 
 

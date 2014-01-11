@@ -4,8 +4,8 @@ Created on Jan 8, 2012
 @author: Nicklas Boerjesson
 '''
 
-from qal.dal.dal_types import DB_DB2,DB_ORACLE, DB_POSTGRESQL
-from qal.sql.sql_utils import db_specific_object_reference
+from qal.dal.types import DB_DB2,DB_ORACLE, DB_POSTGRESQL
+from qal.sql.utils import db_specific_object_reference
 from datetime import date, datetime
 from qal.dataset.custom import Custom_Dataset
 

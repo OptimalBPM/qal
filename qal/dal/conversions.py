@@ -5,7 +5,7 @@ Created on Sep 23, 2013
 """
 
 from datetime import datetime
-from qal.dal.dal_types import DB_MYSQL, DB_POSTGRESQL
+from qal.dal.types import DB_MYSQL, DB_POSTGRESQL
 """
 MySQL constants, made from: https://github.com/PyMySQL/PyMySQL/blob/master/pymysql/constants/FIELD_TYPE.py
 """
@@ -38,10 +38,10 @@ MySQL_STRING = 254
 MySQL_GEOMETRY = 255
 
 
-"""Translation methods for MySQL field codes into the SQL data types(qal.sql.sql_types):
+"""Translation methods for MySQL field codes into the SQL data types(qal.sql.types):
 return ['integer', 'string', 'string(255)', 'string(3000)', 'float', 'serial', 'timestamp', 'boolean']
 
-Arguably, they should be declared in qal.dal.dal_types instead.
+Arguably, they should be declared in qal.dal.types instead.
 """
 
 
