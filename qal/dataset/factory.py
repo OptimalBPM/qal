@@ -20,12 +20,13 @@ def dataset_from_resource(_resource):
             _ds =  RDBMS_Dataset(_resource = _resource)
         elif _resource.type.upper() == "SPREADSHEET":
             _ds =  Spreadsheet_Dataset(_resource = _resource)
-        else: 
+        else:
             raise Exception("qal.dataset.factory.dataset_from_resource: Unsupported source resource type: " + str(_resource.type.upper()))
     except Exception as e:
-        raise Exception("qal.dataset.factory.dataset_from_resource: Failed loading resource for " + _ds.__class__.__name__ + ".\n" + \
+        raise Exception("qal.dataset.factory.dataset_from_resource: Failed loading resource for " + _resource.type.upper() + ".\n" + \
                         "Resource: " + str(_resource.caption)+ "(" + str(_resource.uuid) + ")\n"+ \
-                        "Error: " + str(e))
+                        "Error: \n" + str(e))
+        
     return _ds    
 
 if __name__ == '__main__':
