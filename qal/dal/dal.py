@@ -248,6 +248,8 @@ class Database_Abstraction_Layer(object):
         if self.db_type == DB_POSTGRESQL and self._pg_xact == None:
             self._pg_xact = self.db_connection.xact()
             self._pg_xact.start()
+        else:
+            self.execute("START TRANSACTION")
      
             
     def commit(self):
