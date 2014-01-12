@@ -26,7 +26,7 @@ class RDBMS_Dataset(Custom_Dataset):
     table_name = None
     """If set, all data in table "table_name" is loaded in its entirety into the data_table."""
     query = None
-    """If set, and table name is not, then the SQL statement contained is executed. 
+    """If set, and table_name is not, then the SQL statement contained is executed. 
     It is a text string. 
 
     .. todo::
