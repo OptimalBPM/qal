@@ -9,6 +9,7 @@ from datetime import datetime
 
 from qal.dal.types import DB_DB2,DB_ORACLE, DB_POSTGRESQL
 from qal.sql.utils import db_specific_object_reference
+from qal.common.strings import empty_if_none
 from qal.tools.diff import compare 
 
 DATASET_LOGLEVEL_NONE = 0
@@ -51,30 +52,31 @@ class Custom_Dataset(object):
         except Exception as e:
             raise Exception("cast_text_to_type raised an error for \"" + _text +"\": " + str(e) )
         
-    def log_update_row(self, _row_key, _old_row, _new_row):
+    def log_update_row(self, _row_key, _old_row, _new_row, _comment = None):
         if self._log_level >= DATASET_LOGLEVEL_DETAIL:
             _field_diffs = []
             for _field_idx in range(len(_new_row)):
                 if _old_row[_field_idx] != _new_row[_field_idx]:
                     _field_diffs.append(self.field_names[_field_idx] + " : " + quote(str(_old_row[_field_idx])) + " =>" + quote(str(_new_row[_field_idx]))) 
                 
-            self._log.append(self.__class__.__name__ + ".update;"+quote(str(_row_key)) + ";"+";" +"|".join(_field_diffs))
+            self._log.append(self.__class__.__name__ + ".update;"+quote(str(_row_key)) + ";"+";" +"|".join(_field_diffs) + empty_if_none(";"+ _comment, _comment))
 
     
-    def log_insert(self, _row_key, row_value):
+    def log_insert(self, _row_key, _row_data, _comment = None):
         if self._log_level >= DATASET_LOGLEVEL_DETAIL:
-            self._log.append(self.__class__.__name__ + ".insert;"+quote(str(_row_key)) + ";"+quote(str(row_value)))
+            self._log.append(self.__class__.__name__ + ".insert;"+quote(str(_row_key)) + ";"+quote(str(_row_data)) + empty_if_none(";"+ _comment, _comment))
 
-    def log_delete(self, _row_key, row_value):
+    def log_delete(self, _row_key, _row_data, _comment = None):
         if self._log_level >= DATASET_LOGLEVEL_DETAIL:
-            self._log.append(self.__class__.__name__ + ".delete;"+quote(str(_row_key)) + ";"+quote(str(row_value)))
-    def log_save(self, _filename):
+            self._log.append(self.__class__.__name__ + ".delete;"+quote(str(_row_key)) + ";"+quote(str(_row_data)) + empty_if_none(";"+ _comment, _comment))
+
+    def log_save(self, _filename, _comment = None):
         if self._log_level >= DATASET_LOGLEVEL_LOW:
-            self._log.append(self.__class__.__name__ + ".save;"+quote(str(_filename)) + ";" + str(datetime.now().isoformat()))
+            self._log.append(self.__class__.__name__ + ".save;"+quote(str(_filename)) + ";" + str(datetime.now().isoformat()) + empty_if_none(";"+ _comment, _comment))
                 
-    def log_load(self, _filename):
+    def log_load(self, _filename, _comment = None):
         if self._log_level >= DATASET_LOGLEVEL_LOW:
-            self._log.append(self.__class__.__name__ + ".load;"+quote(str(_filename)) + ";" + str(datetime.now().isoformat()))
+            self._log.append(self.__class__.__name__ + ".load;"+quote(str(_filename)) + ";" + str(datetime.now().isoformat()) + empty_if_none(";"+ _comment, _comment))
                
         
     def load(self):
@@ -171,14 +173,20 @@ class Custom_Dataset(object):
             It is also possible that the keys will not match. So cast these before applying.
         """
          
+        self._structure_key_fields = _key_fields
+        
+        # Some datasets needs to initialize the underlying structure to work, and work efficiently
         self._structure_init()        
         
+        # Compare the source and destination table to generate diff sets
         _delete, _insert, _update, _dest_sorted = compare(
                                                           _left = _new_data_table, 
                                                           _right = self.data_table, 
                                                           _key_columns = _key_fields, 
                                                           _full = True)
-        self._structure_key_fields = _key_fields
+        
+        # Merge the data into the structure. 
+        # Note: in RDBMS_Dataset, this means writing to the underlying database, since there is no in-memory structure.
         self.data_table = self._structure_apply_merge(_insert, _update, _delete, _dest_sorted)
         
         return self.data_table
