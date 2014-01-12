@@ -941,6 +941,27 @@ class Verb_UPDATE(Parameter_Base):
                    
         return _result  
     
+class Verb_DROP_TABLE(Parameter_Base):
+    """This class holds a DELETE statement"""
+    name = None
+    """
+       The name of the table to be dropped.
+    """
+
+    
+    def __init__(self, _name): 
+        super(Verb_DROP_TABLE, self ).__init__()
+            
+        if _name != None:
+            self.name = _name
+        else:
+            self.name = None
+        
+
+    def _generate_sql(self, _db_type):
+        """Generate SQL for specified database engine"""
+        return 'DROP TABLE ' + citate(self.name, _db_type)
+
 class Verb_DELETE(Parameter_Base):
     """This class holds a DELETE statement"""
     sources = None
@@ -950,7 +971,7 @@ class Verb_DELETE(Parameter_Base):
 
     
     def __init__(self, _sources = None, _operator = None): 
-        super(Verb_DELETE, self ).__init__(_operator)
+        super(Verb_DELETE, self ).__init__()
         
             
         if _sources != None:

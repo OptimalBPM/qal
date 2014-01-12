@@ -95,8 +95,7 @@ r_UPDATE_oracle = "SET" + DEFAULT_ROWSEP + "\"dest_column\" = 'Hello'" + DEFAULT
 global r_UPDATE_SQL_Server
 r_UPDATE_SQL_Server = "SET" + DEFAULT_ROWSEP + "dest_column = 'Hello'" + DEFAULT_ROWSEP + "WHERE ((col_1 = '1') AND (col_2 = '1'))"
 
-
-     
+    
 
 # Generate test objects.
 def gen_simple_condition_1():
@@ -287,90 +286,90 @@ class parameter_test(unittest.TestCase):
         self.maxDiff = None
         param = gen_simple_condition_1()
         paramclass = param.__class__.__name__
-        testvalue = '(1.3 > 2.4)'
-        self.assertEqual(param.as_sql(DB_MYSQL), testvalue, paramclass +'.as_sql(DB_MYSQL) failed.')
-        self.assertEqual(param.as_sql(DB_ORACLE), testvalue, paramclass +'.as_sql(DB_ORACLE) failed.')
-        self.assertEqual(param.as_sql(DB_POSTGRESQL), testvalue, paramclass +'.as_sql(DB_POSTGRESQL) failed.')
-        self.assertEqual(param.as_sql(DB_DB2), testvalue, paramclass +'.as_sql(DB_DB2) failed.')
-        self.assertEqual(param.as_sql(DB_SQLSERVER), testvalue, paramclass +'.as_sql(DB_SQLSERVER) failed.')
+        _testvalue = '(1.3 > 2.4)'
+        self.assertEqual(param.as_sql(DB_MYSQL), _testvalue, paramclass +'.as_sql(DB_MYSQL) failed.')
+        self.assertEqual(param.as_sql(DB_ORACLE), _testvalue, paramclass +'.as_sql(DB_ORACLE) failed.')
+        self.assertEqual(param.as_sql(DB_POSTGRESQL), _testvalue, paramclass +'.as_sql(DB_POSTGRESQL) failed.')
+        self.assertEqual(param.as_sql(DB_DB2), _testvalue, paramclass +'.as_sql(DB_DB2) failed.')
+        self.assertEqual(param.as_sql(DB_SQLSERVER), _testvalue, paramclass +'.as_sql(DB_SQLSERVER) failed.')
 
     def test_01_parameter_condition_complex(self):
         self.maxDiff = None
         param = gen_complex_conditions()
         paramclass = param.__class__.__name__
-        testvalue = "((1.3 > 2.4) AND (T1.firstname LIKE '%icklas') AND ((1.3 > 2.4) AND (T1.firstname LIKE '%icklas')))"
-        testvalue_Oracle = "((1.3 > 2.4) AND (T1.\"firstname\" LIKE '%icklas') AND ((1.3 > 2.4) AND (T1.\"firstname\" LIKE '%icklas')))"
-        testvalue_PostgreSQL = "((1.3 > 2.4) AND (T1.\"firstname\" ILIKE '%icklas') AND ((1.3 > 2.4) AND (T1.\"firstname\" ILIKE '%icklas')))"
-        testvalue_DB2 = "((1.3 > 2.4) AND (T1.\"firstname\" LIKE '%icklas') AND ((1.3 > 2.4) AND (T1.\"firstname\" LIKE '%icklas')))"
+        _testvalue = "((1.3 > 2.4) AND (T1.firstname LIKE '%icklas') AND ((1.3 > 2.4) AND (T1.firstname LIKE '%icklas')))"
+        _testvalue_Oracle = "((1.3 > 2.4) AND (T1.\"firstname\" LIKE '%icklas') AND ((1.3 > 2.4) AND (T1.\"firstname\" LIKE '%icklas')))"
+        _testvalue_PostgreSQL = "((1.3 > 2.4) AND (T1.\"firstname\" ILIKE '%icklas') AND ((1.3 > 2.4) AND (T1.\"firstname\" ILIKE '%icklas')))"
+        _testvalue_DB2 = "((1.3 > 2.4) AND (T1.\"firstname\" LIKE '%icklas') AND ((1.3 > 2.4) AND (T1.\"firstname\" LIKE '%icklas')))"
 
-        self.assertEqual(param.as_sql(DB_MYSQL), testvalue, paramclass +'.as_sql(DB_MYSQL) failed.')
-        self.assertEqual(param.as_sql(DB_ORACLE), testvalue_Oracle, paramclass +'.as_sql(DB_ORACLE) failed.')
-        self.assertEqual(param.as_sql(DB_POSTGRESQL), testvalue_PostgreSQL, paramclass +'.as_sql(DB_POSTGRESQL) failed.')
-        self.assertEqual(param.as_sql(DB_DB2), testvalue_DB2, paramclass +'.as_sql(DB_DB2) failed.')
-        self.assertEqual(param.as_sql(DB_SQLSERVER), testvalue, paramclass +'.as_sql(DB_SQLSERVER) failed.')
+        self.assertEqual(param.as_sql(DB_MYSQL), _testvalue, paramclass +'.as_sql(DB_MYSQL) failed.')
+        self.assertEqual(param.as_sql(DB_ORACLE), _testvalue_Oracle, paramclass +'.as_sql(DB_ORACLE) failed.')
+        self.assertEqual(param.as_sql(DB_POSTGRESQL), _testvalue_PostgreSQL, paramclass +'.as_sql(DB_POSTGRESQL) failed.')
+        self.assertEqual(param.as_sql(DB_DB2), _testvalue_DB2, paramclass +'.as_sql(DB_DB2) failed.')
+        self.assertEqual(param.as_sql(DB_SQLSERVER), _testvalue, paramclass +'.as_sql(DB_SQLSERVER) failed.')
 
     def test_02_parameter_expression_simple(self):
         self.maxDiff = None
         param = gen_simpleexpression_1()
-        testvalue = "(T1.CountryPrefix + '+' + T1.PhoneNumber + Simple(CAST((T2.CountryPrefix + '+' + T2.PhoneNumber) AS varchar(200)), (T2.CountryPrefix + '+' + T2.PhoneNumber)))"
-        pipetestvalue = "(T1.CountryPrefix || '+' || T1.PhoneNumber || Simple(CAST((T2.CountryPrefix || '+' || T2.PhoneNumber) AS varchar(200)), (T2.CountryPrefix || '+' || T2.PhoneNumber)))"
-        postgrestestvalue = "(T1.\"CountryPrefix\" || '+' || T1.\"PhoneNumber\" || Simple(CAST((T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS varchar(200)), (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\")))"
-        db2testvalue = "(T1.\"CountryPrefix\" || '+' || T1.\"PhoneNumber\" || Simple(CAST((T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS varchar(200)), (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\")))"
-        oracletestvalue = "(T1.\"CountryPrefix\" + '+' + T1.\"PhoneNumber\" + Simple(CAST((T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\") AS varchar(200)), (T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\")))"
+        _testvalue = "(T1.CountryPrefix + '+' + T1.PhoneNumber + Simple(CAST((T2.CountryPrefix + '+' + T2.PhoneNumber) AS varchar(200)), (T2.CountryPrefix + '+' + T2.PhoneNumber)))"
+        pipe_testvalue = "(T1.CountryPrefix || '+' || T1.PhoneNumber || Simple(CAST((T2.CountryPrefix || '+' || T2.PhoneNumber) AS varchar(200)), (T2.CountryPrefix || '+' || T2.PhoneNumber)))"
+        _postgres_testvalue = "(T1.\"CountryPrefix\" || '+' || T1.\"PhoneNumber\" || Simple(CAST((T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS varchar(200)), (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\")))"
+        _db2_testvalue = "(T1.\"CountryPrefix\" || '+' || T1.\"PhoneNumber\" || Simple(CAST((T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS varchar(200)), (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\")))"
+        _oracle_testvalue = "(T1.\"CountryPrefix\" + '+' + T1.\"PhoneNumber\" + Simple(CAST((T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\") AS varchar(200)), (T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\")))"
         paramclass = param.__class__.__name__
 
-        self.assertEqual(param.as_sql(DB_MYSQL), testvalue, paramclass +'.as_sql(DB_MYSQL) failed.')
-        self.assertEqual(param.as_sql(DB_ORACLE), oracletestvalue, paramclass +'.as_sql(DB_ORACLE) failed.')
-        self.assertEqual(param.as_sql(DB_POSTGRESQL), postgrestestvalue, paramclass +'.as_sql(DB_POSTGRESQL) failed.')
-        self.assertEqual(param.as_sql(DB_DB2), db2testvalue, paramclass +'.as_sql(DB_DB2) failed.')
-        self.assertEqual(param.as_sql(DB_SQLSERVER), testvalue, paramclass +'.as_sql(DB_SQLSERVER) failed.')
+        self.assertEqual(param.as_sql(DB_MYSQL), _testvalue, paramclass +'.as_sql(DB_MYSQL) failed.')
+        self.assertEqual(param.as_sql(DB_ORACLE), _oracle_testvalue, paramclass +'.as_sql(DB_ORACLE) failed.')
+        self.assertEqual(param.as_sql(DB_POSTGRESQL), _postgres_testvalue, paramclass +'.as_sql(DB_POSTGRESQL) failed.')
+        self.assertEqual(param.as_sql(DB_DB2), _db2_testvalue, paramclass +'.as_sql(DB_DB2) failed.')
+        self.assertEqual(param.as_sql(DB_SQLSERVER), _testvalue, paramclass +'.as_sql(DB_SQLSERVER) failed.')
 
     def test_03_parameter_cast_simple(self):
         self.maxDiff = None
         param = gen_simple_cast()
-        testvalue = "CAST((T2.CountryPrefix + '+' + T2.PhoneNumber) AS varchar(200))"
-        db2testvalue = "CAST((T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS varchar(200))"
-        postgrestestvalue = "CAST((T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS varchar(200))"
-        oracletestvalue = "CAST((T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\") AS varchar(200))"
+        _testvalue = "CAST((T2.CountryPrefix + '+' + T2.PhoneNumber) AS varchar(200))"
+        _db2_testvalue = "CAST((T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS varchar(200))"
+        _postgres_testvalue = "CAST((T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS varchar(200))"
+        _oracle_testvalue = "CAST((T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\") AS varchar(200))"
         paramclass = param.__class__.__name__
         
-        self.assertEqual(param.as_sql(DB_MYSQL), testvalue, paramclass +'.as_sql(DB_MYSQL) failed.')
-        self.assertEqual(param.as_sql(DB_ORACLE), oracletestvalue, paramclass +'.as_sql(DB_ORACLE) failed.')
-        self.assertEqual(param.as_sql(DB_POSTGRESQL), postgrestestvalue, paramclass +'.as_sql(DB_POSTGRESQL) failed.')
-        self.assertEqual(param.as_sql(DB_DB2), db2testvalue, paramclass +'.as_sql(DB_DB2) failed.')
-        self.assertEqual(param.as_sql(DB_SQLSERVER), testvalue, paramclass +'.as_sql(DB_SQLSERVER) failed.')
+        self.assertEqual(param.as_sql(DB_MYSQL), _testvalue, paramclass +'.as_sql(DB_MYSQL) failed.')
+        self.assertEqual(param.as_sql(DB_ORACLE), _oracle_testvalue, paramclass +'.as_sql(DB_ORACLE) failed.')
+        self.assertEqual(param.as_sql(DB_POSTGRESQL), _postgres_testvalue, paramclass +'.as_sql(DB_POSTGRESQL) failed.')
+        self.assertEqual(param.as_sql(DB_DB2), _db2_testvalue, paramclass +'.as_sql(DB_DB2) failed.')
+        self.assertEqual(param.as_sql(DB_SQLSERVER), _testvalue, paramclass +'.as_sql(DB_SQLSERVER) failed.')
         
     def test_04_parameter_function_simple(self):
         self.maxDiff = None
         param = gen_simple_function()
-        testvalue = "Simple(CAST((T2.CountryPrefix + '+' + T2.PhoneNumber) AS varchar(200)), (T2.CountryPrefix + '+' + T2.PhoneNumber))"
-        db2testvalue = "Simple(CAST((T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS varchar(200)), (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\"))"
-        postgrestestvalue = "Simple(CAST((T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS varchar(200)), (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\"))"
-        oracletestvalue = "Simple(CAST((T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\") AS varchar(200)), (T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\"))"
+        _testvalue = "Simple(CAST((T2.CountryPrefix + '+' + T2.PhoneNumber) AS varchar(200)), (T2.CountryPrefix + '+' + T2.PhoneNumber))"
+        _db2_testvalue = "Simple(CAST((T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS varchar(200)), (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\"))"
+        _postgres_testvalue = "Simple(CAST((T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS varchar(200)), (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\"))"
+        _oracle_testvalue = "Simple(CAST((T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\") AS varchar(200)), (T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\"))"
         paramclass = param.__class__.__name__
 
-        self.assertEqual(param.as_sql(DB_MYSQL), testvalue, paramclass +'.as_sql(DB_MYSQL) failed.')
-        self.assertEqual(param.as_sql(DB_ORACLE), oracletestvalue, paramclass +'.as_sql(DB_ORACLE) failed.')
-        self.assertEqual(param.as_sql(DB_POSTGRESQL), postgrestestvalue, paramclass +'.as_sql(DB_POSTGRESQL) failed.')
-        self.assertEqual(param.as_sql(DB_DB2), db2testvalue, paramclass +'.as_sql(DB_DB2) failed.')
-        self.assertEqual(param.as_sql(DB_SQLSERVER), testvalue, paramclass +'.as_sql(DB_SQLSERVER) failed.')
+        self.assertEqual(param.as_sql(DB_MYSQL), _testvalue, paramclass +'.as_sql(DB_MYSQL) failed.')
+        self.assertEqual(param.as_sql(DB_ORACLE), _oracle_testvalue, paramclass +'.as_sql(DB_ORACLE) failed.')
+        self.assertEqual(param.as_sql(DB_POSTGRESQL), _postgres_testvalue, paramclass +'.as_sql(DB_POSTGRESQL) failed.')
+        self.assertEqual(param.as_sql(DB_DB2), _db2_testvalue, paramclass +'.as_sql(DB_DB2) failed.')
+        self.assertEqual(param.as_sql(DB_SQLSERVER), _testvalue, paramclass +'.as_sql(DB_SQLSERVER) failed.')
 
 
     def test_05_parameter_case(self):
         self.maxDiff = None
         param = gen_simple_case()
-        testvalue = "CASE WHEN ((1.3 > 2.4) AND (T1.firstname LIKE '%icklas')) THEN (T1.CountryPrefix + '+' + T1.PhoneNumber + Simple(CAST((T2.CountryPrefix + '+' + T2.PhoneNumber) AS varchar(200)), (T2.CountryPrefix + '+' + T2.PhoneNumber))) WHEN ((1.3 > 2.4) AND (T1.firstname LIKE '%icklas')) THEN (T2.CountryPrefix + '+' + T2.PhoneNumber) else_statement (T2.CountryPrefix + '+' + T2.PhoneNumber) END"
-        PostgreSQLtestvalue = "CASE WHEN ((1.3 > 2.4) AND (T1.\"firstname\" ILIKE '%icklas')) THEN (T1.\"CountryPrefix\" || '+' || T1.\"PhoneNumber\" || Simple(CAST((T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS varchar(200)), (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\"))) WHEN ((1.3 > 2.4) AND (T1.\"firstname\" ILIKE '%icklas')) THEN (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") else_statement (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") END"
-        DB2testvalue = "CASE WHEN ((1.3 > 2.4) AND (T1.\"firstname\" LIKE '%icklas')) THEN (T1.\"CountryPrefix\" || '+' || T1.\"PhoneNumber\" || Simple(CAST((T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS varchar(200)), (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\"))) WHEN ((1.3 > 2.4) AND (T1.\"firstname\" LIKE '%icklas')) THEN (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") else_statement (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") END"
-        Oracletestvalue = "CASE WHEN ((1.3 > 2.4) AND (T1.\"firstname\" LIKE '%icklas')) THEN (T1.\"CountryPrefix\" + '+' + T1.\"PhoneNumber\" + Simple(CAST((T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\") AS varchar(200)), (T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\"))) WHEN ((1.3 > 2.4) AND (T1.\"firstname\" LIKE '%icklas')) THEN (T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\") else_statement (T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\") END"
+        _testvalue = "CASE WHEN ((1.3 > 2.4) AND (T1.firstname LIKE '%icklas')) THEN (T1.CountryPrefix + '+' + T1.PhoneNumber + Simple(CAST((T2.CountryPrefix + '+' + T2.PhoneNumber) AS varchar(200)), (T2.CountryPrefix + '+' + T2.PhoneNumber))) WHEN ((1.3 > 2.4) AND (T1.firstname LIKE '%icklas')) THEN (T2.CountryPrefix + '+' + T2.PhoneNumber) else_statement (T2.CountryPrefix + '+' + T2.PhoneNumber) END"
+        PostgreSQL_testvalue = "CASE WHEN ((1.3 > 2.4) AND (T1.\"firstname\" ILIKE '%icklas')) THEN (T1.\"CountryPrefix\" || '+' || T1.\"PhoneNumber\" || Simple(CAST((T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS varchar(200)), (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\"))) WHEN ((1.3 > 2.4) AND (T1.\"firstname\" ILIKE '%icklas')) THEN (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") else_statement (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") END"
+        _db2_testvalue = "CASE WHEN ((1.3 > 2.4) AND (T1.\"firstname\" LIKE '%icklas')) THEN (T1.\"CountryPrefix\" || '+' || T1.\"PhoneNumber\" || Simple(CAST((T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS varchar(200)), (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\"))) WHEN ((1.3 > 2.4) AND (T1.\"firstname\" LIKE '%icklas')) THEN (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") else_statement (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") END"
+        _oracle_testvalue = "CASE WHEN ((1.3 > 2.4) AND (T1.\"firstname\" LIKE '%icklas')) THEN (T1.\"CountryPrefix\" + '+' + T1.\"PhoneNumber\" + Simple(CAST((T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\") AS varchar(200)), (T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\"))) WHEN ((1.3 > 2.4) AND (T1.\"firstname\" LIKE '%icklas')) THEN (T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\") else_statement (T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\") END"
         paramclass = param.__class__.__name__
 
-        self.assertEqual(param.as_sql(DB_MYSQL), testvalue, paramclass +'.as_sql(DB_MYSQL) failed.')
-        self.assertEqual(param.as_sql(DB_ORACLE), Oracletestvalue, paramclass +'.as_sql(DB_ORACLE) failed.')
+        self.assertEqual(param.as_sql(DB_MYSQL), _testvalue, paramclass +'.as_sql(DB_MYSQL) failed.')
+        self.assertEqual(param.as_sql(DB_ORACLE), _oracle_testvalue, paramclass +'.as_sql(DB_ORACLE) failed.')
       
-        self.assertEqual(param.as_sql(DB_POSTGRESQL), PostgreSQLtestvalue, paramclass +'.as_sql(DB_POSTGRESQL) failed.')
-        self.assertEqual(param.as_sql(DB_DB2), DB2testvalue, paramclass +'.as_sql(DB_DB2) failed.')
-        self.assertEqual(param.as_sql(DB_SQLSERVER), testvalue, paramclass +'.as_sql(DB_SQLSERVER) failed.')
+        self.assertEqual(param.as_sql(DB_POSTGRESQL), PostgreSQL_testvalue, paramclass +'.as_sql(DB_POSTGRESQL) failed.')
+        self.assertEqual(param.as_sql(DB_DB2), _db2_testvalue, paramclass +'.as_sql(DB_DB2) failed.')
+        self.assertEqual(param.as_sql(DB_SQLSERVER), _testvalue, paramclass +'.as_sql(DB_SQLSERVER) failed.')
 
     def test_06_VERB_SELECT(self):
         self.maxDiff = None
@@ -397,30 +396,30 @@ class parameter_test(unittest.TestCase):
         self.maxDiff = None
         param = gen_simple_insert()
 
-        testvalue = "INSERT INTO test (Table1ID, Table1Name, Table1Changed)"
-        quotedtestvalue = "INSERT INTO \"test\" (\"Table1ID\", \"Table1Name\", \"Table1Changed\")"
-        paramclass = param.__class__.__name__#        self.assertEqual(param.as_sql(DB_MYSQL), testvalue, paramclass +'.as_sql(DB_MYSQL) failed.')
+        _testvalue = "INSERT INTO test (Table1ID, Table1Name, Table1Changed)"
+        quoted_testvalue = "INSERT INTO \"test\" (\"Table1ID\", \"Table1Name\", \"Table1Changed\")"
+        paramclass = param.__class__.__name__#        self.assertEqual(param.as_sql(DB_MYSQL), _testvalue, paramclass +'.as_sql(DB_MYSQL) failed.')
 
-        self.assertEqual(param.as_sql(DB_MYSQL), testvalue + DEFAULT_ROWSEP + r_SELECT_SQL, paramclass +'.as_sql(DB_MYSQL) failed.')
-        self.assertEqual(param.as_sql(DB_ORACLE), quotedtestvalue + DEFAULT_ROWSEP + r_SELECT_oracle, paramclass +'.as_sql(DB_ORACLE) failed.')
-        self.assertEqual(param.as_sql(DB_POSTGRESQL), quotedtestvalue + DEFAULT_ROWSEP + r_SELECT_postgresql, paramclass +'.as_sql(DB_POSTGRESQL) failed.')
-        self.assertEqual(param.as_sql(DB_DB2), quotedtestvalue + DEFAULT_ROWSEP + r_SELECT_DB_DB2, paramclass +'.as_sql(DB_DB2) failed.')
-        self.assertEqual(param.as_sql(DB_SQLSERVER), testvalue + DEFAULT_ROWSEP + r_SELECT_SQL_Server, paramclass +'.as_sql(DB_SQLSERVER) failed.')
+        self.assertEqual(param.as_sql(DB_MYSQL), _testvalue + DEFAULT_ROWSEP + r_SELECT_SQL, paramclass +'.as_sql(DB_MYSQL) failed.')
+        self.assertEqual(param.as_sql(DB_ORACLE), quoted_testvalue + DEFAULT_ROWSEP + r_SELECT_oracle, paramclass +'.as_sql(DB_ORACLE) failed.')
+        self.assertEqual(param.as_sql(DB_POSTGRESQL), quoted_testvalue + DEFAULT_ROWSEP + r_SELECT_postgresql, paramclass +'.as_sql(DB_POSTGRESQL) failed.')
+        self.assertEqual(param.as_sql(DB_DB2), quoted_testvalue + DEFAULT_ROWSEP + r_SELECT_DB_DB2, paramclass +'.as_sql(DB_DB2) failed.')
+        self.assertEqual(param.as_sql(DB_SQLSERVER), _testvalue + DEFAULT_ROWSEP + r_SELECT_SQL_Server, paramclass +'.as_sql(DB_SQLSERVER) failed.')
         
     def test_09_VERB_UPDATE(self):
         self.maxDiff = None
         param = gen_simple_update()
 
-        testvalue = "UPDATE test"
-        quotedtestvalue = 'UPDATE "test"'
-        paramclass = param.__class__.__name__#        self.assertEqual(param.as_sql(DB_MYSQL), testvalue, paramclass +'.as_sql(DB_MYSQL) failed.')
+        _testvalue = "UPDATE test"
+        quoted_testvalue = 'UPDATE "test"'
+        paramclass = param.__class__.__name__#        self.assertEqual(param.as_sql(DB_MYSQL), _testvalue, paramclass +'.as_sql(DB_MYSQL) failed.')
 
-        self.assertEqual(param.as_sql(DB_MYSQL), testvalue + DEFAULT_ROWSEP + r_UPDATE_my_sql, paramclass +'.as_sql(DB_MYSQL) failed.')
-        self.assertEqual(param.as_sql(DB_ORACLE), quotedtestvalue + DEFAULT_ROWSEP + r_UPDATE_oracle, paramclass +'.as_sql(DB_ORACLE) failed.')
+        self.assertEqual(param.as_sql(DB_MYSQL), _testvalue + DEFAULT_ROWSEP + r_UPDATE_my_sql, paramclass +'.as_sql(DB_MYSQL) failed.')
+        self.assertEqual(param.as_sql(DB_ORACLE), quoted_testvalue + DEFAULT_ROWSEP + r_UPDATE_oracle, paramclass +'.as_sql(DB_ORACLE) failed.')
         
-        self.assertEqual(param.as_sql(DB_POSTGRESQL), quotedtestvalue + DEFAULT_ROWSEP + r_UPDATE_postgresql, paramclass +'.as_sql(DB_POSTGRESQL) failed.')
-        self.assertEqual(param.as_sql(DB_DB2), quotedtestvalue + DEFAULT_ROWSEP + r_UPDATE_DB2, paramclass +'.as_sql(DB_DB2) failed.')
-        self.assertEqual(param.as_sql(DB_SQLSERVER), testvalue + DEFAULT_ROWSEP + r_UPDATE_SQL_Server, paramclass +'.as_sql(DB_SQLSERVER) failed.')
+        self.assertEqual(param.as_sql(DB_POSTGRESQL), quoted_testvalue + DEFAULT_ROWSEP + r_UPDATE_postgresql, paramclass +'.as_sql(DB_POSTGRESQL) failed.')
+        self.assertEqual(param.as_sql(DB_DB2), quoted_testvalue + DEFAULT_ROWSEP + r_UPDATE_DB2, paramclass +'.as_sql(DB_DB2) failed.')
+        self.assertEqual(param.as_sql(DB_SQLSERVER), _testvalue + DEFAULT_ROWSEP + r_UPDATE_SQL_Server, paramclass +'.as_sql(DB_SQLSERVER) failed.')
         
 
 
@@ -428,17 +427,33 @@ class parameter_test(unittest.TestCase):
         self.maxDiff = None
         param = Verb_CREATE_INDEX('ind_Table1ID', "CLUSTERED", 'Table1', ['Table1Name', 'Table1Date'])
         paramclass = param.__class__.__name__
-        mysqltestvalue      = 'CREATE CLUSTERED INDEX `ind_Table1ID`' + param._row_separator + 'ON Table1(`Table1Name`, `Table1Date`)'
-        oracletestvalue     = 'CREATE CLUSTERED INDEX "ind_Table1ID"' + param._row_separator + 'ON Table1("Table1Name", "Table1Date")'
-        postgrestestvalue   = 'CREATE CLUSTERED INDEX "ind_Table1ID"' + param._row_separator + 'ON Table1("Table1Name", "Table1Date")'
-        db2testvalue        = 'CREATE INDEX "ind_Table1ID"' + param._row_separator + 'ON Table1("Table1Name", "Table1Date")' + param._row_separator + 'CLUSTER'
-        sqlservertestvalue  = 'CREATE CLUSTERED INDEX [ind_Table1ID]' + param._row_separator + 'ON Table1([Table1Name], [Table1Date])'
-        self.assertEqual(param.as_sql(DB_MYSQL), mysqltestvalue, paramclass +'.as_sql(DB_MYSQL) failed.')
-        self.assertEqual(param.as_sql(DB_ORACLE), oracletestvalue, paramclass +'.as_sql(DB_ORACLE) failed.')
-        self.assertEqual(param.as_sql(DB_POSTGRESQL), postgrestestvalue, paramclass +'.as_sql(DB_POSTGRESQL) failed.')
-        self.assertEqual(param.as_sql(DB_DB2), db2testvalue, paramclass +'.as_sql(DB_DB2) failed.')
-        self.assertEqual(param.as_sql(DB_SQLSERVER), sqlservertestvalue, paramclass +'.as_sql(DB_SQLSERVER) failed.')
+        _mysql_testvalue      = 'CREATE CLUSTERED INDEX `ind_Table1ID`' + param._row_separator + 'ON Table1(`Table1Name`, `Table1Date`)'
+        _oracle_testvalue     = 'CREATE CLUSTERED INDEX "ind_Table1ID"' + param._row_separator + 'ON Table1("Table1Name", "Table1Date")'
+        _postgres_testvalue   = 'CREATE CLUSTERED INDEX "ind_Table1ID"' + param._row_separator + 'ON Table1("Table1Name", "Table1Date")'
+        _db2_testvalue        = 'CREATE INDEX "ind_Table1ID"' + param._row_separator + 'ON Table1("Table1Name", "Table1Date")' + param._row_separator + 'CLUSTER'
+        _sqlserver_testvalue  = 'CREATE CLUSTERED INDEX [ind_Table1ID]' + param._row_separator + 'ON Table1([Table1Name], [Table1Date])'
+        self.assertEqual(param.as_sql(DB_MYSQL), _mysql_testvalue, paramclass +'.as_sql(DB_MYSQL) failed.')
+        self.assertEqual(param.as_sql(DB_ORACLE), _oracle_testvalue, paramclass +'.as_sql(DB_ORACLE) failed.')
+        self.assertEqual(param.as_sql(DB_POSTGRESQL), _postgres_testvalue, paramclass +'.as_sql(DB_POSTGRESQL) failed.')
+        self.assertEqual(param.as_sql(DB_DB2), _db2_testvalue, paramclass +'.as_sql(DB_DB2) failed.')
+        self.assertEqual(param.as_sql(DB_SQLSERVER), _sqlserver_testvalue, paramclass +'.as_sql(DB_SQLSERVER) failed.')
        
+    def test_11_parameter_drop_table(self):
+        self.maxDiff = None
+        param = Verb_DROP_TABLE('test')
+        paramclass = param.__class__.__name__
+        _mysql_testvalue      = 'DROP TABLE test'
+        _oracle_testvalue     = 'DROP TABLE "test"'
+        _postgres_testvalue   = 'DROP TABLE "test"'
+        _db2_testvalue        = 'DROP TABLE "test"'
+        _sqlserver_testvalue  = 'DROP TABLE test'
+        self.assertEqual(param.as_sql(DB_MYSQL), _mysql_testvalue, paramclass +'.as_sql(DB_MYSQL) failed.')
+        self.assertEqual(param.as_sql(DB_ORACLE), _oracle_testvalue, paramclass +'.as_sql(DB_ORACLE) failed.')
+        self.assertEqual(param.as_sql(DB_POSTGRESQL), _postgres_testvalue, paramclass +'.as_sql(DB_POSTGRESQL) failed.')
+        self.assertEqual(param.as_sql(DB_DB2), _db2_testvalue, paramclass +'.as_sql(DB_DB2) failed.')
+        self.assertEqual(param.as_sql(DB_SQLSERVER), _sqlserver_testvalue, paramclass +'.as_sql(DB_SQLSERVER) failed.')
+
+
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
