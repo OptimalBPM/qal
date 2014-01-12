@@ -150,29 +150,29 @@ def db_specific_object_reference(_value, _db_type):
 
     else:
         raise Exception("db_specific_object_reference: Invalid database type.")    
-    
+def db_specific_datatype_parse_length(_value): 
+    if (_value.find('(') > -1):
+        _strlength = _value.split('(', 1)[1].rsplit(')', 1)[0]
+        if ((_strlength.lower() != '') and (_strlength.isdigit() == False)):
+            raise Exception("db_specific_datatype: Invalid syntax for datatype length:" + value)
+    else:
+        _strlength = ''
+            
+    return _strlength    
     
 def db_specific_datatype(value, DB):
     """Converts general DAL datatypes(as defined in sql_types) database-type specific (see dal_types) representations."""
-    def parse_length(_value): 
-        if (_value.find('(') > -1):
-            _strlength = _value.split('(', 1)[1].rsplit(')', 1)[0]
-            if ((_strlength.lower() != '') and (_strlength.isdigit() == False)):
-                raise Exception("db_specific_datatype: Invalid syntax for datatype length:" + value)
-        else:
-            _strlength = ''
-                
-        return _strlength
+
     # Database order: [DB_MYSQL, DB_POSTGRESQL, DB_ORACLE, DB_DB2, DB_SQLSERVER]
 
     result = ''
     if (value.lower() == "integer"):
         result = unenumerate(['INTEGER', 'INTEGER', 'NUMBER', 'INT', 'int'], DB)
     elif (value[:6].lower() == "string" or value[:7].lower() == "varchar"):
-        strlength = parse_length(value)
+        strlength = db_specific_datatype_parse_length(value)
         if (strlength.lower() != ''):
             result = unenumerate(['VARCHAR', 'VARCHAR', 'VARCHAR2', 'VARCHAR', 'varchar'], DB)
-            result+= parenthesise(parse_length(value))
+            result+= parenthesise(db_specific_datatype_parse_length(value))
         else:
             # @attention: For some reason, DB2 and Oracle doesn't support unspecified column 
             # lengths unless using BLOBs and cumbersome select constructs and casts.
@@ -187,7 +187,7 @@ def db_specific_datatype(value, DB):
     elif (value.lower() == "serial"):
         result = unenumerate(['INTEGER AUTO_INCREMENT', 'serial', 'integer','INT GENERATED ALWAYS AS IDENTITY', 'int IDENTITY(1,1)'], DB)
     elif (value.lower() == "timestamp"):
-        result = unenumerate(['TIMESTAMP', 'TIMESTAMP', 'TIMESTAMP','TIMESTAMP', 'DATETIME'], DB)
+        result = unenumerate(['DATETIME', 'TIMESTAMP', 'TIMESTAMP','TIMESTAMP', 'DATETIME'], DB)
     elif (value.lower() == "boolean"):
         result = unenumerate(['BOOL', 'BOOLEAN', 'NUMERIC(1)','DECIMAL(1)', 'BIT'], DB)
 
@@ -230,7 +230,7 @@ def datatype_to_parameter(_db_type, _datatype):
     """Converts a python data type to the database-driver appropriate parameter substitution string"""
     if _db_type == DB_MYSQL:
         return "%s"
-    elif (_datatype in ["string", "blob", "timestamp"]):
+    elif (_datatype[:6].lower() == "string" or _datatype[:7].lower() == "varchar" or _datatype == "timestamp"):
         return "%s"
     elif (_datatype in ["float", "integer"]):
         return "%d"
