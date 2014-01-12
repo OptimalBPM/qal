@@ -59,24 +59,24 @@ class Custom_Dataset(object):
                 if _old_row[_field_idx] != _new_row[_field_idx]:
                     _field_diffs.append(self.field_names[_field_idx] + " : " + quote(str(_old_row[_field_idx])) + " =>" + quote(str(_new_row[_field_idx]))) 
                 
-            self._log.append(self.__class__.__name__ + ".update;"+quote(str(_row_key)) + ";"+";" +"|".join(_field_diffs) + empty_if_none(";"+ _comment, _comment))
+            self._log.append(self.__class__.__name__ + ".update;"+quote(str(_row_key)) + ";"+";" +"|".join(_field_diffs) + empty_if_none(";"+ str(_comment), _comment))
 
     
     def log_insert(self, _row_key, _row_data, _comment = None):
         if self._log_level >= DATASET_LOGLEVEL_DETAIL:
-            self._log.append(self.__class__.__name__ + ".insert;"+quote(str(_row_key)) + ";"+quote(str(_row_data)) + empty_if_none(";"+ _comment, _comment))
+            self._log.append(self.__class__.__name__ + ".insert;"+quote(str(_row_key)) + ";"+quote(str(_row_data)) + empty_if_none(";"+ str(_comment), _comment))
 
     def log_delete(self, _row_key, _row_data, _comment = None):
         if self._log_level >= DATASET_LOGLEVEL_DETAIL:
-            self._log.append(self.__class__.__name__ + ".delete;"+quote(str(_row_key)) + ";"+quote(str(_row_data)) + empty_if_none(";"+ _comment, _comment))
+            self._log.append(self.__class__.__name__ + ".delete;"+quote(str(_row_key)) + ";"+quote(str(_row_data)) + empty_if_none(";"+ str(_comment), _comment))
 
     def log_save(self, _filename, _comment = None):
         if self._log_level >= DATASET_LOGLEVEL_LOW:
-            self._log.append(self.__class__.__name__ + ".save;"+quote(str(_filename)) + ";" + str(datetime.now().isoformat()) + empty_if_none(";"+ _comment, _comment))
+            self._log.append(self.__class__.__name__ + ".save;"+quote(str(_filename)) + ";" + str(datetime.now().isoformat()) + empty_if_none(";"+ str(_comment), _comment))
                 
     def log_load(self, _filename, _comment = None):
         if self._log_level >= DATASET_LOGLEVEL_LOW:
-            self._log.append(self.__class__.__name__ + ".load;"+quote(str(_filename)) + ";" + str(datetime.now().isoformat()) + empty_if_none(";"+ _comment, _comment))
+            self._log.append(self.__class__.__name__ + ".load;"+quote(str(_filename)) + ";" + str(datetime.now().isoformat()) + empty_if_none(";"+ str(_comment), _comment))
                
         
     def load(self):
@@ -89,20 +89,25 @@ class Custom_Dataset(object):
         raise Exception('Custom_Dataset.Save is not implemented in class: ' + self.classname)
 
     
-    def _structure_insert_row(self, _row_idx, _row_data):
+    def _structure_insert_row(self, _row_idx, _row_data, _no_logging = False):
         """Inserts a row at _row_idx in the self.data_table, containing _row_data\
-        Overridden by subclasses"""
+        Commonly overridden by subclasses"""
+        if _no_logging == False:
+            self.log_insert(_row_idx, _row_data)
         self.data_table.insert(_row_idx,_row_data)
-        
-    def _structure_update_row(self, _row_idx, _row_data):
+    def _structure_update_row(self, _row_idx, _row_data, _no_logging = False):
         """Updates the row at _row_idx in the self.data_table with _row_data.\
-        Overridden by subclasses"""
+        Commonly overridden by subclasses"""
+        if _no_logging == False:
+            self.log_update_row(_row_idx, self.data_table[_row_idx], _row_data)
         self.data_table[_row_idx] = _row_data
-
-    def _structure_delete_row(self, _row_idx):
+    def _structure_delete_row(self, _row_idx, _no_logging = False):
         """Deletes a row at _row_idx from the self.data_table.\
-        Overridden by subclasses"""
+        Commonly overridden by subclasses"""
+        if _no_logging == False:
+            self.log_delete(_row_idx, self.data_table[_row_idx])
         self.data_table.pop(_row_idx)
+        
         
     def _structure_init(self):
         """Initialize underlying structure before applying data to it.\
@@ -175,10 +180,10 @@ class Custom_Dataset(object):
          
         self._structure_key_fields = _key_fields
         
-        # Some datasets needs to initialize the underlying structure to work, and work efficiently
+        # Some data sets needs to initialize the underlying structure to work, and work efficiently
         self._structure_init()        
         
-        # Compare the source and destination table to generate diff sets
+        # Compare the source and destination table to generate difference sets
         _delete, _insert, _update, _dest_sorted = compare(
                                                           _left = _new_data_table, 
                                                           _right = self.data_table, 
@@ -186,7 +191,7 @@ class Custom_Dataset(object):
                                                           _full = True)
         
         # Merge the data into the structure. 
-        # Note: in RDBMS_Dataset, this means writing to the underlying database, since there is no in-memory structure.
+        # Note: in RDBMS_Dataset, this currently means writing to the underlying database, since there is no in-memory structure.
         self.data_table = self._structure_apply_merge(_insert, _update, _delete, _dest_sorted)
         
         return self.data_table
