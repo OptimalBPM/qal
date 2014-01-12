@@ -34,7 +34,7 @@ class Test(unittest.TestCase):
         _d_pgsql.load()
         print("source:\n" + str(_d_pgsql.data_table))
 
-        print("Staging destination")
+        print("Staging destination (TODO: Add source staging as well!")
         _staging_dal = Database_Abstraction_Layer(_resource= _resources.get_resource("{DD34A233-47A6-4C16-A26F-195711B49B97}"))
         _staging_dal.execute("DROP TABLE table_mysql;")
         _staging_dal.execute("CREATE TABLE table_mysql (table_mysqlID integer, table_mysqlName varchar(200), table_mysqlChanged timestamp);")
