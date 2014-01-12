@@ -171,17 +171,7 @@ class Merge(object):
         else:
             raise Exception("Merge.load_from_xml_node: \"None\" is not a valid Merge node.")                  
 
-
-    
-    def _extract_data_columns_from_diff_row(self, _field_indexes, _diff_row):    
-        """Extracts columns specified in _field_indexes from _diff_list"""
-        _result = []
-
-        for _curr_field in _field_indexes:
-            _result.append(_diff_row[2][_curr_field])
-        return _result        
-    
-    
+   
     
     def loaded_dataset_from_resource(self, _resource):
         """Get a dataset from a file resource"""
