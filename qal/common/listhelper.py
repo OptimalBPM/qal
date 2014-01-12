@@ -32,7 +32,7 @@ def find_previous_match(_list, _start_idx, _match):
             return _curr_idx
     return -1
 
-def pretty_array(_array):
+def pretty_list(_array):
     """Returns proper array data representation syntax, but with each row on a new text row, to make it more readable and usable."""
     
     def _handle_types(_data):
