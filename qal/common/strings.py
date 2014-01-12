@@ -1,5 +1,5 @@
 """
-    Contains miscellaneous parsing functions.
+    Contains miscellaneous string functions.
     
     :copyright: Copyright 2010-2013 by Nicklas Boerjesson
     :license: BSD, see LICENSE for details. 
@@ -52,3 +52,8 @@ def parse_balanced_delimiters(_input, _d_left, _d_right, _text_qualifier):
     else:
         return _balanced, _cleared
 
+def empty_if_none(s):
+    if s is None:
+        return ""
+    else:
+        return str(s)
