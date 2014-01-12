@@ -43,7 +43,7 @@ class Merge_test(unittest.TestCase):
         _tree = etree.ElementTree()
         return _tree.parse(_filename, _parser)
     
-    def test_Merge_files(self):
+    def _test_Merge_files(self):
         
         """Test merge two files"""
         
@@ -63,7 +63,7 @@ class Merge_test(unittest.TestCase):
         #_merge.write_result('resources/csv_out.xml')
         self.assertEqual(_result, c_file_result, "Merge result differs")
 
-    def _test_Merge_tables(self):
+    def test_Merge_tables(self):
         
         """Test merge two files"""
         _merge_xml = self._parse_xml(Test_Resource_Dir + "/test_merge_two_tables.xml")

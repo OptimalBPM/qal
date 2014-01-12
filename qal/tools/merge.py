@@ -70,7 +70,7 @@ class Merge(object):
     key_fields = []
     source_table = None
     source_field_types = None
-    dest_table = None
+    destination_table = None
     dest_field_types = None
     resources = None
     destination_log_level = None
@@ -100,7 +100,7 @@ class Merge(object):
     def _table_mappings_as_xml_node(self):
         _xml_node = etree.Element("table_mappings")
         etree.SubElement(_xml_node, "source_table").text = self.source_table
-        etree.SubElement(_xml_node, "dest_table").text = self.dest_table
+        etree.SubElement(_xml_node, "destination_table").text = self.destination_table
         
         return _xml_node    
     
@@ -140,7 +140,7 @@ class Merge(object):
     def load_table_mappings_from_xml_node(self, _xml_node):
         if _xml_node != None:
             self.source_table = isnone(_xml_node.find("source_table"))
-            self.dest_table = isnone(_xml_node.find("dest_table"))
+            self.destination_table = isnone(_xml_node.find("destination_table"))
         else:
             raise Exception("Merge.load_table_mappings_from_xml_node: Missing 'table_mappings'-node.")   
 
@@ -178,22 +178,22 @@ class Merge(object):
         
         # Load source_dataset
         self.source = dataset_from_resource(self.resources.get_resource('source_uuid'))
-        
+        self.source.table_name = self.source_table
         try:
             self.source.load()
         except Exception as e:
             raise Exception("Merge._load_resources: Failed loading data for source data set.\n" + \
-                            "Resource: " + str(self.source._resource.caption)+ "(" + str(self.source._resource.uuid) + ")\n"+ \
+                            "Resource: " + str(self.resources.get_resource('source_uuid').caption)+ "(" + str(self.resources.get_resource('source_uuid').uuid) + ")\n"+ \
                             "Error: " + str(e))
-
+        
         # Load destination dataset
         self.destination = dataset_from_resource(self.resources.get_resource('dest_uuid'))
-        
+        self.destination.table_name = self.destination_table
         try:
             self.destination.load()
         except Exception as e:
             raise Exception("Merge._load_resources: Failed loading data for source data set.\n" + \
-                            "Resource: " + str(self.destination._resource.caption)+ "(" + str(self.destination._resource.uuid) + ")\n"+ \
+                            "Resource: " + str(self.resources.get_resource('dest_uuid').caption)+ "(" + str(self.resources.get_resource('dest_uuid').uuid) + ")\n"+ \
                             "Error: " + str(e))
 
        

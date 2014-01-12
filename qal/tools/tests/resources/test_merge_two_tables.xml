@@ -80,23 +80,23 @@
   <resources>
     <resource caption="destination" type="RDBMS" uuid="dest_uuid">
    	  <autocommit>True</autocommit>
-      <database>ubpmtest</database>
+      <database>bpmtest</database>
       <db_type>MySQL</db_type>
       <instance></instance>
       <password>test</password>
       <port></port>
       <server>localhost</server>
-	  <username>ubpmuser</username>
+	  <username>bpmuser</username>
     </resource>
     <resource caption="source" type="RDBMS" uuid="source_uuid">
       <autocommit>True</autocommit>
-      <database>ubpmtest</database>
+      <database>bpmtest</database>
       <db_type>PostgreSQL</db_type>
       <instance></instance>
       <password>test</password>
       <port></port>
       <server>localhost</server>
-      <username>ubpmuser</username>
+      <username>bpmuser</username>
     </resource>
 
   </resources>

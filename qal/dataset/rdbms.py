@@ -52,11 +52,13 @@ class RDBMS_Dataset(Custom_Dataset):
             self.read_resource_settings(_resource)        
 
     def _structure_init(self):
-        """Initializes the SQL queries that data is to be applied to."""
+        """Initializes the SQL queries that data is to be applied to, starts a database transaction"""
         self._rdbms_init_deletes()
         self._rdbms_init_updates()
         self._rdbms_init_inserts()
-        print("RDBMS_Dataset._structure_init")
+        
+        self.dal.start()
+
         super(RDBMS_Dataset, self)._structure_init()
 
     def _extract_data_columns_from_diff_row(self, _field_indexes, _diff_row):    
@@ -94,7 +96,6 @@ class RDBMS_Dataset(Custom_Dataset):
         """Generates a Verb_INSERT instance populated with the indata"""
 
         self._structure_insert_sql = make_insert_sql_with_parameters(self.table_name, self.field_names,self.dal.db_type, self.field_types)
-
 
         
     def _rdbms_init_updates(self):
@@ -158,7 +159,7 @@ class RDBMS_Dataset(Custom_Dataset):
         # Apply and commit changes to the structure
         
         self.dal.executemany(self._structure_insert_sql, [_execute_many_data])
-        self.dal.commit()
+
         self.log_insert("N/A in RDBMS", _row_data, "Destination table: " + self.table_name)
         # Call parent
         super(RDBMS_Dataset, self)._structure_insert_row(_row_idx,_row_data)
@@ -172,7 +173,7 @@ class RDBMS_Dataset(Custom_Dataset):
         
         # Apply and commit changes to the database        
         self.dal.executemany(self._structure_update_sql,  [_execute_data])  
-        self.dal.commit()
+
         self.log_update_row(_row_idx, self.data_table[_row_idx], _row_data, "Destination table: " + self.table_name)
         # Call parent
         super(RDBMS_Dataset, self)._structure_update_row(_row_idx,_row_data)
@@ -184,7 +185,7 @@ class RDBMS_Dataset(Custom_Dataset):
         _key_values = self._extract_data_columns_from_diff_row(self._structure_key_fields, self.data_table[_row_idx])
         # Make the deletes
         self.dal.executemany(self._structure_delete_sql, [_key_values])
-        self.dal.commit()
+
         self.log_delete(_key_values, self.data_table[_row_idx], "Destination table: " + self.table_name)
 
         # Call parent
@@ -203,6 +204,6 @@ class RDBMS_Dataset(Custom_Dataset):
         pass
     
     def save (self):
-        """Save data. Not implemented as it is not needed in the RDBMS descendant"""
-        pass
+        """Save data. Commits the transaction"""
+        self.dal.commit()
     
