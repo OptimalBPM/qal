@@ -5,7 +5,7 @@ Created on Sep 26, 2013
 """
 
 
-from qal.sql.sql import Verb_CREATE_TABLE, Verb_SELECT, Verb_INSERT, Verb_DELETE, Verb_UPDATE,SQL_List, \
+from qal.sql.sql import Verb_CREATE_TABLE, Verb_SELECT, Verb_INSERT, Verb_DELETE, Verb_UPDATE, Verb_DROP_TABLE, SQL_List, \
     Parameter_ColumnDefinition,Parameter_Identifier, Parameter_Source
     
 from qal.sql.utils import datatype_to_parameter
@@ -60,24 +60,31 @@ def make_insert_sql_with_parameters(_table_name, _field_names, _db_type, _field_
     
     return _insert.as_sql(_db_type) + _values_sql
 
-def copy_to_table(_dal, _values, _field_names, _field_types, _table_name, _create_table = None):
+def copy_to_table(_dal, _values, _field_names, _field_types, _table_name, _create_table = None, _drop_existing = None):
     """Move datatable into a table on the resource, return the table name. """
         
+    if _drop_existing == True:
+        try:
+            _dal.execute(Verb_DROP_TABLE(_table_name).as_sql(_dal.db_type))
+            _dal.commit()
+        except Exception as e:
+            print("copy_to_table - Ignoring error when dropping the table \"" + _table_name + "\": " + str(e)  )
+                    
     if _create_table == True:    
         # Always create temporary table even if it ends up empty.
         _create_table_sql = create_table_skeleton(_table_name, _field_names, _field_types).as_sql(_dal.db_type)    
         print("Creating " + _table_name + " table..\n"+_create_table_sql)
         _dal.execute(_create_table_sql)
+        _dal.commit()
         
     if len(_values) == 0:
         print("copy_to_table: No source data, inserting no rows.")
     else:        
-        
-         
         _insert_sql = make_insert_sql_with_parameters(_table_name, _field_names, _dal.db_type, _field_types)
         
         print("Inserting " + str(len(_values)) + " rows (" + str(len(_values[0])) + " columns)")
         _dal.executemany(_insert_sql, _values)
+        _dal.commit()
         
     return _table_name
 
