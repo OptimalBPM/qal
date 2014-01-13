@@ -47,8 +47,7 @@ class Test(unittest.TestCase):
         _dest_table_name = 'table_dst'
         copy_to_table(_dest_dal, _dest_data, _field_names, _field_types, _dest_table_name, _create_table = True, _drop_existing = True)
  
-        _dest_dal.commit()
-        
+       
         #Load source
         _d_source = RDBMS_Dataset(_resource= _resources.get_resource("{1D62083E-88F7-4442-920D-0B6CC59BA2FF}"))
         _d_source.load()
