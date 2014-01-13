@@ -46,7 +46,7 @@ def pretty_list(_array):
     
     _result = ""
     if len(_array) > 0:
-        for _row_idx in range(len(_array) - 2) :
+        for _row_idx in range(len(_array) - 1) :
             _result+= _handle_types(_array[_row_idx]) + ",\n"
 
         _result+= _handle_types(_array[_row_idx + 1]) + "\n"
