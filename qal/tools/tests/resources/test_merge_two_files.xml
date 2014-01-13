@@ -146,8 +146,8 @@
 	
 	  </field_mappings>
 	  <table_mappings>
-	    <source_table>table1</source_table>
-	    <dest_table>table1</dest_table>
+	    <source_table></source_table>
+	    <destination_table></destination_table>
 	  </table_mappings>  
   </mappings>
   <settings>
