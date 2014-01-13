@@ -201,7 +201,7 @@ class RDBMS_Dataset(Custom_Dataset):
         else:
             raise Exception("RDBMS_Dataset.load(): data_table must be set.")    
         
-        pass
+        return self.data_table
     
     def save (self):
         """Save data. Commits the transaction"""
