@@ -7,9 +7,13 @@ import unittest
 from qal.tools.merge import Merge 
 from qal.common.listhelper import pretty_list
 from qal.dataset.custom import DATASET_LOGLEVEL_DETAIL
+from qal.common.resources import Resources
+from qal.dal.dal import Database_Abstraction_Layer
+from qal.sql.macros import copy_to_table
 from lxml import etree
 from shutil import copyfile
 import datetime
+
 
 import os
 Test_Script_Dir = os.path.dirname(__file__)
@@ -31,9 +35,11 @@ c_file_result = [
                 ['7934', 'MILLER', 'CLERK', 7782, datetime.datetime(1982, 1, 23, 0, 0), 0.0, 1300.0, 10.0]
                 ]
 
-
-
-
+c_table_result =[
+                [1, 'source', datetime.datetime(2001, 1, 1, 0, 0)],
+                [2, 'source', datetime.datetime(2001, 1, 2, 0, 0)],
+                [3, 'source_new', datetime.datetime(2014, 1, 1, 0, 0)]
+                ]
 
 
 class Merge_test(unittest.TestCase):
@@ -43,7 +49,7 @@ class Merge_test(unittest.TestCase):
         _tree = etree.ElementTree()
         return _tree.parse(_filename, _parser)
     
-    def _test_Merge_files(self):
+    def test_1_Merge_files(self):
         
         """Test merge two files"""
         
@@ -52,6 +58,8 @@ class Merge_test(unittest.TestCase):
         _merge_xml = self._parse_xml(Test_Resource_Dir + "/test_merge_two_files.xml")
         _merge = Merge(_xml_node = _merge_xml)
         _merge.destination_log_level = DATASET_LOGLEVEL_DETAIL
+        print(etree.tostring(_merge.as_xml_node()))
+        print(etree.tostring(_merge_xml))
         self.assertEqual(etree.tostring(_merge.as_xml_node()), etree.tostring(_merge_xml), "Input/output XML does not match")
 
 
@@ -63,16 +71,45 @@ class Merge_test(unittest.TestCase):
         #_merge.write_result('resources/csv_out.xml')
         self.assertEqual(_result, c_file_result, "Merge result differs")
 
-    def test_Merge_tables(self):
+    def test_2_Merge_tables(self):
         
-        """Test merge two files"""
+        _resources_node = self._parse_xml(Test_Resource_Dir + "/test_merge_two_tables.xml").find("resources")
+        _resources = Resources(_resources_node = _resources_node)        
+        print("merge_test.test_Merge_tables: Staging source")
+        _source_data = [[1, 'source', datetime.datetime(2001, 1, 1, 0, 0)], [2, 'source', datetime.datetime(2001, 1, 2, 0, 0)], [3, 'source_new', datetime.datetime(2014, 1, 1, 0, 0)]]
+        _field_names = ["ID", "Name", "Changed"]
+        _field_types = ["integer", "string(200)", "timestamp"]
+        
+        _source_dal = Database_Abstraction_Layer(_resource= _resources.get_resource("dest_uuid"))
+        _source_table_name = 'table_src'
+        copy_to_table(_source_dal, _source_data, _field_names, _field_types, _source_table_name, _create_table = True, _drop_existing = True)
+        
+        print("merge_test.test_Merge_tables: Staging destination")
+        _dest_data = [[1, 'dest', datetime.datetime(2001, 1, 1, 0, 0)], [2, 'dest', datetime.datetime(2001, 1, 2, 0, 0)], [3, 'dest', datetime.datetime(2014, 1, 4, 0, 0)]]
+        
+        _dest_dal = Database_Abstraction_Layer(_resource= _resources.get_resource("source_uuid"))
+        _dest_table_name = 'table_dst'
+        copy_to_table(_dest_dal, _dest_data, _field_names, _field_types, _dest_table_name, _create_table = True, _drop_existing = True)
+
+   
+         
         _merge_xml = self._parse_xml(Test_Resource_Dir + "/test_merge_two_tables.xml")
-        _merge = Merge(_xml_node = _merge_xml)
+        _merge = Merge(_xml_node = _merge_xml)  
+        _merge.destination_log_level = DATASET_LOGLEVEL_DETAIL
+        print(etree.tostring(_merge.as_xml_node()))
+        print(etree.tostring(_merge_xml))
+        
         self.assertEqual(etree.tostring(_merge.as_xml_node()), etree.tostring(_merge_xml), "Input/output XML does not match")
 
         _result = _merge.execute()
-
-        self.assertEqual(_result, c_file_result)
+        
+        _dest_result = _merge.destination.load()
+        
+        print("Source:\n" + pretty_list(_merge.source.data_table)) 
+        print("Result:\n" + pretty_list(_dest_result))
+        print("Log:\n" + pretty_list(_merge.destination._log)) 
+        
+        self.assertEqual(_dest_result, c_table_result)
 
         
 

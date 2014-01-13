@@ -68,10 +68,10 @@ class Field_Mapping(object):
 class Merge(object):
     mappings = []
     key_fields = []
+    source = None
+    destination = None
     source_table = None
-    source_field_types = None
     destination_table = None
-    dest_field_types = None
     resources = None
     destination_log_level = None
     
@@ -84,6 +84,8 @@ class Merge(object):
         """
         Constructor
         """
+        self.mappings = []
+        self.key_fields = []
         if _xml_node != None:
             self.load_from_xml_node(_xml_node)
         else:
