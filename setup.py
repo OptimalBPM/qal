@@ -13,13 +13,13 @@ if __name__ == "__main__":
     setup(
         name='qal',
         version=__release__,
-        description='QAL is a Python library for mixing data sources into SQL statements.',
+        description='QAL is a Python library for mixing and merging data involving diffent sources and destinations.',
         author='Nicklas Boerjesson',
         author_email='nicklas_attheold_optimalbpm.se',
         maintainer='Nicklas Boerjesson',
         maintainer_email='nicklas_attheold_optimalbpm.se',
-        long_description="""Query Abstraction Layer is a Python library for mixing data from different data sources into SQL statements.\
-          It supports several database backends and file formats.
+        long_description="""QAL is a Python library for mixing and merging data involving diffent sources and destinations.\n
+        It supports several database backends and file formats.
           """,
         url='https://sourceforge.net/projects/qal/',
         packages=['qal', 'qal.dal', 'qal.dal.tests', 'qal.sql', 'qal.sql.tests', 'qal.sql.tests.resources', 
