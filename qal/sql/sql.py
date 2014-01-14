@@ -6,6 +6,8 @@
         * The mySQL DDL implementation defaults to using innoDB, since stuff like foreign keys and other very important security features are lacking from myISAM.
         * All Parameter_Base descendants property names are named in a specific way, so that one from that name can discern what types are allowed. For example: sources means that it is a list of Parameter_Source.
         * Parameter_* means that it is some form of input, Verb_* means that this statement can be executed stand alone.
+        * No parameters can be required in either Verb_* or Parameter_* classes. If they are, the classes cannot be inspected by qal.sql.meta.list_class_properties.
+
 
     :warning: Changes and new classes must satisfy both the import/export of data structures and schema generation.
     :copyright: Copyright 2010-2013 by Nicklas Boerjesson
@@ -949,7 +951,7 @@ class Verb_DROP_TABLE(Parameter_Base):
     """
 
     
-    def __init__(self, _name): 
+    def __init__(self, _name = None): 
         super(Verb_DROP_TABLE, self ).__init__()
             
         if _name != None:
