@@ -154,7 +154,7 @@ def db_specific_datatype_parse_length(_value):
     if (_value.find('(') > -1):
         _strlength = _value.split('(', 1)[1].rsplit(')', 1)[0]
         if ((_strlength.lower() != '') and (_strlength.isdigit() == False)):
-            raise Exception("db_specific_datatype: Invalid syntax for datatype length:" + value)
+            raise Exception("db_specific_datatype: Invalid syntax for datatype length:" + _value)
     else:
         _strlength = ''
             
