@@ -10,7 +10,7 @@ from qal.dataset.custom import Custom_Dataset
 from qal.common.listhelper import find_next_match, find_previous_match
 from lxml import _elementpath
 from lxml import etree
-from xml.etree.ElementTree import SubElement, _Element  
+from lxml.etree import SubElement
 
 
 
