@@ -162,7 +162,7 @@ class RDBMS_Dataset(Custom_Dataset):
 
         self.log_insert("N/A in RDBMS", _row_data, "Destination table: " + self.table_name)
         # Call parent
-        super(RDBMS_Dataset, self)._structure_insert_row(_row_idx,_row_data)
+        super(RDBMS_Dataset, self)._structure_insert_row(_row_idx,_row_data, _no_logging= True)
         
     def _structure_update_row(self, _row_idx, _row_data):
         """Override parent to add SQL handling"""
@@ -176,7 +176,7 @@ class RDBMS_Dataset(Custom_Dataset):
 
         self.log_update_row(_row_idx, self.data_table[_row_idx], _row_data, "Destination table: " + self.table_name)
         # Call parent
-        super(RDBMS_Dataset, self)._structure_update_row(_row_idx,_row_data)
+        super(RDBMS_Dataset, self)._structure_update_row(_row_idx,_row_data, _no_logging= True)
 
     def _structure_delete_row(self, _row_idx):
         """Override parent to add SQL handling"""
@@ -189,7 +189,7 @@ class RDBMS_Dataset(Custom_Dataset):
         self.log_delete(_key_values, self.data_table[_row_idx], "Destination table: " + self.table_name)
 
         # Call parent
-        super(RDBMS_Dataset, self)._structure_delete_row(_row_idx)
+        super(RDBMS_Dataset, self)._structure_delete_row(_row_idx, _no_logging= True)
         #self.data_table.pop(_row_idx)
                 
     def load(self):
