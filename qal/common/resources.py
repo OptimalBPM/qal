@@ -7,6 +7,7 @@
 from qal.common.xml_utils import XML_Translation
 
 from lxml import etree
+import os
 
 
 def add_xml_subitem(_parent, _nodename, _nodetext):
@@ -25,16 +26,34 @@ class Resource(object):
     Resources have a globally unique resource uuid"""
     
     uuid = None
+    """The unique identifier of the resources. Used to access the resource, wherever its data is stored."""
     type = None
+    """The type of the resources. Possible current values: "CUSTOM", "FLATFILE", "MATRIX", "XPATH", "RDBMS"."""
     caption = None
-    
+    """The "friendly" name of the resource. For example "Database BDD04"."""
+    base_path = None
+    """If this resource was read from an XML, base path is the directory where the XML was located.
+    Makes it possible to deduce the absolute path from relative paths in the XML files, making them slightly more portable."""
     data = {}
-    
+    """A dict of all the custom data that belongs to the resource. Access this way: _filename = data['file_name'].'"""
     def __init__(self):
         self.uuid = None
         self.type = None
-        self.caption = None    
+        self.caption = None
+        self.base_path = None
         self.data = {}
+
+    def make_path_absolute(self, _field_name):
+        """Makes a path defined as relative in the XML resource definition absolute using base_path."""
+        _path = self.data[_field_name]
+        if  os.path.isabs(_path):
+            # Don't do anything, path is already absolute.
+            return _path
+        elif self.base_path:
+            return self.base_path + os.sep + _path
+        else:
+            raise Exception("Resource.make_path_absolute: make_path_absolute cannot make " + _path + " absolute without a base_path.")
+
         
     def as_xml_node(self):
         """This function encode an XML structure into resource objects. Uses lxml as opposed to parse_xml()."""
@@ -55,10 +74,14 @@ class Resources(XML_Translation):
     The resource class provides access to resources available through either XML-definitions or callback functions.
     '''
     
-    """Local list of resources"""
+
     local_resources = None
-    """Callback method for external lookup"""
+    """Local list of resources"""
     external_resources_callback = None
+    """Callback method for external lookup"""
+
+    base_path = None
+    """If resource was loaded from a file, its path is stores here, useful when translating relative paths."""
 
 
     def __init__(self, _resources_node=None, _resources_xml=None, _external_resources_callback=None):
@@ -70,7 +93,7 @@ class Resources(XML_Translation):
        
         if _resources_node != None or _resources_xml != None:
             self.parse_xml(_resources_node, _resources_xml)
-                    
+
     def get_resource(self, _uuid):
         """Returns the resource with the corresponding uuid"""
         
@@ -102,8 +125,11 @@ class Resources(XML_Translation):
                 _resources_node = _root_node.find("resources")
             else:
                 _resources_node = _root_node            
-            
-        
+
+        if _resources_node.base:
+            self.base_path = os.path.dirname(_resources_node.base)
+        else:
+            self.base_path = None
         
         self.local_resources = dict()
         
@@ -115,6 +141,7 @@ class Resources(XML_Translation):
                 _new_resource.uuid = _curr_resource_node.get("uuid")
                 _new_resource.type = _curr_resource_node.get("type")
                 _new_resource.caption = _curr_resource_node.get("caption")
+                _new_resource.base_path = self.base_path
                 
                 for _curr_resource_data in _curr_resource_node.findall("*"):
                     _new_data = []
@@ -130,6 +157,7 @@ class Resources(XML_Translation):
             
                 self.local_resources[_new_resource.uuid] = _new_resource
                 self._debug_print("parse_xml: Append resource: "+_new_resource.caption + " uuid: " + _new_resource.uuid + " type: " + _new_resource.type  , 4)
+
     def as_xml_node(self):
         """This function encode resources structure into an XML structure."""
         _xml_node = etree.Element("resources")

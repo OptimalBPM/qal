@@ -6,6 +6,7 @@ Created on Dec 17, 2013
 
 import unittest
 import datetime
+from qal.common.listhelper import pretty_list
 from qal.dataset.rdbms import RDBMS_Dataset
 from qal.dataset.custom import DATASET_LOGLEVEL_DETAIL
 from qal.common.resources import Resources
@@ -65,7 +66,7 @@ class Test(unittest.TestCase):
         _d_dest.save()
         _d_dest.load()
         
-        print("log:\n"+ str(_d_dest._log))
+        print("log:\n"+ pretty_list(_d_dest._log))
         
         _log_cmp = ['RDBMS_Dataset.delete;%5Bdatetime.datetime%282014%2C%201%2C%204%2C%200%2C%200%29%5D;%5B3%2C%20%27dest%27%2C%20datetime.datetime%282014%2C%201%2C%204%2C%200%2C%200%29%5D;Destination table: table_dst', 'RDBMS_Dataset.insert;N/A%20in%20RDBMS;%5B3%2C%20%27source_new%27%2C%20datetime.datetime%282014%2C%201%2C%201%2C%200%2C%200%29%5D;Destination table: table_dst', 'RDBMS_Dataset.update;1;;Name : dest =>source;Destination table: table_dst', 'RDBMS_Dataset.update;0;;Name : dest =>source;Destination table: table_dst']
         self.assertEqual(_d_dest._log, _log_cmp, "Logs differ")

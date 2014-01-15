@@ -84,7 +84,7 @@ class XPath_Dataset(Custom_Dataset):
   
         if _resource.type.upper() != 'XPATH':
             raise Exception("XPath_Dataset.read_resource_settings.parse_resource error: Wrong resource type: " + _resource.type)
-        self.filename   =   _resource.data.get("filename")
+        self.filename   =   _resource.make_path_absolute("filename")
         self.rows_xpath =   _resource.data.get("rows_xpath")
         self.xpath_data_format =  _resource.data.get("xpath_data_format")
         self.field_names = _resource.data.get("field_names")
