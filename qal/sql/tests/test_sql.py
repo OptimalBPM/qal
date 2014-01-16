@@ -14,7 +14,7 @@ global r_create_table_mysql
 r_create_table_mysql = "CREATE TABLE Table1 ("+DEFAULT_ROWSEP + "\
 `Table1ID` INTEGER AUTO_INCREMENT NOT NULL,"+DEFAULT_ROWSEP + "\
 `Table1Name` VARCHAR(400) NULL,"+DEFAULT_ROWSEP + "\
-`Table1Changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,"+DEFAULT_ROWSEP + "\
+`Table1Changed` DATETIME DEFAULT CURRENT_TIMESTAMP NULL,"+DEFAULT_ROWSEP + "\
 CONSTRAINT `PK_Table1_Table1ID` PRIMARY KEY (Table1ID),"+DEFAULT_ROWSEP + "\
 CONSTRAINT `FK_Table1_Table1ID_Table2_Table2ID` FOREIGN KEY (Table1ID) REFERENCES Table2(Table2ID),"+DEFAULT_ROWSEP + "\
 CONSTRAINT `CK_Table1_Name` CHECK ((1.3 > 2.4) AND (T1.firstname LIKE '%icklas')),"+DEFAULT_ROWSEP + "\
@@ -386,6 +386,9 @@ class parameter_test(unittest.TestCase):
         self.maxDiff = None
         param = gen_simple_create()
         paramclass = param.__class__.__name__
+
+        print(param.as_sql(DB_MYSQL))
+        print(r_create_table_mysql)
         self.assertEqual(param.as_sql(DB_MYSQL), r_create_table_mysql, paramclass +'.as_sql(DB_MYSQL) failed.')
         self.assertEqual(param.as_sql(DB_ORACLE), r_create_table_oracle, paramclass +'.as_sql(DB_ORACLE) failed.')
         self.assertEqual(param.as_sql(DB_POSTGRESQL), r_create_table_postgresql, paramclass +'.as_sql(DB_POSTGRESQL) failed.')
