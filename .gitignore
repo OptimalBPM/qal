@@ -5,7 +5,7 @@
 .pydevproject
 /.settings
 /.git
-
+/.idea
 *test*_out.sql
 *.egg-info
 build
