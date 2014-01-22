@@ -84,15 +84,22 @@ class Resources(XML_Translation):
     """If resource was loaded from a file, its path is stores here, useful when translating relative paths."""
 
 
-    def __init__(self, _resources_node=None, _resources_xml=None, _external_resources_callback=None):
+    def __init__(self, _resources_node=None, _resources_xml=None, _external_resources_callback=None, _base_path = None):
         '''
         The argument _resources_node is an XML node from which local resources are parsed. 
         The argument _external_resources_callback is a user provided callback function 
         that has the same arguments as the get_resource-function.  
         '''
-       
+
+        if _base_path != None:
+            self.base_path = os.path.dirname(_base_path)
+        else:
+            self.base_path = None
+
         if _resources_node != None or _resources_xml != None:
             self.parse_xml(_resources_node, _resources_xml)
+
+
 
     def get_resource(self, _uuid):
         """Returns the resource with the corresponding uuid"""
@@ -128,8 +135,6 @@ class Resources(XML_Translation):
 
         if _resources_node.base:
             self.base_path = os.path.dirname(_resources_node.base)
-        else:
-            self.base_path = None
         
         self.local_resources = dict()
         

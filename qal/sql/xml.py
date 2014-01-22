@@ -278,7 +278,7 @@ class SQL_XML(XML_Translation):
         self._get_up("_parse_class_xml_node")       
         return _obj
 
-    def xml_to_sql_structure(self, _xml = "", _node = None ):
+    def xml_to_sql_structure(self, _xml = "", _node = None, _base_path = None):
         """Translates an XML file into a class structure"""
         _node = self.get_root_node('statement', _xml, _node)
         
@@ -287,7 +287,7 @@ class SQL_XML(XML_Translation):
         if _resources_node:  
             self._debug_print("xml_to_sql_structure: Found resources.")
             # Send XML here, since resources now uses lxml      
-            self._resources = Resources(_resources_xml= _resources_node.toxml())
+            self._resources = Resources(_resources_xml= _resources_node.toxml(), _base_path = _base_path)
         
         _verb = xml_find_non_text_child(_node)
         if (_verb == None):

@@ -256,19 +256,19 @@
 		<resource type="rdbms" uuid="{1D62083E-88F7-4442-920D-0B6CC59BA2FF}" caption="localhost_pg">
 			<server>localhost</server>
 			<db_type>PostgreSQL</db_type>
-			<database>ubpmtest</database>		
-			<username>ubpmuser</username>
+			<database>bpmtest</database>
+			<username>bpmuser</username>
 			<password>test</password>
 		</resource>
 		<resource type="rdbms" uuid="{DD34A233-47A6-4C16-A26F-195711B49B97}" caption="localhost_mysql">
 			<server>localhost</server>
 			<db_type>MySQL</db_type>
-			<database>ubpmtest</database>		
-			<username>ubpmuser</username>
+			<database>bpmtest</database>
+			<username>bpmuser</username>
 			<password>test</password>
 		</resource>
 		<resource type="flatfile" uuid="{86470370-FF78-48A4-9759-A3BAE4EE22FE}" caption="csv-file">
-			<filename>resources/_test_SELECT_resource_csv_in.txt</filename>
+			<filename>_test_SELECT_resource_csv_in.txt</filename>
 			<delimiter>,</delimiter>
 			<has_header>True</has_header>
 			<csv_dialect>csv</csv_dialect>
@@ -277,7 +277,7 @@
 			<!-- Source : http://www.bot.or.th/English/Statistics/FinancialMarkets/ExchangeRate/_layouts/Application/ExchangeRate/ExchangeRate.aspx 
 			  XPath to first data row in HTML: /html/body/form/table/tbody/tr[4]/td[2]/table/tbody/tr[2]/td/table[2]/tbody/tr/td/table/tbody/tr[10]/td/table/tbody/tr[3]/td
 			-->
-			<filename>resources/_test_SELECT_resource_xpath_html_in.html</filename>
+			<filename>_test_SELECT_resource_xpath_html_in.html</filename>
 			<rows_xpath>/html/body/form/table/tr[4]/td[2]/table/tr[2]/td/table[2]/tr/td/table/tr[10]/td/table/tr[position()>2]</rows_xpath>
 			<xpath_data_format>HTML</xpath_data_format>
 			<field_xpaths>
@@ -296,7 +296,7 @@
 		</resource>		
 		<resource type="xpath" uuid="{969A610A-FCA6-4837-B33A-BAA8F13D8B70}" caption="xml-file">
 			<!-- Source(Microsoft's books.xml) : http://msdn.microsoft.com/en-us/library/ms762271%28v=vs.85%29.aspx -->
-			<filename>resources/_test_SELECT_resource_xpath_xml_in.xml</filename>
+			<filename>_test_SELECT_resource_xpath_xml_in.xml</filename>
 			<rows_xpath>/catalog/book[@id="bk111"]</rows_xpath>
 			<xpath_data_format>XML</xpath_data_format>
 			<field_xpaths>

@@ -14,13 +14,14 @@ from qal.sql.utils import handle_temp_table_ref, citate, db_specific_object_refe
 
 
 db_type = DB_POSTGRESQL
+table_name = ""
 
 @default_dal(db_type)
 class Test(unittest.TestCase):
     
     def setUp(self):
         unittest.TestCase.setUp(self)
-        table_name = "#sqlmacro"
+        global table_name = "#sqlmacro"
 
 
         """ Comparison SQL statements"""
@@ -51,16 +52,16 @@ class Test(unittest.TestCase):
         self.values = [["string_1_A", "string_1_B"],["string_2_A", "string_2_B"],["string_3_A", "string_3_B"]]
 
     def test_1_create_table_skeleton(self):
-        self.assertEqual(create_table_skeleton(self.table_name, _field_names = self.field_names,
+        self.assertEqual(create_table_skeleton(table_name, _field_names = self.field_names,
                      _field_types = self.field_types).as_sql(db_type), self.create_temporary_table_SQL)
         
     def test_2_make_insert_sql_with_parameters(self):
-        _sql = make_insert_sql_with_parameters(self.table_name, self.field_names, db_type, self.field_types)
+        _sql = make_insert_sql_with_parameters(table_name, self.field_names, db_type, self.field_types)
         print(_sql)
         self.assertEqual(_sql, self.make_insert_sql_with_parameters_SQL)
        
     def test_3_copy_to_temp_table(self):
-        copy_to_table(_dal = self._dal, _values = self.values, _field_names = self.field_names, _field_types = self.field_types, _table_name = self.table_name, _create_table= True)
+        copy_to_table(_dal = self._dal, _values = self.values, _field_names = self.field_names, _field_types = self.field_types, _table_name = table_name, _create_table= True)
         _rows = self._dal.query("SELECT * FROM " + Parameter_Identifier(_identifier = self.table_name).as_sql(self._dal.db_type))
         self.assertEqual(_rows, self.values)
 

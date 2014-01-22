@@ -275,6 +275,7 @@ class class_SQL_Meta_XML_Test(unittest.TestCase):
 
         self.assertEqual(_str_xml_comp[:-2],_str_xml_out[:-1], 'test_8_update: The generated XML file differs.\n'+ diff_strings(_str_xml_comp, _str_xml_out))
 
+
     def test_9_resource(self):
         # TODO: Describe the requirements for the test.
         
@@ -283,7 +284,7 @@ class class_SQL_Meta_XML_Test(unittest.TestCase):
 
         f = open(Test_Resource_Dir +"/_test_SELECT_resource_in.xml","r")
         _str_xml_in = f.read()
-        _structure = _meta_xml.xml_to_sql_structure(_str_xml_in)
+        _structure = _meta_xml.xml_to_sql_structure(_str_xml_in, _base_path = Test_Resource_Dir +"/_test_SELECT_resource_in.xml")
 
         # Compare with all SQL flavours
         #self._compare_sql_files_for_all_db_types(_structure,"_test_DELETE", _overwrite = True)
