@@ -61,7 +61,7 @@ def expression_item_types():
     return ['Verb_SELECT','Parameter_Expression',
                 'Parameter_String','Parameter_Numeric',
                 'Parameter_Identifier','Parameter_Cast',
-                'Parameter_Function', 'Parameter_IN', 'Parameter_dataset', 'Parameter_CASE', 'Parameter_Set']
+                'Parameter_Function', 'Parameter_IN', 'Parameter_Dataset', 'Parameter_CASE', 'Parameter_Set']
     
 def tabular_expression_item_types(): 
     """Returns a list of the supported tabular expression types""" 

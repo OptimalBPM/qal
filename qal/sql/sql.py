@@ -179,7 +179,7 @@ class Parameter_Dataset(Parameter_Expression_Item, Parameter_Remotable):
             self.data_source.load()
             return "("+ self.data_source.as_sql(_db_type) + ")"       
         else:
-            raise Exception('Parameter_Datasetas_sql : data_source not set.');
+            raise Exception('Parameter_Dataset.as_sql : data_source not set.');
 
 class Parameter_Identifier(Parameter_Expression_Item):
     """Holds an identifier(column-, table or other reference)"""
