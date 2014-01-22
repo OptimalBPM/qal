@@ -187,7 +187,9 @@ def db_specific_datatype(value, DB):
     elif (value.lower() == "serial"):
         result = unenumerate(['INTEGER AUTO_INCREMENT', 'serial', 'integer','INT GENERATED ALWAYS AS IDENTITY', 'int IDENTITY(1,1)'], DB)
     elif (value.lower() == "timestamp"):
-        result = unenumerate(['DATETIME', 'TIMESTAMP', 'TIMESTAMP','TIMESTAMP', 'DATETIME'], DB)
+        result = unenumerate(['TIMESTAMP', 'TIMESTAMP', 'TIMESTAMP','TIMESTAMP', 'DATETIME'], DB)
+    elif (value.lower() == "datetime"):
+        result = unenumerate(['DATETIME', 'TIMESTAMP', 'DATE','TIMESTAMP', 'DATETIME'], DB)
     elif (value.lower() == "boolean"):
         result = unenumerate(['BOOL', 'BOOLEAN', 'NUMERIC(1)','DECIMAL(1)', 'BIT'], DB)
 
