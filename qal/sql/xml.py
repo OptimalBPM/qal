@@ -268,7 +268,7 @@ class SQL_XML(XML_Translation):
                         else:
                             _curr_child = xml_find_non_text_child(_curr_node)
                             if (_curr_child):
-                                _obj.__dict__[_curr_itemkey] = self._parse_class_xml_node(_curr_child, currtype[0], _obj)  
+                                _obj.__dict__[_curr_itemkey] = self._parse_class_xml_node(_curr_node, currtype[0], _obj)
                
                   
         if self._resources and hasattr(_obj, 'resource_uuid') and _obj.resource_uuid != None and _obj.resource_uuid != '':
