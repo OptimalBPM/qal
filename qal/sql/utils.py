@@ -232,7 +232,7 @@ def datatype_to_parameter(_db_type, _datatype):
     """Converts a python data type to the database-driver appropriate parameter substitution string"""
     if _db_type == DB_MYSQL:
         return "%s"
-    elif (_datatype[:6].lower() == "string" or _datatype[:7].lower() == "varchar" or _datatype == "timestamp"):
+    elif (_datatype[:6].lower() == "string" or _datatype[:7].lower() == "varchar" or _datatype in ["timestamp", "datetime"]):
         return "%s"
     elif (_datatype in ["float", "integer"]):
         return "%d"
