@@ -15,9 +15,11 @@ from xml.sax.saxutils import escape
 from qal.common.xml_utils import XML_Translation, xml_base_type_value, find_child_node, xml_get_text,\
     xml_set_cdata, xml_get_numeric, xml_get_boolean, xml_get_allowed_value, xml_find_non_text_child
 from qal.common.resources import Resources
-# TODO : This is a wee bit risky, this means that the schema will be dynamic dependent on what the server supports.
-# Good or Bad?
+
 from csv import list_dialects
+import os
+
+
 
 
 def sql_property_to_xml_type(_PropertyName):
@@ -36,6 +38,9 @@ class SQL_XML(XML_Translation):
 
     encoding = 'utf-8'
     _resources = None
+    base_path = None
+    """The base path of the document. Allows for relative paths within."""
+
 
     def __init__(self):
         '''
@@ -223,6 +228,7 @@ class SQL_XML(XML_Translation):
         
         if hasattr(_obj, 'as_sql'):
             _obj._parent = _parent
+            _obj._base_path = self.base_path
             self._debug_print("_parse_class_xml_node: Found matching Parameter class for " + _classname + " : " + _obj_name)
 
         elif isinstance(_obj, list):
@@ -281,9 +287,13 @@ class SQL_XML(XML_Translation):
     def xml_to_sql_structure(self, _xml = "", _node = None, _base_path = None):
         """Translates an XML file into a class structure"""
         _node = self.get_root_node('statement', _xml, _node)
-        
+
+        if _base_path:
+            self.base_path = os.path.dirname(_base_path)
+
         _resources_node = find_child_node(_node, 'resources')
-        
+
+
         if _resources_node:  
             self._debug_print("xml_to_sql_structure: Found resources.")
             # Send XML here, since resources now uses lxml      
@@ -325,7 +335,7 @@ class SQL_XML(XML_Translation):
             _object_node = _document.createElement(self.prefix_own + ':' + _object.__class__.__name__)
             _parent_node.appendChild(_object_node)                
             if hasattr(_object, "__dict__"):
-                for _curr_property_name, currProperty in _object.__dict__.items():
+                for _curr_property_name, currProperty in sorted(_object.__dict__.items()):
                     if not _curr_property_name.lower() in ['row_separator'] and not hasattr(currProperty, '__call__') and _curr_property_name[0:1] != '_':
                         # Create node for property
                         _curr_node = _document.createElement(self.prefix_own + ':' + _curr_property_name)

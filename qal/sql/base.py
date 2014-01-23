@@ -17,8 +17,12 @@ from qal.sql.types import DEFAULT_ROWSEP
 
 class Parameter_Base(object): 
     """This class is a base class for all parameter classes."""
-    _row_separator = DEFAULT_ROWSEP 
+    _row_separator = DEFAULT_ROWSEP
+    """The default row separator for SQL generation."""
     _parent = None
+    """The parent of the object"""
+    _base_path = None
+    """The base path of the XML file from which it was loaded, used for relative paths."""
 
     def __init__(self, _row_separator = None):
         super(Parameter_Base, self ).__init__()

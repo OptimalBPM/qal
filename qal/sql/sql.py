@@ -30,6 +30,7 @@ from qal.dataset.flatfile import Flatfile_Dataset
 from qal.dataset.xpath import XPath_Dataset
 from qal.dataset.matrix import Matrix_Dataset
 from qal.dal.types import DB_SQLSERVER
+from qal.common.strings import make_path_absolute
 
 
 
@@ -175,7 +176,11 @@ class Parameter_Dataset(Parameter_Expression_Item, Parameter_Remotable):
         
     def _generate_sql(self, _db_type):
         if (self.data_source):
-           
+
+            """Handle relative filename"""
+            if hasattr(self.data_source, 'filename'):
+                self.data_source.filename = make_path_absolute(self.data_source.filename, self._base_path)
+
             self.data_source.load()
             return "("+ self.data_source.as_sql(_db_type) + ")"       
         else:

@@ -64,7 +64,8 @@ class class_SQL_Meta_XML_Test(unittest.TestCase):
     # TODO: This test generates the SQL schema file. It sou
     def test_1_generate_xml_Schema(self):
         meta_xml = SQL_XML()
-        f = open("SQL.xsd","w")
+        print()
+        f = open(os.path.join(Test_Resource_Dir,"../../","SQL.xsd"),"w")
         meta_xml.schema_uri = '../SQL.xsd'
         print( meta_xml.generate_schema().toprettyxml(indent = '  '),file=f)
         f.close()
@@ -202,7 +203,7 @@ class class_SQL_Meta_XML_Test(unittest.TestCase):
 
         f = open(Test_Resource_Dir +"/_test_INSERT_matrix_csv_in.xml","r")
         _str_xml_in = f.read()
-        _structure = _meta_xml.xml_to_sql_structure(_str_xml_in)
+        _structure = _meta_xml.xml_to_sql_structure(_str_xml_in, _base_path=Test_Resource_Dir +"/_test_INSERT_matrix_csv_in.xml")
 
         # Add data matrix
         _structure.data.subsets[0].data_source.field_names = ['Column1', 'Column2']   
@@ -230,7 +231,7 @@ class class_SQL_Meta_XML_Test(unittest.TestCase):
 
         f = open(Test_Resource_Dir +"/_test_DELETE_in.xml","r")
         _str_xml_in = f.read()
-        _structure = _meta_xml.xml_to_sql_structure(_str_xml_in)
+        _structure = _meta_xml.xml_to_sql_structure(_str_xml_in, _base_path= Test_Resource_Dir +"/_test_DELETE_in.xml")
 
         # Compare with all SQL flavours
         self._compare_sql_files_for_all_db_types(_structure,"_test_DELETE", _overwrite = True)
@@ -284,7 +285,7 @@ class class_SQL_Meta_XML_Test(unittest.TestCase):
 
         f = open(Test_Resource_Dir +"/_test_SELECT_resource_in.xml","r")
         _str_xml_in = f.read()
-        _structure = _meta_xml.xml_to_sql_structure(_str_xml_in, _base_path = Test_Resource_Dir +"/_test_SELECT_resource_in.xml")
+        _structure = _meta_xml.xml_to_sql_structure(_str_xml_in, _base_path= Test_Resource_Dir +"/_test_SELECT_resource_in.xml")
 
         # Compare with all SQL flavours
         #self._compare_sql_files_for_all_db_types(_structure,"_test_DELETE", _overwrite = True)
