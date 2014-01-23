@@ -35,7 +35,7 @@ class Test(unittest.TestCase):
         print("rdbms_test.test_1_Load_Save: Staging source")
         _source_data = [[1, 'source', datetime.datetime(2001, 1, 1, 0, 0)], [2, 'source', datetime.datetime(2001, 1, 2, 0, 0)], [3, 'source_new', datetime.datetime(2014, 1, 1, 0, 0)]]
         _field_names = ["ID", "Name", "Changed"]
-        _field_types = ["integer", "string(200)", "timestamp"]
+        _field_types = ["integer", "string(200)", "datetime"]
         
         _source_dal = Database_Abstraction_Layer(_resource= _resources.get_resource("{1D62083E-88F7-4442-920D-0B6CC59BA2FF}"))
         _source_table_name = 'table_src'
