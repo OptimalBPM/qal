@@ -3,7 +3,7 @@ Created on Sep 14, 2012
 
 @author: Nicklas Boerjesson
 '''
-
+from qal.common.strings import make_path_absolute
 
 from qal.dataset.custom import Custom_Dataset
 
@@ -70,7 +70,7 @@ class Flatfile_Dataset(Custom_Dataset):
     def read_resource_settings(self, _resource):
         if _resource.type.upper() != 'FLATFILE':
             raise Exception("Flatfile_Dataset.read_resource_settings.parse_resource error: Wrong resource type: " + _resource.type)
-        self.filename = _resource.make_path_absolute("filename")
+        self.filename = make_path_absolute(_resource.data.get("filename"), _resource.base_path)
         self.delimiter = _resource.data.get("delimiter")
         self.has_header = bool(_resource.data.get("has_header").lower() == "true")
         self.csv_dialect = _resource.data.get("csv_dialect")

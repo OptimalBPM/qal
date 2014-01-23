@@ -43,16 +43,6 @@ class Resource(object):
         self.base_path = None
         self.data = {}
 
-    def make_path_absolute(self, _field_name):
-        """Makes a path defined as relative in the XML resource definition absolute using base_path."""
-        _path = self.data[_field_name]
-        if  os.path.isabs(_path):
-            # Don't do anything, path is already absolute.
-            return _path
-        elif self.base_path:
-            return self.base_path + os.sep + _path
-        else:
-            raise Exception("Resource.make_path_absolute: make_path_absolute cannot make " + _path + " absolute without a base_path.")
 
         
     def as_xml_node(self):

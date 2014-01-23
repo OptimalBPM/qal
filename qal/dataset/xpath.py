@@ -5,6 +5,7 @@ Created on Sep 14, 2012
 '''
 
 import io
+from qal.common.strings import make_path_absolute
 
 from qal.dataset.custom import Custom_Dataset
 from qal.common.listhelper import find_next_match, find_previous_match
@@ -84,8 +85,8 @@ class XPath_Dataset(Custom_Dataset):
   
         if _resource.type.upper() != 'XPATH':
             raise Exception("XPath_Dataset.read_resource_settings.parse_resource error: Wrong resource type: " + _resource.type)
-        self.filename   =   _resource.make_path_absolute("filename")
-        self.rows_xpath =   _resource.data.get("rows_xpath")
+        self.filename   = make_path_absolute(_resource.data.get("filename"), _resource.base_path)
+        self.rows_xpath = _resource.data.get("rows_xpath")
         self.xpath_data_format =  _resource.data.get("xpath_data_format")
         self.field_names = _resource.data.get("field_names")
         self.field_xpaths = _resource.data.get("field_xpaths")       

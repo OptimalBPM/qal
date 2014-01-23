@@ -5,6 +5,8 @@
     :license: BSD, see LICENSE for details. 
 """
 
+import os
+
 def parse_balanced_delimiters(_input, _d_left, _d_right, _text_qualifier):
     """Removes all balanced delimiters. Handles multiple levels and ignores those contained within text delimiters."""
     
@@ -64,3 +66,14 @@ def empty_if_none(_string, _source):
         return ""
     else:
         return str(_string)
+
+
+def make_path_absolute(_path, _base_path):
+    """Makes a path defined as relative in the XML resource definition absolute using base_path."""
+    if  os.path.isabs(_path):
+        # Don't do anything, path is already absolute.
+        return _path
+    elif _base_path:
+        return _base_path + os.sep + _path
+    else:
+        raise Exception("Resource.make_path_absolute: make_path_absolute cannot make " + _path + " absolute without a base_path.")
