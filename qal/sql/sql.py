@@ -809,7 +809,7 @@ class Verb_CREATE_TABLE(Parameter_DDL):
                 if (_db_type == DB_ORACLE):
                     self._post_statements.append(oracle_create_auto_increment(self, item))
                 if (_db_type == DB_MYSQL and len(self.constraints) == 0): # TODO: This might have to really look for primary key constraints to be safe.
-                    result+= add_comma_rs(index, item.as_sql(_db_type, True), self._row_separator)
+                    result+= add_comma_rs(index, item._generate_sql(_db_type, True), self._row_separator)
                 else: 
                     result+= add_comma_rs(index, item.as_sql(_db_type), self._row_separator)
             else:      
