@@ -66,7 +66,7 @@ class class_SQL_Meta_XML_Test(unittest.TestCase):
         meta_xml = SQL_XML()
         print()
         f = open(os.path.join(Test_Resource_Dir,"../../","SQL.xsd"),"w")
-        meta_xml.schema_uri = '../SQL.xsd'
+        meta_xml.schema_uri = ''
         print( meta_xml.generate_schema().toprettyxml(indent = '  '),file=f)
         f.close()
         # TODO: Compare to old XML Schema. Or don̈́'t. Only ties down development?
@@ -90,7 +90,7 @@ class class_SQL_Meta_XML_Test(unittest.TestCase):
         _str_xml_in = f.read()
         f.close()
         structure = meta_xml.xml_to_sql_structure(_str_xml_in)
-        meta_xml.schema_uri = '../SQL.xsd'        
+        meta_xml.schema_uri = '../../SQL.xsd'
         _XMLOut = meta_xml.sql_structure_to_xml(structure)
         _str_xml_out = _XMLOut.toxml()
 
@@ -124,7 +124,7 @@ class class_SQL_Meta_XML_Test(unittest.TestCase):
         _str_xml_in = f.read()
         f.close()
         structure = meta_xml.xml_to_sql_structure(_str_xml_in)
-        meta_xml.schema_uri = '../SQL.xsd'        
+        meta_xml.schema_uri = '../../SQL.xsd'
         _XMLOut = meta_xml.sql_structure_to_xml(structure)
         
         
@@ -157,7 +157,7 @@ class class_SQL_Meta_XML_Test(unittest.TestCase):
         _str_xml_in = f.read()
         f.close()
         structure = meta_xml.xml_to_sql_structure(_str_xml_in)
-        meta_xml.schema_uri = '../SQL.xsd'        
+        meta_xml.schema_uri = '../../SQL.xsd'
         _XMLOut = meta_xml.sql_structure_to_xml(structure)
         
         
@@ -173,7 +173,7 @@ class class_SQL_Meta_XML_Test(unittest.TestCase):
         
     def test_5_create_index(self):
         meta_xml = SQL_XML()
-        meta_xml.schema_uri = '../SQL.xsd'      
+        meta_xml.schema_uri = '../../SQL.xsd'
 #        meta_xml.debuglevel = 4
         
 #        Generate structure from manual CREATE_INDEX. 
@@ -199,7 +199,7 @@ class class_SQL_Meta_XML_Test(unittest.TestCase):
     
     def test_6_insert_matrix_csv(self):
         _meta_xml = SQL_XML()
-        _meta_xml.schema_uri = '../../dal/SQL.xsd'
+        _meta_xml.schema_uri = '../../SQL.xsd'
 
         f = open(Test_Resource_Dir +"/_test_INSERT_matrix_csv_in.xml","r")
         _str_xml_in = f.read()
