@@ -1,5 +1,6 @@
 <?xml version="1.0" ?>
-<sql:statement xmlns:sql="http://www.optimalbpm.se/XMLschema/DAL/SQL" xmlns:xsi="http://www.w3.org/2001/XMLSchema" xsi:schemaLocation="http://www.optimalbpm.se/XMLschema/DAL/SQL ../../dal/SQL.xsd">
+<sql:statement xmlns:sql="http://www.optimalbpm.se/XMLschema/DAL/SQL" xmlns:xsi="http://www.w3.org/2001/XMLSchema"
+               xsi:schemaLocation="http://www.optimalbpm.se/XMLschema/DAL/SQL ../../SQL.xsd">
 	<sql:Verb_DELETE>
 		<sql:sources>
 			<sql:Parameter_Source>
@@ -39,7 +40,7 @@
 					<sql:Parameter_Dataset>
 						<sql:data_source>
 							<sql:Flatfile_Dataset>
-								<sql:filename>resources/_test_insert_csv_in.txt</sql:filename>
+								<sql:filename>_test_insert_csv_in.txt</sql:filename>
 								<sql:delimiter>,</sql:delimiter>
 								<sql:field_names>
 									<sql:str>Column1</sql:str>

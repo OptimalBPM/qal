@@ -199,7 +199,7 @@ class class_SQL_Meta_XML_Test(unittest.TestCase):
     
     def test_6_insert_matrix_csv(self):
         _meta_xml = SQL_XML()
-        _meta_xml.schema_uri = '../../dal/SQL.xsd'      
+        _meta_xml.schema_uri = '../../dal/SQL.xsd'
 
         f = open(Test_Resource_Dir +"/_test_INSERT_matrix_csv_in.xml","r")
         _str_xml_in = f.read()
@@ -227,7 +227,7 @@ class class_SQL_Meta_XML_Test(unittest.TestCase):
 
     def test_7_delete(self):
         _meta_xml = SQL_XML()
-        _meta_xml.schema_uri = '../../dal/SQL.xsd'      
+        _meta_xml.schema_uri = '../../SQL.xsd'
 
         f = open(Test_Resource_Dir +"/_test_DELETE_in.xml","r")
         _str_xml_in = f.read()
@@ -254,7 +254,7 @@ class class_SQL_Meta_XML_Test(unittest.TestCase):
     def test_8_update(self):
         
         _meta_xml = SQL_XML()
-        _meta_xml.schema_uri = '../../dal/SQL.xsd'      
+        _meta_xml.schema_uri = '../../SQL.xsd'
 
         f = open(Test_Resource_Dir +"/_test_UPDATE_in.xml","r")
         _str_xml_in = f.read()
@@ -281,7 +281,7 @@ class class_SQL_Meta_XML_Test(unittest.TestCase):
         # TODO: Describe the requirements for the test.
         
         _meta_xml = SQL_XML()
-        _meta_xml.schema_uri = '../../dal/SQL.xsd'      
+        _meta_xml.schema_uri = '../../SQL.xsd'
 
         f = open(Test_Resource_Dir +"/_test_SELECT_resource_in.xml","r")
         _str_xml_in = f.read()
