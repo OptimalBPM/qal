@@ -65,7 +65,7 @@ def expression_item_types():
     
 def tabular_expression_item_types(): 
     """Returns a list of the supported tabular expression types""" 
-    return ['Verb_SELECT','Parameter_dataset', 'Parameter_Set']
+    return ['Verb_SELECT','Parameter_Dataset', 'Parameter_Set']
 
 def in_types():
     """Returns a list of what is supported in a IN-statement""" 
