@@ -21,7 +21,8 @@ class Test(unittest.TestCase):
     
     def setUp(self):
         unittest.TestCase.setUp(self)
-        global table_name = "#sqlmacro"
+        global table_name
+        table_name = "#sqlmacro"
 
 
         """ Comparison SQL statements"""
@@ -61,8 +62,9 @@ class Test(unittest.TestCase):
         self.assertEqual(_sql, self.make_insert_sql_with_parameters_SQL)
        
     def test_3_copy_to_temp_table(self):
+        global table_name
         copy_to_table(_dal = self._dal, _values = self.values, _field_names = self.field_names, _field_types = self.field_types, _table_name = table_name, _create_table= True)
-        _rows = self._dal.query("SELECT * FROM " + Parameter_Identifier(_identifier = self.table_name).as_sql(self._dal.db_type))
+        _rows = self._dal.query("SELECT * FROM " + Parameter_Identifier(_identifier = table_name).as_sql(self._dal.db_type))
         self.assertEqual(_rows, self.values)
 
     def test_4_select_all_skeleton(self):

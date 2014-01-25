@@ -190,6 +190,8 @@ class Merge(object):
         
         # Load destination dataset
         self.destination = dataset_from_resource(self.resources.get_resource('dest_uuid'))
+        if self.destination_log_level:
+            self.destination._log_level = self.destination_log_level
         self.destination.table_name = self.destination_table
         try:
             self.destination.load()
@@ -199,8 +201,7 @@ class Merge(object):
                             "Error: " + str(e))
 
        
-        if self.destination_log_level:
-            self.destination._log_level = self.destination_log_level
+
              
     def _make_shortcuts(self):
         """Make a list of which source column index maps to which destination column index""" 
@@ -257,6 +258,5 @@ class Merge(object):
 
         self.destination.save()
         
-        return _merged_dataset
+        return _merged_dataset, self.destination._log
 
-        
