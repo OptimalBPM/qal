@@ -88,9 +88,7 @@ class Merge(object):
         self.key_fields = []
         if _xml_node != None:
             self.load_from_xml_node(_xml_node)
-        else:
-            raise Exception("Merge.load_from_xml_node: \"None\" is not a valid Merge node.")                  
-    
+
     
     def _field_mappings_as_xml_node(self):
         _xml_node = etree.Element("field_mappings")
