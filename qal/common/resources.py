@@ -53,7 +53,7 @@ class Resource(object):
         _resource.set("uuid", self.uuid)
         # Loop data. Sorted to be predictable enough for testing purposes
         for _curr_data_key, _curr_data_value in sorted(self.data.items()):
-            add_xml_subitem(_resource, _curr_data_key, _curr_data_value) 
+            add_xml_subitem(_resource, _curr_data_key, str(_curr_data_value))
         
         
         return _resource

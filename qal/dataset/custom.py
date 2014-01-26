@@ -77,16 +77,23 @@ class Custom_Dataset(object):
     def log_load(self, _filename, _comment = None):
         if self._log_level >= DATASET_LOGLEVEL_LOW:
             self._log.append(self.__class__.__name__ + ".load;"+quote(str(_filename)) + ";" + str(datetime.now().isoformat()) + empty_if_none(";"+ str(_comment), _comment))
-               
-        
+
+    def read_resource_settings(self, _resource):
+        """Load the data"""
+        raise Exception('Custom_Dataset.read_resource_settings is not implemented in class: ' + self.__class__.__name__)
+
+    def write_resource_settings(self, _resource):
+        """Load the data"""
+        raise Exception('Custom_Dataset.write_resource_settings is not implemented in class: ' + self.__class__.__name__)
+
     def load(self):
         """Load the data"""
-        raise Exception('Custom_Dataset.Load is not implemented in class: ' + self.classname)
+        raise Exception('Custom_Dataset.load is not implemented in class: ' + self.__class__.__name__)
         pass
     
     def save(self):
         """Save the data to the underlying target."""
-        raise Exception('Custom_Dataset.Save is not implemented in class: ' + self.classname)
+        raise Exception('Custom_Dataset.save is not implemented in class: ' + self.__class__.__name__)
 
     
     def _structure_insert_row(self, _row_idx, _row_data, _no_logging = False):

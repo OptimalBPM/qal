@@ -36,7 +36,7 @@ class Flatfile_Dataset(Custom_Dataset):
     skipinitialspace = None
     """True if initial spaces should be disregarded."""
     
-    def __init__(self, _delimiter = None, _filename = None, _has_header = None, _csv_dialect = None, _resource = None, _quoting = None):
+    def __init__(self, _delimiter = None, _filename = None, _has_header = None, _csv_dialect = None, _resource = None, _quoting = None, _quotechar = None, _skipinitialspace = None):
         """Constructor"""
         super(Flatfile_Dataset, self ).__init__() 
        
@@ -64,12 +64,23 @@ class Flatfile_Dataset(Custom_Dataset):
             if _quoting != None: 
                 self.quoting = _quoting
             else:
-                self.quoting = None      
+                self.quoting = None
 
+            if _quotechar != None:
+                self.quotechar = _quotechar
+            else:
+                self.quotechar = None
+
+            if _skipinitialspace != None:
+                self.skipinitialspace = _skipinitialspace
+            else:
+                self.skipinitialspace = None
         
     def read_resource_settings(self, _resource):
         if _resource.type.upper() != 'FLATFILE':
             raise Exception("Flatfile_Dataset.read_resource_settings.parse_resource error: Wrong resource type: " + _resource.type)
+
+        # TODO Make path absolute should not be set here, but only when used.
         self.filename = make_path_absolute(_resource.data.get("filename"), _resource.base_path)
         self.delimiter = _resource.data.get("delimiter")
         self.has_header = bool(_resource.data.get("has_header").lower() == "true")
@@ -79,6 +90,20 @@ class Flatfile_Dataset(Custom_Dataset):
         self.lineterminator = _resource.data.get("lineterminator")
         self.quotechar = _resource.data.get("quotechar") or '"'       
         self.skipinitialspace = _resource.data.get("skipinitialspace")
+
+    def write_resource_settings(self, _resource):
+        # Clear first, one could be overwriting an resource with other data fields
+        _resource.data = {}
+        _resource.type = 'FLATFILE'
+        _resource.data["filename"] = self.filename
+        _resource.data["delimiter"] = self.delimiter
+        _resource.data["has_header"] = self.has_header
+        _resource.data["csv_dialect"] = self.csv_dialect
+        _resource.data["quoting"] = self.quoting
+        _resource.data["escapechar"] = self.escapechar
+        _resource.data["lineterminator"] = self.lineterminator
+        _resource.data["quotechar"] = self.quotechar
+        _resource.data["skipinitialspace"] = self.skipinitialspace
          
     def _quotestr_to_constants(self, _str):
         if _str == None:

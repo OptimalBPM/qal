@@ -18,8 +18,8 @@ from qal.dataset.custom import Custom_Dataset
 
 class RDBMS_Dataset(Custom_Dataset):
  
-    """The RDMBS Data set holds a two-dimensional array of data, typically representing a table in a database.
-    If the data set is not a table but based on a more complex query, data will not be possibly to apply to it."""
+    """The RDMBS Dataset holds a two-dimensional array of data, typically representing a table in a database.
+    If the data set is not a table but based on a more complex query, data will not be possible to apply to it."""
     
     dal = None
     """An instance of the Database Abstraction Layer(DAL)"""
@@ -40,7 +40,25 @@ class RDBMS_Dataset(Custom_Dataset):
         
         self.table_name = _resource.data.get("table_name")
         
-        self.query =   _resource.data.get("query") 
+        self.query =   _resource.data.get("query")
+
+
+    def write_resource_settings(self, _resource):
+        """TODO: The RDBMS resource type is a special case, as it is both a database connection and/or a dataset definition.
+        Should this be?"""
+
+        if self.dal is None:
+            # Clear, as the DAL is not going to
+            _resource.type = 'RDBMS'
+            _resource.data = {}
+        else:
+            # Let the DAL go first
+            self.dal.write_resource_settings(_resource)
+
+        # Add own parameters
+        _resource.data["table_name"] = self.table_name
+        _resource.data["query"] = self.query
+
     
     def __init__(self, _resource = None):
         '''

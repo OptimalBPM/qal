@@ -91,7 +91,7 @@ def sql_property_to_type(_property_name):
                         'sql_postgresql','sql_oracle','sql_db2','sql_sqlserver','row_separator',\
                         'prefix', 'direction', 'operator','table', 'parameters', 'delimiter',\
                         'filename', 'target_table', 'resource_uuid', 'temporary_table_name',\
-                        'temporary_table_name_prefix', 'rows_xpath']:
+                        'temporary_table_name_prefix', 'rows_xpath', "quotechar", "skipinitialspace"]:
         return ['string']
     
     elif _property_name == 'numeric_value':

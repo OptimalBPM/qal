@@ -68,7 +68,19 @@ class Database_Abstraction_Layer(object):
         self.db_password =     _resource.data.get("password")
         self.db_port =         _resource.data.get("port")
         self.autocommit =      _resource.data.get("autocommit")
-        
+
+    def write_resource_settings(self, _resource):
+        _resource.type = 'RDBMS'
+        _resource.data = {}
+        _resource.data["db_type"] = self.db_type
+        _resource.data["db_server"] = self.db_server
+        _resource.data["db_databasename"] = self.db_databasename
+        _resource.data["db_instance"] = self.db_instance
+        _resource.data["db_username"] = self.db_username
+        _resource.data["db_password"] = self.db_password
+        _resource.data["db_port"] = self.db_port
+        _resource.data["autocommit"] = self.autocommit
+
                        
     def connect_to_db(self):
         '''Connects to the database'''

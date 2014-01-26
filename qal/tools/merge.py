@@ -122,7 +122,15 @@ class Merge(object):
         _xml_node = etree.Element('merge')
         _xml_node.append(self._mappings_as_xml_node())
         _xml_node.append(self._settings_as_xml_node())
-        _xml_node.append(self.resources.as_xml_node())
+        if self.source is not None:
+            self.source.write_resource_settings(self.resources.get_resource('source_uuid'))
+        if self.destination is not None:
+            self.destination.write_resource_settings(self.resources.get_resource('dest_uuid'))
+
+        if self.source is not None or self.destination is not None:
+            # If either aren't set, anything in resources are likely to be residuals from earlier.
+            # However, there could be old resources left in one of them.
+            _xml_node.append(self.resources.as_xml_node())
         return _xml_node        
         
     def load_field_mappings_from_xml_node(self, _xml_node):
