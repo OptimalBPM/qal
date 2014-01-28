@@ -92,7 +92,22 @@ class XPath_Dataset(Custom_Dataset):
         self.field_xpaths = _resource.data.get("field_xpaths")       
         self.field_types = _resource.data.get("field_types") 
         self.xpath_text_qualifier = _resource.data.get("xpath_text_qualifier") 
-        self.encoding = _resource.data.get("encoding")  
+        self.encoding = _resource.data.get("encoding")
+
+
+    def write_resource_settings(self, _resource):
+        """Write settings to a resource"""
+
+        _resource.type = 'XPATH'
+        _resource.data.clear()
+        _resource.data["filename"] = self.filename
+        _resource.data["rows_xpath"] = self.rows_xpath
+        _resource.data["xpath_data_format"] = self.xpath_data_format
+        _resource.data["field_names"] = self.field_names
+        _resource.data["field_xpaths"] = self.field_xpaths
+        _resource.data["field_types"] = self.field_types
+        _resource.data["xpath_text_qualifier"] = self.xpath_text_qualifier
+        _resource.data["encoding"] = self.encoding
               
     def _file_to_tree(self, _data_format, _reference):
         """Reads a file and chooses the right parser to make it an lxml element tree"""

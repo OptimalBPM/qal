@@ -9,7 +9,7 @@
     :license: BSD, see LICENSE for details.
 """
 
-from qal.dal.types import DB_MYSQL, DB_POSTGRESQL, DB_ORACLE, DB_DB2, DB_SQLSERVER, string_to_db_type
+from qal.dal.types import DB_MYSQL, DB_POSTGRESQL, DB_ORACLE, DB_DB2, DB_SQLSERVER, string_to_db_type, db_type_to_string
 from qal.dal.conversions import parse_description, python_type_to_SQL_type
 
 class Database_Abstraction_Layer(object):
@@ -71,8 +71,8 @@ class Database_Abstraction_Layer(object):
 
     def write_resource_settings(self, _resource):
         _resource.type = 'RDBMS'
-        _resource.data = {}
-        _resource.data["db_type"] = self.db_type
+        _resource.data.clear()
+        _resource.data["db_type"] = db_type_to_string(self.db_type)
         _resource.data["db_server"] = self.db_server
         _resource.data["db_databasename"] = self.db_databasename
         _resource.data["db_instance"] = self.db_instance
@@ -164,12 +164,11 @@ class Database_Abstraction_Layer(object):
         if _settings != None:      
             self.settings = _settings
             self.read_ini_settings(_settings)
-            self.db_driver = self.connect_to_db()
-            
+
         if _resource != None:
             self.resource = _resource
             self.read_resource_settings(_resource)
-            self.db_driver = self.connect_to_db()   
+
 
 
     def select(self, params):

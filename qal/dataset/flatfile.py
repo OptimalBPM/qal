@@ -83,7 +83,8 @@ class Flatfile_Dataset(Custom_Dataset):
         # TODO Make path absolute should not be set here, but only when used.
         self.filename = make_path_absolute(_resource.data.get("filename"), _resource.base_path)
         self.delimiter = _resource.data.get("delimiter")
-        self.has_header = bool(_resource.data.get("has_header").lower() == "true")
+        if _resource.data.get("has_header"):
+            self.has_header = bool(_resource.data.get("has_header").lower() == "true")
         self.csv_dialect = _resource.data.get("csv_dialect")
         self.quoting = _resource.data.get("quoting")
         self.escapechar = _resource.data.get("escapechar")

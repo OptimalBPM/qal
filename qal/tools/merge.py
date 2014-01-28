@@ -182,13 +182,14 @@ class Merge(object):
     
 
     
-    def _load_resources(self):
+    def _load_resources(self, _only_settings = None):
         
         # Load source_dataset
         self.source = dataset_from_resource(self.resources.get_resource('source_uuid'))
         self.source.table_name = self.source_table
         try:
-            self.source.load()
+            if _only_settings is None:
+                self.source.load()
         except Exception as e:
             raise Exception("Merge._load_resources: Failed loading data for source data set.\n" + \
                             "Resource: " + str(self.resources.get_resource('source_uuid').caption)+ "(" + str(self.resources.get_resource('source_uuid').uuid) + ")\n"+ \
@@ -200,7 +201,8 @@ class Merge(object):
             self.destination._log_level = self.destination_log_level
         self.destination.table_name = self.destination_table
         try:
-            self.destination.load()
+            if _only_settings is None:
+                self.destination.load()
         except Exception as e:
             raise Exception("Merge._load_resources: Failed loading data for source data set.\n" + \
                             "Resource: " + str(self.resources.get_resource('dest_uuid').caption)+ "(" + str(self.resources.get_resource('dest_uuid').uuid) + ")\n"+ \

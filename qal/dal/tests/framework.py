@@ -42,8 +42,10 @@ def get_default_dal(_db_type, _db_name = ""):
     settings = UBPMSettings(cfg_file)
     if settings.Parser.has_section("database"):
         if _db_name != "":
-            settings.Parser.set("database", "database_name", _db_name)  
-        return Database_Abstraction_Layer(settings)
+            settings.Parser.set("database", "database_name", _db_name)
+        _dal = Database_Abstraction_Layer(settings)
+        _dal.connect_to_db()
+        return _dal
     else:
         return None
 
@@ -55,5 +57,6 @@ def default_dal(_db_type):
             instance._dal = get_default_dal(DB_POSTGRESQL)
         else:
             instance._dal = get_default_dal(_db_type)
+
         return instance
     return decorator_dal

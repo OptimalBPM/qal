@@ -50,7 +50,7 @@ class RDBMS_Dataset(Custom_Dataset):
         if self.dal is None:
             # Clear, as the DAL is not going to
             _resource.type = 'RDBMS'
-            _resource.data = {}
+            _resource.data.clear()
         else:
             # Let the DAL go first
             self.dal.write_resource_settings(_resource)

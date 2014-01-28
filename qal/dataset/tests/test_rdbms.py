@@ -38,6 +38,7 @@ class Test(unittest.TestCase):
         _field_types = ["integer", "string(200)", "datetime"]
         
         _source_dal = Database_Abstraction_Layer(_resource= _resources.get_resource("{1D62083E-88F7-4442-920D-0B6CC59BA2FF}"))
+        _source_dal.connect_to_db()
         _source_table_name = 'table_src'
         copy_to_table(_source_dal, _source_data, _field_names, _field_types, _source_table_name, _create_table = True, _drop_existing = True)
         
@@ -45,6 +46,7 @@ class Test(unittest.TestCase):
         _dest_data = [[1, 'dest', datetime.datetime(2001, 1, 1, 0, 0)], [2, 'dest', datetime.datetime(2001, 1, 2, 0, 0)], [3, 'dest', datetime.datetime(2014, 1, 4, 0, 0)]]
         
         _dest_dal = Database_Abstraction_Layer(_resource= _resources.get_resource("{DD34A233-47A6-4C16-A26F-195711B49B97}"))
+        _dest_dal.connect_to_db()
         _dest_table_name = 'table_dst'
         copy_to_table(_dest_dal, _dest_data, _field_names, _field_types, _dest_table_name, _create_table = True, _drop_existing = True)
  
