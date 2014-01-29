@@ -35,6 +35,16 @@ class Spreadsheet_Dataset(Custom_Dataset):
         self.sheet_name = _resource.data.get("sheet_name")
         self.x_offset = _resource.data.get("x_offset")
         self.y_offset = _resource.data.get("y_offset")
+
+    def write_resource_settings(self, _resource):
+        _resource.type = 'SPREADSHEET'
+        _resource.data.clear()
+        _resource.data["filename"] = self.filename
+        _resource.data["delimiter"] = self.delimiter
+        _resource.data["has_header"] = self.has_header
+        _resource.data["sheet_name"] = self.sheet_name
+        _resource.data["x_offset"] = self.x_offset
+        _resource.data["y_offset"] = self.y_offset
     
     def __init__(self, _filename = None, _has_header = None, _resource = None, _sheet_name = None, _x_offset = None, _y_offset = None):
         '''
