@@ -41,7 +41,7 @@ class Spreadsheet_Dataset(Custom_Dataset):
         _resource.data.clear()
         _resource.data["filename"] = self.filename
         _resource.data["delimiter"] = self.delimiter
-        _resource.data["has_header"] = self.has_header
+        _resource.data["has_header"] = str(self.has_header)
         _resource.data["sheet_name"] = self.sheet_name
         _resource.data["x_offset"] = self.x_offset
         _resource.data["y_offset"] = self.y_offset
