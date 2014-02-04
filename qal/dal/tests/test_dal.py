@@ -10,8 +10,12 @@ from qal.dal.tests.framework import get_default_dal
 
 def _connect_test(_db_type):
     dal = get_default_dal(_db_type, "")
-    dal.close()
-    return True
+    if dal:
+        dal.close()
+        return True
+    else:
+        raise Exception("Get default DAL did not return a DAL.")
+
     
 class DAL_tests(unittest.TestCase):
     global settings
