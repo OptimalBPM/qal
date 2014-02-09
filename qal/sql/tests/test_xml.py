@@ -290,9 +290,9 @@ class class_SQL_Meta_XML_Test(unittest.TestCase):
         # Compare with all SQL flavours
         #self._compare_sql_files_for_all_db_types(_structure,"_test_DELETE", _overwrite = True)
 
-        
         _sql_out = _structure.as_sql(DB_POSTGRESQL)
         print(_sql_out)
+
         _rows = _structure._dal.query(_sql_out)
         
         for _row in _rows:

@@ -38,9 +38,9 @@ class RDBMS_Dataset(Custom_Dataset):
         
         self.dal = Database_Abstraction_Layer(_resource = _resource)
         
-        self.table_name = _resource.data.get("table_name")
+        self.table_name = _resource.data.get("db_table_name")
         
-        self.query =   _resource.data.get("query")
+        self.query =   _resource.data.get("db_query")
 
 
     def write_resource_settings(self, _resource):
@@ -56,8 +56,8 @@ class RDBMS_Dataset(Custom_Dataset):
             self.dal.write_resource_settings(_resource)
 
         # Add own parameters
-        _resource.data["table_name"] = self.table_name
-        _resource.data["query"] = self.query
+        _resource.data["db_table_name"] = self.table_name
+        _resource.data["db_query"] = self.query
 
     
     def __init__(self, _resource = None):
@@ -213,6 +213,8 @@ class RDBMS_Dataset(Custom_Dataset):
     def load(self):
         if self.table_name and self.table_name != "":
             """Query all values from a table from a RDBMS resource"""
+            if not self.dal.connected:
+                self.dal.connect_to_db()
             self.data_table = self.dal.query(select_all_skeleton(self.table_name).as_sql(self.dal.db_type))
             self.field_names = self.dal.field_names
             self.field_types = self.dal.field_types

@@ -61,13 +61,13 @@ class Database_Abstraction_Layer(object):
         if _resource.type.upper() != 'RDBMS':
             raise Exception("DAL.read_resource_settings error: Wrong resource type - " + _resource.type)
         self.db_type =         string_to_db_type(_resource.data.get("db_type"))
-        self.db_server =       _resource.data.get("server")
-        self.db_databasename = _resource.data.get("database")
-        self.db_instance =     _resource.data.get("instance")
-        self.db_username =     _resource.data.get("username")
-        self.db_password =     _resource.data.get("password")
-        self.db_port =         _resource.data.get("port")
-        self.autocommit =      _resource.data.get("autocommit")
+        self.db_server =       _resource.data.get("db_server")
+        self.db_databasename = _resource.data.get("db_databasename")
+        self.db_instance =     _resource.data.get("db_instance")
+        self.db_username =     _resource.data.get("db_username")
+        self.db_password =     _resource.data.get("db_password")
+        self.db_port =         _resource.data.get("db_port")
+        self.autocommit =      _resource.data.get("db_autocommit")
 
     def write_resource_settings(self, _resource):
         _resource.type = 'RDBMS'
@@ -79,7 +79,7 @@ class Database_Abstraction_Layer(object):
         _resource.data["db_username"] = self.db_username
         _resource.data["db_password"] = self.db_password
         _resource.data["db_port"] = self.db_port
-        _resource.data["autocommit"] = self.autocommit
+        _resource.data["db_autocommit"] = self.autocommit
 
                        
     def connect_to_db(self):

@@ -86,7 +86,7 @@ class XPath_Dataset(Custom_Dataset):
   
         if _resource.type.upper() != 'XPATH':
             raise Exception("XPath_Dataset.read_resource_settings.parse_resource error: Wrong resource type: " + _resource.type)
-        self.filename   = make_path_absolute(_resource.data.get("filename"), )
+        self.filename   = _resource.data.get("filename")
         self.rows_xpath = _resource.data.get("rows_xpath")
         self.xpath_data_format =  _resource.data.get("xpath_data_format")
         self.field_names = _resource.data.get("field_names")
@@ -142,7 +142,7 @@ class XPath_Dataset(Custom_Dataset):
         print("Loading : " + self.filename)
         self.log_load(self.filename)  
         try:
-            _tree = self._file_to_tree(self.xpath_data_format, self.filename)
+            _tree = self._file_to_tree(self.xpath_data_format, make_path_absolute(self.filename, self.base_path))
             
         except Exception as e:
             raise Exception("XPath_Dataset.load - error parsing " + self.xpath_data_format + " file : " + str(e))
@@ -415,7 +415,7 @@ class XPath_Dataset(Custom_Dataset):
         """Save the document"""
         
         if not _save_as:
-            _save_as = self.filename
+            _save_as = make_path_absolute(self.filename, self.base_path())
             
         self._structure_tree.write(_save_as)
             

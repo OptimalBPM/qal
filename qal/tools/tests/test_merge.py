@@ -83,6 +83,8 @@ class Merge_test(unittest.TestCase):
         
         _source_dal = Database_Abstraction_Layer(_resource= _resources.get_resource("dest_uuid"))
         _source_table_name = 'table_src'
+        _source_dal.connect_to_db()
+
         copy_to_table(_source_dal, _source_data, _field_names, _field_types, _source_table_name, _create_table = True, _drop_existing = True)
         
         print("merge_test.test_Merge_tables: Staging destination")
@@ -90,6 +92,8 @@ class Merge_test(unittest.TestCase):
         
         _dest_dal = Database_Abstraction_Layer(_resource= _resources.get_resource("source_uuid"))
         _dest_table_name = 'table_dst'
+        _dest_dal.connect_to_db()
+
         copy_to_table(_dest_dal, _dest_data, _field_names, _field_types, _dest_table_name, _create_table = True, _drop_existing = True)
 
    

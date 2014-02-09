@@ -46,6 +46,7 @@ class Parameter_Remotable(object):
             if not self._dal:
                 """Make connection to resource defined by the resource_uuid"""
                 self._dal = Database_Abstraction_Layer(_resource = self._resource)
+                self._dal.connect_to_db()
             
             _source_sql = self._generate_sql(self._dal.db_type)
             from qal.sql.sql import Parameter_Source
@@ -94,6 +95,7 @@ class Parameter_Remotable(object):
         else:
             """If it doesn't, create one to the resource, and use that."""
             _parent_dal = Database_Abstraction_Layer(_resource=self._out_of_context_parent._resource)
+            _parent_dal.connect_to_db()
             """Also set the parents _dal, since we are using temporary tables, they need to be in the same context.""" 
             self._out_of_context_parent._dal = _parent_dal
             
