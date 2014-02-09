@@ -4,15 +4,11 @@ Created on Nov 3, 2013
 @author: Nicklas Boerjesson
 """
 
-
+from lxml import etree
 
 from qal.common.resources import Resources
 from qal.tools.transform import make_transformation_array_from_xml_node, make_transformations_xml_node, perform_transformations
-from qal.tools.diff import compare
 from qal.dataset.factory import dataset_from_resource
-from qal.sql.macros import select_all_skeleton
-from qal.dal.dal import Database_Abstraction_Layer
-from lxml import etree
 
 
 def isnone( _node):
@@ -21,7 +17,7 @@ def isnone( _node):
     else:
         return _node.text  
     
-class Field_Mapping(object):
+class Mapping(object):
     is_key = None 
     src_reference = None
     src_datatype = None
@@ -135,7 +131,7 @@ class Merge(object):
         if _xml_node != None:
             _mapping_idx = 0
             for _curr_mapping in _xml_node.findall("field_mapping"):
-                _new_mapping = Field_Mapping(_xml_node = _curr_mapping)
+                _new_mapping = Mapping(_xml_node = _curr_mapping)
                 self.mappings.append(_new_mapping)
                 if _new_mapping.is_key == "True":
                     self.key_fields.append(_mapping_idx)  
