@@ -53,8 +53,11 @@ class XPath_Dataset(Custom_Dataset):
         .. todo::
             Should this be able to hold an XML?
     """
-        
-    
+
+    _structure_top_node = None
+    """
+        A private variable holding the top node of the structure.
+    """
 
     def __init__(self, _filename = None, _rows_xpath = None,  _resource = None):
 
@@ -75,7 +78,10 @@ class XPath_Dataset(Custom_Dataset):
             if _rows_xpath != None: 
                 self.rows_xpath = _rows_xpath
             else:
-                self.rows_xpath = None  
+                self.rows_xpath = None
+
+
+
                 
 
 
@@ -328,7 +334,7 @@ class XPath_Dataset(Custom_Dataset):
             
             # If not try to load, or create file.    
             import os
-            if os.path.exists(self.filename):
+            if os.path.exists(make_path_absolute(self.filename, self.base_path)):
                 
                 try:
                     self.load(_add_node_ref=True)
