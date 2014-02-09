@@ -50,7 +50,7 @@ class Transform_test(unittest.TestCase):
     def test_cast(self):
         """Test trim transformation input/output and XML encoding/decoding"""
         _tree = self._parse_xml(Test_Resource_Dir + "/test_merge_two_files.xml")
-        _xml_def = _tree.find("mappings/field_mappings/field_mapping[src_column='hiredate']/transformations/cast[@order='5']")
+        _xml_def = _tree.find("mappings/field_mappings/field_mapping[src_reference='hiredate']/transformations/cast[@order='5']")
         _tested = Cast(_xml_def)
         _result = _tested.transform("2010-01-02 00:00:01")
         self.assertEqual(_result, datetime.strptime("2010-01-02 00:00:01", "%Y-%m-%d %H:%M:%S"), "Results differ")

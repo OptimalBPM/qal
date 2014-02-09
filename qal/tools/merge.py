@@ -23,11 +23,11 @@ def isnone( _node):
     
 class Field_Mapping(object):
     is_key = None 
-    src_column = None
+    src_reference = None
     src_datatype = None
     src_cast_to = None
     result_cast_to = None
-    dest_column = None
+    dest_reference = None
     transformations = []
     
     def __init__(self, _xml_node = None):
@@ -42,11 +42,11 @@ class Field_Mapping(object):
     def load_from_xml_node(self, _xml_node):
         if _xml_node != None:
             self.is_key = isnone(_xml_node.find("is_key"))
-            self.src_column = isnone(_xml_node.find("src_column"))
+            self.src_reference = isnone(_xml_node.find("src_reference"))
             self.src_datatype = isnone(_xml_node.find("src_datatype"))
             self.src_cast_to = isnone(_xml_node.find("src_cast_to"))
             self.result_cast_to = isnone(_xml_node.find("result_cast_to"))
-            self.dest_column = isnone(_xml_node.find("dest_column"))
+            self.dest_reference = isnone(_xml_node.find("dest_reference"))
             self.transformations = make_transformation_array_from_xml_node(_xml_node.find("transformations"))
          
             
@@ -54,12 +54,12 @@ class Field_Mapping(object):
 
         _xml_node = etree.Element("field_mapping")        
         etree.SubElement(_xml_node, "is_key").text = self.is_key
-        etree.SubElement(_xml_node, "src_column").text = self.src_column
+        etree.SubElement(_xml_node, "src_reference").text = self.src_reference
         etree.SubElement(_xml_node, "src_datatype").text = self.src_datatype
         etree.SubElement(_xml_node, "src_cast_to").text = self.src_cast_to
         _xml_node.append(make_transformations_xml_node(self.transformations))
         etree.SubElement(_xml_node, "result_cast_to").text = self.result_cast_to
-        etree.SubElement(_xml_node, "dest_column").text = self.dest_column
+        etree.SubElement(_xml_node, "dest_reference").text = self.dest_reference
 
         
 
@@ -214,8 +214,8 @@ class Merge(object):
 
         # Make mapping
         for _curr_mapping in self.mappings:
-            _src_idx  = self.source.field_names.index(_curr_mapping.src_column)
-            _dest_idx = self.destination.field_names.index(_curr_mapping.dest_column)
+            _src_idx  = self.source.field_names.index(_curr_mapping.src_reference)
+            _dest_idx = self.destination.field_names.index(_curr_mapping.dest_reference)
             _shortcuts.append([_src_idx, _dest_idx, _curr_mapping])
             
         return _shortcuts
