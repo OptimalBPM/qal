@@ -30,6 +30,9 @@ class Custom_Dataset(object):
     """The data types of the fields"""
     data_table = [] 
     """The actual data, in the form of a two-dimensional array"""
+    base_path = None
+    """The base path for all relative references in resources. Inferred from the locations of resource files."""
+
     
     _log_level = DATASET_LOGLEVEL_MEDIUM
 
@@ -244,3 +247,4 @@ class Custom_Dataset(object):
             
                     
         return str("\nUNION\n".join(_result)) 
+

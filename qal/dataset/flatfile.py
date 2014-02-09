@@ -3,6 +3,8 @@ Created on Sep 14, 2012
 
 @author: Nicklas Boerjesson
 '''
+from datetime import date
+import datetime
 from qal.common.strings import make_path_absolute
 
 from qal.dataset.custom import Custom_Dataset
@@ -79,12 +81,12 @@ class Flatfile_Dataset(Custom_Dataset):
     def read_resource_settings(self, _resource):
         if _resource.type.upper() != 'FLATFILE':
             raise Exception("Flatfile_Dataset.read_resource_settings.parse_resource error: Wrong resource type: " + _resource.type)
-
+        self.base_path = _resource.base_path
         # TODO Make path absolute should not be set here, but only when used.
-        self.filename = make_path_absolute(_resource.data.get("filename"), _resource.base_path)
+        self.filename = _resource.data.get("filename")
         self.delimiter = _resource.data.get("delimiter")
         if _resource.data.get("has_header"):
-            self.has_header = bool(_resource.data.get("has_header").lower() == "true")
+            self.has_header = bool(str(_resource.data.get("has_header")).lower() == "true")
         self.csv_dialect = _resource.data.get("csv_dialect")
         self.quoting = _resource.data.get("quoting")
         self.escapechar = _resource.data.get("escapechar")
@@ -95,7 +97,7 @@ class Flatfile_Dataset(Custom_Dataset):
     def write_resource_settings(self, _resource):
         # Clear first, one could be overwriting an resource with other data fields
         _resource.data = {}
-        _resource.type = 'FLATFILE'
+        _resource.type = _resource.type
         _resource.data["filename"] = self.filename
         _resource.data["delimiter"] = self.delimiter
         _resource.data["has_header"] = self.has_header
@@ -123,7 +125,7 @@ class Flatfile_Dataset(Custom_Dataset):
         """Load data"""
         print("Flatfile_Dataset.load: Filename='" + str(self.filename) + "', Delimiter='"+str(self.delimiter)+"'")
         
-        _file = open(self.filename, 'r')
+        _file = open( make_path_absolute(self.filename, self.base_path), 'r')
         _reader = csv.reader(_file, 
                              delimiter=self.delimiter, 
                              quoting=self._quotestr_to_constants(self.quoting),
@@ -148,10 +150,7 @@ class Flatfile_Dataset(Custom_Dataset):
                 self.field_names.append("Field_"+ str(_curr_idx))   
             
         return self.data_table   
-    
 
-
-    
     def save(self, _save_as = None):
         """Save data"""
 
@@ -160,7 +159,7 @@ class Flatfile_Dataset(Custom_Dataset):
         if _save_as:
             _filename = _save_as
         else:
-            _filename = self.filename
+            _filename =  make_path_absolute(self.filename, self.base_path)
             
         _file = open(_filename, 'w')
 

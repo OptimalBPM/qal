@@ -161,14 +161,16 @@
 		<delimiter>;</delimiter>
 		<filename>csv_out.csv</filename>
 		<has_header>True</has_header>
+        <quotechar>"</quotechar>
 		<quoting>ALL</quoting>
-	</resource>	
+	</resource>
     <resource caption="source" type="flatfile" uuid="source_uuid">
 		<csv_dialect>excel-tab</csv_dialect>
 		<delimiter>;</delimiter>
 		<filename>csv_source.csv</filename>
 		<has_header>True</has_header>
-		<quoting>ALL</quoting>
+		<quotechar>"</quotechar>
+        <quoting>MINIMAL</quoting>
 	</resource>	
 
   </resources>

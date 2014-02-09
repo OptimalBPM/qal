@@ -4,6 +4,7 @@ Created on Nov 3, 2013
 @author: Nicklas Boerjesson
 """
 import unittest
+from aptdaemon.worker import trans_only_installs_pkgs_from_high_trust_repos
 from qal.tools.merge import Merge 
 from qal.common.listhelper import pretty_list
 from qal.dataset.custom import DATASET_LOGLEVEL_DETAIL
@@ -65,11 +66,11 @@ class Merge_test(unittest.TestCase):
 
         _result = _merge.execute()
         print("Source:\n" + pretty_list(_merge.source.data_table)) 
-        print("Result:\n" + pretty_list(_merge.destination.data_table))
+        print("Result:\n" + pretty_list(_result[0]))
         print("Log:\n" + pretty_list(_merge.destination._log)) 
         
         #_merge.write_result('resources/csv_out.xml')
-        self.assertEqual(_result, c_file_result, "Merge result differs")
+        self.assertEqual(_result[0], c_file_result, "Merge result differs")
 
     def test_2_Merge_tables(self):
         

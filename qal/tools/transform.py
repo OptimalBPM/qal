@@ -7,6 +7,7 @@ Created on Nov 3, 2013
 * Use format string for destination formatting as well (casting from any other primitive type to string)
 
 """
+import re
 from lxml import etree
 from datetime import date, datetime
 
@@ -160,7 +161,12 @@ class Cast(Custom_Transformation):
                         return _value.strftime("%Y-%m-%d %H:%M:%S")
                 else:
                     return str(_value)
-            elif self.dest_type in ['float']:
+            else:
+                if isinstance(_value, str):
+                    # All other types will not work with quotations
+                    _value = re.sub(r'^["\']|["\']$', '', _value)
+
+            if self.dest_type in ['float']:
                 return float(_value)
             elif self.dest_type in ['integer', 'serial']:
                 return int(_value)

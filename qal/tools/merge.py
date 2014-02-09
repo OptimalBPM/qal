@@ -70,8 +70,6 @@ class Merge(object):
     key_fields = []
     source = None
     destination = None
-    source_table = None
-    destination_table = None
     resources = None
     destination_log_level = None
     
@@ -174,6 +172,7 @@ class Merge(object):
             self.load_mappings_from_xml_node(_xml_node.find("mappings"))
             self.load_settings_from_xml_node(_xml_node.find("settings"))
             self.resources = Resources(_resources_node= _xml_node.find("resources"))
+            self._load_resources(_only_settings=True)
             
         else:
             raise Exception("Merge.load_from_xml_node: \"None\" is not a valid Merge node.")                  
@@ -186,7 +185,6 @@ class Merge(object):
         
         # Load source_dataset
         self.source = dataset_from_resource(self.resources.get_resource('source_uuid'))
-        self.source.table_name = self.source_table
         try:
             if _only_settings is None:
                 self.source.load()
@@ -199,7 +197,6 @@ class Merge(object):
         self.destination = dataset_from_resource(self.resources.get_resource('dest_uuid'))
         if self.destination_log_level:
             self.destination._log_level = self.destination_log_level
-        self.destination.table_name = self.destination_table
         try:
             if _only_settings is None:
                 self.destination.load()

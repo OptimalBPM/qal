@@ -35,7 +35,6 @@ class XPath_Dataset(Custom_Dataset):
 
     xpath_data_format = None
     """The data format. Can be either "XML", "XHTML" or "HTML"."""
-    
 
     _structure_tree = None
     """A private reference to the node tree, when load is called with _add_node_ref=True, an instance
@@ -82,10 +81,12 @@ class XPath_Dataset(Custom_Dataset):
 
     def read_resource_settings(self, _resource):
         """Reads settings from a resource"""
+
+        self.base_path = _resource.base_path
   
         if _resource.type.upper() != 'XPATH':
             raise Exception("XPath_Dataset.read_resource_settings.parse_resource error: Wrong resource type: " + _resource.type)
-        self.filename   = make_path_absolute(_resource.data.get("filename"), _resource.base_path)
+        self.filename   = make_path_absolute(_resource.data.get("filename"), )
         self.rows_xpath = _resource.data.get("rows_xpath")
         self.xpath_data_format =  _resource.data.get("xpath_data_format")
         self.field_names = _resource.data.get("field_names")
