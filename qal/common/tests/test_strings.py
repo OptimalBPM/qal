@@ -6,7 +6,7 @@
 """
 
 import unittest
-from qal.common.strings import parse_balanced_delimiters, empty_if_none
+from qal.common.strings import parse_balanced_delimiters, empty_if_none, make_path_absolute
 
 import os
 Test_Script_Dir = os.path.dirname(__file__)
@@ -23,9 +23,18 @@ class Test(unittest.TestCase):
         self.assertEqual(_result_list, _cmp_parse_balanced_delimiters_list, "Balanced delimiters differ")
         self.assertEqual(_result_clear, _cmp_parse_balanced_delimiters_clear, "Cleared string differ")
         
-    def test_1_empty_if_none(self):
+    def test_2_empty_if_none(self):
         self.assertEqual("", empty_if_none(";Test", None), "Should be empty")
         self.assertEqual(";Test", empty_if_none(";Test", "Test"), "Should not be empty")
+
+    def test_3_make_path_absolute(self):
+        if os.name in ['nt', 'ce']:
+            self.assertEqual("C:\temp\test\test.txt", make_path_absolute("test\test.txt", "C:\temp"))
+        elif os.name in ['posix','os2', 'ce', 'java', 'riscos']:
+            self.assertEqual("/temp/test/test.txt", make_path_absolute("test/test.txt", "/temp"))
+        else:
+            raise Exception("Error in test_3_make_path_absolute, unsupported platform '" + os.name +"' ")
+
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testDev']
