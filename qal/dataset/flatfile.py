@@ -5,6 +5,7 @@ Created on Sep 14, 2012
 '''
 from datetime import date
 import datetime
+from itertools import islice
 from qal.common.strings import make_path_absolute
 
 from qal.dataset.custom import Custom_Dataset
@@ -142,13 +143,12 @@ class Flatfile_Dataset(Custom_Dataset):
                 _first_row = False
             else:
                 self.data_table.append(_row)
-                    
-            
-        _file.close()    
+
         if (self.has_header == False):
-            for _curr_idx in range(0,len(_reader[0])):
+            for _curr_idx in range(0,len(list(islice(_reader, 0, 1)))):
                 self.field_names.append("Field_"+ str(_curr_idx))   
-            
+
+        _file.close()
         return self.data_table   
 
     def save(self, _save_as = None):
