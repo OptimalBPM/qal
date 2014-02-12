@@ -4,6 +4,8 @@
     :copyright: Copyright 2010-2013 by Nicklas Boerjesson
     :license: BSD, see LICENSE for details. 
 """
+from urllib.parse import unquote
+
 from qal.common.xml_utils import XML_Translation
 
 from lxml import etree
@@ -55,7 +57,7 @@ class Resource(object):
         for _curr_data_key, _curr_data_value in sorted(self.data.items()):
             if _curr_data_value is not None:
                 add_xml_subitem(_resource, _curr_data_key, str(_curr_data_value))
-        
+
         
         return _resource
     
@@ -125,7 +127,7 @@ class Resources(XML_Translation):
                 _resources_node = _root_node            
 
         if _resources_node.base:
-            self.base_path = os.path.dirname(_resources_node.base)
+            self.base_path = os.path.dirname(unquote(_resources_node.base))
         
         self.local_resources = dict()
         
