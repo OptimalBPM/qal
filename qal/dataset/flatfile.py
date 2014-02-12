@@ -137,16 +137,17 @@ class Flatfile_Dataset(Custom_Dataset):
         self.data_table = []
         for _row in _reader:
             # Save header row if existing.
-            if (_first_row and self.has_header == True):
-                self.field_names = [_curr_col.replace("'", "").replace("\"", "") for _curr_col in _row]
-                print("self.field_names :" + str(self.field_names))
+            if (_first_row):
+                if self.has_header == True:
+                    self.field_names = [_curr_col.replace("'", "").replace("\"", "") for _curr_col in _row]
+                    print("self.field_names :" + str(self.field_names))
+                else:
+                    for _curr_idx in range(0,len(_row)):
+                        self.field_names.append("Field_"+ str(_curr_idx))
+
                 _first_row = False
             else:
                 self.data_table.append(_row)
-
-        if (self.has_header == False):
-            for _curr_idx in range(0,len(list(islice(_reader, 0, 1)))):
-                self.field_names.append("Field_"+ str(_curr_idx))   
 
         _file.close()
         return self.data_table   

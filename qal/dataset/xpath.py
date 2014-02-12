@@ -155,44 +155,46 @@ class XPath_Dataset(Custom_Dataset):
         
         #_root_nodes = _tree.xpath("/html/body/form/table/tr[4]/td[2]/table/tr[2]/td/table[2]/tr/td/table/tr[10]/td/table/tr")
         _root_nodes = _tree.xpath(self.rows_xpath)
-        if len(_root_nodes) > 0 and _add_node_ref:
+        if len(_root_nodes) > 0:
             self._structure_tree = _tree
             self._structure_row_node_parent = _root_nodes[0].getparent()
             self._structure_top_node = _tree.getroot()
         
         _data = []
-        for _curr_row in _root_nodes:
-            _row_data = []
-            for _field_idx in range(0, len(self.field_names)):
-                _curr_path, _curr_attribute = self._structure_parse_qal_xpath(self.field_xpaths[_field_idx])
-                if _curr_path != "":
-                    _item_data = _curr_row.xpath(_curr_path)[0]
-                else:
-                    _item_data = _curr_row
-                    
-                if _item_data is not None:
-                    if _curr_attribute:
-                        if _curr_attribute[0] == "@":
-                            _row_data.append(self.cast_text_to_type(_item_data.get(_curr_attribute[1:]), _field_idx))
-                        elif _curr_attribute.lower() == "xml":
-                            _row_data.append(self.cast_text_to_type(_item_data.tostring(), _field_idx))
-                        else:
-                            raise Exception("Param_XPath.load: Error, attribute references must have the ::@AttributeName- format or ::XML. The attribute was \""+_curr_attribute + "\"")
+
+        if self.field_xpaths:
+            for _curr_row in _root_nodes:
+                _row_data = []
+                for _field_idx in range(0, len(self.field_names)):
+                    _curr_path, _curr_attribute = self._structure_parse_qal_xpath(self.field_xpaths[_field_idx])
+                    if _curr_path != "":
+                        _item_data = _curr_row.xpath(_curr_path)[0]
                     else:
-                        _row_data.append(self.cast_text_to_type(_item_data.text, _field_idx))
-                else:
-                    _row_data.append("")
+                        _item_data = _curr_row
+
+                    if _item_data is not None:
+                        if _curr_attribute:
+                            if _curr_attribute[0] == "@":
+                                _row_data.append(self.cast_text_to_type(_item_data.get(_curr_attribute[1:]), _field_idx))
+                            elif _curr_attribute.lower() == "xml":
+                                _row_data.append(self.cast_text_to_type(_item_data.tostring(), _field_idx))
+                            else:
+                                raise Exception("Param_XPath.load: Error, attribute references must have the ::@AttributeName- format or ::XML. The attribute was \""+_curr_attribute + "\"")
+                        else:
+                            _row_data.append(self.cast_text_to_type(_item_data.text, _field_idx))
+                    else:
+                        _row_data.append("")
 
 
-            # Add reference to XML structure.
-            if _add_node_ref:
-                _row_data.append(_curr_row)
-            
-            print(str(_row_data))
-            _data.append(_row_data)
-            
-        self.data_table = _data
-        
+                # Add reference to XML structure.
+                if _add_node_ref:
+                    _row_data.append(_curr_row)
+
+                print(str(_row_data))
+                _data.append(_row_data)
+
+            self.data_table = _data
+
         return _data  
     
     
