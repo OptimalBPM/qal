@@ -54,7 +54,7 @@ def parse_balanced_delimiters(_input, _d_left, _d_right, _text_qualifier):
     else:
         return _balanced, _cleared
 
-def empty_if_none(_string, _source):
+def empty_if_none(_string, _source = None):
     """If _source if None, return an empty string, otherwise return string. 
     This is useful when you build strings and want it to be empty if you don't have any data.
     For example when building a comma-separated string with a dynamic number of parameters: 
@@ -63,6 +63,14 @@ def empty_if_none(_string, _source):
     command = (_id +";" +  +  empty_if_none(";"+str(_comment), _comment))
     """
     if _source is None:
+        return ""
+    else:
+        return str(_string)
+
+def empty_when_none(_string = None):
+    """If _string if None, return an empty string, otherwise return string.
+    """
+    if _string is None:
         return ""
     else:
         return str(_string)
