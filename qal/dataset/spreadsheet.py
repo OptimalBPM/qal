@@ -31,7 +31,8 @@ class Spreadsheet_Dataset(Custom_Dataset):
             raise Exception("Spreadsheet_Dataset.read_resource_settings.parse_resource error: Wrong resource type: " + _resource.type)
         self.filename = make_path_absolute(_resource.data.get("filename"), _resource.base_path)
         self.delimiter = _resource.data.get("delimiter")
-        self.has_header = bool(_resource.data.get("has_header").lower() == "true")
+        if _resource.data.get("has_header"):
+            self.has_header = bool(str(_resource.data.get("has_header")).lower() == "true")
         self.sheet_name = _resource.data.get("sheet_name")
         self.x_offset = _resource.data.get("x_offset")
         self.y_offset = _resource.data.get("y_offset")
@@ -41,7 +42,7 @@ class Spreadsheet_Dataset(Custom_Dataset):
         _resource.data.clear()
         _resource.data["filename"] = self.filename
         _resource.data["delimiter"] = self.delimiter
-        _resource.data["has_header"] = str(self.has_header)
+        _resource.data["has_header"] = self.has_header
         _resource.data["sheet_name"] = self.sheet_name
         _resource.data["x_offset"] = self.x_offset
         _resource.data["y_offset"] = self.y_offset

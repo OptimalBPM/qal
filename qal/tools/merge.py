@@ -37,7 +37,13 @@ class Mapping(object):
     
     def load_from_xml_node(self, _xml_node):
         if _xml_node != None:
-            self.is_key = isnone(_xml_node.find("is_key"))
+
+            _is_key = isnone(_xml_node.find("is_key"))
+            if _is_key.lower() == "true":
+                self.is_key = True
+            else:
+                self.is_key = False
+
             self.src_reference = isnone(_xml_node.find("src_reference"))
             self.src_datatype = isnone(_xml_node.find("src_datatype"))
             self.src_cast_to = isnone(_xml_node.find("src_cast_to"))
@@ -49,7 +55,7 @@ class Mapping(object):
     def as_xml_node(self):
 
         _xml_node = etree.Element("field_mapping")        
-        etree.SubElement(_xml_node, "is_key").text = self.is_key
+        etree.SubElement(_xml_node, "is_key").text = str(self.is_key)
         etree.SubElement(_xml_node, "src_reference").text = self.src_reference
         etree.SubElement(_xml_node, "src_datatype").text = self.src_datatype
         etree.SubElement(_xml_node, "src_cast_to").text = self.src_cast_to
