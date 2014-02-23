@@ -21,8 +21,6 @@ class Mapping(object):
     is_key = None 
     src_reference = None
     src_datatype = None
-    src_cast_to = None
-    result_cast_to = None
     dest_reference = None
     transformations = []
     
@@ -46,8 +44,6 @@ class Mapping(object):
 
             self.src_reference = isnone(_xml_node.find("src_reference"))
             self.src_datatype = isnone(_xml_node.find("src_datatype"))
-            self.src_cast_to = isnone(_xml_node.find("src_cast_to"))
-            self.result_cast_to = isnone(_xml_node.find("result_cast_to"))
             self.dest_reference = isnone(_xml_node.find("dest_reference"))
             self.transformations = make_transformation_array_from_xml_node(_xml_node.find("transformations"))
          
@@ -58,9 +54,7 @@ class Mapping(object):
         etree.SubElement(_xml_node, "is_key").text = str(self.is_key)
         etree.SubElement(_xml_node, "src_reference").text = self.src_reference
         etree.SubElement(_xml_node, "src_datatype").text = self.src_datatype
-        etree.SubElement(_xml_node, "src_cast_to").text = self.src_cast_to
         _xml_node.append(make_transformations_xml_node(self.transformations))
-        etree.SubElement(_xml_node, "result_cast_to").text = self.result_cast_to
         etree.SubElement(_xml_node, "dest_reference").text = self.dest_reference
 
         
@@ -139,7 +133,7 @@ class Merge(object):
             for _curr_mapping in _xml_node.findall("field_mapping"):
                 _new_mapping = Mapping(_xml_node = _curr_mapping)
                 self.mappings.append(_new_mapping)
-                if _new_mapping.is_key == "True":
+                if _new_mapping.is_key == True:
                     self.key_fields.append(_mapping_idx)  
                 _mapping_idx+= 1              
         else:

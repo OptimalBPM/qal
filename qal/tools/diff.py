@@ -96,6 +96,8 @@ def compare(_left, _right, _key_columns, _full):
     elif len(_key_columns) == 3:   
         _left_s = sorted(_left, key=lambda d: ( d[_key_columns[0]], d[_key_columns[1]], d[_key_columns[2]]))
         _right_s = sorted(_right, key=lambda d: ( d[_key_columns[0]], d[_key_columns[1]], d[_key_columns[2]]))
+    elif len(_key_columns) == 0:
+        raise Exception("Error in compare, at least one key column is required.")
     else:
         raise Exception("Err..sorry, only 3 key columns are supported currently, too tired to make it dynamic. :-)")
         

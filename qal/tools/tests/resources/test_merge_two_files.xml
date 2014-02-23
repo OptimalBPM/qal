@@ -6,7 +6,6 @@
 		    <is_key>True</is_key>
 		    <src_reference>emp_no</src_reference>
 		    <src_datatype>string</src_datatype>
-		    <src_cast_to>string</src_cast_to>
 		    <transformations>
 		    	<trim order="1">end</trim>
 		        <if_empty order="2">NULL</if_empty>
@@ -16,14 +15,12 @@
 		        	<max>1</max>
 		        </replace>
 		    </transformations>
-		    <result_cast_to></result_cast_to>
 		    <dest_reference>emp_no</dest_reference>
 		  </field_mapping>
 		  <field_mapping>
 		    <is_key>False</is_key>
 		    <src_reference>name</src_reference>
 		    <src_datatype>string</src_datatype>
-		    <src_cast_to>string</src_cast_to>
 		    <transformations>
 		        <trim order="1"></trim>
 		        <replace order="3">
@@ -37,25 +34,21 @@
 		        	<max/>
 		        </replace>	        
 		    </transformations>
-		    <result_cast_to></result_cast_to>
 		    <dest_reference>name</dest_reference>
 		  </field_mapping>
 		  <field_mapping>
 		    <is_key>False</is_key>
 		    <src_reference>position</src_reference>
 		    <src_datatype>string</src_datatype>
-		    <src_cast_to>string</src_cast_to>
 		    <transformations>
 		        <trim order="1"></trim>
 		    </transformations>
-		    <result_cast_to></result_cast_to>
 		    <dest_reference>position</dest_reference>
 		  </field_mapping>
 		  <field_mapping>
 		    <is_key>False</is_key>
 		    <src_reference>manager</src_reference>
 		    <src_datatype>string</src_datatype>
-		    <src_cast_to>string</src_cast_to>
 		    <transformations>
 		        <trim order="1"></trim>
 		      	<cast order="5">
@@ -63,14 +56,12 @@
 		        	<format_string/>
 		        </cast>
 		    </transformations>
-		    <result_cast_to></result_cast_to>
 		    <dest_reference>manager</dest_reference>
 		  </field_mapping>
 		  <field_mapping>
 		    <is_key>False</is_key>
 		    <src_reference>hiredate</src_reference>
 		    <src_datatype>string</src_datatype>
-		    <src_cast_to>string</src_cast_to>
 		    <transformations>
 		        <trim order="1"></trim>
 		      	<cast order="5">		      		
@@ -78,14 +69,12 @@
 		        	<format_string>%Y-%m-%d %H:%M:%S</format_string>
 		        </cast>
 		    </transformations>
-		    <result_cast_to/>
 		    <dest_reference>hiredate</dest_reference>
 		  </field_mapping>
 		  <field_mapping>
 		    <is_key>False</is_key>
 		    <src_reference>salary</src_reference>
 		    <src_datatype>string</src_datatype>
-		    <src_cast_to>string</src_cast_to>
 		    <transformations>
 		        <trim order="1"></trim>
 		        <replace order="3">
@@ -98,16 +87,13 @@
 		        	<format_string/>
 		        </cast>
 		    </transformations>
-		    <result_cast_to/>
 		    <dest_reference>comm</dest_reference>
 		  </field_mapping>
 		  <field_mapping>
 		    <is_key>False</is_key>
 		    <src_reference>comm</src_reference>
 		    <src_datatype>string</src_datatype>
-		    <src_cast_to>string</src_cast_to>
 		    <transformations>
-		    	
 		        <trim order="1"></trim>
 		        <replace order="3">
 		        	<old>,</old>
@@ -120,14 +106,12 @@
 		        	<format_string/>
 		        </cast>
 		    </transformations>
-		    <result_cast_to></result_cast_to>
 		    <dest_reference>salary</dest_reference>
 		  </field_mapping>
 		  <field_mapping>
 		    <is_key>False</is_key>
 		    <src_reference>dep_no</src_reference>
 		    <src_datatype>string</src_datatype>
-		    <src_cast_to>string</src_cast_to>
 		    <transformations>
 		        <trim order="1"></trim>
 		       	<replace order="3">
@@ -140,7 +124,6 @@
 		        	<format_string/>
 		        </cast>
 		    </transformations>
-		    <result_cast_to></result_cast_to>
 		    <dest_reference>dep_no</dest_reference>
 		  </field_mapping>
 	
