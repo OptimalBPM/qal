@@ -22,7 +22,7 @@ DATASET_LOGLEVEL_ALL = 4
 class Custom_Dataset(object):
     """This is the base class for all (external) data sets in QAL-
     Note: The fields are named like this to not appear as parameters in automatic generators like sql_xml.
-    TODO: Field names should be considered captions, not references.
+    TODO: Field names should be considered captions, not references, and should not be used when looping columns.
     """
 
     field_names = []
@@ -47,9 +47,11 @@ class Custom_Dataset(object):
         
     def cast_text_to_type(self, _text, _field_idx):
         try:
-            if  self.field_types[_field_idx] == "integer":
+            if self.field_types is None:
+                return _text
+            elif self.field_types[_field_idx] == "integer":
                 return int(_text)
-            if  self.field_types[_field_idx] == "float":
+            elif self.field_types[_field_idx] == "float":
                 return float(_text)
             else:
                 return _text
