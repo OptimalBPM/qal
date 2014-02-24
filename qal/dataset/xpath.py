@@ -168,7 +168,11 @@ class XPath_Dataset(Custom_Dataset):
                 for _field_idx in range(0, len(self.field_names)):
                     _curr_path, _curr_attribute = self._structure_parse_qal_xpath(self.field_xpaths[_field_idx])
                     if _curr_path != "":
-                        _item_data = _curr_row.xpath(_curr_path)[0]
+                        _found_node = _curr_row.xpath(_curr_path)
+                        if len(_found_node)>0:
+                            _item_data = _found_node[0]
+                        else:
+                            _item_data = None
                     else:
                         _item_data = _curr_row
 
