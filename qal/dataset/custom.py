@@ -22,10 +22,11 @@ DATASET_LOGLEVEL_ALL = 4
 class Custom_Dataset(object):
     """This is the base class for all (external) data sets in QAL-
     Note: The fields are named like this to not appear as parameters in automatic generators like sql_xml.
+    TODO: Field names should be considered captions, not references.
     """
 
     field_names = []
-    """These are, if applicable, the field names of the dataset"""
+    """These are, if applicable, the field names of the resulting dataset"""
     field_types = []
     """The data types of the fields"""
     data_table = [] 
@@ -58,7 +59,7 @@ class Custom_Dataset(object):
     def log_update_row(self, _row_key, _old_row, _new_row, _comment = None):
         if self._log_level >= DATASET_LOGLEVEL_DETAIL:
             _field_diffs = []
-            for _field_idx in range(len(_new_row)):
+            for _field_idx in range(len(self.field_names)):
                 if _old_row[_field_idx] != _new_row[_field_idx]:
                     _field_diffs.append(self.field_names[_field_idx] + " : " + quote(str(_old_row[_field_idx])) + " =>" + quote(str(_new_row[_field_idx]))) 
                 

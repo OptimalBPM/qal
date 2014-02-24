@@ -265,6 +265,8 @@ class XPath_Dataset(Custom_Dataset):
                         
                     _token_idx+=5
                 else:
+                    if isinstance(_curr_node, str):
+                        raise Exception("_structure_create_xpath_nodes - Internal error: Node is a string, missing node ref, was _add_node_ref used? \nData :" + _curr_node+" | "+_next_name+" | "+_xpath+" | "+str(_tokens))
                     _found_nodes = _curr_node.xpath(_next_name)
                     # Node found, move on
                     if len(_found_nodes) == 1:
@@ -366,7 +368,7 @@ class XPath_Dataset(Custom_Dataset):
        
         
     def _structure_populate_row(self, _node, _row_data):
-        for _field_idx in range(len(_row_data)):
+        for _field_idx in range(len(self.field_xpaths)):
             _curr_path, _curr_attribute = self._structure_parse_qal_xpath(self.field_xpaths[_field_idx])
             _curr_node = self._structure_create_xpath_nodes(_node, _curr_path)
             _new_value = str(_row_data[_field_idx])
