@@ -30,12 +30,9 @@ class Mapping(object):
         """
         if _xml_node != None:
             self.load_from_xml_node(_xml_node)
-        else:
-            raise Exception("Field_Mapping.load_from_xml_node: \"None\" is not a valid Merge node.")     
-    
+
     def load_from_xml_node(self, _xml_node):
         if _xml_node != None:
-
             _is_key = isnone(_xml_node.find("is_key"))
             if _is_key.lower() == "true":
                 self.is_key = True
