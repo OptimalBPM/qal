@@ -142,6 +142,7 @@ class Flatfile_Dataset(Custom_Dataset):
                     self.field_names = [_curr_col.replace("'", "").replace("\"", "") for _curr_col in _row]
                     print("self.field_names :" + str(self.field_names))
                 else:
+                    self.field_names = []
                     for _curr_idx in range(0,len(_row)):
                         self.field_names.append("Field_"+ str(_curr_idx))
 
