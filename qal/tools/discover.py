@@ -3,6 +3,7 @@ Created on Oct 30, 2013
 
 @author: Nicklas Boerjesson
 """
+import sys
 
 
 def discover_database_servers(_ip):
@@ -17,8 +18,8 @@ def discover_services(_ip, _ports, _verbose = False):
     try:
         import nmap                         # import nmap.py module
     except ImportError as imp:
-        if str(imp) == "No module named nmap":
-            raise Exception('No python Nmap wrapper, run: pip-3.x install python-nmap')                     
+        if str(imp) == "No module named 'nmap'":
+            raise Exception('No python Nmap wrapper, run: "pip-'+ get_python_versions(_style="Minor") + ' install python-nmap" as root')
         else:
             raise imp
 
@@ -58,5 +59,20 @@ def discover_services(_ip, _ports, _verbose = False):
                             print(_nm[_host].hostname() + " - " +_nm[_host][_proto][_port]['product'] + _host)
                         _detected_services.append( [_host, _nm[_host].hostname(), _nm[_host][_proto][_port]['product']]) 
 
-    return _detected_services   
-                        
+    return _detected_services
+
+def get_python_versions(_style = None):
+    _major, _minor, _release, _state, _build = sys.version_info
+
+    if _style == "Major":
+        return str(_major)
+    elif _style == "Minor":
+        return str(_major) + "." + str(_minor)
+    elif _style == "Release":
+        return str(_major) + "." + str(_minor) + "." + str(_release)
+    elif _style == "Full" or _style is None:
+        return str(_major) + "." + str(_minor) + "." + str(_release) + " " + _state + " build " + str(_build)
+    else:
+        raise Exception("Error in get_python_versions: Invalid _style-parameter :'"+ _style + "'")
+
+
