@@ -14,7 +14,7 @@ from datetime import date, datetime
 
 
 def isnone( _node):
-    if _node == None or _node.text == None:
+    if _node is None or _node.text is None:
         return None
     else:
         return _node.text  
@@ -122,7 +122,7 @@ class If_empty(Custom_Transformation):
 
     def transform(self, _value):
         """Make transformation"""
-        if _value == None or _value == "":
+        if _value is None or _value == "":
             return self.value
         else:
             return _value
@@ -151,7 +151,7 @@ class Cast(Custom_Transformation):
     def transform(self, _value):
         """Make cast"""
         try:
-            if _value == None or _value =="":
+            if _value is None or _value =="":
                 return _value
             if self.dest_type in ['string', 'string(255)', 'string(3000)']:
                 if isinstance(_value, date):
@@ -206,11 +206,11 @@ class Replace(Custom_Transformation):
 
     def transform(self, _value):
         """Make transformation"""
-        if self.old == None:
+        if self.old is None:
             raise Exception("Replace.transform: old value has to have a value.")
         else:
             _old = self.old
-        if self.new == None:
+        if self.new is None:
             _new = ""
         else:
             _new = self.new
