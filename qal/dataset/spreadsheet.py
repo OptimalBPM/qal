@@ -3,7 +3,7 @@ Created on Dec 28, 2013
 
 @author: Nicklas Boerjesson
 '''
-from qal.common.strings import make_path_absolute
+from qal.common.strings import make_path_absolute, bool_to_binary_int, string_to_bool
 
 from qal.dataset.custom import Custom_Dataset
 
@@ -32,7 +32,7 @@ class Spreadsheet_Dataset(Custom_Dataset):
         self.filename = make_path_absolute(_resource.data.get("filename"), _resource.base_path)
         self.delimiter = _resource.data.get("delimiter")
         if _resource.data.get("has_header"):
-            self.has_header = bool(str(_resource.data.get("has_header")).lower() == "true")
+            self.has_header = string_to_bool(_resource.data.get("has_header"))
         self.sheet_name = _resource.data.get("sheet_name")
         self.x_offset = _resource.data.get("x_offset")
         self.y_offset = _resource.data.get("y_offset")

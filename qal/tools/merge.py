@@ -7,6 +7,7 @@ Created on Nov 3, 2013
 from lxml import etree
 
 from qal.common.resources import Resources
+from qal.common.strings import string_to_bool
 from qal.tools.transform import make_transformation_array_from_xml_node, make_transformations_xml_node, perform_transformations
 from qal.dataset.factory import dataset_from_resource
 
@@ -33,12 +34,7 @@ class Mapping(object):
 
     def load_from_xml_node(self, _xml_node):
         if _xml_node != None:
-            _is_key = isnone(_xml_node.find("is_key"))
-            if _is_key.lower() == "true":
-                self.is_key = True
-            else:
-                self.is_key = False
-
+            self.is_key = (string_to_bool(isnone(_xml_node.find("is_key"))
             self.src_reference = isnone(_xml_node.find("src_reference"))
             self.src_datatype = isnone(_xml_node.find("src_datatype"))
             self.dest_reference = isnone(_xml_node.find("dest_reference"))
@@ -155,9 +151,9 @@ class Merge(object):
 
     def load_settings_from_xml_node(self, _xml_node):
         if _xml_node != None:
-            self.insert = isnone(_xml_node.find("insert"))
-            self.update = isnone(_xml_node.find("update"))
-            self.delete = isnone(_xml_node.find("delete"))     
+            self.insert = string_to_bool(isnone(_xml_node.find("insert")))
+            self.update = string_to_bool(isnone(_xml_node.find("update")))
+            self.delete = string_to_bool(isnone(_xml_node.find("delete")))
         else:
             raise Exception("Merge.load_settings_from_xml_node: Missing 'settings'-node.")     
                

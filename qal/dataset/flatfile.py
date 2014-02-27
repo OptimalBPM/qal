@@ -6,7 +6,7 @@ Created on Sep 14, 2012
 from datetime import date
 import datetime
 from itertools import islice
-from qal.common.strings import make_path_absolute
+from qal.common.strings import make_path_absolute, string_to_bool
 
 from qal.dataset.custom import Custom_Dataset
 
@@ -87,7 +87,7 @@ class Flatfile_Dataset(Custom_Dataset):
         self.filename = _resource.data.get("filename")
         self.delimiter = _resource.data.get("delimiter")
         if _resource.data.get("has_header"):
-            self.has_header = bool(str(_resource.data.get("has_header")).lower() == "true")
+            self.has_header = string_to_bool(_resource.data.get("has_header"))
         self.csv_dialect = _resource.data.get("csv_dialect")
         self.quoting = _resource.data.get("quoting")
         self.escapechar = _resource.data.get("escapechar")

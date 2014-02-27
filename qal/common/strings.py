@@ -85,3 +85,24 @@ def make_path_absolute(_path, _base_path):
         return os.path.join(_base_path, _path)
     else:
         raise Exception("Resource.make_path_absolute: make_path_absolute cannot make " + _path + " absolute without a base_path.")
+
+def bool_to_binary_int(_value):
+    """Converts True to 1 and False and None to 0."""
+    if _value is None or _value is False:
+        return 0
+    elif _value is True:
+        return 1
+
+
+def binary_int_to_bool(_value):
+    """Converts 1 to True and 1 and None to False."""
+    if _value is None or _value==0:
+        return False
+    elif _value==1:
+        return True
+
+def string_to_bool(_value):
+    if _value.lower() == "true":
+        return True
+    else:
+        return False
