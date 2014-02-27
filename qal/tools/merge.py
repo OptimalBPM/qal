@@ -65,7 +65,9 @@ class Merge(object):
     destination = None
     resources = None
     destination_log_level = None
-    
+    insert = None
+    delete = None
+    update = None
     """
     The merge class takes two datasets and merges them together.
     """
@@ -252,7 +254,7 @@ class Merge(object):
         
 
         """Merge the datasets"""
-        _merged_dataset = self.destination.apply_new_data(_mapped_source, self.key_fields)
+        _merged_dataset = self.destination.apply_new_data(_mapped_source, self.key_fields, _insert=self.insert, _update = self.update, _delete=self.delete)
 
         self.destination.save()
         

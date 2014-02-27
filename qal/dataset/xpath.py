@@ -338,7 +338,7 @@ class XPath_Dataset(Custom_Dataset):
         _root_node_name, self._structure_row_node_name, _parent_xpath = self._structure_parse_root_path(self.rows_xpath)
         
         # If the structure already loaded?
-        if not self._structure_row_node_parent:
+        if self._structure_row_node_parent is None:
             
             # If not try to load, or create file.    
             import os

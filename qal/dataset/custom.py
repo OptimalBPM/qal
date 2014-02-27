@@ -171,7 +171,7 @@ class Custom_Dataset(object):
         #print("After apply:  " + str(_sorted_dest))            
         return self.data_table        
     
-    def apply_new_data(self, _new_data_table, _key_fields):
+    def apply_new_data(self, _new_data_table, _key_fields, _insert=None, _update=None, _delete=None):
         """This function applies a new data table unto the existing, matches are made using the key fields.
       
         
@@ -189,7 +189,7 @@ class Custom_Dataset(object):
         self._structure_init()        
         
         # Compare the source and destination table to generate difference sets
-        _delete, _insert, _update, _dest_sorted = compare(
+        _deletes, _inserts, _updates, _dest_sorted = compare(
                                                           _left = _new_data_table, 
                                                           _right = self.data_table, 
                                                           _key_columns = _key_fields, 
@@ -197,7 +197,16 @@ class Custom_Dataset(object):
         
         # Merge the data into the structure. 
         # Note: in RDBMS_Dataset, this currently means writing to the underlying database, since there is no in-memory structure.
-        self.data_table = self._structure_apply_merge(_insert, _update, _delete, _dest_sorted)
+
+        # Clear out all changes that should not be made
+        if _delete is None or _delete==False:
+            _deletes=None
+        if _insert is None or _insert==False:
+            _inserts=None
+        if _update is None or _update==False:
+            _updates=None
+
+        self.data_table = self._structure_apply_merge(_inserts, _updates, _deletes, _dest_sorted)
         
         return self.data_table
                             
