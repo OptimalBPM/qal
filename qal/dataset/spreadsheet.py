@@ -32,7 +32,9 @@ class Spreadsheet_Dataset(Custom_Dataset):
         self.filename = make_path_absolute(_resource.data.get("filename"), _resource.base_path)
         self.delimiter = _resource.data.get("delimiter")
         if _resource.data.get("has_header"):
-            self.has_header = string_to_bool(_resource.data.get("has_header"))
+            self.has_header = string_to_bool(str(_resource.data.get("has_header")))
+        else:
+            self.has_header = None
         self.sheet_name = _resource.data.get("sheet_name")
         self.x_offset = _resource.data.get("x_offset")
         self.y_offset = _resource.data.get("y_offset")

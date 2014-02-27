@@ -60,9 +60,9 @@
         </table_mappings>
     </mappings>
     <settings>
-        <insert>true</insert>
-        <update>true</update>
-        <delete>true</delete>
+        <insert>True</insert>
+        <update>True</update>
+        <delete>True</delete>
     </settings>
     <resources>
         <resource caption="destination" type="RDBMS" uuid="dest_uuid">

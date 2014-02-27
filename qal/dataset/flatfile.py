@@ -87,7 +87,9 @@ class Flatfile_Dataset(Custom_Dataset):
         self.filename = _resource.data.get("filename")
         self.delimiter = _resource.data.get("delimiter")
         if _resource.data.get("has_header"):
-            self.has_header = string_to_bool(_resource.data.get("has_header"))
+            self.has_header = string_to_bool(str(_resource.data.get("has_header")))
+        else:
+            self.has_header = None
         self.csv_dialect = _resource.data.get("csv_dialect")
         self.quoting = _resource.data.get("quoting")
         self.escapechar = _resource.data.get("escapechar")

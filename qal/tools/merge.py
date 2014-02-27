@@ -34,7 +34,7 @@ class Mapping(object):
 
     def load_from_xml_node(self, _xml_node):
         if _xml_node != None:
-            self.is_key = (string_to_bool(isnone(_xml_node.find("is_key"))
+            self.is_key = string_to_bool(isnone(_xml_node.find("is_key")))
             self.src_reference = isnone(_xml_node.find("src_reference"))
             self.src_datatype = isnone(_xml_node.find("src_datatype"))
             self.dest_reference = isnone(_xml_node.find("dest_reference"))
@@ -101,9 +101,9 @@ class Merge(object):
     
     def _settings_as_xml_node(self):
         _xml_node = etree.Element("settings")
-        etree.SubElement(_xml_node, "insert").text = self.insert
-        etree.SubElement(_xml_node, "update").text = self.update
-        etree.SubElement(_xml_node, "delete").text = self.delete
+        etree.SubElement(_xml_node, "insert").text = str(self.insert)
+        etree.SubElement(_xml_node, "update").text = str(self.update)
+        etree.SubElement(_xml_node, "delete").text = str(self.delete)
         return _xml_node    
     
     
