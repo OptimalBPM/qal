@@ -81,7 +81,7 @@ class Merge_test(unittest.TestCase):
         _field_names = ["ID", "Name", "Changed"]
         _field_types = ["integer", "string(200)", "timestamp"]
         
-        _source_dal = Database_Abstraction_Layer(_resource= _resources.get_resource("dest_uuid"))
+        _source_dal = Database_Abstraction_Layer(_resource= _resources.get_resource("source_uuid"))
         _source_table_name = 'table_src'
         _source_dal.connect_to_db()
 
@@ -90,7 +90,7 @@ class Merge_test(unittest.TestCase):
         print("merge_test.test_Merge_tables: Staging destination")
         _dest_data = [[1, 'dest', datetime.datetime(2001, 1, 1, 0, 0)], [2, 'dest', datetime.datetime(2001, 1, 2, 0, 0)], [3, 'dest', datetime.datetime(2014, 1, 4, 0, 0)]]
         
-        _dest_dal = Database_Abstraction_Layer(_resource= _resources.get_resource("source_uuid"))
+        _dest_dal = Database_Abstraction_Layer(_resource= _resources.get_resource("dest_uuid"))
         _dest_table_name = 'table_dst'
         _dest_dal.connect_to_db()
 
@@ -112,7 +112,7 @@ class Merge_test(unittest.TestCase):
         
         print("Source:\n" + pretty_list(_merge.source.data_table)) 
         print("Result:\n" + pretty_list(_dest_result))
-        print("Log:\n" + pretty_list(_merge.destination._log)) 
+        print("Log:\n" + pretty_list(_merge.destination._log))
         
         self.assertEqual(_dest_result, c_table_result)
 
