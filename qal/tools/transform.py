@@ -166,11 +166,11 @@ class Cast(Custom_Transformation):
     def _transform(self, _value):
         """Make cast"""
         try:
-            if _value is None or _value =="":
+            if _value is None or _value=="":
                 return _value
             if self.dest_type in ['string', 'string(255)', 'string(3000)']:
                 if isinstance(_value, date):
-                    if self.format_string != None:
+                    if self.format_string is not None and self.format_string !="":
                         return _value.strftime(self.format_string)
                     else:
                         return _value.strftime("%Y-%m-%d %H:%M:%S")
@@ -186,7 +186,7 @@ class Cast(Custom_Transformation):
             elif self.dest_type in ['integer', 'serial']:
                 return int(_value)
             elif self.dest_type in ['timestamp']:
-                if self.format_string != None:
+                if self.format_string is not None and self.format_string !="":
                     return datetime.strptime(_value, self.format_string)
                 else:
                     return datetime.strptime(_value, "%Y-%m-%d %H:%M:%S")
