@@ -53,7 +53,7 @@ class Custom_Transformation(object):
     
     """Order dictates when the transformation is run."""
     order = None
-
+    """On done is an event, triggered when the transformation has been run. Conveys the resulting value or error message."""
     on_done = None
     
     def __init__(self, _xml_node = None):
