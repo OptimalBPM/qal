@@ -53,6 +53,8 @@ class Custom_Transformation(object):
     
     """Order dictates when the transformation is run."""
     order = None
+
+    on_done = None
     
     def __init__(self, _xml_node = None):
         
@@ -62,6 +64,11 @@ class Custom_Transformation(object):
         
         if _xml_node != None:
             self.load_from_xml_node(_xml_node)
+
+    def do_on_done(self, _value=None, _error=None):
+        if self.on_done:
+            self.on_done(_value, _error)
+        return _value
             
     def init_base_to_node(self, _name):
         _xml_node = etree.Element(_name)
@@ -76,8 +83,16 @@ class Custom_Transformation(object):
             self.order = _xml_node.get("order")
         else:
             raise Exception("Custom_Transformation.load_from_xml_node : Base class need a destination node.")  
-    
+
     def transform(self, _value):
+        try:
+            _result = self._transform(_value)
+            return self.do_on_done(_value=_result)
+        except Exception as e:
+            self.do_on_done(_error=str(e))
+            raise
+
+    def _transform(self, _value):
         """Make transformation"""
         raise Exception("Custom_Transformation.transform : Not implemented in base class.")            
 
@@ -97,7 +112,7 @@ class Trim(Custom_Transformation):
         
         return _xml_node
 
-    def transform(self, _value):
+    def _transform(self, _value):
         """Make transformation"""
         if self.value == "beginning":
             return _value.lstrip()
@@ -120,7 +135,7 @@ class If_empty(Custom_Transformation):
         
         return _xml_node
 
-    def transform(self, _value):
+    def _transform(self, _value):
         """Make transformation"""
         if _value is None or _value == "":
             return self.value
@@ -148,7 +163,7 @@ class Cast(Custom_Transformation):
         
         return _xml_node
 
-    def transform(self, _value):
+    def _transform(self, _value):
         """Make cast"""
         try:
             if _value is None or _value =="":
@@ -204,7 +219,7 @@ class Replace(Custom_Transformation):
         
         return _xml_node
 
-    def transform(self, _value):
+    def _transform(self, _value):
         """Make transformation"""
         if self.old is None:
             raise Exception("Replace.transform: old value has to have a value.")
