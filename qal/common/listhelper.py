@@ -45,7 +45,12 @@ def pretty_list(_array):
                 return "[" + str(_data) + "]"       
     
     _result = ""
-    if len(_array) > 0:
+    if _array is None:
+        return False
+    elif len(_array)==1:
+        return "[\n" + _handle_types(_array[0]) + "\n]"
+    elif len(_array) > 0:
+
         for _row_idx in range(len(_array) - 1) :
             _result+= _handle_types(_array[_row_idx]) + ",\n"
 
