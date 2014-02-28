@@ -240,7 +240,7 @@ class Merge(object):
         
         return _mapped_source
            
-    def execute(self):
+    def execute(self, _commit = True):
         
         # Load resources
         self._load_resources()
@@ -250,9 +250,10 @@ class Merge(object):
         
 
         """Merge the datasets"""
-        _merged_dataset = self.destination.apply_new_data(_mapped_source, self.key_fields, _insert=self.insert, _update = self.update, _delete=self.delete)
+        _merged_dataset, _deletes, _inserts, _updates = self.destination.apply_new_data(_mapped_source, self.key_fields, _insert=self.insert, _update = self.update, _delete=self.delete, _commit=_commit)
 
-        self.destination.save()
+        if _commit:
+            self.destination.save()
         
-        return _merged_dataset, self.destination._log
+        return _merged_dataset, self.destination._log, _deletes, _inserts, _updates
 

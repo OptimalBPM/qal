@@ -102,19 +102,19 @@ class Custom_Dataset(object):
         raise Exception('Custom_Dataset.save is not implemented in class: ' + self.__class__.__name__)
 
     
-    def _structure_insert_row(self, _row_idx, _row_data, _no_logging = False):
+    def _structure_insert_row(self, _row_idx, _row_data, _commit=None,_no_logging = False):
         """Inserts a row at _row_idx in the self.data_table, containing _row_data\
         Commonly overridden by subclasses"""
         if _no_logging == False:
             self.log_insert(_row_idx, _row_data)
         self.data_table.insert(_row_idx,_row_data)
-    def _structure_update_row(self, _row_idx, _row_data, _no_logging = False):
+    def _structure_update_row(self, _row_idx, _row_data, _commit=None, _no_logging = False):
         """Updates the row at _row_idx in the self.data_table with _row_data.\
         Commonly overridden by subclasses"""
         if _no_logging == False:
             self.log_update_row(_row_idx, self.data_table[_row_idx], _row_data)
         self.data_table[_row_idx] = _row_data
-    def _structure_delete_row(self, _row_idx, _no_logging = False):
+    def _structure_delete_row(self, _row_idx, _commit=None, _no_logging = False):
         """Deletes a row at _row_idx from the self.data_table.\
         Commonly overridden by subclasses"""
         if _no_logging == False:
@@ -128,7 +128,7 @@ class Custom_Dataset(object):
         pass
 
         
-    def _structure_apply_merge(self, _insert, _update, _delete, _sorted_dest):
+    def _structure_apply_merge(self, _insert, _update, _delete, _sorted_dest, _commit=True):
         
         #print("_insert: " + str(_insert))
         #print("Before apply: " + str(_sorted_dest))
@@ -156,22 +156,22 @@ class Custom_Dataset(object):
   
             # Make deletes
             while _delete_idx > -1 and _delete[_delete_idx][1] == _curr_row_idx:
-                self._structure_delete_row(_curr_row_idx)
+                self._structure_delete_row(_curr_row_idx, _commit=_commit)
                 _delete_idx-= 1
             # Make updates
             while _update_idx > -1 and _update[_update_idx][1] == _curr_row_idx:
-                self._structure_update_row(_curr_row_idx, _update[_update_idx][2])
+                self._structure_update_row(_curr_row_idx, _update[_update_idx][2], _commit=_commit)
                 _update_idx-= 1
                 
             # Make inserts
             while _insert_idx > -1 and _insert[_insert_idx][1] == _curr_row_idx:
-                self._structure_insert_row(_curr_row_idx, _insert[_insert_idx][2]) 
+                self._structure_insert_row(_curr_row_idx, _insert[_insert_idx][2], _commit=_commit)
                 _insert_idx-= 1
         
         #print("After apply:  " + str(_sorted_dest))            
         return self.data_table        
     
-    def apply_new_data(self, _new_data_table, _key_fields, _insert=None, _update=None, _delete=None):
+    def apply_new_data(self, _new_data_table, _key_fields, _insert=None, _update=None, _delete=None, _commit=True):
         """This function applies a new data table unto the existing, matches are made using the key fields.
       
         
@@ -206,9 +206,9 @@ class Custom_Dataset(object):
         if _update is None or _update==False:
             _updates=None
 
-        self.data_table = self._structure_apply_merge(_inserts, _updates, _deletes, _dest_sorted)
+        self.data_table = self._structure_apply_merge(_inserts, _updates, _deletes, _dest_sorted, _commit=_commit)
         
-        return self.data_table
+        return self.data_table, _deletes, _inserts, _updates
                             
                 
         

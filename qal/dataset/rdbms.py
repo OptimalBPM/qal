@@ -169,45 +169,48 @@ class RDBMS_Dataset(Custom_Dataset):
        
    
              
-    def _structure_insert_row(self, _row_idx, _row_data):
-        """Override parent to add SQL handling"""
-        _execute_many_data = self._extract_data_columns_from_diff_row(range(len(self.field_names)), _row_data)
-        
-         
-        # Apply and commit changes to the structure
-        
-        self.dal.executemany(self._structure_insert_sql, [_execute_many_data])
+    def _structure_insert_row(self, _row_idx, _row_data, _commit=True, _no_logging=None):
+        if _commit is True:
+            """Override parent to add SQL handling"""
+            _execute_many_data = self._extract_data_columns_from_diff_row(range(len(self.field_names)), _row_data)
 
-        self.log_insert("N/A in RDBMS", _row_data, "Destination table: " + self.table_name)
+
+            # Apply and commit changes to the structure
+
+            self.dal.executemany(self._structure_insert_sql, [_execute_many_data])
+            if not _no_logging:
+                self.log_insert("N/A in RDBMS", _row_data, "Destination table: " + self.table_name)
         # Call parent
-        super(RDBMS_Dataset, self)._structure_insert_row(_row_idx,_row_data, _no_logging= True)
+        super(RDBMS_Dataset, self)._structure_insert_row(_row_idx,_row_data, _no_logging=_commit)
         
-    def _structure_update_row(self, _row_idx, _row_data):
-        """Override parent to add SQL handling"""
-        # To satisfy the Verb_UPDATE instance, create a two-dimensional array, leftmost columns are data, rightmost are keys.
-                 
-        _field_idx_ex_keys = list(set(range(len(self.field_names))) - set(self._structure_key_fields))
-        _execute_data = self._extract_data_columns_from_diff_row(_field_idx_ex_keys + self._structure_key_fields, _row_data)
-        
-        # Apply and commit changes to the database        
-        self.dal.executemany(self._structure_update_sql,  [_execute_data])  
+    def _structure_update_row(self, _row_idx, _row_data, _commit=True, _no_logging=None):
+        if _commit is True:
+            """Override parent to add SQL handling"""
+            # To satisfy the Verb_UPDATE instance, create a two-dimensional array, leftmost columns are data, rightmost are keys.
 
-        self.log_update_row(_row_idx, self.data_table[_row_idx], _row_data, "Destination table: " + self.table_name)
+            _field_idx_ex_keys = list(set(range(len(self.field_names))) - set(self._structure_key_fields))
+            _execute_data = self._extract_data_columns_from_diff_row(_field_idx_ex_keys + self._structure_key_fields, _row_data)
+
+            # Apply and commit changes to the database
+            self.dal.executemany(self._structure_update_sql,  [_execute_data])
+            if not _no_logging:
+                self.log_update_row(_row_idx, self.data_table[_row_idx], _row_data, "Destination table: " + self.table_name)
         # Call parent
-        super(RDBMS_Dataset, self)._structure_update_row(_row_idx,_row_data, _no_logging= True)
+        super(RDBMS_Dataset, self)._structure_update_row(_row_idx,_row_data, _no_logging=_commit)
 
-    def _structure_delete_row(self, _row_idx):
-        """Override parent to add SQL handling"""
-                
-        # Extract the key data
-        _key_values = self._extract_data_columns_from_diff_row(self._structure_key_fields, self.data_table[_row_idx])
-        # Make the deletes
-        self.dal.executemany(self._structure_delete_sql, [_key_values])
+    def _structure_delete_row(self, _row_idx, _commit=True, _no_logging=None):
+        if _commit is True:
+            """Override parent to add SQL handling"""
 
-        self.log_delete(_key_values, self.data_table[_row_idx], "Destination table: " + self.table_name)
+            # Extract the key data
+            _key_values = self._extract_data_columns_from_diff_row(self._structure_key_fields, self.data_table[_row_idx])
+            # Make the deletes
+            self.dal.executemany(self._structure_delete_sql, [_key_values])
+            if not _no_logging:
+                self.log_delete(_key_values, self.data_table[_row_idx], "Destination table: " + self.table_name)
 
         # Call parent
-        super(RDBMS_Dataset, self)._structure_delete_row(_row_idx, _no_logging= True)
+        super(RDBMS_Dataset, self)._structure_delete_row(_row_idx, _no_logging=_commit)
         #self.data_table.pop(_row_idx)
                 
     def load(self):

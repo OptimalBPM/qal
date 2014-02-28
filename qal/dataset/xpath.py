@@ -384,43 +384,46 @@ class XPath_Dataset(Custom_Dataset):
             if _curr_attribute:
                 _curr_node.set(_curr_attribute[1:], _new_value)
             else:
-                _curr_node.text = _new_value 
-            
-             
-    def _structure_insert_row(self, _row_idx, _row_data):
-        """Override parent to add XML handling"""
+                _curr_node.text = _new_value
 
-        # Last column is a reference
-        print("_row_data: " + str(_row_data))
-        _row_node = self.data_table[_row_idx][len(self.data_table[_row_idx]) -1]
-        
-        _new_element = etree.Element(self._structure_row_node_name)
-        
-        # Insert row node
-        self._structure_row_node_parent.insert(_row_idx, _new_element)
-        
-        self._structure_populate_row(_new_element, _row_data)
+             
+    def _structure_insert_row(self, _row_idx, _row_data, _commit=True, _no_logging=None):
+        if _commit is True:
+            """Override parent to add XML handling"""
+
+            # Last column is a reference
+            print("_row_data: " + str(_row_data))
+            _row_node = self.data_table[_row_idx][len(self.data_table[_row_idx]) -1]
+
+            _new_element = etree.Element(self._structure_row_node_name)
+
+            # Insert row node
+            self._structure_row_node_parent.insert(_row_idx, _new_element)
+
+            self._structure_populate_row(_new_element, _row_data)
 
         # Call parent
         super(XPath_Dataset, self)._structure_insert_row(_row_idx,_row_data)
         
-    def _structure_update_row(self, _row_idx, _row_data):
-        """Override parent to add XML handling"""
+    def _structure_update_row(self, _row_idx, _row_data, _commit=True, _no_logging=None):
+        if _commit is True:
+            """Override parent to add XML handling"""
 
-        # Last column is a reference
-        print("_row_data: " + str(_row_data))
-        _row_node = self.data_table[_row_idx][len(self.data_table[_row_idx]) -1]
-        
-       
-        self._structure_populate_row(_row_node, _row_data)
+            # Last column is a reference
+            print("_row_data: " + str(_row_data))
+            _row_node = self.data_table[_row_idx][len(self.data_table[_row_idx]) -1]
+
+
+            self._structure_populate_row(_row_node, _row_data)
         
         # Call parent
         super(XPath_Dataset, self)._structure_update_row(_row_idx,_row_data)
 
-    def _structure_delete_row(self, _row_idx):
-        """Override parent to add XML handling"""
-        _row_node = self.data_table[_row_idx][len(self.data_table[_row_idx]) -1]
-        self._structure_row_node_parent.remove(_row_node)
+    def _structure_delete_row(self, _row_idx, _commit=True, _no_logging=None):
+        if _commit is True:
+            """Override parent to add XML handling"""
+            _row_node = self.data_table[_row_idx][len(self.data_table[_row_idx]) -1]
+            self._structure_row_node_parent.remove(_row_node)
         # Call parent
         super(XPath_Dataset, self)._structure_delete_row(_row_idx)
         #self.data_table.pop(_row_idx)
