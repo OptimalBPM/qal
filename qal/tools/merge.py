@@ -6,7 +6,7 @@ Created on Nov 3, 2013
 
 from lxml import etree
 
-from qal.common.resources import Resources
+from qal.common.resources import Resources, Resource
 from qal.common.strings import string_to_bool
 from qal.tools.transform import make_transformation_array_from_xml_node, make_transformations_xml_node, perform_transformations
 from qal.dataset.factory import dataset_from_resource
@@ -105,9 +105,22 @@ class Merge(object):
         _xml_node.append(self._mappings_as_xml_node())
         _xml_node.append(self._settings_as_xml_node())
         if self.source is not None:
-            self.source.write_resource_settings(self.resources.get_resource('source_uuid'))
+            _source_resource = None
+            if self.resources is not None:
+                _source_resource = self.resources.get_resource('source_uuid')
+
+            if _source_resource is None:
+                _source_resource = Resource()
+            self.source.write_resource_settings(_source_resource)
         if self.destination is not None:
-            self.destination.write_resource_settings(self.resources.get_resource('dest_uuid'))
+            _dest_resource = None
+            if self.resources is not None:
+                _dest_resource = self.resources.get_resource('dest_uuid')
+
+            if _dest_resource is None:
+                _dest_resource = Resource()
+
+            self.destination.write_resource_settings(_dest_resource)
 
         if self.source is not None or self.destination is not None:
             # If either aren't set, anything in resources are likely to be residuals from earlier.
