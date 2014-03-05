@@ -104,23 +104,37 @@ class Merge(object):
         _xml_node = etree.Element('merge')
         _xml_node.append(self._mappings_as_xml_node())
         _xml_node.append(self._settings_as_xml_node())
-        if self.source is not None:
-            _source_resource = None
-            if self.resources is not None:
-                _source_resource = self.resources.get_resource('source_uuid')
 
+        if self.resources is None:
+            self.resources = Resources()
+
+        if self.source is not None:
+            try:
+                _source_resource = self.resources.get_resource('source_uuid')
+            except:
+                _source_resource = None
             if _source_resource is None:
                 _source_resource = Resource()
+                _source_resource.uuid='source_uuid'
+                _source_resource.caption = "source"
+                self.resources.local_resources['source_uuid'] = _source_resource
             self.source.write_resource_settings(_source_resource)
         if self.destination is not None:
-            _dest_resource = None
-            if self.resources is not None:
+            try:
                 _dest_resource = self.resources.get_resource('dest_uuid')
-
+            except:
+                _dest_resource = None
             if _dest_resource is None:
                 _dest_resource = Resource()
+                _dest_resource.uuid='dest_uuid'
+                _dest_resource.caption = "destination"
+                self.resources.local_resources['dest_uuid'] = _dest_resource
 
             self.destination.write_resource_settings(_dest_resource)
+
+        """ TODO: Handle remotely defined resources properly. This way, they are included in the XML, which perhaps isn't
+            right. Perhaps get_resource should return a tuple with a source parameter.
+        """
 
         if self.source is not None or self.destination is not None:
             # If either aren't set, anything in resources are likely to be residuals from earlier.

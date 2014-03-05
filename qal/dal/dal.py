@@ -50,7 +50,7 @@ class Database_Abstraction_Layer(object):
             self.db_username    = _ini_parser.Parser.get("database", "username")
             self.db_password    = _ini_parser.Parser.get("database", "password")
             self.db_port        = _ini_parser.Parser.get("database", "port")
-            self.autocommit     = _ini_parser.get("database", "autocommit", True)        
+            self.db_autocommit     = _ini_parser.get("database", "autocommit", True)
             if _ini_parser.Parser.has_option("database", "instance"):
                 self.db_instance    = _ini_parser.Parser.get("database", "instance")
         else:
@@ -67,7 +67,7 @@ class Database_Abstraction_Layer(object):
         self.db_username =     _resource.data.get("db_username")
         self.db_password =     _resource.data.get("db_password")
         self.db_port =         _resource.data.get("db_port")
-        self.autocommit =      _resource.data.get("db_autocommit")
+        self.db_autocommit =      _resource.data.get("db_autocommit")
 
     def write_resource_settings(self, _resource):
         _resource.type = 'RDBMS'
@@ -79,7 +79,7 @@ class Database_Abstraction_Layer(object):
         _resource.data["db_username"] = self.db_username
         _resource.data["db_password"] = self.db_password
         _resource.data["db_port"] = self.db_port
-        _resource.data["db_autocommit"] = self.autocommit
+        _resource.data["db_autocommit"] = self.db_autocommit
 
                        
     def connect_to_db(self):
@@ -117,7 +117,7 @@ class Database_Abstraction_Layer(object):
             else:
                 raise Exception("connect_to_db: ODBC connections on " + platform.system() + " not supported yet.")
             print("Connect to database using connection string:  " + connstr)
-            Conn = pyodbc.connect(connstr, autocommit=self.autocommit);      
+            Conn = pyodbc.connect(connstr, autocommit=self.db_autocommit);
 
         elif (self.db_type == DB_DB2):
             import pyodbc
@@ -132,7 +132,7 @@ class Database_Abstraction_Layer(object):
             # DSN-less?{IBM DB2 ODBC DRIVER} ?? http://www.webmasterworld.com/forum88/4434.htm
             connstr =  "Driver=" + drivername + ";Database=" + self.db_databasename +";hostname=" + self.db_server + ";port="+str(self.db_port) + ";protocol=TCPIP; uid=" + self.db_username + "; pwd=" + self.db_password
             #connstr = "DSN=" + self.db_server + ";UID=" + self.db_username + ";PWD=" + self.db_password 
-            Conn = pyodbc.connect(connstr, autocommit=self.autocommit)
+            Conn = pyodbc.connect(connstr, autocommit=self.db_autocommit)
         
         # cx_Oracle in python 3.X not checked yet.
         elif (self.db_type == DB_ORACLE):
@@ -140,7 +140,7 @@ class Database_Abstraction_Layer(object):
             connstr = self.db_username + '/' +  self.db_password + '@' + self.db_server + ':' + str(self.db_port) + '/' + self.db_instance
             print(connstr)
             Conn = cx_Oracle.connect(connstr) 
-            Conn.autocommit=self.autocommit
+            Conn.autocommit=self.db_autocommit
                   
         else:
             raise Exception("connect_to_db: Invalid database type.")              

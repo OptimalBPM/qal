@@ -84,6 +84,8 @@ class Resources(XML_Translation):
         that has the same arguments as the get_resource-function.  
         '''
 
+        self.local_resources = dict()
+
         if _base_path != None:
             self.base_path = os.path.dirname(_base_path)
         else:
@@ -91,6 +93,7 @@ class Resources(XML_Translation):
 
         if _resources_node != None or _resources_xml != None:
             self.parse_xml(_resources_node, _resources_xml)
+
 
 
 
