@@ -54,10 +54,6 @@
                 <dest_reference>Changed</dest_reference>
             </field_mapping>
         </field_mappings>
-        <table_mappings>
-            <source_table>table_src</source_table>
-            <destination_table>table_dst</destination_table>
-        </table_mappings>
     </mappings>
     <settings>
         <insert>True</insert>

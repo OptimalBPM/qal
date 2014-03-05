@@ -128,10 +128,6 @@
 		  </field_mapping>
 	
 	  </field_mappings>
-	  <table_mappings>
-	    <source_table></source_table>
-	    <destination_table></destination_table>
-	  </table_mappings>  
   </mappings>
   <settings>
   	<insert>True</insert>

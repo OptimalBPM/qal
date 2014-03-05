@@ -86,17 +86,10 @@ class Merge(object):
         
         return _xml_node    
 
-    def _table_mappings_as_xml_node(self):
-        _xml_node = etree.Element("table_mappings")
-        etree.SubElement(_xml_node, "source_table").text = self.source_table
-        etree.SubElement(_xml_node, "destination_table").text = self.destination_table
-        
-        return _xml_node    
-    
+
     def _mappings_as_xml_node(self):
         _xml_node = etree.Element("mappings")
         _xml_node.append(self._field_mappings_as_xml_node())
-        _xml_node.append(self._table_mappings_as_xml_node())
         return _xml_node
     
     def _settings_as_xml_node(self):
@@ -134,17 +127,9 @@ class Merge(object):
         else:
             raise Exception("Merge.load_field_mappings_from_xml_node: Missing 'field_mappings'-node.")   
 
-    def load_table_mappings_from_xml_node(self, _xml_node):
-        if _xml_node != None:
-            self.source_table = isnone(_xml_node.find("source_table"))
-            self.destination_table = isnone(_xml_node.find("destination_table"))
-        else:
-            raise Exception("Merge.load_table_mappings_from_xml_node: Missing 'table_mappings'-node.")   
-
     def load_mappings_from_xml_node(self, _xml_node):
         if _xml_node != None:
             self.load_field_mappings_from_xml_node(_xml_node.find("field_mappings"))
-            self.load_table_mappings_from_xml_node(_xml_node.find("table_mappings"))
         else:
             raise Exception("Merge.load_field_mappings_from_xml_node: Missing 'mappings'-node.")   
         
