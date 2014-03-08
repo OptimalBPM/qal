@@ -164,7 +164,7 @@ class XPath_Dataset(Custom_Dataset):
         
         _data = []
 
-        if self.field_xpaths:
+        if len(self.field_xpaths) > 0:
             for _curr_row in _root_nodes:
                 _row_data = []
                 for _field_idx in range(0, len(self.field_names)):
