@@ -30,7 +30,7 @@ class XPath_Dataset(Custom_Dataset):
     rows_xpath = None
     """The XPath to the "row" nodes of the data set. Ex: /books/book"""
 
-    field_xpaths  = []
+    field_xpaths  = None
     """A list of XPaths relative to the rows_xpath leading to each field. Ex: ["title", "id"]"""
 
     xpath_data_format = None
@@ -67,6 +67,8 @@ class XPath_Dataset(Custom_Dataset):
         :param Resource _resource : An instance of a :py:class: qal.common.resource.resource
         """
         super(XPath_Dataset, self ).__init__()
+
+        self.field_xpaths = []
         
         if _resource:
             self.read_resource_settings(_resource)

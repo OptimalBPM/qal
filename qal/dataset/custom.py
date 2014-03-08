@@ -25,11 +25,11 @@ class Custom_Dataset(object):
     TODO: Field names should be considered captions, not references, and should not be used when looping columns.
     """
 
-    field_names = []
+    field_names = None
     """These are, if applicable, the field names of the resulting dataset"""
-    field_types = []
+    field_types = None
     """The data types of the fields"""
-    data_table = [] 
+    data_table = None
     """The actual data, in the form of a two-dimensional array"""
     base_path = None
     """The base path for all relative references in resources. Inferred from the locations of resource files."""
@@ -41,6 +41,7 @@ class Custom_Dataset(object):
     def __init__(self):
         """Constructor""" 
         self.field_names = []
+        self.field_types = []
         self.data_table = []
         self._log = [] 
         self._log_level = DATASET_LOGLEVEL_MEDIUM

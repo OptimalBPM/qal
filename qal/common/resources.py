@@ -36,7 +36,7 @@ class Resource(object):
     base_path = None
     """If this resource was read from an XML, base path is the directory where the XML was located.
     Makes it possible to deduce the absolute path from relative paths in the XML files, making them slightly more portable."""
-    data = {}
+    data = None
     """A dict of all the custom data that belongs to the resource. Access this way: _filename = data['file_name'].'"""
     def __init__(self):
         self.uuid = None

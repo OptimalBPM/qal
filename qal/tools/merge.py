@@ -23,14 +23,17 @@ class Mapping(object):
     src_reference = None
     src_datatype = None
     dest_reference = None
-    transformations = []
+    transformations = None
     
     def __init__(self, _xml_node = None):
         """
         Constructor
         """
+        self.transformations = []
         if _xml_node != None:
             self.load_from_xml_node(_xml_node)
+
+
 
     def load_from_xml_node(self, _xml_node):
         if _xml_node != None:
@@ -55,8 +58,8 @@ class Mapping(object):
         return _xml_node
 
 class Merge(object):
-    mappings = []
-    key_fields = []
+    mappings = None
+    key_fields = None
     source = None
     destination = None
     resources = None
