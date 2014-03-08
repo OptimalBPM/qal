@@ -7,7 +7,7 @@ Created on Nov 3, 2013
 from lxml import etree
 
 from qal.common.resources import Resources, Resource
-from qal.common.strings import string_to_bool
+from qal.common.strings import string_to_bool, empty_when_none
 from qal.tools.transform import make_transformation_array_from_xml_node, make_transformations_xml_node, perform_transformations
 from qal.dataset.factory import dataset_from_resource
 
@@ -48,10 +48,10 @@ class Mapping(object):
 
         _xml_node = etree.Element("field_mapping")        
         etree.SubElement(_xml_node, "is_key").text = str(self.is_key)
-        etree.SubElement(_xml_node, "src_reference").text = self.src_reference
-        etree.SubElement(_xml_node, "src_datatype").text = self.src_datatype
+        etree.SubElement(_xml_node, "src_reference").text = empty_when_none(self.src_reference)
+        etree.SubElement(_xml_node, "src_datatype").text = empty_when_none(self.src_datatype)
         _xml_node.append(make_transformations_xml_node(self.transformations))
-        etree.SubElement(_xml_node, "dest_reference").text = self.dest_reference
+        etree.SubElement(_xml_node, "dest_reference").text = empty_when_none(self.dest_reference)
 
         
 
