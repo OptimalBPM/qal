@@ -178,40 +178,33 @@ class Merge(object):
             self.load_mappings_from_xml_node(_xml_node.find("mappings"))
             self.load_settings_from_xml_node(_xml_node.find("settings"))
             self.resources = Resources(_resources_node= _xml_node.find("resources"))
-            self._load_resources(_only_settings=True)
-            
+            self.source = dataset_from_resource(self.resources.get_resource('source_uuid'))
+            self.destination = dataset_from_resource(self.resources.get_resource('dest_uuid'))
+
         else:
             raise Exception("Merge.load_from_xml_node: \"None\" is not a valid Merge node.")                  
 
-   
     
-
-    
-    def _load_resources(self, _only_settings = None):
+    def _load_datasets(self, _only_settings = None):
         
         # Load source_dataset
-        self.source = dataset_from_resource(self.resources.get_resource('source_uuid'))
         try:
-            if _only_settings is None:
-                self.source.load()
+            self.source.load()
         except Exception as e:
-            raise Exception("Merge._load_resources: Failed loading data for source data set.\n" + \
-                            "Resource: " + str(self.resources.get_resource('source_uuid').caption)+ "(" + str(self.resources.get_resource('source_uuid').uuid) + ")\n"+ \
+            raise Exception("Merge._load_datasets: Failed loading data for source data set.\n" + \
+                            "Dataset: " + str(self.destination.__class__.__name__) + "\n"+ \
                             "Error: " + str(e))
         
         # Load destination dataset
-        self.destination = dataset_from_resource(self.resources.get_resource('dest_uuid'))
-        if self.destination_log_level:
-            self.destination._log_level = self.destination_log_level
         try:
-            if _only_settings is None:
-                self.destination.load()
+            self.destination.load()
         except Exception as e:
-            raise Exception("Merge._load_resources: Failed loading data for source data set.\n" + \
-                            "Resource: " + str(self.resources.get_resource('dest_uuid').caption)+ "(" + str(self.resources.get_resource('dest_uuid').uuid) + ")\n"+ \
+            raise Exception("Merge._load_datasets: Failed loading data for destination data set.\n" + \
+                            "Dataset: " + str(self.destination.__class__.__name__) + "\n"+ \
                             "Error: " + str(e))
 
-       
+        if self.destination_log_level:
+            self.destination._log_level = self.destination_log_level
 
              
     def _make_shortcuts(self):
@@ -258,7 +251,7 @@ class Merge(object):
     def execute(self, _commit = True):
         
         # Load resources
-        self._load_resources()
+        self._load_datasets()
         
         # Create a remapped source dataset, perform transformations
         _mapped_source = self._remap_and_transform()
