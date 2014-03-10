@@ -8,6 +8,7 @@ from lxml import etree
 
 from qal.common.resources import Resources, Resource
 from qal.common.strings import string_to_bool, empty_when_none
+from qal.dataset.xpath import XPath_Dataset
 from qal.tools.transform import make_transformation_array_from_xml_node, make_transformations_xml_node, perform_transformations
 from qal.dataset.factory import dataset_from_resource
 
@@ -184,16 +185,42 @@ class Merge(object):
         else:
             raise Exception("Merge.load_from_xml_node: \"None\" is not a valid Merge node.")                  
 
-    
-    def _load_datasets(self, _only_settings = None):
+
+    def _mappings_to_fields(self, _dataset,  _use_dest = True):
+        _dataset.key_fields = []
+        _dataset.field_names = []
+        _dataset.field_types = []
+        self.key_fields = []
+        if hasattr(_dataset, "field_xpaths"):
+            _dataset.field_xpaths = []
+
+        for _curr_mapping_idx in range(len(self.mappings)):
+            _curr_mapping = self.mappings[_curr_mapping_idx]
+            if _use_dest:
+                _curr_source_ref = _curr_mapping.dest_reference
+            else:
+                _curr_source_ref = _curr_mapping.src_reference
+
+
+            _dataset.field_names.append(_curr_source_ref)
+            if _curr_mapping.is_key == True:
+                self.key_fields.append(_curr_mapping_idx)
+            if hasattr(_dataset, "filename"):
+                _dataset.field_types.append("string")
+                if hasattr(_dataset, "field_xpaths"):
+                    _dataset.field_xpaths.append(_curr_source_ref)
+
+    def _load_datasets(self):
         
         # Load source_dataset
         try:
             self.source.load()
         except Exception as e:
             raise Exception("Merge._load_datasets: Failed loading data for source data set.\n" + \
-                            "Dataset: " + str(self.destination.__class__.__name__) + "\n"+ \
+                            "Dataset: " + str(self.source.__class__.__name__) + "\n"+ \
                             "Error: " + str(e))
+        if self.source.field_names is None or len(self.source.field_names) == 0:
+            self._mappings_to_fields(self.source, False)
         
         # Load destination dataset
         try:
@@ -202,6 +229,8 @@ class Merge(object):
             raise Exception("Merge._load_datasets: Failed loading data for destination data set.\n" + \
                             "Dataset: " + str(self.destination.__class__.__name__) + "\n"+ \
                             "Error: " + str(e))
+        if self.destination.field_names is None or len(self.destination.field_names) == 0:
+            self._mappings_to_fields(self.destination, True)
 
         if self.destination_log_level:
             self.destination._log_level = self.destination_log_level

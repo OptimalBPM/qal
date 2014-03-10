@@ -43,7 +43,7 @@ class XPath_Dataset(Custom_Dataset):
     _structure_row_node_parent = None
     """A private reference to the parent node of the row nodes in the structure """     
     
-    _structure_key_fields = []
+    _structure_key_fields = None
     """A private list of key fields."""
     
     _structure_row_node_name = None
@@ -69,6 +69,7 @@ class XPath_Dataset(Custom_Dataset):
         super(XPath_Dataset, self ).__init__()
 
         self.field_xpaths = []
+        self._structure_key_fields = []
         
         if _resource:
             self.read_resource_settings(_resource)
@@ -164,7 +165,7 @@ class XPath_Dataset(Custom_Dataset):
         
         _data = []
 
-        if len(self.field_xpaths) > 0:
+        if self.field_xpaths is not None and len(self.field_xpaths) > 0:
             for _curr_row in _root_nodes:
                 _row_data = []
                 for _field_idx in range(0, len(self.field_names)):

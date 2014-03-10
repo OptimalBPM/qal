@@ -10,7 +10,7 @@ Created on Nov 3, 2013
 import re
 from lxml import etree
 from datetime import date, datetime
-
+from qal.common.strings import empty_when_none
 
 
 def isnone( _node):
@@ -72,7 +72,7 @@ class Custom_Transformation(object):
             
     def init_base_to_node(self, _name):
         _xml_node = etree.Element(_name)
-        _xml_node.set("order", self.order)
+        _xml_node.set("order", empty_when_none(self.order))
         return _xml_node
             
     def as_xml_node(self):
@@ -108,7 +108,7 @@ class Trim(Custom_Transformation):
     
     def as_xml_node(self):
         _xml_node = self.init_base_to_node("trim")
-        _xml_node.text = self.value
+        _xml_node.text = empty_when_none(self.value)
         
         return _xml_node
 
@@ -131,7 +131,7 @@ class If_empty(Custom_Transformation):
     
     def as_xml_node(self):
         _xml_node = self.init_base_to_node("if_empty")
-        _xml_node.text = self.value
+        _xml_node.text = empty_when_none( self.value)
         
         return _xml_node
 
@@ -158,8 +158,8 @@ class Cast(Custom_Transformation):
     
     def as_xml_node(self):
         _xml_node = self.init_base_to_node("cast")
-        etree.SubElement(_xml_node, "dest_type").text = self.dest_type
-        etree.SubElement(_xml_node, "format_string").text = self.format_string
+        etree.SubElement(_xml_node, "dest_type").text = empty_when_none(self.dest_type)
+        etree.SubElement(_xml_node, "format_string").text = empty_when_none(self.format_string)
         
         return _xml_node
 
@@ -213,9 +213,9 @@ class Replace(Custom_Transformation):
     
     def as_xml_node(self):
         _xml_node = self.init_base_to_node("replace")
-        etree.SubElement(_xml_node, "old").text = self.old
-        etree.SubElement(_xml_node, "new").text = self.new
-        etree.SubElement(_xml_node, "max").text = self.max
+        etree.SubElement(_xml_node, "old").text = empty_when_none(self.old)
+        etree.SubElement(_xml_node, "new").text = empty_when_none(self.new)
+        etree.SubElement(_xml_node, "max").text = empty_when_none(self.max)
         
         return _xml_node
 

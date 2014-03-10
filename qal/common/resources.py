@@ -56,7 +56,12 @@ class Resource(object):
         # Loop data. Sorted to be predictable enough for testing purposes
         for _curr_data_key, _curr_data_value in sorted(self.data.items()):
             if _curr_data_value is not None:
-                add_xml_subitem(_resource, _curr_data_key, str(_curr_data_value))
+                if isinstance(_curr_data_value, list):
+                    _item_parent = add_xml_subitem(_resource, _curr_data_key, "")
+                    for _item in _curr_data_value:
+                        add_xml_subitem(_item_parent, "item", str(_item))
+                else:
+                    add_xml_subitem(_resource, _curr_data_key, str(_curr_data_value))
 
         
         return _resource
