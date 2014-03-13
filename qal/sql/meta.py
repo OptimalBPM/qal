@@ -6,7 +6,7 @@ Created on Sep 19, 2010
 from the SQL.py and generates meta data by analyzing its objects.
 '''
 
-# Import the entire SQL namespace to make it searchable and supress warnings.
+# Import the entire SQL namespace to make it searchable and suppress warnings.
 from qal.sql.sql import * #@UnusedWildImport #IGNORE:W0401
 from qal.sql.base import *
 from qal.sql.remotable import *
@@ -18,14 +18,14 @@ def list_parameter_classes():
     """List all parameter classes"""
     result = list()
     for k in globals().items():
-        if (k[0][0:10]).lower() == 'parameter_':
+        if (k[0][0:9]).lower() == 'parameter':
             result.append(k[0]) 
     return result    
 def list_verb_classes():
     """List all verb classes"""
     result = list()
     for k in globals().items():
-        if (k[0][0:5]).lower() == 'verb_':
+        if (k[0][0:4]).lower() == 'verb':
             result.append(k[0]) 
     return result    
 

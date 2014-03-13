@@ -1051,7 +1051,7 @@ class VerbDelete(ParameterBase):
     
     
       
-class Verb_Custom(ParameterDDL):
+class VerbCustom(ParameterDDL):
     """This class holds custom statements (written, not generated) for all platforms.
     This is for when what is currenctly implementet do not suffice"""
    
@@ -1066,7 +1066,7 @@ class Verb_Custom(ParameterDDL):
         return [self.sql_mysql, self.sql_postgresql, self.sql_oracle, self.sql_db2, self.sql_sqlserver][_db_type]
         
     def __init__(self):
-        super(Verb_Custom, self ).__init__()
+        super(VerbCustom, self ).__init__()
         self.sql_mysql = ''
         self.sql_postgresql = ''
         self.sql_oracle = ''

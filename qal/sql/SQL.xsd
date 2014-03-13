@@ -63,7 +63,7 @@
       <xsd:element name="VerbCreateTable" type="VerbCreateTable"/>
       <xsd:element name="VerbCreateIndex" type="VerbCreateIndex"/>
       <xsd:element name="VerbSelect" type="VerbSelect"/>
-      <xsd:element name="Verb_Custom" type="Verb_Custom"/>
+      <xsd:element name="VerbCustom" type="VerbCustom"/>
       <xsd:element name="VerbInsert" type="VerbInsert"/>
     </xsd:choice>
   </xsd:complexType>
@@ -180,7 +180,7 @@
       <xsd:element minOccurs="0" name="operator" type="xsd:string"/>
     </xsd:all>
   </xsd:complexType>
-  <xsd:complexType name="Verb_Custom">
+  <xsd:complexType name="VerbCustom">
     <xsd:all>
       <xsd:element minOccurs="0" name="sql_postgresql" type="xsd:string"/>
       <xsd:element minOccurs="0" name="sql_oracle" type="xsd:string"/>

@@ -191,5 +191,5 @@ def sql_property_to_type(_property_name):
     
 def verbs(): 
     """Returns a list of the supported verb types""" 
-    return ['VerbCreateTable','VerbCreateIndex', 'VerbSelect','Verb_Custom', 'VerbInsert']
+    return ['VerbCreateTable','VerbCreateIndex', 'VerbSelect','VerbCustom', 'VerbInsert']
    

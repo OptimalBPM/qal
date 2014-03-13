@@ -18,7 +18,7 @@ class Test(unittest.TestCase):
         self.assertEqual(list_parameter_classes(),['ParameterConditions','ParameterCondition', 'ParameterConditions', 'ParameterString', 'ParameterBase', 'ParameterFunction', 'Parameter_Expression', 'ParameterIdentifier', 'ParameterColumndefinition', 'ParameterCast', 'ParameterWhen', 'ParameterConstraint', 'ParameterNumeric', 'ParameterExpressionItem', 'Parameter_DML', 'ParameterSource', 'ParameterCase', 'ParameterField'])
         
     def _test_list_verb_classes(self):
-        self.assertEqual(list_verb_classes(), ['VerbCreateIndex', 'VerbCreateTable', 'VerbSelect', 'VerbDelete', 'Verb_Custom'])
+        self.assertEqual(list_verb_classes(), ['VerbCreateIndex', 'VerbCreateTable', 'VerbSelect', 'VerbDelete', 'VerbCustom'])
         
     def _testList_class_properties(self):
         self.assertEqual(list_class_properties('VerbCreateTable'), ['Name', 'Columns', 'Constraints'])
