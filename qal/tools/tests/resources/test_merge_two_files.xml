@@ -53,7 +53,7 @@
 		        <trim order="1"></trim>
 		      	<cast order="5">
 		      		<dest_type>integer</dest_type>
-		        	<format_string/>
+		        	<format_string></format_string>
 		        </cast>
 		    </transformations>
 		    <dest_reference>manager</dest_reference>
@@ -84,7 +84,7 @@
 		        </replace>	 
 		      	<cast order="5">
 		      		<dest_type>float</dest_type>
-		        	<format_string/>
+		        	<format_string></format_string>
 		        </cast>
 		    </transformations>
 		    <dest_reference>comm</dest_reference>
@@ -103,7 +103,7 @@
 		        <if_empty order="4">0</if_empty>	 
 		        <cast order="5">
 		        	<dest_type>float</dest_type>
-		        	<format_string/>
+		        	<format_string></format_string>
 		        </cast>
 		    </transformations>
 		    <dest_reference>salary</dest_reference>
@@ -121,7 +121,7 @@
 		        </replace>	 
 		      	<cast order="5">
 		      		<dest_type>float</dest_type>
-		        	<format_string/>
+		        	<format_string></format_string>
 		        </cast>
 		    </transformations>
 		    <dest_reference>dep_no</dest_reference>

@@ -10,7 +10,7 @@ Created on Nov 3, 2013
 import re
 from lxml import etree
 from datetime import date, datetime
-from qal.common.strings import empty_if_none
+from qal.common.strings import empty_when_none
 
 
 def isnone( _node):
@@ -72,7 +72,7 @@ class Custom_Transformation(object):
             
     def init_base_to_node(self, _name):
         _xml_node = etree.Element(_name)
-        _xml_node.set("order", empty_if_none(self.order))
+        _xml_node.set("order", empty_when_none(self.order))
         return _xml_node
             
     def as_xml_node(self):

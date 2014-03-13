@@ -3,7 +3,7 @@ Created on Oct 3, 2010
 
 @author: Nicklas Boerjesson
 @note: This module is made to retrieve metadata about databases. 
-@todo: These SQL:s could be moved into an XML file(Verb_Custom). 
+@todo: These SQL:s could be moved into an XML file(VerbCustom).
 The gain is yet somewhat marginal. They should not move in to the database due to versioning.  
 '''
 

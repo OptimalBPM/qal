@@ -59,8 +59,9 @@ class Merge_test(unittest.TestCase):
         _merge_xml = self._parse_xml(Test_Resource_Dir + "/test_merge_two_files.xml")
         _merge = Merge(_xml_node = _merge_xml)
         _merge.destination_log_level = DATASET_LOGLEVEL_DETAIL
-        print(etree.tostring(_merge.as_xml_node()))
-        print(etree.tostring(_merge_xml))
+        print("as_xml_node: " + str(etree.tostring(_merge.as_xml_node())))
+
+        print("_merge_xml : " + str(etree.tostring(_merge_xml)))
         self.assertEqual(etree.tostring(_merge.as_xml_node()), etree.tostring(_merge_xml), "Input/output XML does not match")
 
 

@@ -9,7 +9,7 @@
                     <if_empty order="2">0</if_empty>
                     <cast order="3">
                         <dest_type>string</dest_type>
-                        <format_string/>
+                        <format_string></format_string>
                     </cast>
                     <replace order="4">
                         <old>,</old>
@@ -18,7 +18,7 @@
                     </replace>
                     <cast order="5">
                         <dest_type>integer</dest_type>
-                        <format_string/>
+                        <format_string></format_string>
                     </cast>
                 </transformations>
                 <dest_reference>ID</dest_reference>
@@ -28,10 +28,10 @@
                 <src_reference>Name</src_reference>
                 <src_datatype>string</src_datatype>
                 <transformations>
-                    <trim order="1"/>
+                    <trim order="1"></trim>
                     <cast order="4">
                         <dest_type>string</dest_type>
-                        <format_string/>
+                        <format_string></format_string>
                     </cast>
                 </transformations>
                 <dest_reference>Name</dest_reference>
@@ -43,9 +43,9 @@
                 <transformations>
                     <cast order="1">
                         <dest_type>string</dest_type>
-                        <format_string/>
+                        <format_string></format_string>
                     </cast>
-                    <trim order="3"/>
+                    <trim order="3"></trim>
                     <cast order="1">
                         <dest_type>timestamp</dest_type>
                         <format_string>%Y-%m-%d %H:%M:%S</format_string>
