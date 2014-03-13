@@ -44,7 +44,7 @@ def citate(AValue, _db_type):
         return AValue
     
 def comma_separate(_list, _db_type):
-    """Convert a list of possible Parameter_Base-descendants."""
+    """Convert a list of possible ParameterBase-descendants."""
     result = ''
     for currItem in _list:
         if result != '': result = result + ","

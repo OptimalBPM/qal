@@ -1,36 +1,36 @@
 <?xml version="1.0" ?>
 <sql:statement xmlns:sql="http://www.optimalbpm.se/XMLschema/DAL/SQL" xmlns:xsi="http://www.w3.org/2001/XMLSchema"
                xsi:schemaLocation="http://www.optimalbpm.se/XMLschema/DAL/SQL ../../SQL.xsd">
-    <sql:Verb_INSERT>
+    <sql:VerbInsert>
         <sql:destination_identifier>
             <sql:prefix></sql:prefix>
             <sql:identifier>Test</sql:identifier>
             <sql:operator>C</sql:operator>
         </sql:destination_identifier>
         <sql:column_identifiers>
-            <sql:Parameter_Identifier>
+            <sql:ParameterIdentifier>
                 <sql:prefix></sql:prefix>
                 <sql:identifier>Column1</sql:identifier>
                 <sql:operator>C</sql:operator>
-            </sql:Parameter_Identifier>
-            <sql:Parameter_Identifier>
+            </sql:ParameterIdentifier>
+            <sql:ParameterIdentifier>
                 <sql:prefix></sql:prefix>
                 <sql:identifier>Column2</sql:identifier>
                 <sql:operator></sql:operator>
-            </sql:Parameter_Identifier>
+            </sql:ParameterIdentifier>
         </sql:column_identifiers>
         <sql:data>
-            <sql:Parameter_Set>
+            <sql:ParameterSet>
                 <sql:set_operator>UNION</sql:set_operator>
                 <sql:subsets>
-                    <sql:Parameter_Dataset>
+                    <sql:ParameterDataset>
                         <sql:data_source>
                             <sql:Matrix_Dataset/>
                         </sql:data_source>
                         <sql:resource_uuid/>
                         <sql:operator></sql:operator>
-                    </sql:Parameter_Dataset>
-                    <sql:Parameter_Dataset>
+                    </sql:ParameterDataset>
+                    <sql:ParameterDataset>
                         <sql:data_source>
                             <sql:Flatfile_Dataset>
                                 <sql:filename>_test_insert_csv_in.txt</sql:filename>
@@ -41,9 +41,9 @@
                         </sql:data_source>
                         <sql:resource_uuid/>
                         <sql:operator></sql:operator>
-                    </sql:Parameter_Dataset>
+                    </sql:ParameterDataset>
                 </sql:subsets>
-            </sql:Parameter_Set>
+            </sql:ParameterSet>
         </sql:data>
-    </sql:Verb_INSERT>
+    </sql:VerbInsert>
 </sql:statement>

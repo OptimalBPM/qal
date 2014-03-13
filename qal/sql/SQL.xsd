@@ -54,72 +54,72 @@
   <xsd:simpleType name="csv_dialects">
     <xsd:restriction base="xsd:string">
       <xsd:enumeration value="excel-tab"/>
-      <xsd:enumeration value="excel"/>
       <xsd:enumeration value="unix"/>
+      <xsd:enumeration value="excel"/>
     </xsd:restriction>
   </xsd:simpleType>
   <xsd:complexType name="statement">
     <xsd:choice>
-      <xsd:element name="Verb_CREATE_TABLE" type="Verb_CREATE_TABLE"/>
-      <xsd:element name="Verb_CREATE_INDEX" type="Verb_CREATE_INDEX"/>
-      <xsd:element name="Verb_SELECT" type="Verb_SELECT"/>
+      <xsd:element name="VerbCreateTable" type="VerbCreateTable"/>
+      <xsd:element name="VerbCreateIndex" type="VerbCreateIndex"/>
+      <xsd:element name="VerbSelect" type="VerbSelect"/>
       <xsd:element name="Verb_Custom" type="Verb_Custom"/>
-      <xsd:element name="Verb_INSERT" type="Verb_INSERT"/>
+      <xsd:element name="VerbInsert" type="VerbInsert"/>
     </xsd:choice>
   </xsd:complexType>
   <xsd:complexType name="condition_part">
     <xsd:choice>
-      <xsd:element name="Parameter_Conditions" type="Parameter_Conditions"/>
-      <xsd:element name="Parameter_Condition" type="Parameter_Condition"/>
+      <xsd:element name="ParameterConditions" type="ParameterConditions"/>
+      <xsd:element name="ParameterCondition" type="ParameterCondition"/>
       <xsd:element name="Parameter_Expression" type="Parameter_Expression"/>
-      <xsd:element name="Verb_SELECT" type="Verb_SELECT"/>
+      <xsd:element name="VerbSelect" type="VerbSelect"/>
       <xsd:element name="Parameter_Expression" type="Parameter_Expression"/>
-      <xsd:element name="Parameter_String" type="Parameter_String"/>
-      <xsd:element name="Parameter_Numeric" type="Parameter_Numeric"/>
-      <xsd:element name="Parameter_Identifier" type="Parameter_Identifier"/>
-      <xsd:element name="Parameter_Cast" type="Parameter_Cast"/>
-      <xsd:element name="Parameter_Function" type="Parameter_Function"/>
-      <xsd:element name="Parameter_IN" type="Parameter_IN"/>
-      <xsd:element name="Parameter_Dataset" type="Parameter_Dataset"/>
-      <xsd:element name="Parameter_CASE" type="Parameter_CASE"/>
-      <xsd:element name="Parameter_Set" type="Parameter_Set"/>
+      <xsd:element name="ParameterString" type="ParameterString"/>
+      <xsd:element name="ParameterNumeric" type="ParameterNumeric"/>
+      <xsd:element name="ParameterIdentifier" type="ParameterIdentifier"/>
+      <xsd:element name="ParameterCast" type="ParameterCast"/>
+      <xsd:element name="ParameterFunction" type="ParameterFunction"/>
+      <xsd:element name="ParameterIn" type="ParameterIn"/>
+      <xsd:element name="ParameterDataset" type="ParameterDataset"/>
+      <xsd:element name="ParameterCase" type="ParameterCase"/>
+      <xsd:element name="ParameterSet" type="ParameterSet"/>
     </xsd:choice>
   </xsd:complexType>
   <xsd:complexType name="tabular_expression_item">
     <xsd:choice>
-      <xsd:element name="Verb_SELECT" type="Verb_SELECT"/>
-      <xsd:element name="Parameter_Dataset" type="Parameter_Dataset"/>
-      <xsd:element name="Parameter_Set" type="Parameter_Set"/>
+      <xsd:element name="VerbSelect" type="VerbSelect"/>
+      <xsd:element name="ParameterDataset" type="ParameterDataset"/>
+      <xsd:element name="ParameterSet" type="ParameterSet"/>
     </xsd:choice>
   </xsd:complexType>
-  <xsd:complexType name="Array_Parameter_String">
+  <xsd:complexType name="Array_ParameterString">
     <xsd:choice>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_String" type="Parameter_String"/>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="ParameterString" type="ParameterString"/>
     </xsd:choice>
   </xsd:complexType>
-  <xsd:complexType name="Array_Parameter_Constraint">
+  <xsd:complexType name="Array_ParameterConstraint">
     <xsd:choice>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_Constraint" type="Parameter_Constraint"/>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="ParameterConstraint" type="ParameterConstraint"/>
     </xsd:choice>
   </xsd:complexType>
-  <xsd:complexType name="Array_Parameter_ColumnDefinition">
+  <xsd:complexType name="Array_ParameterColumndefinition">
     <xsd:choice>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_ColumnDefinition" type="Parameter_ColumnDefinition"/>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="ParameterColumndefinition" type="ParameterColumndefinition"/>
     </xsd:choice>
   </xsd:complexType>
-  <xsd:complexType name="Array_Parameter_Source">
+  <xsd:complexType name="Array_ParameterSource">
     <xsd:choice>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_Source" type="Parameter_Source"/>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="ParameterSource" type="ParameterSource"/>
     </xsd:choice>
   </xsd:complexType>
-  <xsd:complexType name="Array_Parameter_WHEN">
+  <xsd:complexType name="Array_ParameterWhen">
     <xsd:choice>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_WHEN" type="Parameter_WHEN"/>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="ParameterWhen" type="ParameterWhen"/>
     </xsd:choice>
   </xsd:complexType>
-  <xsd:complexType name="Array_Parameter_Identifier">
+  <xsd:complexType name="Array_ParameterIdentifier">
     <xsd:choice>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_Identifier" type="Parameter_Identifier"/>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="ParameterIdentifier" type="ParameterIdentifier"/>
     </xsd:choice>
   </xsd:complexType>
   <xsd:complexType name="Array_Statement">
@@ -127,46 +127,46 @@
       <xsd:element maxOccurs="unbounded" minOccurs="0" name="statement" type="statement"/>
     </xsd:choice>
   </xsd:complexType>
-  <xsd:complexType name="Array_Parameter_ORDER_BY_item">
+  <xsd:complexType name="Array_ParameterOrderByItem">
     <xsd:choice>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_ORDER_BY_item" type="Parameter_ORDER_BY_item"/>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="ParameterOrderByItem" type="ParameterOrderByItem"/>
     </xsd:choice>
   </xsd:complexType>
-  <xsd:complexType name="Array_Parameter_Condition">
+  <xsd:complexType name="Array_ParameterCondition">
     <xsd:choice>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_Condition" type="Parameter_Condition"/>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="ParameterCondition" type="ParameterCondition"/>
     </xsd:choice>
   </xsd:complexType>
-  <xsd:complexType name="Array_Parameter_Field">
+  <xsd:complexType name="Array_ParameterField">
     <xsd:choice>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_Field" type="Parameter_Field"/>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="ParameterField" type="ParameterField"/>
     </xsd:choice>
   </xsd:complexType>
-  <xsd:complexType name="Array_Parameter_Assignment">
+  <xsd:complexType name="Array_ParameterAssignment">
     <xsd:choice>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_Assignment" type="Parameter_Assignment"/>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="ParameterAssignment" type="ParameterAssignment"/>
     </xsd:choice>
   </xsd:complexType>
   <xsd:complexType name="Array_expression_item">
     <xsd:choice>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Verb_SELECT" type="Verb_SELECT"/>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="VerbSelect" type="VerbSelect"/>
       <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_Expression" type="Parameter_Expression"/>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_String" type="Parameter_String"/>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_Numeric" type="Parameter_Numeric"/>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_Identifier" type="Parameter_Identifier"/>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_Cast" type="Parameter_Cast"/>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_Function" type="Parameter_Function"/>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_IN" type="Parameter_IN"/>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_Dataset" type="Parameter_Dataset"/>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_CASE" type="Parameter_CASE"/>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_Set" type="Parameter_Set"/>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="ParameterString" type="ParameterString"/>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="ParameterNumeric" type="ParameterNumeric"/>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="ParameterIdentifier" type="ParameterIdentifier"/>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="ParameterCast" type="ParameterCast"/>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="ParameterFunction" type="ParameterFunction"/>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="ParameterIn" type="ParameterIn"/>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="ParameterDataset" type="ParameterDataset"/>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="ParameterCase" type="ParameterCase"/>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="ParameterSet" type="ParameterSet"/>
     </xsd:choice>
   </xsd:complexType>
   <xsd:complexType name="Array_tabular_expression_item">
     <xsd:choice>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Verb_SELECT" type="Verb_SELECT"/>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_Dataset" type="Parameter_Dataset"/>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Parameter_Set" type="Parameter_Set"/>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="VerbSelect" type="VerbSelect"/>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="ParameterDataset" type="ParameterDataset"/>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="ParameterSet" type="ParameterSet"/>
     </xsd:choice>
   </xsd:complexType>
   <xsd:complexType name="Array_list">
@@ -174,212 +174,19 @@
       <xsd:element maxOccurs="unbounded" minOccurs="0" name="*" type="*"/>
     </xsd:choice>
   </xsd:complexType>
-  <xsd:complexType name="Parameter_IN">
-    <xsd:all>
-      <xsd:element minOccurs="0" name="in_values" type="in_types"/>
-      <xsd:element minOccurs="0" name="operator" type="xsd:string"/>
-    </xsd:all>
-  </xsd:complexType>
   <xsd:complexType name="Parameter_Expression">
     <xsd:all>
       <xsd:element minOccurs="0" name="expressionitems" type="Array_expression_item"/>
       <xsd:element minOccurs="0" name="operator" type="xsd:string"/>
     </xsd:all>
   </xsd:complexType>
-  <xsd:complexType name="Parameter_WHEN">
-    <xsd:all>
-      <xsd:element minOccurs="0" name="conditions" type="Array_Parameter_Condition"/>
-      <xsd:element minOccurs="0" name="result" type="Array_expression_item"/>
-    </xsd:all>
-  </xsd:complexType>
-  <xsd:complexType name="Parameter_Conditions">
-    <xsd:all/>
-  </xsd:complexType>
-  <xsd:complexType name="Parameter_ColumnDefinition">
-    <xsd:all>
-      <xsd:element minOccurs="0" name="datatype" type="datatypes"/>
-      <xsd:element minOccurs="0" name="name" type="xsd:string"/>
-      <xsd:element minOccurs="0" name="default" type="xsd:string"/>
-      <xsd:element minOccurs="0" name="notnull" type="xsd:boolean"/>
-    </xsd:all>
-  </xsd:complexType>
-  <xsd:complexType name="Parameter_Source">
-    <xsd:all>
-      <xsd:element minOccurs="0" name="conditions" type="Array_Parameter_Condition"/>
-      <xsd:element minOccurs="0" name="join_type" type="join_type"/>
-      <xsd:element minOccurs="0" name="alias" type="xsd:string"/>
-      <xsd:element minOccurs="0" name="expression" type="Array_expression_item"/>
-      <xsd:element minOccurs="0" name="resource_uuid" type="xsd:string"/>
-    </xsd:all>
-  </xsd:complexType>
-  <xsd:complexType name="Parameter_Condition">
-    <xsd:all>
-      <xsd:element minOccurs="0" name="right" type="condition_part"/>
-      <xsd:element minOccurs="0" name="left" type="condition_part"/>
-      <xsd:element minOccurs="0" name="operator" type="xsd:string"/>
-      <xsd:element minOccurs="0" name="and_or" type="and_or"/>
-    </xsd:all>
-  </xsd:complexType>
-  <xsd:complexType name="Parameter_Field">
-    <xsd:all>
-      <xsd:element minOccurs="0" name="alias" type="xsd:string"/>
-      <xsd:element minOccurs="0" name="expression" type="Array_expression_item"/>
-    </xsd:all>
-  </xsd:complexType>
-  <xsd:complexType name="Parameter_Parameter">
-    <xsd:all>
-      <xsd:element minOccurs="0" name="datatype" type="datatypes"/>
-      <xsd:element minOccurs="0" name="operator" type="xsd:string"/>
-    </xsd:all>
-  </xsd:complexType>
-  <xsd:complexType name="Parameter_ORDER_BY_item">
-    <xsd:all>
-      <xsd:element minOccurs="0" name="direction" type="xsd:string"/>
-      <xsd:element minOccurs="0" name="expressionitems" type="Array_expression_item"/>
-      <xsd:element minOccurs="0" name="operator" type="xsd:string"/>
-      <xsd:element minOccurs="0" name="operator" type="xsd:string"/>
-    </xsd:all>
-  </xsd:complexType>
-  <xsd:complexType name="Parameter_Expression_Item">
-    <xsd:all>
-      <xsd:element minOccurs="0" name="operator" type="xsd:string"/>
-    </xsd:all>
-  </xsd:complexType>
-  <xsd:complexType name="Parameter_CASE">
-    <xsd:all>
-      <xsd:element minOccurs="0" name="when_statements" type="Array_Parameter_WHEN"/>
-      <xsd:element minOccurs="0" name="else_statement" type="Array_expression_item"/>
-      <xsd:element minOccurs="0" name="operator" type="xsd:string"/>
-    </xsd:all>
-  </xsd:complexType>
-  <xsd:complexType name="Parameter_Set">
-    <xsd:all>
-      <xsd:element minOccurs="0" name="subsets" type="Array_tabular_expression_item"/>
-      <xsd:element minOccurs="0" name="set_operator" type="set_operator"/>
-    </xsd:all>
-  </xsd:complexType>
-  <xsd:complexType name="Parameter_Numeric">
-    <xsd:all>
-      <xsd:element minOccurs="0" name="numeric_value" type="xsd:decimal"/>
-      <xsd:element minOccurs="0" name="operator" type="xsd:string"/>
-    </xsd:all>
-  </xsd:complexType>
-  <xsd:complexType name="Parameter_Identifier">
-    <xsd:all>
-      <xsd:element minOccurs="0" name="prefix" type="xsd:string"/>
-      <xsd:element minOccurs="0" name="identifier" type="xsd:string"/>
-      <xsd:element minOccurs="0" name="operator" type="xsd:string"/>
-    </xsd:all>
-  </xsd:complexType>
-  <xsd:complexType name="Parameter_Assignment">
-    <xsd:all>
-      <xsd:element minOccurs="0" name="left" type="condition_part"/>
-      <xsd:element minOccurs="0" name="right" type="condition_part"/>
-    </xsd:all>
-  </xsd:complexType>
-  <xsd:complexType name="Parameter_Cast">
-    <xsd:all>
-      <xsd:element minOccurs="0" name="datatype" type="datatypes"/>
-      <xsd:element minOccurs="0" name="expression" type="Array_expression_item"/>
-      <xsd:element minOccurs="0" name="operator" type="xsd:string"/>
-    </xsd:all>
-  </xsd:complexType>
-  <xsd:complexType name="Parameter_Function">
-    <xsd:all>
-      <xsd:element minOccurs="0" name="parameters" type="xsd:string"/>
-      <xsd:element minOccurs="0" name="name" type="xsd:string"/>
-      <xsd:element minOccurs="0" name="operator" type="xsd:string"/>
-    </xsd:all>
-  </xsd:complexType>
-  <xsd:complexType name="Parameter_DDL">
-    <xsd:all/>
-  </xsd:complexType>
-  <xsd:complexType name="Parameter_Dataset">
-    <xsd:all>
-      <xsd:element minOccurs="0" name="data_source" type="data_source_types"/>
-      <xsd:element minOccurs="0" name="operator" type="xsd:string"/>
-      <xsd:element minOccurs="0" name="resource_uuid" type="xsd:string"/>
-    </xsd:all>
-  </xsd:complexType>
-  <xsd:complexType name="Parameter_String">
-    <xsd:all>
-      <xsd:element minOccurs="0" name="string_value" type="xsd:string"/>
-      <xsd:element minOccurs="0" name="escape_character" type="xsd:string"/>
-      <xsd:element minOccurs="0" name="operator" type="xsd:string"/>
-    </xsd:all>
-  </xsd:complexType>
-  <xsd:complexType name="Parameter_Base">
-    <xsd:all/>
-  </xsd:complexType>
-  <xsd:complexType name="Parameter_Constraint">
-    <xsd:all>
-      <xsd:element minOccurs="0" name="references" type="Array_Parameter_Identifier"/>
-      <xsd:element minOccurs="0" name="checkconditions" type="Array_Parameter_Condition"/>
-      <xsd:element minOccurs="0" name="constraint_type" type="constraint_types"/>
-      <xsd:element minOccurs="0" name="name" type="xsd:string"/>
-    </xsd:all>
-  </xsd:complexType>
-  <xsd:complexType name="Parameter_Remotable">
-    <xsd:all>
-      <xsd:element minOccurs="0" name="resource_uuid" type="xsd:string"/>
-    </xsd:all>
-  </xsd:complexType>
-  <xsd:complexType name="Verb_UPDATE">
-    <xsd:all>
-      <xsd:element minOccurs="0" name="conditions" type="Array_Parameter_Condition"/>
-      <xsd:element minOccurs="0" name="assignments" type="Array_Parameter_Assignment"/>
-      <xsd:element minOccurs="0" name="table_identifier" type="Parameter_Identifier"/>
-    </xsd:all>
-  </xsd:complexType>
-  <xsd:complexType name="Verb_DROP_TABLE">
-    <xsd:all>
-      <xsd:element minOccurs="0" name="name" type="xsd:string"/>
-    </xsd:all>
-  </xsd:complexType>
-  <xsd:complexType name="Verb_CREATE_INDEX">
-    <xsd:all>
-      <xsd:element minOccurs="0" name="tablename" type="xsd:string"/>
-      <xsd:element minOccurs="0" name="name" type="xsd:string"/>
-      <xsd:element minOccurs="0" name="columnnames" type="Array_string"/>
-      <xsd:element minOccurs="0" name="index_type" type="index_types"/>
-    </xsd:all>
-  </xsd:complexType>
-  <xsd:complexType name="Verb_INSERT">
-    <xsd:all>
-      <xsd:element minOccurs="0" name="destination_identifier" type="Parameter_Identifier"/>
-      <xsd:element minOccurs="0" name="data" type="tabular_expression_item"/>
-      <xsd:element minOccurs="0" name="column_identifiers" type="Array_Parameter_Identifier"/>
-    </xsd:all>
-  </xsd:complexType>
   <xsd:complexType name="Verb_Custom">
     <xsd:all>
-      <xsd:element minOccurs="0" name="sql_mysql" type="xsd:string"/>
-      <xsd:element minOccurs="0" name="sql_oracle" type="xsd:string"/>
       <xsd:element minOccurs="0" name="sql_postgresql" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="sql_oracle" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="sql_mysql" type="xsd:string"/>
       <xsd:element minOccurs="0" name="sql_db2" type="xsd:string"/>
       <xsd:element minOccurs="0" name="sql_sqlserver" type="xsd:string"/>
-    </xsd:all>
-  </xsd:complexType>
-  <xsd:complexType name="Verb_CREATE_TABLE">
-    <xsd:all>
-      <xsd:element minOccurs="0" name="columns" type="Array_Parameter_ColumnDefinition"/>
-      <xsd:element minOccurs="0" name="name" type="xsd:string"/>
-      <xsd:element minOccurs="0" name="constraints" type="Array_Parameter_Constraint"/>
-    </xsd:all>
-  </xsd:complexType>
-  <xsd:complexType name="Verb_SELECT">
-    <xsd:all>
-      <xsd:element minOccurs="0" name="order_by" type="Array_Parameter_ORDER_BY_item"/>
-      <xsd:element minOccurs="0" name="fields" type="Array_Parameter_Field"/>
-      <xsd:element minOccurs="0" name="top_limit" type="xsd:integer"/>
-      <xsd:element minOccurs="0" name="sources" type="Array_Parameter_Source"/>
-      <xsd:element minOccurs="0" name="operator" type="xsd:string"/>
-      <xsd:element minOccurs="0" name="resource_uuid" type="xsd:string"/>
-    </xsd:all>
-  </xsd:complexType>
-  <xsd:complexType name="Verb_DELETE">
-    <xsd:all>
-      <xsd:element minOccurs="0" name="sources" type="Array_Parameter_Source"/>
     </xsd:all>
   </xsd:complexType>
   <xsd:element name="statement" type="statement"/>

@@ -177,8 +177,8 @@ class class_SQL_Meta_XML_Test(unittest.TestCase):
 #        meta_xml.debuglevel = 4
         
 #        Generate structure from manual CREATE_INDEX. 
-#        from dal.sql import Verb_CREATE_INDEX
-#        structure = Verb_CREATE_INDEX('ind_Table1ID', "CLUSTERED", 'Table1', ['Table1Name', 'Table1Date'])
+#        from dal.sql import VerbCreateIndex
+#        structure = VerbCreateIndex('ind_Table1ID', "CLUSTERED", 'Table1', ['Table1Name', 'Table1Date'])
 #         
         f = open(Test_Resource_Dir +"/_test_CREATE_INDEX_in.xml","r")
         _str_xml_in = f.read()

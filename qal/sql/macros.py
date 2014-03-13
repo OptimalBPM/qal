@@ -5,52 +5,52 @@ Created on Sep 26, 2013
 """
 
 
-from qal.sql.sql import Verb_CREATE_TABLE, Verb_SELECT, Verb_INSERT, Verb_DELETE, Verb_UPDATE, Verb_DROP_TABLE, SQL_List, \
-    Parameter_ColumnDefinition,Parameter_Identifier, Parameter_Source
+from qal.sql.sql import VerbCreateTable, VerbSelect, VerbInsert, VerbDelete, VerbUpdate, VerbDropTable, SqlList, \
+    ParameterColumndefinition,ParameterIdentifier, ParameterSource
     
 from qal.sql.utils import datatype_to_parameter
 
 
 def make_column_definitions(_field_names, _field_types):
-    _columns = SQL_List()
+    _columns = SqlList()
     _field_counter = 0
     _curr_column = None
     for _field_counter in range(0, len(_field_names)):
-        _columns.append(Parameter_ColumnDefinition(_name = _field_names[_field_counter], _datatype = _field_types[_field_counter]))
+        _columns.append(ParameterColumndefinition(_name = _field_names[_field_counter], _datatype = _field_types[_field_counter]))
     return _columns
 
 def create_table_skeleton(_table_name, _field_names, _field_types):
     """Creates a sql for creating tables."""
     _columns = make_column_definitions(_field_names, _field_types)
-    _CREATE = Verb_CREATE_TABLE(_name = _table_name, _columns = _columns)
+    _CREATE = VerbCreateTable(_name = _table_name, _columns = _columns)
     _CREATE._temporary = True
     return _CREATE
 
 
 def make_column_identifiers(_field_names):
     """Create columns idenfiers from a list of field names."""
-    _columns = SQL_List()
+    _columns = SqlList()
     _field_counter = 0
     _curr_column = None
     for _field_counter in range(0, len(_field_names)):
-        _columns.append(Parameter_Identifier(_identifier = _field_names[_field_counter]))
+        _columns.append(ParameterIdentifier(_identifier = _field_names[_field_counter]))
     return _columns
 
 def make_delete_skeleton(_table_name, _key_fields):
-    _destination_identifier = Parameter_Identifier(_identifier = _table_name)
+    _destination_identifier = ParameterIdentifier(_identifier = _table_name)
     
     _column_identifiers = make_column_identifiers(_key_fields)
-    return Verb_DELETE()
+    return VerbDelete()
 
 def make_update_skeleton(_table_name):
-    _table_identifier = Parameter_Identifier(_identifier = _table_name)
-    return Verb_UPDATE(_table_identifier =  _table_identifier)
+    _table_identifier = ParameterIdentifier(_identifier = _table_name)
+    return VerbUpdate(_table_identifier =  _table_identifier)
 
 def make_insert_sql_with_parameters(_table_name, _field_names, _db_type, _field_types):
     """Make a prepared statement-type INSERT INTO ...VALUES-SQL."""
-    _destination_identifier = Parameter_Identifier(_identifier = _table_name)
+    _destination_identifier = ParameterIdentifier(_identifier = _table_name)
     _column_identifiers = make_column_identifiers(_field_names)
-    _insert = Verb_INSERT(_destination_identifier = _destination_identifier, _column_identifiers = _column_identifiers)
+    _insert = VerbInsert(_destination_identifier = _destination_identifier, _column_identifiers = _column_identifiers)
     _refs = []
     # The VALUES-part of INSERT INTO looks the same on all platforms and we don't have to care about escaping.
     for _curr_idx in range(0, len(_field_names)):
@@ -65,7 +65,7 @@ def copy_to_table(_dal, _values, _field_names, _field_types, _table_name, _creat
         
     if _drop_existing == True:
         try:
-            _dal.execute(Verb_DROP_TABLE(_table_name).as_sql(_dal.db_type))
+            _dal.execute(VerbDropTable(_table_name).as_sql(_dal.db_type))
             _dal.commit()
         except Exception as e:
             print("copy_to_table - Ignoring error when dropping the table \"" + _table_name + "\": " + str(e)  )
@@ -91,9 +91,9 @@ def copy_to_table(_dal, _values, _field_names, _field_types, _table_name, _creat
     
 def select_all_skeleton(_table_name):
     """Returns a "SELECT * FROM _table_name"-structure. """
-    _expression = Parameter_Identifier(_table_name)
-    _source = Parameter_Source(_expression, _conditions = None, _alias = None, _join_type = None)
-    _select = Verb_SELECT(_fields = None, _sources = [_source], _operator =  "AND")
+    _expression = ParameterIdentifier(_table_name)
+    _source = ParameterSource(_expression, _conditions = None, _alias = None, _join_type = None)
+    _select = VerbSelect(_fields = None, _sources = [_source], _operator =  "AND")
     
     return _select
             

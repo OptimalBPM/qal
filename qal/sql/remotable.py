@@ -5,7 +5,7 @@ Created on Sep 30, 2013
 '''
 from qal.dal.dal import Database_Abstraction_Layer 
 
-class Parameter_Remotable(object): 
+class ParameterRemotable(object):
     """This class is an auxilliary class for all parameter classes that are remotable. 
     That is, they can fetch their data from, or perform their actions at, a different location than the parent class.
     If they return data, the data will be held in the temporary table, where it can be joined with or otherwise managed.
@@ -40,7 +40,7 @@ class Parameter_Remotable(object):
         char_set = string.ascii_lowercase + string.digits
         _tmp_table_name = '#' +''.join(random.sample(char_set*8,8))
        
-        from qal.sql.sql import Parameter_Identifier
+        from qal.sql.sql import ParameterIdentifier
         
         if self._resource.type.upper() == 'RDBMS':
             if not self._dal:
@@ -49,10 +49,10 @@ class Parameter_Remotable(object):
                 self._dal.connect_to_db()
             
             _source_sql = self._generate_sql(self._dal.db_type)
-            from qal.sql.sql import Parameter_Source
-            if  isinstance(self, Parameter_Source):
-                print("is Parameter_Source")
-                if isinstance(self.expression[0], Parameter_Identifier):
+            from qal.sql.sql import ParameterSource
+            if  isinstance(self, ParameterSource):
+                print("is ParameterSource")
+                if isinstance(self.expression[0], ParameterIdentifier):
                     
                     _source_sql = 'SELECT * FROM ' + self.expression[0].as_sql(self._dal.db_type)
                     if _tmp_table_name[1] == "#":
@@ -104,7 +104,7 @@ class Parameter_Remotable(object):
         """Copy the data into the parents' context so the parent can access it."""
         _table_name = copy_to_table(_dal = _parent_dal, _values =_data, _field_names = _field_names, _field_types = _field_types, _table_name = _tmp_table_name, _create_table = True)
         
-        _ident = Parameter_Identifier(_identifier = _table_name)
+        _ident = ParameterIdentifier(_identifier = _table_name)
         return _ident.as_sql(_parent_dal.db_type)
         
 

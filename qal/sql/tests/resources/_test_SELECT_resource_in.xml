@@ -1,256 +1,256 @@
 <sql:statement xmlns:sql="http://www.optimalbpm.se/XMLschema/DAL/SQL" xmlns:xsi="http://www.w3.org/2001/XMLSchema" xsi:schemaLocation="http://www.optimalbpm.se/XMLschema/DAL/SQL ../../dal/SQL.xsd">
 
-	<sql:Verb_SELECT>
+	<sql:VerbSelect>
 		<sql:order_by>
-			<sql:Parameter_ORDER_BY_item>
+			<sql:ParameterOrderByItem>
 				<sql:direction></sql:direction>
 				<sql:expressionitems>
-					<sql:Parameter_Identifier>
+					<sql:ParameterIdentifier>
 						<sql:identifier>table_postgresID</sql:identifier>
 						<sql:prefix>PG</sql:prefix>
 						<sql:operator></sql:operator>
-					</sql:Parameter_Identifier>
+					</sql:ParameterIdentifier>
 				</sql:expressionitems>
 				<sql:operator></sql:operator>
 				<sql:operator></sql:operator>
-			</sql:Parameter_ORDER_BY_item>
-			<sql:Parameter_ORDER_BY_item>
+			</sql:ParameterOrderByItem>
+			<sql:ParameterOrderByItem>
 				<sql:direction></sql:direction>
 				<sql:expressionitems>
-					<sql:Parameter_Identifier>
+					<sql:ParameterIdentifier>
 						<sql:identifier>file_htmlCode</sql:identifier>
 						<sql:prefix>HTML</sql:prefix>
 						<sql:operator></sql:operator>
-					</sql:Parameter_Identifier>
+					</sql:ParameterIdentifier>
 				</sql:expressionitems>
 				<sql:operator></sql:operator>
 				<sql:operator></sql:operator>
-			</sql:Parameter_ORDER_BY_item>
+			</sql:ParameterOrderByItem>
 		</sql:order_by>
 		<sql:fields>
-			<sql:Parameter_Field>
+			<sql:ParameterField>
 				<sql:alias></sql:alias>
 				<sql:expression>
-					<sql:Parameter_Identifier>
+					<sql:ParameterIdentifier>
 						<sql:identifier>table_postgresID</sql:identifier>
 						<sql:prefix>PG</sql:prefix>
 						<sql:operator></sql:operator>
-					</sql:Parameter_Identifier>
+					</sql:ParameterIdentifier>
 				</sql:expression>
-			</sql:Parameter_Field>
-			<sql:Parameter_Field>
+			</sql:ParameterField>
+			<sql:ParameterField>
 				<sql:alias></sql:alias>
 				<sql:expression>
-					<sql:Parameter_Identifier>
+					<sql:ParameterIdentifier>
 						<sql:identifier>table_mysqlID</sql:identifier>
 						<sql:prefix>MY</sql:prefix>
 						<sql:operator></sql:operator>
-					</sql:Parameter_Identifier>
+					</sql:ParameterIdentifier>
 				</sql:expression>
-			</sql:Parameter_Field>
-			<sql:Parameter_Field>
+			</sql:ParameterField>
+			<sql:ParameterField>
 				<sql:alias></sql:alias>
 				<sql:expression>
-					<sql:Parameter_Identifier>
+					<sql:ParameterIdentifier>
 						<sql:identifier>table_postgresName</sql:identifier>
 						<sql:prefix>PG</sql:prefix>
 						<sql:operator></sql:operator>
-					</sql:Parameter_Identifier>
+					</sql:ParameterIdentifier>
 				</sql:expression>
-			</sql:Parameter_Field>
-			<sql:Parameter_Field>
+			</sql:ParameterField>
+			<sql:ParameterField>
 				<sql:alias></sql:alias>
 				<sql:expression>
-					<sql:Parameter_Identifier>
+					<sql:ParameterIdentifier>
 						<sql:identifier>table_mysqlName</sql:identifier>
 						<sql:prefix>MY</sql:prefix>
 						<sql:operator></sql:operator>
-					</sql:Parameter_Identifier>
+					</sql:ParameterIdentifier>
 				</sql:expression>
-			</sql:Parameter_Field>
-			<sql:Parameter_Field>
+			</sql:ParameterField>
+			<sql:ParameterField>
 				<sql:alias></sql:alias>
 				<sql:expression>
-					<sql:Parameter_Identifier>
+					<sql:ParameterIdentifier>
 						<sql:identifier>file_csvName</sql:identifier>
 						<sql:prefix>CSV</sql:prefix>
 						<sql:operator></sql:operator>
-					</sql:Parameter_Identifier>
+					</sql:ParameterIdentifier>
 				</sql:expression>
-			</sql:Parameter_Field>
-			<sql:Parameter_Field>
+			</sql:ParameterField>
+			<sql:ParameterField>
 				<sql:alias></sql:alias>
 				<sql:expression>
-					<sql:Parameter_Identifier>
+					<sql:ParameterIdentifier>
 						<sql:identifier>file_htmlCode</sql:identifier>
 						<sql:prefix>HTML</sql:prefix>
 						<sql:operator></sql:operator>
-					</sql:Parameter_Identifier>
+					</sql:ParameterIdentifier>
 				</sql:expression>
-			</sql:Parameter_Field>
-			<sql:Parameter_Field>
+			</sql:ParameterField>
+			<sql:ParameterField>
 				<sql:alias></sql:alias>
 				<sql:expression>
-					<sql:Parameter_Identifier>
+					<sql:ParameterIdentifier>
 						<sql:identifier>file_htmlValue</sql:identifier>
 						<sql:prefix>HTML</sql:prefix>
 						<sql:operator></sql:operator>
-					</sql:Parameter_Identifier>
+					</sql:ParameterIdentifier>
 				</sql:expression>
-			</sql:Parameter_Field>
-			<sql:Parameter_Field>
+			</sql:ParameterField>
+			<sql:ParameterField>
 				<sql:alias></sql:alias>
 				<sql:expression>
-					<sql:Parameter_Identifier>
+					<sql:ParameterIdentifier>
 						<sql:identifier>file_xmltitle</sql:identifier>
 						<sql:prefix>XML</sql:prefix>
 						<sql:operator></sql:operator>
-					</sql:Parameter_Identifier>
+					</sql:ParameterIdentifier>
 				</sql:expression>
-			</sql:Parameter_Field>
-			<sql:Parameter_Field>
+			</sql:ParameterField>
+			<sql:ParameterField>
 				<sql:alias></sql:alias>
 				<sql:expression>
-					<sql:Parameter_Identifier>
+					<sql:ParameterIdentifier>
 						<sql:identifier>file_xmlprice</sql:identifier>
 						<sql:prefix>XML</sql:prefix>
 						<sql:operator></sql:operator>
-					</sql:Parameter_Identifier>
+					</sql:ParameterIdentifier>
 				</sql:expression>
-			</sql:Parameter_Field>
+			</sql:ParameterField>
 		</sql:fields>
 		<sql:sources>
-			<sql:Parameter_Source>
+			<sql:ParameterSource>
 				<sql:conditions/>
 				<sql:join_type>INNER</sql:join_type>
 				<sql:alias>PG</sql:alias>
 				<sql:expression>
-					<sql:Parameter_Identifier>
+					<sql:ParameterIdentifier>
 						<sql:identifier>table_postgres</sql:identifier>
 						<sql:prefix></sql:prefix>
 						<sql:operator></sql:operator>
-					</sql:Parameter_Identifier>
+					</sql:ParameterIdentifier>
 				</sql:expression>
 				<sql:resource_uuid>{1D62083E-88F7-4442-920D-0B6CC59BA2FF}</sql:resource_uuid>
-			</sql:Parameter_Source>
-			<sql:Parameter_Source>
+			</sql:ParameterSource>
+			<sql:ParameterSource>
 				<sql:conditions>
-					<sql:Parameter_Condition>
+					<sql:ParameterCondition>
 						<sql:right>
-							<sql:Parameter_Identifier>
+							<sql:ParameterIdentifier>
 								<sql:identifier>table_mysqlID</sql:identifier>
 								<sql:prefix>MY</sql:prefix>
 								<sql:operator></sql:operator>
-							</sql:Parameter_Identifier>
+							</sql:ParameterIdentifier>
 						</sql:right>
 						<sql:and_or>AND</sql:and_or>
 						<sql:operator>=</sql:operator>
 						<sql:left>
-							<sql:Parameter_Identifier>
+							<sql:ParameterIdentifier>
 								<sql:identifier>table_postgresID</sql:identifier>
 								<sql:prefix>PG</sql:prefix>
 								<sql:operator></sql:operator>
-							</sql:Parameter_Identifier>
+							</sql:ParameterIdentifier>
 						</sql:left>
-					</sql:Parameter_Condition>
+					</sql:ParameterCondition>
 				</sql:conditions>
 				<sql:join_type>INNER</sql:join_type>
 				<sql:alias>MY</sql:alias>
 				<sql:expression>
-					<sql:Parameter_Identifier>
+					<sql:ParameterIdentifier>
 						<sql:identifier>table_mysql</sql:identifier>
 						<sql:prefix></sql:prefix>
 						<sql:operator></sql:operator>
-					</sql:Parameter_Identifier>
+					</sql:ParameterIdentifier>
 				</sql:expression>
 				<sql:resource_uuid>{DD34A233-47A6-4C16-A26F-195711B49B97}</sql:resource_uuid>
-			</sql:Parameter_Source>
-			<sql:Parameter_Source>
+			</sql:ParameterSource>
+			<sql:ParameterSource>
 				<sql:conditions>
-					<sql:Parameter_Condition>
+					<sql:ParameterCondition>
 						<sql:right>
-							<sql:Parameter_Cast>
+							<sql:ParameterCast>
 								<sql:datatype>integer</sql:datatype>
 								<sql:expression>
-									<sql:Parameter_Identifier>
+									<sql:ParameterIdentifier>
 										<sql:identifier>file_csvID</sql:identifier>
 										<sql:prefix>CSV</sql:prefix>
 										<sql:operator></sql:operator>
-									</sql:Parameter_Identifier>
+									</sql:ParameterIdentifier>
 								</sql:expression>
 								<sql:operator></sql:operator>
-							</sql:Parameter_Cast>
+							</sql:ParameterCast>
 						</sql:right>
 						<sql:and_or>AND</sql:and_or>
 						<sql:operator>=</sql:operator>
 						<sql:left>
-							<sql:Parameter_Identifier>
+							<sql:ParameterIdentifier>
 								<sql:identifier>table_postgresID</sql:identifier>
 								<sql:prefix>PG</sql:prefix>
 								<sql:operator></sql:operator>
-							</sql:Parameter_Identifier>
+							</sql:ParameterIdentifier>
 						</sql:left>
-					</sql:Parameter_Condition>
+					</sql:ParameterCondition>
 				</sql:conditions>
 				<sql:join_type>INNER</sql:join_type>
 				<sql:alias>CSV</sql:alias>
 				<sql:expression>
-					<sql:Parameter_Dataset>
+					<sql:ParameterDataset>
 						<sql:data_source>Flatfile_Dataset</sql:data_source>
 						<sql:operator></sql:operator>
 						<sql:resource_uuid>{86470370-FF78-48A4-9759-A3BAE4EE22FE}</sql:resource_uuid>
-					</sql:Parameter_Dataset>
+					</sql:ParameterDataset>
 				</sql:expression>
 				<sql:resource_uuid></sql:resource_uuid>
-			</sql:Parameter_Source>
-			<sql:Parameter_Source>
+			</sql:ParameterSource>
+			<sql:ParameterSource>
 				<sql:conditions/>
 				<sql:join_type>CROSS</sql:join_type>
 				<sql:alias>HTML</sql:alias>
 				<sql:expression>
-					<sql:Parameter_Dataset>
+					<sql:ParameterDataset>
 						<sql:data_source>XPath_Dataset</sql:data_source>
 						<sql:operator></sql:operator>
 						<sql:resource_uuid>{0B8B71C1-D3A8-4F16-B8E1-9C73E196254C}</sql:resource_uuid>
-					</sql:Parameter_Dataset>
+					</sql:ParameterDataset>
 				</sql:expression>
 				<sql:resource_uuid></sql:resource_uuid>
-			</sql:Parameter_Source>
-			<sql:Parameter_Source>
+			</sql:ParameterSource>
+			<sql:ParameterSource>
 				<sql:conditions>
-					<sql:Parameter_Condition>
+					<sql:ParameterCondition>
 						<sql:right>
-							<sql:Parameter_Numeric>
+							<sql:ParameterNumeric>
 								<sql:numeric_value>1</sql:numeric_value>
 								<sql:operator></sql:operator>
-							</sql:Parameter_Numeric>
+							</sql:ParameterNumeric>
 						</sql:right>
 						<sql:and_or>AND</sql:and_or>
 						<sql:operator>=</sql:operator>
 						<sql:left>
-							<sql:Parameter_Numeric>
+							<sql:ParameterNumeric>
 								<sql:numeric_value>1</sql:numeric_value>
 								<sql:operator></sql:operator>
-							</sql:Parameter_Numeric>
+							</sql:ParameterNumeric>
 						</sql:left>
-					</sql:Parameter_Condition>
+					</sql:ParameterCondition>
 				</sql:conditions>
 				<sql:join_type>INNER</sql:join_type>
 				<sql:alias>XML</sql:alias>
 				<sql:expression>
-					<sql:Parameter_Dataset>
+					<sql:ParameterDataset>
 						<sql:data_source>XPath_Dataset</sql:data_source>
 						<sql:operator></sql:operator>
 						<sql:resource_uuid>{969A610A-FCA6-4837-B33A-BAA8F13D8B70}</sql:resource_uuid>
-					</sql:Parameter_Dataset>
+					</sql:ParameterDataset>
 				</sql:expression>
 				<sql:resource_uuid></sql:resource_uuid>
-			</sql:Parameter_Source>
+			</sql:ParameterSource>
 		</sql:sources>
 		<sql:top_limit>0</sql:top_limit>
 		<sql:operator></sql:operator>
 		<sql:resource_uuid>{1D62083E-88F7-4442-920D-0B6CC59BA2FF}</sql:resource_uuid>
-	</sql:Verb_SELECT>
+	</sql:VerbSelect>
 	<resources>
 	
 		<resource type="rdbms" uuid="{1D62083E-88F7-4442-920D-0B6CC59BA2FF}" caption="localhost_pg">

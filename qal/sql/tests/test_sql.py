@@ -99,23 +99,23 @@ r_UPDATE_SQL_Server = "SET" + DEFAULT_ROWSEP + "dest_column = 'Hello'" + DEFAULT
 
 # Generate test objects.
 def gen_simple_condition_1():
-    _cond = Parameter_Condition(_operator = '>', _and_or = 'AND')
-    _cond.left.append(Parameter_Numeric(1.3, '+'))
-    _cond.right.append(Parameter_Numeric(2.4, '+'))
+    _cond = ParameterCondition(_operator = '>', _and_or = 'AND')
+    _cond.left.append(ParameterNumeric(1.3, '+'))
+    _cond.right.append(ParameterNumeric(2.4, '+'))
 
     return _cond
 
 def gen_simple_condition_2():
-    _cond = Parameter_Condition(_operator = 'LIKE', _and_or = 'AND')
-    _cond.left.append(Parameter_Identifier('firstname', 'C', 'T1'))
-    _cond.right.append(Parameter_String('%icklas', '+'))
+    _cond = ParameterCondition(_operator = 'LIKE', _and_or = 'AND')
+    _cond.left.append(ParameterIdentifier('firstname', 'C', 'T1'))
+    _cond.right.append(ParameterString('%icklas', '+'))
 
     return _cond
 
 def gen_simple_conditions():
     
 
-    _cond = Parameter_Conditions()
+    _cond = ParameterConditions()
 
     _cond.append(gen_simple_condition_1())
     _cond.append(gen_simple_condition_2())
@@ -124,7 +124,7 @@ def gen_simple_conditions():
 
 def gen_complex_conditions():
 
-    _cond = Parameter_Conditions()
+    _cond = ParameterConditions()
 
     _cond.append(gen_simple_condition_1())
     _cond.append(gen_simple_condition_2())
@@ -132,29 +132,29 @@ def gen_complex_conditions():
     return _cond
 
 def gen_simple_function():
-    param = Parameter_Function(_name = 'Simple', _operator = 'C')
+    param = ParameterFunction(_name = 'Simple', _operator = 'C')
     param.parameters.append(gen_simple_cast())
     param.parameters.append(gen_simple_expression_2())
     return param
 def gen_simpleexpression_1():
     param = Parameter_Expression(_operator = '+')
-    param.expressionitems.append(Parameter_Identifier('CountryPrefix', 'C', 'T1'))
-    param.expressionitems.append(Parameter_String('+', 'C'))
-    param.expressionitems.append(Parameter_Identifier('PhoneNumber', 'C', 'T1'))
+    param.expressionitems.append(ParameterIdentifier('CountryPrefix', 'C', 'T1'))
+    param.expressionitems.append(ParameterString('+', 'C'))
+    param.expressionitems.append(ParameterIdentifier('PhoneNumber', 'C', 'T1'))
     param.expressionitems.append(gen_simple_function())
     return param
 
 def gen_simple_expression_2():
     param = Parameter_Expression(_operator = '+')
-    param.expressionitems.append(Parameter_Identifier('CountryPrefix', 'C', 'T2'))
-    param.expressionitems.append(Parameter_String('+', 'C'))
-    param.expressionitems.append(Parameter_Identifier('PhoneNumber', 'C', 'T2'))
+    param.expressionitems.append(ParameterIdentifier('CountryPrefix', 'C', 'T2'))
+    param.expressionitems.append(ParameterString('+', 'C'))
+    param.expressionitems.append(ParameterIdentifier('PhoneNumber', 'C', 'T2'))
     return param
 
 
 def gen_simple_cast():
     
-    param = Parameter_Cast(None, 'varchar(200)', 'C')
+    param = ParameterCast(None, 'varchar(200)', 'C')
     param.expression.append(gen_simple_expression_2())
     return param
 
@@ -165,22 +165,22 @@ def gen_complex_expression():
     
     param = Parameter_Expression()
     param.expressionitems.append(exp)
-    param.expressionitems.append(Parameter_String('+', 'C', '\\'))
-    param.expressionitems.append(Parameter_Identifier('PhoneNumber', 'C', 'T1'))
+    param.expressionitems.append(ParameterString('+', 'C', '\\'))
+    param.expressionitems.append(ParameterIdentifier('PhoneNumber', 'C', 'T1'))
     return param
 
 def gen_complex_function():
-    param = Parameter_Function(_name = 'Test', _operator = '+')
+    param = ParameterFunction(_name = 'Test', _operator = '+')
     param.parameters.append(gen_simpleexpression_1())
     param.parameters.append(gen_complex_expression())
     return param
     
 
 def gen_simple_case():
-    param = Parameter_CASE()
-    when1 = Parameter_WHEN(gen_simple_conditions(), gen_simpleexpression_1())
+    param = ParameterCase()
+    when1 = ParameterWhen(gen_simple_conditions(), gen_simpleexpression_1())
     param.when_statements.append(when1)
-    when2 = Parameter_WHEN(gen_simple_conditions(), gen_simple_expression_2())
+    when2 = ParameterWhen(gen_simple_conditions(), gen_simple_expression_2())
     param.when_statements.append(when2)
     param.else_statement = gen_simple_expression_2()
     return param
@@ -188,85 +188,85 @@ def gen_simple_case():
 
 def gen_simple_field_1():
     
-    Parameter = Parameter_Field(None, _alias= 'Field1')
+    Parameter = ParameterField(None, _alias= 'Field1')
     Parameter.expression.append(gen_simpleexpression_1())
     return Parameter
 def gen_simple_field_2():
-    Parameter = Parameter_Field(None, _alias= 'Field2')
+    Parameter = ParameterField(None, _alias= 'Field2')
     Parameter.expression.append(gen_simple_expression_2())
     return Parameter 
 def gen_simple_source_1():
     
-    #_condlist = SQL_List("Parameter_Condition")
+    #_condlist = SqlList("ParameterCondition")
     _condlist = gen_simple_conditions()
-    source = Parameter_Source(None, _condlist, 'T1')
-    source.expression.append(Parameter_Identifier('testtable', 'C')) 
+    source = ParameterSource(None, _condlist, 'T1')
+    source.expression.append(ParameterIdentifier('testtable', 'C'))
     return source
 
 def gen_simple_source_2():
-    #_condlist = SQL_List("Parameter_Condition")
+    #_condlist = SqlList("ParameterCondition")
     _condlist = gen_simple_conditions()
-    source = Parameter_Source(None, _condlist, 'T2')
-    source.expression.append(Parameter_Identifier('testtable', 'C')) 
+    source = ParameterSource(None, _condlist, 'T2')
+    source.expression.append(ParameterIdentifier('testtable', 'C'))
     return source
 
 def gen_simple_select(): 
-    select = Verb_SELECT(_operator = 'C')
+    select = VerbSelect(_operator = 'C')
     select.top_limit = 1
     select.fields.append(gen_simple_field_1())
     select.fields.append(gen_simple_field_2())
     select.sources.append(gen_simple_source_1())
     select.sources.append(gen_simple_source_2())
-    po1 = Parameter_ORDER_BY_item(_direction = "desc")
-    po1.expressionitems.append(Parameter_Identifier("Field1", _prefix = "T1"))
+    po1 = ParameterOrderByItem(_direction = "desc")
+    po1.expressionitems.append(ParameterIdentifier("Field1", _prefix = "T1"))
     select.order_by.append(po1)
-    po2 = Parameter_ORDER_BY_item(_direction = "asc")
-    po2.expressionitems.append(Parameter_Identifier("Field1", _prefix = "T2"))
+    po2 = ParameterOrderByItem(_direction = "asc")
+    po2.expressionitems.append(ParameterIdentifier("Field1", _prefix = "T2"))
     select.order_by.append(po2)
     return select
 
 def gen_simple_insert():
-    insert = Verb_INSERT()
-    insert.destination_identifier = Parameter_Identifier("test")
+    insert = VerbInsert()
+    insert.destination_identifier = ParameterIdentifier("test")
     insert.data = gen_simple_select()
-    insert.column_identifiers.append(Parameter_Identifier("Table1ID"))
-    insert.column_identifiers.append(Parameter_Identifier("Table1Name"))
-    insert.column_identifiers.append(Parameter_Identifier("Table1Changed"))
+    insert.column_identifiers.append(ParameterIdentifier("Table1ID"))
+    insert.column_identifiers.append(ParameterIdentifier("Table1Name"))
+    insert.column_identifiers.append(ParameterIdentifier("Table1Changed"))
     return insert
 
 def gen_simple_update():
  
-    _table_identifier = Parameter_Identifier("test")
+    _table_identifier = ParameterIdentifier("test")
     
-    _a_1 = Parameter_Condition(Parameter_Identifier("col_1"), Parameter_String("1"), "=")
-    _a_2 = Parameter_Condition(Parameter_Identifier("col_2"), Parameter_String("1"), "=", "AND")
-    _conditions = Parameter_Conditions()
+    _a_1 = ParameterCondition(ParameterIdentifier("col_1"), ParameterString("1"), "=")
+    _a_2 = ParameterCondition(ParameterIdentifier("col_2"), ParameterString("1"), "=", "AND")
+    _conditions = ParameterConditions()
     _conditions.append(_a_1)
     _conditions.append(_a_2)
     
     
-    _assignments = SQL_List()
-    _assignments.append(Parameter_Assignment(_left = Parameter_Identifier("dest_column"), _right = Parameter_String("Hello")))
+    _assignments = SqlList()
+    _assignments.append(ParameterAssignment(_left = ParameterIdentifier("dest_column"), _right = ParameterString("Hello")))
 
-    _update = Verb_UPDATE(_table_identifier =Parameter_Identifier("test"),_assignments = _assignments, _conditions = _conditions)
+    _update = VerbUpdate(_table_identifier =ParameterIdentifier("test"),_assignments = _assignments, _conditions = _conditions)
     return _update
 
 def gen_simple_create(): 
   
-    col1_constraint1 = Parameter_Constraint('PK_Table1_Table1ID', "PRIMARY KEY", [Parameter_Identifier('Table1ID')])
-    col1_constraint2 = Parameter_Constraint('FK_Table1_Table1ID_Table2_Table2ID', "FOREIGN KEY", [Parameter_Identifier('Table1ID'), Parameter_Identifier('Table2'), Parameter_Identifier('Table2ID')])
-    col1_constraint3 = Parameter_Constraint('CK_Table1_Name', "CHECK", [Parameter_Identifier('Table1ID')])
+    col1_constraint1 = ParameterConstraint('PK_Table1_Table1ID', "PRIMARY KEY", [ParameterIdentifier('Table1ID')])
+    col1_constraint2 = ParameterConstraint('FK_Table1_Table1ID_Table2_Table2ID', "FOREIGN KEY", [ParameterIdentifier('Table1ID'), ParameterIdentifier('Table2'), ParameterIdentifier('Table2ID')])
+    col1_constraint3 = ParameterConstraint('CK_Table1_Name', "CHECK", [ParameterIdentifier('Table1ID')])
     col1_constraint3.checkconditions = gen_simple_conditions()
-    col1_constraint4 = Parameter_Constraint('UQ_Table1_Name', "UNIQUE", [Parameter_Identifier('Table1ID')])
-    #col1_constraint5 = Parameter_Constraint('DF_Table1_name', C_DEFAULT, ['GETDATE()'])
+    col1_constraint4 = ParameterConstraint('UQ_Table1_Name', "UNIQUE", [ParameterIdentifier('Table1ID')])
+    #col1_constraint5 = ParameterConstraint('DF_Table1_name', C_DEFAULT, ['GETDATE()'])
     
-    col1 = Parameter_ColumnDefinition('Table1ID', 'serial', True)
-    col2 = Parameter_ColumnDefinition('Table1Name', 'VARCHAR(400)', False)
-    col3 = Parameter_ColumnDefinition('Table1Changed', 'timestamp', False)  
+    col1 = ParameterColumndefinition('Table1ID', 'serial', True)
+    col2 = ParameterColumndefinition('Table1Name', 'VARCHAR(400)', False)
+    col3 = ParameterColumndefinition('Table1Changed', 'timestamp', False)
     col3.default = '::currdatetime::'
-    #col4 = Parameter_ColumnDefinition('Table1Date', 'datetime', False, 'NOW()')  
+    #col4 = ParameterColumndefinition('Table1Date', 'datetime', False, 'NOW()')
 
-    result = Verb_CREATE_TABLE('Table1')
+    result = VerbCreateTable('Table1')
     result.columns.append(col1)
     result.columns.append(col2)
     result.columns.append(col3)
@@ -282,7 +282,7 @@ def gen_simple_create():
 class parameter_test(unittest.TestCase):
 
 
-    def test_00_parameter_condition_simple(self):
+    def test_00_ParameterCondition_simple(self):
         self.maxDiff = None
         param = gen_simple_condition_1()
         paramclass = param.__class__.__name__
@@ -293,7 +293,7 @@ class parameter_test(unittest.TestCase):
         self.assertEqual(param.as_sql(DB_DB2), _testvalue, paramclass +'.as_sql(DB_DB2) failed.')
         self.assertEqual(param.as_sql(DB_SQLSERVER), _testvalue, paramclass +'.as_sql(DB_SQLSERVER) failed.')
 
-    def test_01_parameter_condition_complex(self):
+    def test_01_ParameterCondition_complex(self):
         self.maxDiff = None
         param = gen_complex_conditions()
         paramclass = param.__class__.__name__
@@ -324,7 +324,7 @@ class parameter_test(unittest.TestCase):
         self.assertEqual(param.as_sql(DB_DB2), _db2_testvalue, paramclass +'.as_sql(DB_DB2) failed.')
         self.assertEqual(param.as_sql(DB_SQLSERVER), _testvalue, paramclass +'.as_sql(DB_SQLSERVER) failed.')
 
-    def test_03_parameter_cast_simple(self):
+    def test_03_ParameterCast_simple(self):
         self.maxDiff = None
         param = gen_simple_cast()
         _testvalue = "CAST((T2.CountryPrefix + '+' + T2.PhoneNumber) AS varchar(200))"
@@ -339,7 +339,7 @@ class parameter_test(unittest.TestCase):
         self.assertEqual(param.as_sql(DB_DB2), _db2_testvalue, paramclass +'.as_sql(DB_DB2) failed.')
         self.assertEqual(param.as_sql(DB_SQLSERVER), _testvalue, paramclass +'.as_sql(DB_SQLSERVER) failed.')
         
-    def test_04_parameter_function_simple(self):
+    def test_04_ParameterFunction_simple(self):
         self.maxDiff = None
         param = gen_simple_function()
         _testvalue = "Simple(CAST((T2.CountryPrefix + '+' + T2.PhoneNumber) AS varchar(200)), (T2.CountryPrefix + '+' + T2.PhoneNumber))"
@@ -355,7 +355,7 @@ class parameter_test(unittest.TestCase):
         self.assertEqual(param.as_sql(DB_SQLSERVER), _testvalue, paramclass +'.as_sql(DB_SQLSERVER) failed.')
 
 
-    def test_05_parameter_case(self):
+    def test_05_ParameterCase(self):
         self.maxDiff = None
         param = gen_simple_case()
         _testvalue = "CASE WHEN ((1.3 > 2.4) AND (T1.firstname LIKE '%icklas')) THEN (T1.CountryPrefix + '+' + T1.PhoneNumber + Simple(CAST((T2.CountryPrefix + '+' + T2.PhoneNumber) AS varchar(200)), (T2.CountryPrefix + '+' + T2.PhoneNumber))) WHEN ((1.3 > 2.4) AND (T1.firstname LIKE '%icklas')) THEN (T2.CountryPrefix + '+' + T2.PhoneNumber) else_statement (T2.CountryPrefix + '+' + T2.PhoneNumber) END"
@@ -371,7 +371,7 @@ class parameter_test(unittest.TestCase):
         self.assertEqual(param.as_sql(DB_DB2), _db2_testvalue, paramclass +'.as_sql(DB_DB2) failed.')
         self.assertEqual(param.as_sql(DB_SQLSERVER), _testvalue, paramclass +'.as_sql(DB_SQLSERVER) failed.')
 
-    def test_06_VERB_SELECT(self):
+    def test_06_VerbSelect(self):
         self.maxDiff = None
         param = gen_simple_select()
         paramclass = param.__class__.__name__
@@ -395,7 +395,7 @@ class parameter_test(unittest.TestCase):
         self.assertEqual(param.as_sql(DB_DB2), r_create_table_db2, paramclass +'.as_sql(DB_DB2) failed.')
         self.assertEqual(param.as_sql(DB_SQLSERVER), r_create_table_sqlserver, paramclass +'.as_sql(DB_SQLSERVER) failed.')
 
-    def test_08_VERB_INSERT(self):
+    def test_08_VerbInsert(self):
         self.maxDiff = None
         param = gen_simple_insert()
 
@@ -409,7 +409,7 @@ class parameter_test(unittest.TestCase):
         self.assertEqual(param.as_sql(DB_DB2), quoted_testvalue + DEFAULT_ROWSEP + r_SELECT_DB_DB2, paramclass +'.as_sql(DB_DB2) failed.')
         self.assertEqual(param.as_sql(DB_SQLSERVER), _testvalue + DEFAULT_ROWSEP + r_SELECT_SQL_Server, paramclass +'.as_sql(DB_SQLSERVER) failed.')
         
-    def test_09_VERB_UPDATE(self):
+    def test_09_VerbUpdate(self):
         self.maxDiff = None
         param = gen_simple_update()
 
@@ -428,7 +428,7 @@ class parameter_test(unittest.TestCase):
 
     def test_10_parameter_create_index(self):
         self.maxDiff = None
-        param = Verb_CREATE_INDEX('ind_Table1ID', "CLUSTERED", 'Table1', ['Table1Name', 'Table1Date'])
+        param = VerbCreateIndex('ind_Table1ID', "CLUSTERED", 'Table1', ['Table1Name', 'Table1Date'])
         paramclass = param.__class__.__name__
         _mysql_testvalue      = 'CREATE CLUSTERED INDEX `ind_Table1ID`' + param._row_separator + 'ON Table1(`Table1Name`, `Table1Date`)'
         _oracle_testvalue     = 'CREATE CLUSTERED INDEX "ind_Table1ID"' + param._row_separator + 'ON Table1("Table1Name", "Table1Date")'
@@ -443,7 +443,7 @@ class parameter_test(unittest.TestCase):
        
     def test_11_parameter_drop_table(self):
         self.maxDiff = None
-        param = Verb_DROP_TABLE('test')
+        param = VerbDropTable('test')
         paramclass = param.__class__.__name__
         _mysql_testvalue      = 'DROP TABLE test'
         _oracle_testvalue     = 'DROP TABLE "test"'

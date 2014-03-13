@@ -58,24 +58,24 @@ def join_types():
 
 def expression_item_types():
     """Returns a list of the supported expression types""" 
-    return ['Verb_SELECT','Parameter_Expression',
-                'Parameter_String','Parameter_Numeric',
-                'Parameter_Identifier','Parameter_Cast',
-                'Parameter_Function', 'Parameter_IN', 'Parameter_Dataset', 'Parameter_CASE', 'Parameter_Set']
+    return ['VerbSelect','Parameter_Expression',
+                'ParameterString','ParameterNumeric',
+                'ParameterIdentifier','ParameterCast',
+                'ParameterFunction', 'ParameterIn', 'ParameterDataset', 'ParameterCase', 'ParameterSet']
     
 def tabular_expression_item_types(): 
     """Returns a list of the supported tabular expression types""" 
-    return ['Verb_SELECT','Parameter_Dataset', 'Parameter_Set']
+    return ['VerbSelect','ParameterDataset', 'ParameterSet']
 
 def in_types():
     """Returns a list of what is supported in a IN-statement""" 
-    return ['Verb_SELECT', 'Parameter_String'] 
+    return ['VerbSelect', 'ParameterString']
 
         
     
 def condition_part(): 
     """Returns a list of the supported condition parts""" 
-    return ['Parameter_Conditions','Parameter_Condition', 'Parameter_Expression'] + expression_item_types() 
+    return ['ParameterConditions','ParameterCondition', 'Parameter_Expression'] + expression_item_types()
 
 
 def sql_property_to_type(_property_name):
@@ -149,47 +149,47 @@ def sql_property_to_type(_property_name):
     
     # Complex types
     elif _property_name in ['checkconditions','conditions']:
-        return ['Array_Parameter_Condition']
+        return ['Array_ParameterCondition']
 
     elif _property_name in ['columnnames']:
         return ['Array_string']
         
     elif _property_name == 'columns':
-        return ['Array_Parameter_ColumnDefinition']
+        return ['Array_ParameterColumndefinition']
     
     elif _property_name in ['destination_identifier', 'table_identifier']:
-        return ['Parameter_Identifier']
+        return ['ParameterIdentifier']
 
     elif _property_name in ['column_identifiers','references']:
-        return ['Array_Parameter_Identifier']
+        return ['Array_ParameterIdentifier']
         
     elif _property_name == 'constraints':
-        return ['Array_Parameter_Constraint']
+        return ['Array_ParameterConstraint']
     
      
     elif _property_name == 'fields':
-        return ['Array_Parameter_Field']  
+        return ['Array_ParameterField']
 
     elif _property_name == 'select':
-        return ['Verb_SELECT']
+        return ['VerbSelect']
      
     elif _property_name == 'sources':
-        return ['Array_Parameter_Source']  
+        return ['Array_ParameterSource']
     
     elif _property_name == 'csv_dialect':
         return ['file_types', list_dialects()] 
 
     
     elif _property_name == 'when_statements':
-        return ['Array_Parameter_WHEN']  
+        return ['Array_ParameterWhen']
     elif _property_name == 'order_by':
-        return ['Array_Parameter_ORDER_BY_item'] 
+        return ['Array_ParameterOrderByItem']
     elif _property_name == 'assignments':
-        return ['Array_Parameter_Assignment']  
+        return ['Array_ParameterAssignment']
     else:
         raise Exception("sql_property_to_type: Unrecognized property:" + _property_name)
     
 def verbs(): 
     """Returns a list of the supported verb types""" 
-    return ['Verb_CREATE_TABLE','Verb_CREATE_INDEX', 'Verb_SELECT','Verb_Custom', 'Verb_INSERT']  
+    return ['VerbCreateTable','VerbCreateIndex', 'VerbSelect','Verb_Custom', 'VerbInsert']
    

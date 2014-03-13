@@ -1,43 +1,43 @@
 <?xml version="1.0" ?>
 <sql:statement xmlns:sql="http://www.optimalbpm.se/XMLschema/DAL/SQL" xmlns:xsi="http://www.w3.org/2001/XMLSchema"
                xsi:schemaLocation="http://www.optimalbpm.se/XMLschema/DAL/SQL ../../SQL.xsd">
-	<sql:Verb_DELETE>
+	<sql:VerbDelete>
 		<sql:sources>
-			<sql:Parameter_Source>
+			<sql:ParameterSource>
 				<sql:conditions/>
 				<sql:expression>
-					<sql:Parameter_Identifier>
+					<sql:ParameterIdentifier>
 						<sql:operator/>
 						<sql:prefix/>
 						<sql:identifier>Test</sql:identifier>
-					</sql:Parameter_Identifier>
+					</sql:ParameterIdentifier>
 				</sql:expression>
 				<sql:join_type/>
 				<sql:alias>T1</sql:alias>
-			</sql:Parameter_Source>
-			<sql:Parameter_Source>
+			</sql:ParameterSource>
+			<sql:ParameterSource>
 				<sql:conditions>
-					<sql:Parameter_Condition>
+					<sql:ParameterCondition>
 						<sql:operator>=</sql:operator>
 						<sql:and_or>AND</sql:and_or>
 						<sql:right>
-							<sql:Parameter_Identifier>
+							<sql:ParameterIdentifier>
 								<sql:operator/>
 								<sql:prefix>T1</sql:prefix>
 								<sql:identifier>Column1</sql:identifier>
-							</sql:Parameter_Identifier>
+							</sql:ParameterIdentifier>
 						</sql:right>
 						<sql:left>
-							<sql:Parameter_Identifier>
+							<sql:ParameterIdentifier>
 								<sql:operator/>
 								<sql:prefix>T2</sql:prefix>
 								<sql:identifier>Column1</sql:identifier>
-							</sql:Parameter_Identifier>
+							</sql:ParameterIdentifier>
 						</sql:left>
-					</sql:Parameter_Condition>
+					</sql:ParameterCondition>
 				</sql:conditions>
 				<sql:expression>
-					<sql:Parameter_Dataset>
+					<sql:ParameterDataset>
 						<sql:data_source>
 							<sql:Flatfile_Dataset>
 								<sql:filename>_test_insert_csv_in.txt</sql:filename>
@@ -60,11 +60,11 @@
 								</sql:data_table>
 							</sql:Flatfile_Dataset>
 						</sql:data_source>
-					</sql:Parameter_Dataset>
+					</sql:ParameterDataset>
 				</sql:expression>
 				<sql:join_type/>
 				<sql:alias>T2</sql:alias>
-			</sql:Parameter_Source>
+			</sql:ParameterSource>
 		</sql:sources>
-	</sql:Verb_DELETE>
+	</sql:VerbDelete>
 </sql:statement>

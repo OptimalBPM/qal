@@ -15,13 +15,13 @@ class Test(unittest.TestCase):
 
 
     def _test_list_parameter_classes(self):
-        self.assertEqual(list_parameter_classes(),['Parameter_Conditions','Parameter_Condition', 'Parameter_Conditions', 'Parameter_String', 'Parameter_Base', 'Parameter_Function', 'Parameter_Expression', 'Parameter_Identifier', 'Parameter_ColumnDefinition', 'Parameter_Cast', 'Parameter_WHEN', 'Parameter_Constraint', 'Parameter_Numeric', 'Parameter_Expression_Item', 'Parameter_DML', 'Parameter_Source', 'Parameter_CASE', 'Parameter_Field'])
+        self.assertEqual(list_parameter_classes(),['ParameterConditions','ParameterCondition', 'ParameterConditions', 'ParameterString', 'ParameterBase', 'ParameterFunction', 'Parameter_Expression', 'ParameterIdentifier', 'ParameterColumndefinition', 'ParameterCast', 'ParameterWhen', 'ParameterConstraint', 'ParameterNumeric', 'ParameterExpressionItem', 'Parameter_DML', 'ParameterSource', 'ParameterCase', 'ParameterField'])
         
     def _test_list_verb_classes(self):
-        self.assertEqual(list_verb_classes(), ['Verb_CREATE_INDEX', 'Verb_CREATE_TABLE', 'Verb_SELECT', 'Verb_DELETE', 'Verb_Custom'])
+        self.assertEqual(list_verb_classes(), ['VerbCreateIndex', 'VerbCreateTable', 'VerbSelect', 'VerbDelete', 'Verb_Custom'])
         
     def _testList_class_properties(self):
-        self.assertEqual(list_class_properties('Verb_CREATE_TABLE'), ['Name', 'Columns', 'Constraints'])
+        self.assertEqual(list_class_properties('VerbCreateTable'), ['Name', 'Columns', 'Constraints'])
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testDev']

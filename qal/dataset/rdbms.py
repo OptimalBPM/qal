@@ -6,11 +6,11 @@ Created on Jan 8, 2012
 
 from qal.dal.types import DB_DB2,DB_ORACLE, DB_POSTGRESQL
 from qal.sql.utils import db_specific_object_reference
-from qal.sql.sql import Verb_INSERT, Verb_DELETE, Verb_UPDATE, Parameter_Conditions
-from qal.sql.sql import Parameter_Source, Parameter_Identifier, Parameter_Parameter,Parameter_Condition, Parameter_Assignment
+from qal.sql.sql import VerbInsert, VerbDelete, VerbUpdate, ParameterConditions
+from qal.sql.sql import ParameterSource, ParameterIdentifier, ParameterParameter,ParameterCondition, ParameterAssignment
 from qal.dal.dal import Database_Abstraction_Layer
 from qal.sql.macros import select_all_skeleton
-from qal.sql.base import SQL_List
+from qal.sql.base import SqlList
 
 from qal.sql.macros import make_insert_sql_with_parameters
 
@@ -30,7 +30,7 @@ class RDBMS_Dataset(Custom_Dataset):
     It is a text string. 
 
     .. todo::
-    Make it possible for it to be a backend agnostic qal.sql.sql.VERB_SELECT object parsed from an XML structure.""" 
+    Make it possible for it to be a backend agnostic qal.sql.sql.VerbSelect object parsed from an XML structure."""
 
     def read_resource_settings(self, _resource):
         if _resource.type.upper() != 'RDBMS':
@@ -89,20 +89,20 @@ class RDBMS_Dataset(Custom_Dataset):
     
 
     def _rdbms_init_deletes(self):
-        """Generates a Verb_DELETE instance populated with the indata"""
+        """Generates a VerbDelete instance populated with the indata"""
         
-        _source = Parameter_Source()
-        _source.expression.append(Parameter_Identifier(self.table_name))
+        _source = ParameterSource()
+        _source.expression.append(ParameterIdentifier(self.table_name))
         
         # Add the WHERE statement
         for _field_idx in self._structure_key_fields:
-            _new_cond = Parameter_Condition(_left = Parameter_Identifier(_identifier= self.field_names[_field_idx]), 
-                                            _right = Parameter_Parameter(_datatype = self.field_types[_field_idx]), 
+            _new_cond = ParameterCondition(_left = ParameterIdentifier(_identifier= self.field_names[_field_idx]),
+                                            _right = ParameterParameter(_datatype = self.field_types[_field_idx]),
                                              _operator = '=', _and_or = 'AND')
             _source.conditions.append(_new_cond)
         
-        # Make the Verb_DELETE skeleton
-        _delete = Verb_DELETE()
+        # Make the VerbDelete skeleton
+        _delete = VerbDelete()
         _delete.sources.append(_source)
         
         # Fetch the resource
@@ -111,7 +111,7 @@ class RDBMS_Dataset(Custom_Dataset):
 
     
     def _rdbms_init_inserts(self):
-        """Generates a Verb_INSERT instance populated with the indata"""
+        """Generates a VerbInsert instance populated with the indata"""
 
         self._structure_insert_sql = make_insert_sql_with_parameters(self.table_name, self.field_names,self.dal.db_type, self.field_types)
 
@@ -136,32 +136,32 @@ class RDBMS_Dataset(Custom_Dataset):
                 _field_names_ex_keys_datatypes.append(self.field_types[_curr_field_idx])
         
         
-        _assignments = SQL_List("Parameter_Assignment")
+        _assignments = SqlList("ParameterAssignment")
         
         # Instantiate the assignments
                 
         for _curr_field_idx in range(len(_field_names_ex_keys)):
-            _left = Parameter_Identifier(_identifier = _field_names_ex_keys[_curr_field_idx])
-            _right = Parameter_Parameter(_datatype = _field_names_ex_keys_datatypes[_curr_field_idx])
-            _assignments.append(Parameter_Assignment(_left, _right))
+            _left = ParameterIdentifier(_identifier = _field_names_ex_keys[_curr_field_idx])
+            _right = ParameterParameter(_datatype = _field_names_ex_keys_datatypes[_curr_field_idx])
+            _assignments.append(ParameterAssignment(_left, _right))
 
 
         # Create the WHERE conditions.
 
-        _conditions = Parameter_Conditions()    
+        _conditions = ParameterConditions()
         
         for _curr_field_idx in range(len(_key_field_names)):
-            _left = Parameter_Identifier(_identifier = _key_field_names[_curr_field_idx])
-            _right = Parameter_Parameter(_datatype = _key_field_datatypes[_curr_field_idx])
-            _conditions.append(Parameter_Condition( _left, _right, _operator = "="))
+            _left = ParameterIdentifier(_identifier = _key_field_names[_curr_field_idx])
+            _right = ParameterParameter(_datatype = _key_field_datatypes[_curr_field_idx])
+            _conditions.append(ParameterCondition( _left, _right, _operator = "="))
         
         # Specify target table
             
-        _table_identifier =  Parameter_Identifier(_identifier = self.table_name)
+        _table_identifier =  ParameterIdentifier(_identifier = self.table_name)
         
-        # Create Verb_UPDATE instance with all parameters
+        # Create VerbUpdate instance with all parameters
         
-        _update = Verb_UPDATE(_table_identifier = _table_identifier, _conditions = _conditions, _assignments = _assignments)            
+        _update = VerbUpdate(_table_identifier = _table_identifier, _conditions = _conditions, _assignments = _assignments)
         
         # Generate the SQL with all parameter place holders
         
@@ -186,7 +186,7 @@ class RDBMS_Dataset(Custom_Dataset):
     def _structure_update_row(self, _row_idx, _row_data, _commit=True, _no_logging=None):
         if _commit is True:
             """Override parent to add SQL handling"""
-            # To satisfy the Verb_UPDATE instance, create a two-dimensional array, leftmost columns are data, rightmost are keys.
+            # To satisfy the VerbUpdate instance, create a two-dimensional array, leftmost columns are data, rightmost are keys.
 
             _field_idx_ex_keys = list(set(range(len(self.field_names))) - set(self._structure_key_fields))
             _execute_data = self._extract_data_columns_from_diff_row(_field_idx_ex_keys + self._structure_key_fields, _row_data)

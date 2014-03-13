@@ -117,17 +117,17 @@ class SQL_XML(XML_Translation):
         self._add_child_type_restriction(_document, _parent_node, "condition_part", condition_part()) 
         self._add_child_type_restriction(_document, _parent_node, "tabular_expression_item", tabular_expression_item_types()) 
                     
-        self._add_child_array_of(_document, _parent_node, 'Array_Parameter_String', ['Parameter_String'])
-        self._add_child_array_of(_document, _parent_node, 'Array_Parameter_Constraint', ['Parameter_Constraint'])
-        self._add_child_array_of(_document, _parent_node, 'Array_Parameter_ColumnDefinition', ['Parameter_ColumnDefinition'])
-        self._add_child_array_of(_document, _parent_node, 'Array_Parameter_Source', ['Parameter_Source'])
-        self._add_child_array_of(_document, _parent_node, 'Array_Parameter_WHEN', ['Parameter_WHEN'])
-        self._add_child_array_of(_document, _parent_node, 'Array_Parameter_Identifier', ["Parameter_Identifier"])
+        self._add_child_array_of(_document, _parent_node, 'Array_ParameterString', ['ParameterString'])
+        self._add_child_array_of(_document, _parent_node, 'Array_ParameterConstraint', ['ParameterConstraint'])
+        self._add_child_array_of(_document, _parent_node, 'Array_ParameterColumndefinition', ['ParameterColumndefinition'])
+        self._add_child_array_of(_document, _parent_node, 'Array_ParameterSource', ['ParameterSource'])
+        self._add_child_array_of(_document, _parent_node, 'Array_ParameterWhen', ['ParameterWhen'])
+        self._add_child_array_of(_document, _parent_node, 'Array_ParameterIdentifier', ["ParameterIdentifier"])
         self._add_child_array_of(_document, _parent_node, 'Array_Statement', ["statement"])
-        self._add_child_array_of(_document, _parent_node, 'Array_Parameter_ORDER_BY_item', ["Parameter_ORDER_BY_item"])
-        self._add_child_array_of(_document, _parent_node, 'Array_Parameter_Condition', ["Parameter_Condition"])
-        self._add_child_array_of(_document, _parent_node, 'Array_Parameter_Field', ["Parameter_Field"])
-        self._add_child_array_of(_document, _parent_node, 'Array_Parameter_Assignment', ["Parameter_Assignment"])
+        self._add_child_array_of(_document, _parent_node, 'Array_ParameterOrderByItem', ["ParameterOrderByItem"])
+        self._add_child_array_of(_document, _parent_node, 'Array_ParameterCondition', ["ParameterCondition"])
+        self._add_child_array_of(_document, _parent_node, 'Array_ParameterField', ["ParameterField"])
+        self._add_child_array_of(_document, _parent_node, 'Array_ParameterAssignment', ["ParameterAssignment"])
         self._add_child_array_of(_document, _parent_node, 'Array_expression_item', expression_item_types())
         self._add_child_array_of(_document, _parent_node, 'Array_tabular_expression_item', tabular_expression_item_types())    
         self._add_child_array_of(_document, _parent_node, 'Array_list', '*')        
@@ -219,7 +219,7 @@ class SQL_XML(XML_Translation):
 
         _stripped_classname = self._strip_own(_classname)
         
-        # Check for base typesError in Verb_CREATE_INDEX, name is not set.
+        # Check for base typesError in VerbCreateIndex, name is not set.
         if _stripped_classname.lower() in  ['str', 'int', 'float', 'datetime']:
             return xml_base_type_value(_node, _stripped_classname) 
         
