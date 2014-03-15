@@ -29,8 +29,8 @@ def make_transformation_array_from_xml_node(_xml_node):
     for _curr_node in _xml_node:
         if _curr_node.tag == 'trim':
             _result.append(Trim(_curr_node))
-        elif _curr_node.tag == 'if_empty':
-            _result.append(If_empty(_curr_node))
+        elif _curr_node.tag == 'IfEmpty':
+            _result.append(IfEmpty(_curr_node))
         elif _curr_node.tag == 'cast':
             _result.append(Cast(_curr_node))
         elif _curr_node.tag == 'replace':
@@ -46,7 +46,7 @@ def make_transformations_xml_node(_transformations):
     return _xml_node
 
 
-class Custom_Transformation(object):
+class CustomTransformation(object):
     """
     This is the base class for all transformations
     """
@@ -76,13 +76,13 @@ class Custom_Transformation(object):
         return _xml_node
             
     def as_xml_node(self):
-        raise Exception("Custom_Transformation.as_xml_node : Should not be called. Not implemented in base class, use init_base_to_node().")      
+        raise Exception("CustomTransformation.as_xml_node : Should not be called. Not implemented in base class, use init_base_to_node().")
         
     def load_from_xml_node(self, _xml_node = None):
         if _xml_node != None:
             self.order = _xml_node.get("order")
         else:
-            raise Exception("Custom_Transformation.load_from_xml_node : Base class need a destination node.")  
+            raise Exception("CustomTransformation.load_from_xml_node : Base class need a destination node.")
 
     def transform(self, _value):
         try:
@@ -94,10 +94,10 @@ class Custom_Transformation(object):
 
     def _transform(self, _value):
         """Make transformation"""
-        raise Exception("Custom_Transformation.transform : Not implemented in base class.")            
+        raise Exception("CustomTransformation.transform : Not implemented in base class.")
 
 
-class Trim(Custom_Transformation):
+class Trim(CustomTransformation):
     """Trim returns a copy of the string in which all chars have been trimmed from the beginning and the end of the string (default whitespace characters).
     If the value parameter is set to either "beginning" or "end", only the left or right end of the string is trimmed, respectively."""
     value = None
@@ -121,16 +121,16 @@ class Trim(Custom_Transformation):
         else:
             return _value.strip()
         
-class If_empty(Custom_Transformation):
-    """If_empty returns a specified value if the input value is NULL."""
+class IfEmpty(CustomTransformation):
+    """IfEmpty returns a specified value if the input value is NULL."""
     value = None
     
     def load_from_xml_node(self, _xml_node):
-        super(If_empty, self ).load_from_xml_node(_xml_node)
+        super(IfEmpty, self ).load_from_xml_node(_xml_node)
         self.value = _xml_node.text
     
     def as_xml_node(self):
-        _xml_node = self.init_base_to_node("if_empty")
+        _xml_node = self.init_base_to_node("IfEmpty")
         _xml_node.text =  self.value
         
         return _xml_node
@@ -142,7 +142,7 @@ class If_empty(Custom_Transformation):
         else:
             return _value
         
-class Cast(Custom_Transformation):
+class Cast(CustomTransformation):
     """ICasts a string to the specified type. The timestamp date format defaults to the ISO format if format_string is not set.\n
     Possible format string directives at : http://docs.python.org/3.2/library/datetime.html#strftime-strptime-behavior\n
     For example, 2013-11-06 22:05:42 is "%Y-%m-%d %H:%M:%S".
@@ -199,7 +199,7 @@ class Cast(Custom_Transformation):
         except Exception as e:
             raise Exception("Error in Cast.transform: " + str(e))
 
-class Replace(Custom_Transformation):
+class Replace(CustomTransformation):
     """Replace returns a copy of the string in which the occurrences of old have been replaced with new, optionally restricting the number of replacements to max."""
     old = None
     new = None

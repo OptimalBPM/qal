@@ -12,7 +12,7 @@
 from qal.dal.types import DB_MYSQL, DB_POSTGRESQL, DB_ORACLE, DB_DB2, DB_SQLSERVER, string_to_db_type, db_type_to_string
 from qal.dal.conversions import parse_description, python_type_to_SQL_type
 
-class Database_Abstraction_Layer(object):
+class DatabaseAbstractionLayer(object):
     """This class abstracts the different peculiarities of the different database backends with regards to connection details"""
     
     # Events

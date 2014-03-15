@@ -222,7 +222,7 @@ class ParameterCast(ParameterExpressionItem):
     * expression is a list of expression items(sql_types.expression_item_types()).
     * datatype is a string containing the datatype(as defined in sql_types.data_types())
 
-    Example: http://192.168.0.210/mediawiki/index.php/Unified_BPM_Database_Abstraction_Layer#ParameterCast.28ParameterExpressionItem.29"""
+    Example: http://192.168.0.210/mediawiki/index.php/Unified_BPM_DatabaseAbstractionLayer#ParameterCast.28ParameterExpressionItem.29"""
     
     expression = ''
     datatype = ''

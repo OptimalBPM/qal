@@ -6,7 +6,7 @@
                 <src_reference>ID</src_reference>
                 <src_datatype>integer</src_datatype>
                 <transformations>
-                    <if_empty order="2">0</if_empty>
+                    <IfEmpty order="2">0</IfEmpty>
                     <cast order="3">
                         <dest_type>string</dest_type>
                         <format_string></format_string>

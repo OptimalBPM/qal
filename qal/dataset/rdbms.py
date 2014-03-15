@@ -8,7 +8,7 @@ from qal.dal.types import DB_DB2,DB_ORACLE, DB_POSTGRESQL
 from qal.sql.utils import db_specific_object_reference
 from qal.sql.sql import VerbInsert, VerbDelete, VerbUpdate, ParameterConditions
 from qal.sql.sql import ParameterSource, ParameterIdentifier, ParameterParameter,ParameterCondition, ParameterAssignment
-from qal.dal.dal import Database_Abstraction_Layer
+from qal.dal.dal import DatabaseAbstractionLayer
 from qal.sql.macros import select_all_skeleton
 from qal.sql.base import SqlList
 
@@ -36,7 +36,7 @@ class RDBMSDataset(CustomDataset):
         if _resource.type.upper() != 'RDBMS':
             raise Exception("RDBMSDataset.read_resource_settings.parse_resource error: Wrong resource type: " + _resource.type)
         
-        self.dal = Database_Abstraction_Layer(_resource = _resource)
+        self.dal = DatabaseAbstractionLayer(_resource = _resource)
         
         self.table_name = _resource.data.get("db_table_name")
         

@@ -10,7 +10,7 @@ from qal.common.listhelper import pretty_list
 from qal.dataset.rdbms import RDBMSDataset
 from qal.dataset.custom import DATASET_LOGLEVEL_DETAIL
 from qal.common.resources import Resources
-from qal.dal.dal import Database_Abstraction_Layer
+from qal.dal.dal import DatabaseAbstractionLayer
 from qal.sql.macros import copy_to_table
 from lxml import etree
 
@@ -37,7 +37,7 @@ class Test(unittest.TestCase):
         _field_names = ["ID", "Name", "Changed"]
         _field_types = ["integer", "string(200)", "datetime"]
         
-        _source_dal = Database_Abstraction_Layer(_resource= _resources.get_resource("{1D62083E-88F7-4442-920D-0B6CC59BA2FF}"))
+        _source_dal = DatabaseAbstractionLayer(_resource= _resources.get_resource("{1D62083E-88F7-4442-920D-0B6CC59BA2FF}"))
         _source_dal.connect_to_db()
         _source_table_name = 'table_src'
         copy_to_table(_source_dal, _source_data, _field_names, _field_types, _source_table_name, _create_table = True, _drop_existing = True)
@@ -45,7 +45,7 @@ class Test(unittest.TestCase):
         print("rdbms_test.test_1_Load_Save: Staging destination")
         _dest_data = [[1, 'dest', datetime.datetime(2001, 1, 1, 0, 0)], [2, 'dest', datetime.datetime(2001, 1, 2, 0, 0)], [3, 'dest', datetime.datetime(2014, 1, 4, 0, 0)]]
         
-        _dest_dal = Database_Abstraction_Layer(_resource= _resources.get_resource("{DD34A233-47A6-4C16-A26F-195711B49B97}"))
+        _dest_dal = DatabaseAbstractionLayer(_resource= _resources.get_resource("{DD34A233-47A6-4C16-A26F-195711B49B97}"))
         _dest_dal.connect_to_db()
         _dest_table_name = 'table_dst'
         copy_to_table(_dest_dal, _dest_data, _field_names, _field_types, _dest_table_name, _create_table = True, _drop_existing = True)

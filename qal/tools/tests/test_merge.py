@@ -9,7 +9,7 @@ from qal.tools.merge import Merge
 from qal.common.listhelper import pretty_list
 from qal.dataset.custom import DATASET_LOGLEVEL_DETAIL
 from qal.common.resources import Resources
-from qal.dal.dal import Database_Abstraction_Layer
+from qal.dal.dal import DatabaseAbstractionLayer
 from qal.sql.macros import copy_to_table
 from lxml import etree
 from shutil import copyfile
@@ -82,7 +82,7 @@ class Merge_test(unittest.TestCase):
         _field_names = ["ID", "Name", "Changed"]
         _field_types = ["integer", "string(200)", "timestamp"]
         
-        _source_dal = Database_Abstraction_Layer(_resource= _resources.get_resource("source_uuid"))
+        _source_dal = DatabaseAbstractionLayer(_resource= _resources.get_resource("source_uuid"))
         _source_table_name = 'table_src'
         _source_dal.connect_to_db()
 
@@ -91,7 +91,7 @@ class Merge_test(unittest.TestCase):
         print("merge_test.test_Merge_tables: Staging destination")
         _dest_data = [[1, 'dest', datetime.datetime(2001, 1, 1, 0, 0)], [2, 'dest', datetime.datetime(2001, 1, 2, 0, 0)], [3, 'dest', datetime.datetime(2014, 1, 4, 0, 0)]]
         
-        _dest_dal = Database_Abstraction_Layer(_resource= _resources.get_resource("dest_uuid"))
+        _dest_dal = DatabaseAbstractionLayer(_resource= _resources.get_resource("dest_uuid"))
         _dest_table_name = 'table_dst'
         _dest_dal.connect_to_db()
 

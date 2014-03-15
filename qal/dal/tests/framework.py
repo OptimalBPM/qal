@@ -5,7 +5,7 @@ Created on Oct 6, 2010
 '''
 
 from qal.common.settings import UBPMSettings
-from qal.dal.dal import Database_Abstraction_Layer
+from qal.dal.dal import DatabaseAbstractionLayer
 from qal.dal.types import DB_MYSQL, DB_POSTGRESQL, DB_ORACLE, DB_DB2, DB_SQLSERVER
 import os
 
@@ -43,7 +43,7 @@ def get_default_dal(_db_type, _db_name = ""):
     if settings.Parser.has_section("database"):
         if _db_name != "":
             settings.Parser.set("database", "database_name", _db_name)
-        _dal = Database_Abstraction_Layer(settings)
+        _dal = DatabaseAbstractionLayer(settings)
         _dal.connect_to_db()
         return _dal
     else:
