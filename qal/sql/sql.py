@@ -34,13 +34,13 @@ from qal.common.strings import make_path_absolute
 
 
 
-class Parameter_Expression(ParameterExpressionItem):
+class ParameterExpression(ParameterExpressionItem):
     """Holds an expression"""
     
     expressionitems = None
     
     def __init__(self, _expressionitems = None,_operator = None): 
-        super(Parameter_Expression, self ).__init__(_operator)
+        super(ParameterExpression, self ).__init__(_operator)
         
         if _expressionitems != None:
             self.expressionitems = _expressionitems
@@ -373,7 +373,7 @@ class ParameterSource(ParameterBase, ParameterRemotable):
     
         return _sql
     
-class ParameterOrderByItem(Parameter_Expression):
+class ParameterOrderByItem(ParameterExpression):
     """This class holds an order by-statement"""
     #Sort direction, ASC or DESC
     direction = None

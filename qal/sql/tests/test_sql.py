@@ -137,7 +137,7 @@ def gen_simple_function():
     param.parameters.append(gen_simple_expression_2())
     return param
 def gen_simpleexpression_1():
-    param = Parameter_Expression(_operator = '+')
+    param = ParameterExpression(_operator = '+')
     param.expressionitems.append(ParameterIdentifier('CountryPrefix', 'C', 'T1'))
     param.expressionitems.append(ParameterString('+', 'C'))
     param.expressionitems.append(ParameterIdentifier('PhoneNumber', 'C', 'T1'))
@@ -145,7 +145,7 @@ def gen_simpleexpression_1():
     return param
 
 def gen_simple_expression_2():
-    param = Parameter_Expression(_operator = '+')
+    param = ParameterExpression(_operator = '+')
     param.expressionitems.append(ParameterIdentifier('CountryPrefix', 'C', 'T2'))
     param.expressionitems.append(ParameterString('+', 'C'))
     param.expressionitems.append(ParameterIdentifier('PhoneNumber', 'C', 'T2'))
@@ -161,9 +161,9 @@ def gen_simple_cast():
 
 def gen_complex_expression():
     
-    exp = Parameter_Expression()
+    exp = ParameterExpression()
     
-    param = Parameter_Expression()
+    param = ParameterExpression()
     param.expressionitems.append(exp)
     param.expressionitems.append(ParameterString('+', 'C', '\\'))
     param.expressionitems.append(ParameterIdentifier('PhoneNumber', 'C', 'T1'))
@@ -308,7 +308,7 @@ class parameter_test(unittest.TestCase):
         self.assertEqual(param.as_sql(DB_DB2), _testvalue_DB2, paramclass +'.as_sql(DB_DB2) failed.')
         self.assertEqual(param.as_sql(DB_SQLSERVER), _testvalue, paramclass +'.as_sql(DB_SQLSERVER) failed.')
 
-    def test_02_parameter_expression_simple(self):
+    def test_02_ParameterExpression_simple(self):
         self.maxDiff = None
         param = gen_simpleexpression_1()
         _testvalue = "(T1.CountryPrefix + '+' + T1.PhoneNumber + Simple(CAST((T2.CountryPrefix + '+' + T2.PhoneNumber) AS varchar(200)), (T2.CountryPrefix + '+' + T2.PhoneNumber)))"

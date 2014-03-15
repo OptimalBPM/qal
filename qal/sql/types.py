@@ -58,7 +58,7 @@ def join_types():
 
 def expression_item_types():
     """Returns a list of the supported expression types""" 
-    return ['VerbSelect','Parameter_Expression',
+    return ['VerbSelect','ParameterExpression',
                 'ParameterString','ParameterNumeric',
                 'ParameterIdentifier','ParameterCast',
                 'ParameterFunction', 'ParameterIn', 'ParameterDataset', 'ParameterCase', 'ParameterSet']
@@ -75,7 +75,7 @@ def in_types():
     
 def condition_part(): 
     """Returns a list of the supported condition parts""" 
-    return ['ParameterConditions','ParameterCondition', 'Parameter_Expression'] + expression_item_types()
+    return ['ParameterConditions','ParameterCondition', 'ParameterExpression'] + expression_item_types()
 
 
 def sql_property_to_type(_property_name):
