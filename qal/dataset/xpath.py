@@ -7,7 +7,7 @@ Created on Sep 14, 2012
 import io
 from qal.common.strings import make_path_absolute
 
-from qal.dataset.custom import Custom_Dataset
+from qal.dataset.custom import CustomDataset
 from qal.common.listhelper import find_next_match, find_previous_match
 from lxml import _elementpath
 from lxml import etree
@@ -18,7 +18,7 @@ from lxml.etree import SubElement
 def xpath_data_formats():
     return ["XML", "XHTML", "HTML"] # "UNTIDY_HTML"]
 
-class XPath_Dataset(Custom_Dataset):
+class XpathDataset(CustomDataset):
     """This class implements data formats that are possible to query via XPath.
     Currently XML and HTML are implemented(XHTML isn't tested). 
     Untidy HTML will be implemented using the Beautiful Soup library.
@@ -66,7 +66,7 @@ class XPath_Dataset(Custom_Dataset):
         :param str _rows_xpath: Path to nodes holding the rows.
         :param Resource _resource : An instance of a :py:class: qal.common.resource.resource
         """
-        super(XPath_Dataset, self ).__init__()
+        super(XpathDataset, self ).__init__()
 
         self.field_xpaths = []
         self._structure_key_fields = []
@@ -94,7 +94,7 @@ class XPath_Dataset(Custom_Dataset):
         self.base_path = _resource.base_path
   
         if _resource.type.upper() != 'XPATH':
-            raise Exception("XPath_Dataset.read_resource_settings.parse_resource error: Wrong resource type: " + _resource.type)
+            raise Exception("XpathDataset.read_resource_settings.parse_resource error: Wrong resource type: " + _resource.type)
         self.filename   = _resource.data.get("filename")
         self.rows_xpath = _resource.data.get("rows_xpath")
         self.xpath_data_format =  _resource.data.get("xpath_data_format")
@@ -154,7 +154,7 @@ class XPath_Dataset(Custom_Dataset):
             _tree = self._file_to_tree(self.xpath_data_format, make_path_absolute(self.filename, self.base_path))
             
         except Exception as e:
-            raise Exception("XPath_Dataset.load - error parsing " + self.xpath_data_format + " file : " + str(e))
+            raise Exception("XpathDataset.load - error parsing " + self.xpath_data_format + " file : " + str(e))
         
         #_root_nodes = _tree.xpath("/html/body/form/table/tr[4]/td[2]/table/tr[2]/td/table[2]/tr/td/table/tr[10]/td/table/tr")
         _root_nodes = _tree.xpath(self.rows_xpath)
@@ -334,8 +334,8 @@ class XPath_Dataset(Custom_Dataset):
     
     def _structure_init(self):
         """Initializes the XML structure that data is to be applied to."""
-        print("XPath_Dataset._structure_init")
-        super(XPath_Dataset, self)._structure_init()
+        print("XpathDataset._structure_init")
+        super(XpathDataset, self)._structure_init()
 
         # Parse important information data from XPath 
         _root_node_name, self._structure_row_node_name, _parent_xpath = self._structure_parse_root_path(self.rows_xpath)
@@ -350,7 +350,7 @@ class XPath_Dataset(Custom_Dataset):
                 try:
                     self.load(_add_node_ref=True)
                 except Exception as e:
-                    raise Exception("XPath_Dataset.save - error parsing " + self.xpath_data_format + " file : " + str(e))
+                    raise Exception("XpathDataset.save - error parsing " + self.xpath_data_format + " file : " + str(e))
             else:
                 # Create a tree with root node based on the first  
                 
@@ -362,7 +362,7 @@ class XPath_Dataset(Custom_Dataset):
                               
                     _tree = etree.parse(io.StringIO("<?xml version='1.0' ?>\n<" + _root_node_name + "/>")) 
                 else:
-                    raise Exception("XPath_Dataset.save - rows_xpath("+ str(self.rows_xpath)+") must be absolute and have at least the name of the root node. Example: \"/root_node\" ")
+                    raise Exception("XpathDataset.save - rows_xpath("+ str(self.rows_xpath)+") must be absolute and have at least the name of the root node. Example: \"/root_node\" ")
 
         # If the structure there yet? It could be an XML file with only a top node. 
         if self._structure_row_node_parent is None:
@@ -406,7 +406,7 @@ class XPath_Dataset(Custom_Dataset):
             self._structure_populate_row(_new_element, _row_data)
 
         # Call parent
-        super(XPath_Dataset, self)._structure_insert_row(_row_idx,_row_data)
+        super(XpathDataset, self)._structure_insert_row(_row_idx,_row_data)
         
     def _structure_update_row(self, _row_idx, _row_data, _commit=True, _no_logging=None):
         if _commit is True:
@@ -420,7 +420,7 @@ class XPath_Dataset(Custom_Dataset):
             self._structure_populate_row(_row_node, _row_data)
         
         # Call parent
-        super(XPath_Dataset, self)._structure_update_row(_row_idx,_row_data)
+        super(XpathDataset, self)._structure_update_row(_row_idx,_row_data)
 
     def _structure_delete_row(self, _row_idx, _commit=True, _no_logging=None):
         if _commit is True:
@@ -428,7 +428,7 @@ class XPath_Dataset(Custom_Dataset):
             _row_node = self.data_table[_row_idx][len(self.data_table[_row_idx]) -1]
             self._structure_row_node_parent.remove(_row_node)
         # Call parent
-        super(XPath_Dataset, self)._structure_delete_row(_row_idx)
+        super(XpathDataset, self)._structure_delete_row(_row_idx)
         #self.data_table.pop(_row_idx)
 
     def save(self, _save_as = None):

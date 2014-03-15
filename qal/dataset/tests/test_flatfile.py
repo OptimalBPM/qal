@@ -6,7 +6,7 @@ Created on Dec 17, 2013
 
 import unittest
 
-from qal.dataset.flatfile import Flatfile_Dataset
+from qal.dataset.flatfile import FlatfileDataset
 from qal.common.resources import Resources
 from qal.common.listhelper import pretty_list
 from lxml import etree
@@ -24,7 +24,7 @@ class Test(unittest.TestCase):
     def test_1_Load_Save(self):
         _resources_node = load_xml(Test_Resource_Dir + "/resources.xml").find("resources")
         _resources = Resources(_resources_node = _resources_node)
-        _da = Flatfile_Dataset(_resource= _resources.get_resource("{86470370-FF78-48A4-9759-A3BAE4EE22FE}"))
+        _da = FlatfileDataset(_resource= _resources.get_resource("{86470370-FF78-48A4-9759-A3BAE4EE22FE}"))
         _da._log_level = DATASET_LOGLEVEL_DETAIL
         _da.load()
         print("Source: " + pretty_list(_da.data_table))

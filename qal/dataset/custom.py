@@ -19,7 +19,7 @@ DATASET_LOGLEVEL_DETAIL = 3
 DATASET_LOGLEVEL_ALL = 4
 
 
-class Custom_Dataset(object):
+class CustomDataset(object):
     """This is the base class for all (external) data sets in QAL-
     Note: The fields are named like this to not appear as parameters in automatic generators like sql_xml.
     TODO: Field names should be considered captions, not references, and should not be used when looping columns.
@@ -87,20 +87,20 @@ class Custom_Dataset(object):
 
     def read_resource_settings(self, _resource):
         """Load the data"""
-        raise Exception('Custom_Dataset.read_resource_settings is not implemented in class: ' + self.__class__.__name__)
+        raise Exception('CustomDataset.read_resource_settings is not implemented in class: ' + self.__class__.__name__)
 
     def write_resource_settings(self, _resource):
         """Load the data"""
-        raise Exception('Custom_Dataset.write_resource_settings is not implemented in class: ' + self.__class__.__name__)
+        raise Exception('CustomDataset.write_resource_settings is not implemented in class: ' + self.__class__.__name__)
 
     def load(self):
         """Load the data"""
-        raise Exception('Custom_Dataset.load is not implemented in class: ' + self.__class__.__name__)
+        raise Exception('CustomDataset.load is not implemented in class: ' + self.__class__.__name__)
         pass
     
     def save(self):
         """Save the data to the underlying target."""
-        raise Exception('Custom_Dataset.save is not implemented in class: ' + self.__class__.__name__)
+        raise Exception('CustomDataset.save is not implemented in class: ' + self.__class__.__name__)
 
     
     def _structure_insert_row(self, _row_idx, _row_data, _commit=None,_no_logging = False):
@@ -197,7 +197,7 @@ class Custom_Dataset(object):
                                                           _full = True)
         
         # Merge the data into the structure. 
-        # Note: in RDBMS_Dataset, this currently means writing to the underlying database, since there is no in-memory structure.
+        # Note: in RDBMSDataset, this currently means writing to the underlying database, since there is no in-memory structure.
 
         # Clear out all changes that should not be made
         if _delete is None or _delete==False:

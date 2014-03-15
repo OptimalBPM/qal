@@ -10,9 +10,9 @@ from the SQL.py and generates meta data by analyzing its objects.
 from qal.sql.sql import * #@UnusedWildImport #IGNORE:W0401
 from qal.sql.base import *
 from qal.sql.remotable import *
-from qal.dataset.flatfile import Flatfile_Dataset #@UnusedWildImport #IGNORE:W0401
-from qal.dataset.xpath import XPath_Dataset #@UnusedWildImport #IGNORE:W0401
-from qal.dataset.matrix import Matrix_Dataset #@UnusedWildImport #IGNORE:W0401
+from qal.dataset.flatfile import FlatfileDataset #@UnusedWildImport #IGNORE:W0401
+from qal.dataset.xpath import XpathDataset #@UnusedWildImport #IGNORE:W0401
+from qal.dataset.matrix import MatrixDataset #@UnusedWildImport #IGNORE:W0401
 
 def list_parameter_classes():
     """List all parameter classes"""

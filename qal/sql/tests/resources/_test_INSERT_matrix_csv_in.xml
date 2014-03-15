@@ -25,19 +25,19 @@
                 <sql:subsets>
                     <sql:ParameterDataset>
                         <sql:data_source>
-                            <sql:Matrix_Dataset/>
+                            <sql:MatrixDataset/>
                         </sql:data_source>
                         <sql:resource_uuid/>
                         <sql:operator></sql:operator>
                     </sql:ParameterDataset>
                     <sql:ParameterDataset>
                         <sql:data_source>
-                            <sql:Flatfile_Dataset>
+                            <sql:FlatfileDataset>
                                 <sql:filename>_test_insert_csv_in.txt</sql:filename>
                                 <sql:delimiter>,</sql:delimiter>
                                 <sql:has_header>True</sql:has_header>
                                 <sql:csv_dialect>excel-tab</sql:csv_dialect>
-                            </sql:Flatfile_Dataset>
+                            </sql:FlatfileDataset>
                         </sql:data_source>
                         <sql:resource_uuid/>
                         <sql:operator></sql:operator>

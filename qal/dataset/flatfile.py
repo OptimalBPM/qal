@@ -8,11 +8,11 @@ import datetime
 from itertools import islice
 from qal.common.strings import make_path_absolute, string_to_bool
 
-from qal.dataset.custom import Custom_Dataset
+from qal.dataset.custom import CustomDataset
 
 import csv
 
-class Flatfile_Dataset(Custom_Dataset):
+class FlatfileDataset(CustomDataset):
     """This class loads a flat file into an array, self.data_table."""
     delimiter = None
     """The delimiter, typically ";", "," or "|"."""
@@ -41,7 +41,7 @@ class Flatfile_Dataset(Custom_Dataset):
     
     def __init__(self, _delimiter = None, _filename = None, _has_header = None, _csv_dialect = None, _resource = None, _quoting = None, _quotechar = None, _skipinitialspace = None):
         """Constructor"""
-        super(Flatfile_Dataset, self ).__init__() 
+        super(FlatfileDataset, self ).__init__()
        
         if _resource != None:
             self.read_resource_settings(_resource)
@@ -81,7 +81,7 @@ class Flatfile_Dataset(Custom_Dataset):
         
     def read_resource_settings(self, _resource):
         if _resource.type.upper() != 'FLATFILE':
-            raise Exception("Flatfile_Dataset.read_resource_settings.parse_resource error: Wrong resource type: " + _resource.type)
+            raise Exception("FlatfileDataset.read_resource_settings.parse_resource error: Wrong resource type: " + _resource.type)
         self.base_path = _resource.base_path
         # TODO Make path absolute should not be set here, but only when used.
         self.filename = _resource.data.get("filename")
@@ -126,7 +126,7 @@ class Flatfile_Dataset(Custom_Dataset):
 
     def load(self):
         """Load data"""
-        print("Flatfile_Dataset.load: Filename='" + str(self.filename) + "', Delimiter='"+str(self.delimiter)+"'")
+        print("FlatfileDataset.load: Filename='" + str(self.filename) + "', Delimiter='"+str(self.delimiter)+"'")
         
         _file = open( make_path_absolute(self.filename, self.base_path), 'r')
         _reader = csv.reader(_file, 
@@ -158,7 +158,7 @@ class Flatfile_Dataset(Custom_Dataset):
     def save(self, _save_as = None):
         """Save data"""
 
-        print("Flatfile_Dataset.save: Filename='" + str(self.filename) + "', Delimiter='"+str(self.delimiter)+"'")
+        print("FlatfileDataset.save: Filename='" + str(self.filename) + "', Delimiter='"+str(self.delimiter)+"'")
         
         if _save_as:
             _filename = _save_as

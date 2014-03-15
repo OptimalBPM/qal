@@ -68,18 +68,18 @@ class ParameterRemotable(object):
             
         elif self._resource.type.upper() in ["FLATFILE"]:
 
-            from qal.dataset.flatfile import Flatfile_Dataset
+            from qal.dataset.flatfile import FlatfileDataset
             
-            self._data_source = Flatfile_Dataset(_resource = self._resource)
+            self._data_source = FlatfileDataset(_resource = self._resource)
             
             _data = self._data_source.load()
             _field_names = self._data_source.field_names
             _field_types = ["string"] * len(_field_names)
             
         elif self._resource.type.upper() in ["XPATH"]:    
-            from qal.dataset.xpath import XPath_Dataset
+            from qal.dataset.xpath import XpathDataset
             
-            self._data_source = XPath_Dataset(_resource = self._resource)
+            self._data_source = XpathDataset(_resource = self._resource)
             
             _data = self._data_source.load()
             _field_names = self._data_source.field_names

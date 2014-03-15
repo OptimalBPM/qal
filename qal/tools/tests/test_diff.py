@@ -5,7 +5,7 @@ Created on Nov 3, 2013
 """
 import unittest
 from qal.common.listhelper import pretty_list
-from qal.dataset.flatfile import Flatfile_Dataset
+from qal.dataset.flatfile import FlatfileDataset
 from qal.tools.diff import compare
 
 
@@ -19,9 +19,9 @@ class Diff_test(unittest.TestCase):
 
     def test_diff(self):
         """Test comparison of two data sets, fetched from .csv files."""
-        _ff_source = Flatfile_Dataset(_filename = Test_Resource_Dir + "/csv_source.csv", _has_header = True, _delimiter = ";", _csv_dialect = "excel-tab", _quoting = "MINIMAL", _quotechar='"')
+        _ff_source = FlatfileDataset(_filename = Test_Resource_Dir + "/csv_source.csv", _has_header = True, _delimiter = ";", _csv_dialect = "excel-tab", _quoting = "MINIMAL", _quotechar='"')
         _dataset_source = _ff_source.load()
-        _ff_dest = Flatfile_Dataset(_filename = Test_Resource_Dir + "/csv_dest_orig.csv", _has_header = True, _delimiter = ";", _csv_dialect = "excel-tab", _quoting = "MINIMAL", _quotechar='"')
+        _ff_dest = FlatfileDataset(_filename = Test_Resource_Dir + "/csv_dest_orig.csv", _has_header = True, _delimiter = ";", _csv_dialect = "excel-tab", _quoting = "MINIMAL", _quotechar='"')
         _dataset_dest = _ff_dest.load()
         #print(str(_dataset_dest))
         _missing_left, _missing_right, _difference, _sorted = compare(_dataset_source, _dataset_dest, [0], True)

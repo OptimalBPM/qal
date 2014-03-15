@@ -7,9 +7,9 @@ Created on Jan 8, 2012
 from qal.dal.types import DB_DB2,DB_ORACLE, DB_POSTGRESQL
 from qal.sql.utils import db_specific_object_reference
 from datetime import date, datetime
-from qal.dataset.custom import Custom_Dataset
+from qal.dataset.custom import CustomDataset
 
-class Matrix_Dataset(Custom_Dataset):
+class MatrixDataset(CustomDataset):
  
     """The matrix dataset holds a two-dimensional array of data"""
     
@@ -19,7 +19,7 @@ class Matrix_Dataset(Custom_Dataset):
         '''
         Constructor
         '''
-        super(Matrix_Dataset, self ).__init__()
+        super(MatrixDataset, self ).__init__()
         
         
         

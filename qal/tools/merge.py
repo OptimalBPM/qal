@@ -8,7 +8,7 @@ from lxml import etree
 
 from qal.common.resources import Resources, Resource
 from qal.common.strings import string_to_bool, empty_when_none
-from qal.dataset.xpath import XPath_Dataset
+from qal.dataset.xpath import XpathDataset
 from qal.tools.transform import make_transformation_array_from_xml_node, make_transformations_xml_node, perform_transformations
 from qal.dataset.factory import dataset_from_resource
 

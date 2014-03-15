@@ -26,9 +26,9 @@ from qal.sql.utils import add_operator, parenthesise, oracle_add_escape, add_com
                                 citate,check_not_null, curr_user, db_specific_datatype, curr_datetime, add_comma_rs, oracle_create_auto_increment,\
                                 handle_temp_table_ref, datatype_to_parameter
 from qal.sql.types import condition_part
-from qal.dataset.flatfile import Flatfile_Dataset
-from qal.dataset.xpath import XPath_Dataset
-from qal.dataset.matrix import Matrix_Dataset
+from qal.dataset.flatfile import FlatfileDataset
+from qal.dataset.xpath import XpathDataset
+from qal.dataset.matrix import MatrixDataset
 from qal.dal.types import DB_SQLSERVER
 from qal.common.strings import make_path_absolute
 

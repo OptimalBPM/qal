@@ -14,9 +14,9 @@ from qal.sql.base import SqlList
 
 from qal.sql.macros import make_insert_sql_with_parameters
 
-from qal.dataset.custom import Custom_Dataset
+from qal.dataset.custom import CustomDataset
 
-class RDBMS_Dataset(Custom_Dataset):
+class RDBMSDataset(CustomDataset):
  
     """The RDMBS Dataset holds a two-dimensional array of data, typically representing a table in a database.
     If the data set is not a table but based on a more complex query, data will not be possible to apply to it."""
@@ -34,7 +34,7 @@ class RDBMS_Dataset(Custom_Dataset):
 
     def read_resource_settings(self, _resource):
         if _resource.type.upper() != 'RDBMS':
-            raise Exception("RDBMS_Dataset.read_resource_settings.parse_resource error: Wrong resource type: " + _resource.type)
+            raise Exception("RDBMSDataset.read_resource_settings.parse_resource error: Wrong resource type: " + _resource.type)
         
         self.dal = Database_Abstraction_Layer(_resource = _resource)
         
@@ -64,7 +64,7 @@ class RDBMS_Dataset(Custom_Dataset):
         '''
         Constructor
         '''
-        super(RDBMS_Dataset, self ).__init__()
+        super(RDBMSDataset, self ).__init__()
         
         if _resource != None:
             self.read_resource_settings(_resource)        
@@ -77,7 +77,7 @@ class RDBMS_Dataset(Custom_Dataset):
         
         self.dal.start()
 
-        super(RDBMS_Dataset, self)._structure_init()
+        super(RDBMSDataset, self)._structure_init()
 
     def _extract_data_columns_from_diff_row(self, _field_indexes, _diff_row):    
         """Extracts columns specified in _field_indexes from _diff_list"""
@@ -181,7 +181,7 @@ class RDBMS_Dataset(Custom_Dataset):
             if not _no_logging:
                 self.log_insert("N/A in RDBMS", _row_data, "Destination table: " + self.table_name)
         # Call parent
-        super(RDBMS_Dataset, self)._structure_insert_row(_row_idx,_row_data, _no_logging=_commit)
+        super(RDBMSDataset, self)._structure_insert_row(_row_idx,_row_data, _no_logging=_commit)
         
     def _structure_update_row(self, _row_idx, _row_data, _commit=True, _no_logging=None):
         if _commit is True:
@@ -196,7 +196,7 @@ class RDBMS_Dataset(Custom_Dataset):
             if not _no_logging:
                 self.log_update_row(_row_idx, self.data_table[_row_idx], _row_data, "Destination table: " + self.table_name)
         # Call parent
-        super(RDBMS_Dataset, self)._structure_update_row(_row_idx,_row_data, _no_logging=_commit)
+        super(RDBMSDataset, self)._structure_update_row(_row_idx,_row_data, _no_logging=_commit)
 
     def _structure_delete_row(self, _row_idx, _commit=True, _no_logging=None):
         if _commit is True:
@@ -210,7 +210,7 @@ class RDBMS_Dataset(Custom_Dataset):
                 self.log_delete(_key_values, self.data_table[_row_idx], "Destination table: " + self.table_name)
 
         # Call parent
-        super(RDBMS_Dataset, self)._structure_delete_row(_row_idx, _no_logging=_commit)
+        super(RDBMSDataset, self)._structure_delete_row(_row_idx, _no_logging=_commit)
         #self.data_table.pop(_row_idx)
                 
     def load(self):
@@ -222,7 +222,7 @@ class RDBMS_Dataset(Custom_Dataset):
             self.field_names = self.dal.field_names
             self.field_types = self.dal.field_types
         else:
-            raise Exception("RDBMS_Dataset.load(): data_table must be set.")    
+            raise Exception("RDBMSDataset.load(): data_table must be set.")
         
         return self.data_table
     

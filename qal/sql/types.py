@@ -38,7 +38,7 @@ def data_types():
 
 def data_source_types():
     """Returns a list of the supported data source types"""
-    return ['Flatfile_Dataset', 'XPath_Dataset', 'Matrix_Dataset']
+    return ['FlatfileDataset', 'XpathDataset', 'MatrixDataset']
 
 def boolean():
     """Returns a list of the supported boolean values"""

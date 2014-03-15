@@ -5,11 +5,11 @@ Created on Dec 28, 2013
 '''
 from qal.common.strings import make_path_absolute, bool_to_binary_int, string_to_bool
 
-from qal.dataset.custom import Custom_Dataset
+from qal.dataset.custom import CustomDataset
 
 
 
-class Spreadsheet_Dataset(Custom_Dataset):
+class SpreadsheetDataset(CustomDataset):
  
     """The Spreadsheet dataset can read data from a spreadsheet, currently only Excel files, and store that data in its."""
     
@@ -28,7 +28,7 @@ class Spreadsheet_Dataset(Custom_Dataset):
     
     def read_resource_settings(self, _resource):
         if _resource.type.upper() != 'SPREADSHEET':
-            raise Exception("Spreadsheet_Dataset.read_resource_settings.parse_resource error: Wrong resource type: " + _resource.type)
+            raise Exception("SpreadsheetDataset.read_resource_settings.parse_resource error: Wrong resource type: " + _resource.type)
         self.filename = make_path_absolute(_resource.data.get("filename"), _resource.base_path)
         self.delimiter = _resource.data.get("delimiter")
         if _resource.data.get("has_header"):
@@ -53,7 +53,7 @@ class Spreadsheet_Dataset(Custom_Dataset):
         '''
         Constructor
         '''
-        super(Spreadsheet_Dataset, self ).__init__()
+        super(SpreadsheetDataset, self ).__init__()
         if _resource != None:
             self.read_resource_settings(_resource)        
         else:
@@ -111,15 +111,15 @@ class Spreadsheet_Dataset(Custom_Dataset):
                     self.data_table.append(_sheet.row_values(_curr_y, start_colx= self.x_offset, end_colx= _sheet.ncols))
 
             except IOError as e:
-                raise Exception("Spreadsheet_Dataset.load: Error reading file:" + str(e))
+                raise Exception("SpreadsheetDataset.load: Error reading file:" + str(e))
             
             
         elif _extension.lower() == ".odt":
             from ezodf import newdoc, Paragraph, Heading, Sheet
-            raise Exception("Spreadsheet_Dataset.load: Open Document Spreadsheet not implemented yet.")
+            raise Exception("SpreadsheetDataset.load: Open Document Spreadsheet not implemented yet.")
 
         else:
-            raise Exception("Spreadsheet_Dataset.load: Unsupported file type \"" + _extension +"\"")
+            raise Exception("SpreadsheetDataset.load: Unsupported file type \"" + _extension +"\"")
     
     def save (self):
         """Save data. Not implemented yet"""

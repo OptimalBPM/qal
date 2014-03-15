@@ -39,7 +39,7 @@
 				<sql:expression>
 					<sql:ParameterDataset>
 						<sql:data_source>
-							<sql:Flatfile_Dataset>
+							<sql:FlatfileDataset>
 								<sql:filename>_test_insert_csv_in.txt</sql:filename>
 								<sql:delimiter>,</sql:delimiter>
 								<sql:field_names>
@@ -58,7 +58,7 @@
 										<sql:str>CSV22</sql:str>
 									</sql:list>
 								</sql:data_table>
-							</sql:Flatfile_Dataset>
+							</sql:FlatfileDataset>
 						</sql:data_source>
 					</sql:ParameterDataset>
 				</sql:expression>

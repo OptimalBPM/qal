@@ -7,7 +7,7 @@ Created on Dec 17, 2013
 import unittest
 import datetime
 from qal.common.listhelper import pretty_list
-from qal.dataset.rdbms import RDBMS_Dataset
+from qal.dataset.rdbms import RDBMSDataset
 from qal.dataset.custom import DATASET_LOGLEVEL_DETAIL
 from qal.common.resources import Resources
 from qal.dal.dal import Database_Abstraction_Layer
@@ -52,12 +52,12 @@ class Test(unittest.TestCase):
  
        
         #Load source
-        _d_source = RDBMS_Dataset(_resource= _resources.get_resource("{1D62083E-88F7-4442-920D-0B6CC59BA2FF}"))
+        _d_source = RDBMSDataset(_resource= _resources.get_resource("{1D62083E-88F7-4442-920D-0B6CC59BA2FF}"))
         _d_source.load()
         print("source:\n" + str(_d_source.data_table))
 
         #Load dest        
-        _d_dest = RDBMS_Dataset(_resource= _resources.get_resource("{DD34A233-47A6-4C16-A26F-195711B49B97}"))
+        _d_dest = RDBMSDataset(_resource= _resources.get_resource("{DD34A233-47A6-4C16-A26F-195711B49B97}"))
         _d_dest._log_level = DATASET_LOGLEVEL_DETAIL
         _d_dest.load()
 
@@ -70,7 +70,7 @@ class Test(unittest.TestCase):
         
         print("log:\n"+ pretty_list(_d_dest._log))
         
-        _log_cmp = ['RDBMS_Dataset.delete;%5Bdatetime.datetime%282014%2C%201%2C%204%2C%200%2C%200%29%5D;%5B3%2C%20%27dest%27%2C%20datetime.datetime%282014%2C%201%2C%204%2C%200%2C%200%29%5D;Destination table: table_dst', 'RDBMS_Dataset.insert;N/A%20in%20RDBMS;%5B3%2C%20%27source_new%27%2C%20datetime.datetime%282014%2C%201%2C%201%2C%200%2C%200%29%5D;Destination table: table_dst', 'RDBMS_Dataset.update;1;;Name : dest =>source;Destination table: table_dst', 'RDBMS_Dataset.update;0;;Name : dest =>source;Destination table: table_dst']
+        _log_cmp = ['RDBMSDataset.delete;%5Bdatetime.datetime%282014%2C%201%2C%204%2C%200%2C%200%29%5D;%5B3%2C%20%27dest%27%2C%20datetime.datetime%282014%2C%201%2C%204%2C%200%2C%200%29%5D;Destination table: table_dst', 'RDBMSDataset.insert;N/A%20in%20RDBMS;%5B3%2C%20%27source_new%27%2C%20datetime.datetime%282014%2C%201%2C%201%2C%200%2C%200%29%5D;Destination table: table_dst', 'RDBMSDataset.update;1;;Name : dest =>source;Destination table: table_dst', 'RDBMSDataset.update;0;;Name : dest =>source;Destination table: table_dst']
         self.assertEqual(_d_dest._log, _log_cmp, "Logs differ")
         
         print("result:\n" + str(_d_dest.data_table))
