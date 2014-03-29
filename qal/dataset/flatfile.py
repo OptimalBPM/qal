@@ -82,8 +82,7 @@ class FlatfileDataset(CustomDataset):
     def read_resource_settings(self, _resource):
         if _resource.type.upper() != 'FLATFILE':
             raise Exception("FlatfileDataset.read_resource_settings.parse_resource error: Wrong resource type: " + _resource.type)
-        self.base_path = _resource.base_path
-        # TODO Make path absolute should not be set here, but only when used.
+        self._base_path = _resource.base_path
         self.filename = _resource.data.get("filename")
         self.delimiter = _resource.data.get("delimiter")
         if _resource.data.get("has_header"):
@@ -128,7 +127,7 @@ class FlatfileDataset(CustomDataset):
         """Load data"""
         print("FlatfileDataset.load: Filename='" + str(self.filename) + "', Delimiter='"+str(self.delimiter)+"'")
         
-        _file = open( make_path_absolute(self.filename, self.base_path), 'r')
+        _file = open( make_path_absolute(self.filename, self._base_path), 'r')
         _reader = csv.reader(_file, 
                              delimiter=self.delimiter, 
                              quoting=self._quotestr_to_constants(self.quoting),
@@ -163,7 +162,7 @@ class FlatfileDataset(CustomDataset):
         if _save_as:
             _filename = _save_as
         else:
-            _filename =  make_path_absolute(self.filename, self.base_path)
+            _filename =  make_path_absolute(self.filename, self._base_path)
             
         _file = open(_filename, 'w')
 

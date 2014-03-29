@@ -31,7 +31,7 @@ class CustomDataset(object):
     """The data types of the fields"""
     data_table = None
     """The actual data, in the form of a two-dimensional array"""
-    base_path = None
+    _base_path = None
     """The base path for all relative references in resources. Inferred from the locations of resource files."""
 
     
@@ -43,6 +43,7 @@ class CustomDataset(object):
         self.field_names = []
         self.field_types = []
         self.data_table = []
+        self._base_path = None
         self._log = [] 
         self._log_level = DATASET_LOGLEVEL_MEDIUM
         

@@ -52,7 +52,7 @@ class ParameterExpression(ParameterExpressionItem):
         result = ''
         #Loop expressions
         for index, item in enumerate(self.expressionitems):
-            # Some want || instrad of + for concatenation 
+            # Some want || instead of + for concatenation
             if (_db_type == DB_POSTGRESQL or _db_type == DB_DB2):
                 result+= add_operator(index, make_operator(item.operator, True)) + item.as_sql(_db_type) 
             else:
@@ -179,7 +179,8 @@ class ParameterDataset(ParameterExpressionItem, ParameterRemotable):
 
             """Handle relative filename"""
             if hasattr(self.data_source, 'filename'):
-                self.data_source.filename = make_path_absolute(self.data_source.filename, self._base_path)
+                self.data_source.filename = self.data_source.filename
+                self.data_source._base_path = self._base_path
 
             self.data_source.load()
             return "("+ self.data_source.as_sql(_db_type) + ")"       
@@ -198,7 +199,7 @@ class ParameterIdentifier(ParameterExpressionItem):
             self.prefix = _prefix
         else:
             self.prefix = '' 
-            
+
                                   
     
     def _generate_sql(self, _db_type):

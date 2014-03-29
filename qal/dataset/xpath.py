@@ -91,7 +91,7 @@ class XpathDataset(CustomDataset):
     def read_resource_settings(self, _resource):
         """Reads settings from a resource"""
 
-        self.base_path = _resource.base_path
+        self._base_path = _resource.base_path
   
         if _resource.type.upper() != 'XPATH':
             raise Exception("XpathDataset.read_resource_settings.parse_resource error: Wrong resource type: " + _resource.type)
@@ -151,7 +151,7 @@ class XpathDataset(CustomDataset):
         print("Loading : " + self.filename)
         self.log_load(self.filename)  
         try:
-            _tree = self._file_to_tree(self.xpath_data_format, make_path_absolute(self.filename, self.base_path))
+            _tree = self._file_to_tree(self.xpath_data_format, make_path_absolute(self.filename, self._base_path))
             
         except Exception as e:
             raise Exception("XpathDataset.load - error parsing " + self.xpath_data_format + " file : " + str(e))
@@ -345,7 +345,7 @@ class XpathDataset(CustomDataset):
             
             # If not try to load, or create file.    
             import os
-            if os.path.exists(make_path_absolute(self.filename, self.base_path)):
+            if os.path.exists(make_path_absolute(self.filename, self._base_path)):
                 
                 try:
                     self.load(_add_node_ref=True)
@@ -435,7 +435,7 @@ class XpathDataset(CustomDataset):
         """Save the document"""
         
         if not _save_as:
-            _save_as = make_path_absolute(self.filename, self.base_path())
+            _save_as = make_path_absolute(self.filename, self._base_path())
             
         self._structure_tree.write(_save_as)
             

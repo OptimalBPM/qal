@@ -77,14 +77,14 @@ def empty_when_none(_string = None):
 
 
 def make_path_absolute(_path, _base_path):
-    """Makes a path defined as relative in the XML resource definition absolute using base_path."""
+    """Makes a path defined as relative in the XML resource definition absolute using _base_path."""
     if  os.path.isabs(_path):
         # Don't do anything, path is already absolute.
         return _path
     elif _base_path:
         return os.path.join(_base_path, _path)
     else:
-        raise Exception("Resource.make_path_absolute: make_path_absolute cannot make " + _path + " absolute without a base_path.")
+        raise Exception("Resource.make_path_absolute: make_path_absolute cannot make " + _path + " absolute without a _base_path.")
 
 def bool_to_binary_int(_value):
     """Converts True to 1 and False and None to 0."""
