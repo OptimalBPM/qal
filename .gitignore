@@ -3,4 +3,6 @@
 /.git
 *test*_out.sql
 .pypirc
+/*.egg_info
+
 
