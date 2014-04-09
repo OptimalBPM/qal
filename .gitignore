@@ -1,14 +1,6 @@
 *.pyc
 *__pycache__*
-/.externalToolBuilders
-.project
-.pydevproject
-/.settings
 /.git
-/.idea
 *test*_out.sql
-*.egg-info
-build
-dist
 .pypirc
-qal-0.1
+
