@@ -10,6 +10,6 @@
 
 """
 # Version and release information used by Sphinx for documentation and setuptools for package generation. 
-__version__ = '0.2'
-__release__ = '0.2.0'
+__version__ = '0.3'
+__release__ = '0.3.0'
 __copyright__ = '2010-2013, Nicklas Boerjesson'
