@@ -136,7 +136,8 @@ class DatabaseAbstractionLayer(object):
                                                      _apt_package="None",
                                                      _win_package=None,
                                                      _import_comment="2014-04-16: " +
-                                                                     "No python3-pyodbc available at this time."))
+                                                                     "No apt package (python3-pyodbc)"+
+                                                                     " available at this time."))
             import platform
 
             #TODO: Investigate if there is any more adapting needed, platform.release() can also be used.
