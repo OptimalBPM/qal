@@ -46,15 +46,15 @@ def discover_services(_ip, _ports, _verbose = False):
     try:
         import nmap                         # import nmap.py module
     except ImportError as _err:
-        raise Exception(import_error_to_help(_module= "nmap", _err_obj = _err, _pip_package = "python-nmap", _apt_package = "", _win_package = ""))
+        raise Exception(import_error_to_help(_module= "nmap", _err_obj = _err, _pip_package = "python-nmap", _apt_package = None, _win_package = None))
 
     try:
         _nm = nmap.PortScanner()      # instantiate nmap.PortScanner object
     except nmap.PortScannerError:
-        raise('Nmap not found', sys.exc_info()[0])
+        raise Exception('Nmap not found(nmap not installed on the system?)', sys.exc_info()[0])
     except Exception as e:
         print("Unexpected error:" + str(e), sys.exc_info()[0])
-        raise e
+        raise Exception(str(e))
     
     _ips = _ip.split(".")
     _new_ip = ".".join(_ips[0:3])
