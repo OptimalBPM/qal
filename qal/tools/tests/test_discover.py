@@ -1,0 +1,29 @@
+"""
+Created on Nov 3, 2013
+
+@author: Nicklas Boerjesson
+"""
+import unittest
+from qal.tools.discover import import_error_to_help
+from source.qal.tools.discover import platform_to_int
+
+
+class Discover_test(unittest.TestCase):
+    
+
+    def test_import_error_to_help(self):
+        """Since this test is platform specific, failure is only possible on linux"""
+        if platform_to_int() == 0:
+            self.assertEqual(import_error_to_help(_module="pymysql", _err_obj="No module named 'pymysql'",
+                                                  _pip_package="pymysql3", _apt_package="python3-mysql",
+                                                  _win_package="pymysql3.msi"),
+                             "The python 3.3 module \"pymysql\" is not installed.\nRun pip-3.3 install pymysql3" +
+                             " or sudo apt-get install python3-mysql")
+        else:
+            self.assertTrue()
+
+
+
+if __name__ == "__main__":
+    #import sys;sys.argv = ['', 'Test.testName']
+    unittest.main()

@@ -11,9 +11,12 @@
 
 from qal.dal.types import DB_MYSQL, DB_POSTGRESQL, DB_ORACLE, DB_DB2, DB_SQLSERVER, string_to_db_type, db_type_to_string
 from qal.dal.conversions import parse_description, python_type_to_SQL_type
+from source.qal.tools.discover import import_error_to_help
+
 
 class DatabaseAbstractionLayer(object):
-    """This class abstracts the different peculiarities of the different database backends with regards to connection details"""
+    """This class abstracts the different peculiarities of the different database backends with
+    regards to connection details"""
     
     # Events
     
@@ -84,75 +87,128 @@ class DatabaseAbstractionLayer(object):
                        
     def connect_to_db(self):
         '''Connects to the database'''
-        if (self.db_type == DB_MYSQL):
-            import pymysql
-            Conn = pymysql.connect (host = self.db_server,
+        if self.db_type == DB_MYSQL:
+            try:
+                import pymysql
+            except ImportError as _err:
+                # TODO: Add python3-mysql when available or consider mysql-connector when available for python3
+                raise Exception(import_error_to_help(_module="pymysql", _err_obj=_err, _pip_package="pymysql3",
+                                                     _apt_package=None, _win_package=None))
+
+            _connection = pymysql.connect (host = self.db_server,
                             db = self.db_databasename,
                             user = self.db_username,
                             passwd = self.db_password,
                             )
             
 
-        elif (self.db_type == DB_POSTGRESQL):
-            import postgresql.driver as pg_driver 
+        elif self.db_type == DB_POSTGRESQL:
+
+            try:
+                import postgresql.driver as pg_driver
+            except ImportError as _err:
+                raise Exception(import_error_to_help(_module="postgresql.driver", _err_obj=_err,
+                                                     _pip_package="py-postgresql",
+                                                     _apt_package="python3-postgresql",
+                                                     _win_package=None,
+                                                     _import_comment="2014-04-16: If using apt-get, " +
+                                                                     "check so version is > 1.0.3-2" +
+                                                     " as there is a severe bug in the 1.02 version. " +
+                                                     "See https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=724597"))
+
             if self.db_port == None or self.db_port == "" or self.db_port == 0:
                 _port = 5432
             else:
                 _port = self.db_port
-            Conn = pg_driver.connect(host = self.db_server, 
+            _connection = pg_driver.connect(host = self.db_server,
                                                 database =  self.db_databasename, 
                                                 user = self.db_username, 
                                                 password = self.db_password,
                                                 port = _port)
                             
-        elif (self.db_type == DB_SQLSERVER):
-            import pyodbc
-            #TODO: Investigate if there is any more adapting needed, platform.release() can also be used. 
+        elif self.db_type in [DB_SQLSERVER, DB_DB2]:
+            _connection_string = None
+            try:
+                import pyodbc
+            except ImportError as _err:
+                raise Exception(import_error_to_help(_module="pyodbc", _err_obj=_err,
+                                                     _pip_package="pyodbc",
+                                                     _apt_package="None",
+                                                     _win_package=None,
+                                                     _import_comment="2014-04-16: " +
+                                                                     "No python3-pyodbc available at this time."))
             import platform
-            if platform.system().lower() == 'linux':
 
-                connstr = "DRIVER=FreeTDS;SERVER=" + self.db_server + ";DATABASE=" + self.db_databasename +";TDS VERSION=8.0;UID=" + self.db_username + ";PWD=" + self.db_password + ";PORT="+str(self.db_port) + ";Trusted_Connection=no"
-            elif platform.system().lower() == 'windows':
-                connstr = "Driver={SQL Server};Server=" + self.db_server + ";DATABASE=" + self.db_databasename +";UID=" + self.db_username + ";PWD=" + self.db_password + ";PORT="+str(self.db_port) + ";Trusted_Connection=no"
-            else:
-                raise Exception("connect_to_db: ODBC connections on " + platform.system() + " not supported yet.")
-            print("Connect to database using connection string:  " + connstr)
-            Conn = pyodbc.connect(connstr, autocommit=self.db_autocommit);
+            #TODO: Investigate if there is any more adapting needed, platform.release() can also be used.
 
-        elif (self.db_type == DB_DB2):
-            import pyodbc
-            import platform
-            if platform.system().lower() == 'linux':
-                drivername = "DB2"
-            elif platform.system().lower() == 'windows':
-                drivername = "{IBM DATA SERVER DRIVER for ODBC - C:/PROGRA~1/IBM}"
-            else:
-                raise Exception("connect_to_db: DB2 connections on " + platform.system() + " not supported yet.")
-            
-            # DSN-less?{IBM DB2 ODBC DRIVER} ?? http://www.webmasterworld.com/forum88/4434.htm
-            connstr =  "Driver=" + drivername + ";Database=" + self.db_databasename +";hostname=" + self.db_server + ";port="+str(self.db_port) + ";protocol=TCPIP; uid=" + self.db_username + "; pwd=" + self.db_password
-            #connstr = "DSN=" + self.db_server + ";UID=" + self.db_username + ";PWD=" + self.db_password 
-            Conn = pyodbc.connect(connstr, autocommit=self.db_autocommit)
+            if self.db_type == DB_SQLSERVER:
+                if platform.system().lower() == 'linux':
+                    _connection_string = "DRIVER=FreeTDS;SERVER=" + self.db_server + ";DATABASE=" + \
+                                         self.db_databasename +";TDS VERSION=8.0;UID=" + self.db_username + ";PWD=" + \
+                                         self.db_password + ";PORT="+str(self.db_port) + ";Trusted_Connection=no"
+                elif platform.system().lower() == 'win32':
+                    _connection_string = "Driver={SQL Server};Server=" + self.db_server + ";DATABASE=" + \
+                                         self.db_databasename +";UID=" + self.db_username + ";PWD=" + self.db_password +\
+                                         ";PORT="+str(self.db_port) + ";Trusted_Connection=no"
+                else:
+                    raise Exception("connect_to_db: ODBC connections on " + platform.system() + " not supported yet.")
+
+
+            elif self.db_type == DB_DB2:
+
+                if platform.system().lower() == 'linux':
+                    drivername = "DB2"
+                elif platform.system().lower() == 'win32':
+                    drivername = "{IBM DATA SERVER DRIVER for ODBC - C:/PROGRA~1/IBM}"
+                else:
+                    raise Exception("connect_to_db: DB2 connections on " + platform.system() + " not supported yet.")
+
+                # DSN-less?{IBM DB2 ODBC DRIVER} ?? http://www.webmasterworld.com/forum88/4434.htm
+                _connection_string =  "Driver=" + drivername + ";Database=" + self.db_databasename +";hostname=" + \
+                                      self.db_server + ";port="+str(self.db_port) + ";protocol=TCPIP; uid=" + \
+                                      self.db_username + "; pwd=" + self.db_password
+                #_connection_string = "DSN=" + self.db_server + ";UID=" + self.db_username + ";PWD=" + self.db_password
+                _connection = pyodbc.connect(_connection_string, autocommit=self.db_autocommit)
+
+                # DSN-less?{IBM DB2 ODBC DRIVER} ?? http://www.webmasterworld.com/forum88/4434.htm
+                _connection_string =  "Driver=" + drivername + ";Database=" + self.db_databasename +";hostname=" + \
+                                      self.db_server + ";port="+str(self.db_port) + ";protocol=TCPIP; uid=" + \
+                                      self.db_username + "; pwd=" + self.db_password
+                #_connection_string = "DSN=" + self.db_server + ";UID=" + self.db_username + ";PWD=" + self.db_password
+
+            print("Connect to database using connection string:  " + _connection_string)
+            _connection = pyodbc.connect(_connection_string, autocommit=self.db_autocommit)
         
         # cx_Oracle in python 3.X not checked yet.
-        elif (self.db_type == DB_ORACLE):
-            import cx_Oracle
-            connstr = self.db_username + '/' +  self.db_password + '@' + self.db_server + ':' + str(self.db_port) + '/' + self.db_instance
-            print(connstr)
-            Conn = cx_Oracle.connect(connstr) 
-            Conn.autocommit=self.db_autocommit
+        elif self.db_type == DB_ORACLE:
+            try:
+                import cx_Oracle
+            except ImportError as _err:
+                raise Exception(import_error_to_help(_module="cx_Oracle", _err_obj=_err,
+                                                     _pip_package="cx_Oracle",
+                                                     _apt_package="None",
+                                                     _win_package="Download and install binary .msi package from " +
+                                                                  "http://cx-oracle.sourceforge.net/ and install.",
+                                                     _import_comment="2014-04-16: No python3-pyodbc available at" +
+                                                                     " build time."))
+
+            _connection_string = self.db_username + '/' +  self.db_password + '@' + self.db_server + ':' + \
+                                 str(self.db_port) + '/' + self.db_instance
+            print("Connect to database using connection string:  " + _connection_string)
+            _connection = cx_Oracle.connect(_connection_string)
+            _connection.autocommit=self.db_autocommit
                   
         else:
             raise Exception("connect_to_db: Invalid database type.")              
       
         
-        self.db_connection = Conn
+        self.db_connection = _connection
         
         if self.on_connect:
             self.on_connect() 
         self.connected = True
             
-        return Conn 
+        return _connection
     
     
     
