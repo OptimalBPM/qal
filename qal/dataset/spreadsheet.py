@@ -35,9 +35,17 @@ class SpreadsheetDataset(CustomDataset):
             self.has_header = string_to_bool(str(_resource.data.get("has_header")))
         else:
             self.has_header = None
+
         self.sheet_name = _resource.data.get("sheet_name")
-        self.x_offset = _resource.data.get("x_offset")
-        self.y_offset = _resource.data.get("y_offset")
+
+        if _resource.data.get("x_offset") is not None:
+            self.x_offset = int(_resource.data.get("x_offset"))
+        else:
+            self.x_offset = 0
+        if _resource.data.get("y_offset") is not None:
+            self.y_offset = int( _resource.data.get("y_offset"))
+        else:
+            self.y_offset = 0
 
     def write_resource_settings(self, _resource):
         _resource.type = 'SPREADSHEET'
@@ -99,10 +107,10 @@ class SpreadsheetDataset(CustomDataset):
                     self.y_offset = 0
               
                 if self.has_header:
-                    self.field_names = _sheet.row_values(self.y_offset, start_colx = self.x_offset, end_colx = _sheet.ncols)
+                    self.field_names = _sheet.row_values(rowx=0, start_colx=0, end_colx=_sheet.ncols)
                     _has_header_offset = 1
                 else:
-                    self.field_names = list("Column_" +str(x) for x in range(self.y_offset, _sheet.ncols))
+                    self.field_names = list("Column_" + str(x) for x in range(self.y_offset, _sheet.ncols))
                     _has_header_offset = 0
 
                 self.data_table = []

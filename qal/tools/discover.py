@@ -21,13 +21,13 @@ def platform_to_int():
 
 def import_error_to_help(_module, _err_obj, _pip_package, _apt_package, _win_package, _import_comment=None):
     """Usable to create a helpful error message if a module is missing"""
-    if str(_err_obj) == "No module named '" + _module + "'":
-        _err_msg = "The python " + get_python_versions(_style="Minor") + " module \"" + _module + "\" is not installed.\n"
-        _err_msg += ["Run pip-" + get_python_versions(_style="Minor") + " install " + _pip_package +
-                     empty_if_none(" or sudo apt-get install " + _apt_package, _apt_package),
-                     "Run pip install " + _pip_package + empty_if_none(" or download " + _win_package +
-                                                                       " and install from source.", _win_package),
-                     "If available on your platform, run pip" + get_python_versions(_style="Minor") + " install " + _pip_package +
+    if str(_err_obj) == "No module named '" + str(_module) + "'":
+        _err_msg = "The python " + get_python_versions(_style="Minor") + " module \"" + str(_module) + "\" is not installed.\n"
+        _err_msg+= ["Run sudo pip3 install " + str(_pip_package) +
+                     empty_if_none(" or sudo apt-get install " + str(_apt_package), _apt_package),
+                     "Run sudo pip install " + str(_pip_package) + empty_if_none(" or download " + str(_win_package) +
+                                                                       " and install from source.",_win_package),
+                     "If available on your platform, run pip" + get_python_versions(_style="Minor") + " install " + str(_pip_package) +
                      " otherwise download and install from source."][platform_to_int()]
         return _err_msg + empty_if_none("\n" + str(_import_comment), _import_comment)
     else:

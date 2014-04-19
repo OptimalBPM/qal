@@ -17,7 +17,7 @@ class Discover_test(unittest.TestCase):
             self.assertEqual(import_error_to_help(_module="pymysql", _err_obj="No module named 'pymysql'",
                                                   _pip_package="pymysql3", _apt_package="python3-mysql",
                                                   _win_package="pymysql3.msi"),
-                             "The python 3.3 module \"pymysql\" is not installed.\nRun pip-3.3 install pymysql3" +
+                             "The python 3.3 module \"pymysql\" is not installed.\nRun sudo pip3 install pymysql3" +
                              " or sudo apt-get install python3-mysql")
         else:
             self.assertTrue()
