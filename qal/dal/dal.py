@@ -107,7 +107,7 @@ class DatabaseAbstractionLayer(object):
             try:
                 import postgresql.driver as pg_driver
             except ImportError as _err:
-                raise Exception(import_error_to_help(_module="postgresql.driver", _err_obj=_err,
+                raise Exception(import_error_to_help(_module="postgresql", _err_obj=_err,
                                                      _pip_package="py-postgresql",
                                                      _apt_package="python3-postgresql",
                                                      _win_package=None,
