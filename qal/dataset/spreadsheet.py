@@ -107,7 +107,7 @@ class SpreadsheetDataset(CustomDataset):
                     self.y_offset = 0
               
                 if self.has_header:
-                    self.field_names = _sheet.row_values(rowx=0, start_colx=0, end_colx=_sheet.ncols)
+                    self.field_names = _sheet.row_values(rowx=self.y_offset, start_colx=self.x_offset, end_colx=_sheet.ncols)
                     _has_header_offset = 1
                 else:
                     self.field_names = list("Column_" + str(x) for x in range(self.y_offset, _sheet.ncols))
@@ -123,7 +123,7 @@ class SpreadsheetDataset(CustomDataset):
             
             
         elif _extension.lower() == ".odt":
-            from ezodf import newdoc, Paragraph, Heading, Sheet
+            # from ezodf import newdoc, Paragraph, Heading, Sheet
             raise Exception("SpreadsheetDataset.load: Open Document Spreadsheet not implemented yet.")
 
         else:
