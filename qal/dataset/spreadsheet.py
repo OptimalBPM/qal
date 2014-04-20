@@ -27,9 +27,11 @@ class SpreadsheetDataset(CustomDataset):
     """The topmost row where data is held, *including the header row*."""
     
     def read_resource_settings(self, _resource):
+        self._base_path = _resource.base_path
+
         if _resource.type.upper() != 'SPREADSHEET':
             raise Exception("SpreadsheetDataset.read_resource_settings.parse_resource error: Wrong resource type: " + _resource.type)
-        self.filename = make_path_absolute(_resource.data.get("filename"), _resource.base_path)
+        self.filename = _resource.data.get("filename")
         self.delimiter = _resource.data.get("delimiter")
         if _resource.data.get("has_header"):
             self.has_header = string_to_bool(str(_resource.data.get("has_header")))
@@ -98,7 +100,7 @@ class SpreadsheetDataset(CustomDataset):
         if _extension.lower() in [".xls", ".xlsx"]:
             from xlrd import open_workbook
             try:
-                _workbook = open_workbook(self.filename)
+                _workbook = open_workbook(make_path_absolute(self.filename, self._base_path))
                 _sheet = _workbook.sheet_by_name(self.sheet_name)
                 if self.x_offset is None:
                     self.x_offset = 0
