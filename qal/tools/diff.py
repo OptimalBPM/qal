@@ -128,12 +128,11 @@ def compare(_left, _right, _key_columns, _full):
             
     # Add remainders to missing
     if _left_idx < _left_len:   
-        
         for _curr_item in _left_s[_left_idx: _left_len]:
             # print("_missing_right.append (post) " + str([_left_idx, len(_missing_right) + 1, _curr_item]))
             _missing_right.append([_left_idx, len(_missing_right) + 1, _curr_item])
+
     if _right_idx < _right_len:
-        
         for _curr_item in _right_s[_right_idx: _right_len]:
             # print("_missing_left.append (post)" + str([len(_missing_left) + 1, _right_idx,_curr_item]))
             _missing_left.append([len(_missing_left) + 1, _right_idx,_curr_item])

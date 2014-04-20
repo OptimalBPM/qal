@@ -34,19 +34,22 @@ class Test(unittest.TestCase):
         2. that bk103:s "test_tag" is unaffected by the update
         2. that bk110 is added
         3. bk103.3 is removed by _delete=True
-        4. And that the visual layout of the destination file is kept. 
+        4. And that the visual layout of the destination file is kept.
+        5. That bk113 is added.
         """
         
-        #copyfile(Test_Resource_Dir + "/xml_dest_in.xml", Test_Resource_Dir + "/xml_out.xml")
+        copyfile(Test_Resource_Dir + "/xml_dest_in.xml", Test_Resource_Dir + "/xml_out.xml")
         
         _resources_node = load_xml(Test_Resource_Dir + "/resources.xml").find("resources")
-        _resources = Resources(_resources_node = _resources_node)
-        
-        _source = XpathDataset(_resource= _resources.get_resource("{969A610A-FCA6-4837-B33A-BAA8F13D8B70}"))
+        _resources = Resources(_resources_node=_resources_node)
+
+        # xml_in
+        _source = XpathDataset(_resource=_resources.get_resource("{969A610A-FCA6-4837-B33A-BAA8F13D8B70}"))
         _source._log_level = DATASET_LOGLEVEL_DETAIL
         _source.load(_add_node_ref=True)
-        
-        _destination = XpathDataset(_resource= _resources.get_resource("{969A610A-FCA6-4837-B33A-BAA8F13D8B71}"))
+
+        # xml_out
+        _destination = XpathDataset(_resource=_resources.get_resource("{969A610A-FCA6-4837-B33A-BAA8F13D8B71}"))
         _destination._log_level = DATASET_LOGLEVEL_DETAIL
         _destination.load(_add_node_ref=True)
         _destination.apply_new_data(_source.data_table, [2], _insert=True, _update=True, _delete=True)
@@ -54,8 +57,8 @@ class Test(unittest.TestCase):
         print(str(_destination.data_table))
         _destination.save(_save_as = Test_Resource_Dir + "/xml_out.xml")
         
-        _f_a = open(Test_Resource_Dir + "/xml_out.xml", "r")
-        _f_b = open(Test_Resource_Dir + "/xml_cmp.xml", "r")
+        _f_a = open(Test_Resource_Dir + "/xml_cmp.xml", "r")
+        _f_b = open(Test_Resource_Dir + "/xml_out.xml", "r")
         _a = _f_a.read()
         _b = _f_b.read()
         _f_a.close()

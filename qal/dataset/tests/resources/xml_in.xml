@@ -117,4 +117,12 @@
       integrated into a comprehensive development 
       environment.</description>
    </book>
+   <book id="bk113">
+      <author>B, Nicklas</author>
+      <title>Optimal BPM - The shower</title>
+      <genre>Computer</genre>
+      <price>0.95</price>
+      <publish_date>2015-04-16</publish_date>
+      <description>The disturbing story of business process management system and blatant disregard for personal hygiene.</description>
+   </book>
 </catalog>

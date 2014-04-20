@@ -109,7 +109,9 @@ class CustomDataset(object):
         Commonly overridden by subclasses"""
         if _no_logging == False:
             self.log_insert(_row_idx, _row_data)
+
         self.data_table.insert(_row_idx,_row_data)
+
     def _structure_update_row(self, _row_idx, _row_data, _commit=None, _no_logging = False):
         """Updates the row at _row_idx in the self.data_table with _row_data.\
         Commonly overridden by subclasses"""
@@ -153,23 +155,29 @@ class CustomDataset(object):
 
         
         self.data_table = _sorted_dest
-        # Loop the sorted destination dataset backwards and apply changes
-        for _curr_row_idx in range(len(self.data_table), -1, -1):
-  
-            # Make deletes
-            while _delete_idx > -1 and _delete[_delete_idx][1] == _curr_row_idx:
-                self._structure_delete_row(_curr_row_idx, _commit=_commit)
-                _delete_idx-= 1
-            # Make updates
-            while _update_idx > -1 and _update[_update_idx][1] == _curr_row_idx:
-                self._structure_update_row(_curr_row_idx, _update[_update_idx][2], _commit=_commit)
-                _update_idx-= 1
-                
+        if len(self.data_table) > 0:
+            # Loop the sorted destination dataset backwards and apply changes
+            for _curr_row_idx in range(len(self.data_table), -1, -1):
+
+                # Make deletes
+                while _delete_idx > -1 and _delete[_delete_idx][1] == _curr_row_idx:
+                    self._structure_delete_row(_curr_row_idx, _commit=_commit)
+                    _delete_idx-= 1
+                # Make updates
+                while _update_idx > -1 and _update[_update_idx][1] == _curr_row_idx:
+                    self._structure_update_row(_curr_row_idx, _update[_update_idx][2], _commit=_commit)
+                    _update_idx-= 1
+
+                # Make inserts
+                while _insert_idx > -1 and _insert[_insert_idx][1] == _curr_row_idx:
+                    self._structure_insert_row(_curr_row_idx, _insert[_insert_idx][2], _commit=_commit)
+                    _insert_idx-= 1
+        else:
             # Make inserts
-            while _insert_idx > -1 and _insert[_insert_idx][1] == _curr_row_idx:
-                self._structure_insert_row(_curr_row_idx, _insert[_insert_idx][2], _commit=_commit)
+            while _insert_idx > -1:
+                self._structure_insert_row(0, _insert[_insert_idx][2], _commit=_commit)
                 _insert_idx-= 1
-        
+
         #print("After apply:  " + str(_sorted_dest))            
         return self.data_table        
     

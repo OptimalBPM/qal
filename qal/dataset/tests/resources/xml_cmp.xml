@@ -18,7 +18,7 @@
       an evil sorceress, and her own childhood to become queen 
       of the world.</description>
    </book>
-   <book id="bk103">
+   <book id="bk113"><title>Optimal BPM - The shower</title><price>0.95</price></book><book id="bk103">
       <author>Corets, Eva</author>
       <title>Maeve Ascendant</title>
       <genre>Fantasy</genre>
@@ -87,7 +87,7 @@
       Uncertainty Device, James Salway discovers the problems 
       of being quantum.</description>
    </book>
-   <book id="bk110"><title>Microsoft .NET: The Programming Bible</title><price>36.95</price></book><book id="bk111">
+   <book id="bk111">
       <author>O'Brien, Tim</author>
       <title>MSXML3: A Comprehensive Guide</title>
       <genre>Computer</genre>
