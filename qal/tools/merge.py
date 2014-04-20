@@ -251,7 +251,7 @@ class Merge(object):
 
     def _remap_and_transform(self):
         """Create a remapped source data set that has the same data in the same columns as the destination data set.
-        Also applies transformations."""
+        Also applies transformations and remaps keys."""
         _shortcuts = self._make_shortcuts()
 
         _mapped_source = []
@@ -274,8 +274,15 @@ class Merge(object):
                 # Set the correct field in the destination data set
                 _curr_mapped[_curr_shortcut[1]] = _value
             _mapped_source.append(_curr_mapped)
-        
-        return _mapped_source
+
+        # Remap keys to match the fields in _mapped_source
+        _mapped_keys = []
+        for _curr_key_fields_idx in range(len(self.key_fields)):
+            for _curr_shortcut in _shortcuts:
+                if self.key_fields[_curr_key_fields_idx]==_curr_shortcut[0]:
+                    _mapped_keys.append(_curr_shortcut[1])
+
+        return _mapped_source, _mapped_keys
            
     def execute(self, _commit = True):
         
@@ -283,11 +290,11 @@ class Merge(object):
         self._load_datasets()
         
         # Create a remapped source dataset, perform transformations
-        _mapped_source = self._remap_and_transform()
+        _mapped_source, _mapped_keys = self._remap_and_transform()
         
 
         """Merge the datasets"""
-        _merged_dataset, _deletes, _inserts, _updates = self.destination.apply_new_data(_mapped_source, self.key_fields, _insert=self.insert, _update = self.update, _delete=self.delete, _commit=_commit)
+        _merged_dataset, _deletes, _inserts, _updates = self.destination.apply_new_data(_mapped_source, _mapped_keys, _insert=self.insert, _update = self.update, _delete=self.delete, _commit=_commit)
 
         if _commit:
             self.destination.save()
