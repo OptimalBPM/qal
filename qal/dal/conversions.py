@@ -59,12 +59,14 @@ def mysql_type_to_SQL_type(_type_code):
         MySQL_BLOB,
         ):
         return "blob"    
-    elif _type_code in (MySQL_DECIMAL,
+    elif _type_code in (
+        MySQL_DECIMAL,
         MySQL_FLOAT,
         MySQL_DOUBLE,
+        MySQL_NEWDECIMAL
         ):        
         return "float"
-    elif _type_code in (MySQL_DECIMAL,
+    elif _type_code in (
         MySQL_TINY,
         MySQL_SHORT,
         MySQL_LONG,
