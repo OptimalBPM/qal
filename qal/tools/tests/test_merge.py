@@ -54,9 +54,9 @@ class Merge_test(unittest.TestCase):
         
         """Test merge two files"""
         
-        copyfile(Test_Resource_Dir + "/csv_dest_orig.csv", Test_Resource_Dir + "/csv_out.csv")
+        copyfile(os.path.join(Test_Resource_Dir,"csv_dest_orig.csv"), os.path.join(Test_Resource_Dir, "csv_out.csv"))
         
-        _merge_xml = self._parse_xml(Test_Resource_Dir + "/test_merge_two_files.xml")
+        _merge_xml = self._parse_xml(os.path.join(Test_Resource_Dir,"test_merge_two_files.xml"))
         _merge = Merge(_xml_node = _merge_xml)
         _merge.destination_log_level = DATASET_LOGLEVEL_DETAIL
         print("as_xml_node: " + str(etree.tostring(_merge.as_xml_node())))
@@ -75,7 +75,7 @@ class Merge_test(unittest.TestCase):
 
     def test_2_Merge_tables(self):
         
-        _resources_node = self._parse_xml(Test_Resource_Dir + "/test_merge_two_tables.xml").find("resources")
+        _resources_node = self._parse_xml(os.path.join(Test_Resource_Dir, "test_merge_two_tables.xml")).find("resources")
         _resources = Resources(_resources_node = _resources_node)        
         print("merge_test.test_Merge_tables: Staging source")
         _source_data = [[1, 'source', datetime.datetime(2001, 1, 1, 0, 0)], [2, 'source', datetime.datetime(2001, 1, 2, 0, 0)], [3, 'source_new', datetime.datetime(2014, 1, 1, 0, 0)]]
@@ -99,7 +99,7 @@ class Merge_test(unittest.TestCase):
 
    
          
-        _merge_xml = self._parse_xml(Test_Resource_Dir + "/test_merge_two_tables.xml")
+        _merge_xml = self._parse_xml(os.path.join(Test_Resource_Dir, "test_merge_two_tables.xml"))
         _merge = Merge(_xml_node = _merge_xml)  
         _merge.destination_log_level = DATASET_LOGLEVEL_DETAIL
         print(etree.tostring(_merge.as_xml_node()))
