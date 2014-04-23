@@ -10,7 +10,7 @@ from datetime import datetime
 
 import os
 Test_Script_Dir = os.path.dirname(__file__)
-Test_Resource_Dir = Test_Script_Dir + '/resources'
+Test_Resource_Dir = os.path.join(Test_Script_Dir, 'resources')
 
 class Transform_test(unittest.TestCase):
     

@@ -14,7 +14,7 @@ from qal.dataset.custom import DATASET_LOGLEVEL_DETAIL
 from lxml import etree
 import os
 Test_Script_Dir = os.path.dirname(__file__)
-Test_Resource_Dir = Test_Script_Dir + '/resources'
+Test_Resource_Dir = os.path.join(Test_Script_Dir, 'resources')
 
 def load_xml(_filename):
     return etree.parse(_filename)

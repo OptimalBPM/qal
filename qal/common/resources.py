@@ -135,7 +135,7 @@ class Resources(XML_Translation):
                 _resources_node = _root_node            
 
         if _resources_node.base:
-            self.base_path = os.path.dirname(unquote(_resources_node.base))
+            self.base_path = os.path.dirname(unquote(_resources_node.base.replace('file:///', '')))
         
         self.local_resources = dict()
         

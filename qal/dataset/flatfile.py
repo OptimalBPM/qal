@@ -11,6 +11,8 @@ from qal.common.strings import make_path_absolute, string_to_bool
 from qal.dataset.custom import CustomDataset
 
 import csv
+from urllib.parse import unquote
+
 
 class FlatfileDataset(CustomDataset):
     """This class loads a flat file into an array, self.data_table."""
@@ -92,7 +94,7 @@ class FlatfileDataset(CustomDataset):
         self.csv_dialect = _resource.data.get("csv_dialect")
         self.quoting = _resource.data.get("quoting")
         self.escapechar = _resource.data.get("escapechar")
-        self.lineterminator = _resource.data.get("lineterminator")
+        self.lineterminator = bytes(_resource.data.get("lineterminator"), "UTF-8").decode("unicode-escape")
         self.quotechar = _resource.data.get("quotechar") or '"'       
         self.skipinitialspace = _resource.data.get("skipinitialspace")
 
@@ -125,7 +127,8 @@ class FlatfileDataset(CustomDataset):
 
     def load(self):
         """Load data"""
-        print("FlatfileDataset.load: Filename='" + str(self.filename) + "', Delimiter='"+str(self.delimiter)+"'")
+        print("FlatfileDataset.load: Filename='" + str(self.filename) + "', Delimiter='"+str(self.delimiter)+"'" +
+              ", Base_path "+ str(self._base_path))
         
         _file = open( make_path_absolute(self.filename, self._base_path), 'r')
         _reader = csv.reader(_file, 

@@ -13,7 +13,7 @@ from lxml import etree
 from qal.dataset.custom import DATASET_LOGLEVEL_DETAIL
 import os
 Test_Script_Dir = os.path.dirname(__file__)
-Test_Resource_Dir = Test_Script_Dir + '/resources'
+Test_Resource_Dir = os.path.join(Test_Script_Dir, 'resources')
 
 def load_xml(_filename):
     return etree.parse(_filename)
@@ -37,7 +37,7 @@ class Test(unittest.TestCase):
         _f_a.close()
         _f_b.close()
         
-        
+        self.maxDiff = None
         self.assertEqual(_a, _b, "test_1_Load_Save: Files are not equal")
         
         

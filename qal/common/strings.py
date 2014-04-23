@@ -78,6 +78,9 @@ def empty_when_none(_string = None):
 
 def make_path_absolute(_path, _base_path):
     """Makes a path defined as relative in the XML resource definition absolute using _base_path."""
+    _path = os.path.normpath(_path)
+    if _base_path is not None and _base_path != "" :
+        _base_path = os.path.normpath(_base_path)
     if  os.path.isabs(_path):
         # Don't do anything, path is already absolute.
         return _path

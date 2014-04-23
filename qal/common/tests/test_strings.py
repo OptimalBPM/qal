@@ -10,7 +10,7 @@ from qal.common.strings import parse_balanced_delimiters, empty_if_none, make_pa
 
 import os
 Test_Script_Dir = os.path.dirname(__file__)
-Test_Resource_Dir = Test_Script_Dir + '/resources'
+Test_Resource_Dir = os.path.join(Test_Script_Dir, 'resources')
 
 _cmp_parse_balanced_delimiters_list = ['4', '2', '2', '2', '10', "@name='sdf]'", "@id='test'"]
 _cmp_parse_balanced_delimiters_clear = '/html/body/form/table/tr/td/table/tr/td/table/tr/td/table/tr/td/table'
@@ -29,7 +29,7 @@ class Test(unittest.TestCase):
 
     def test_3_make_path_absolute(self):
         if os.name in ['nt', 'ce']:
-            self.assertEqual("C:\temp\test\test.txt", make_path_absolute("test\test.txt", "C:\temp"))
+            self.assertEqual("C:\temp\\test\test.txt", make_path_absolute("test\test.txt", "C:\temp"))
         elif os.name in ['posix','os2', 'ce', 'java', 'riscos']:
             self.assertEqual("/temp/test/test.txt", make_path_absolute("test/test.txt", "/temp"))
         else:

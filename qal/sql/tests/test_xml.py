@@ -17,7 +17,7 @@ from qal.dal.types import db_types, DB_POSTGRESQL
 
 import os
 Test_Script_Dir = os.path.dirname(__file__)
-Test_Resource_Dir = Test_Script_Dir + '/resources'
+Test_Resource_Dir = os.path.join(Test_Script_Dir, 'resources')
 
 
 def sql_for_all_databases(_SQLObj):  

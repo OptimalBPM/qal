@@ -15,7 +15,7 @@ from qal.dataset.spreadsheet import SpreadsheetDataset
 
 import os
 Test_Script_Dir = os.path.dirname(__file__)
-Test_Resource_Dir = Test_Script_Dir + '/resources/'
+Test_Resource_Dir = os.path.join(Test_Script_Dir, 'resources')
 
 def load_xml(_filename):
     return etree.parse(_filename)
@@ -24,7 +24,7 @@ class Test(unittest.TestCase):
 
 
     def test_1_Load_Save(self, _has_header = None, _resource = None):
-        _resources_node = load_xml(Test_Resource_Dir + "resources.xml").find("resources")
+        _resources_node = load_xml(os.path.join(Test_Resource_Dir, "resources.xml")).find("resources")
         _resources = Resources(_resources_node = _resources_node)
         _da = SpreadsheetDataset(_resource= _resources.get_resource("{86470370-FF78-48A4-9759-A3BAE4EE22A1}"))
         _da.load()

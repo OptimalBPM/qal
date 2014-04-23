@@ -12,7 +12,7 @@ def platform_to_int():
     """Returns an integer depending on platform."""
     if platform.system().lower() == "linux":
         return 0
-    elif platform.system().lower() == "win32":
+    elif platform.system().lower() == "windows":
         return 1
     elif platform.system().lower() == "darwin":
         return 2
@@ -25,8 +25,8 @@ def import_error_to_help(_module, _err_obj, _pip_package, _apt_package, _win_pac
         _err_msg = "The python " + get_python_versions(_style="Minor") + " module \"" + str(_module) + "\" is not installed.\n"
         _err_msg+= ["Run sudo pip3 install " + str(_pip_package) +
                      empty_if_none(" or sudo apt-get install " + str(_apt_package), _apt_package),
-                     "Run sudo pip install " + str(_pip_package) + empty_if_none(" or download " + str(_win_package) +
-                                                                       " and install from source.",_win_package),
+                     "Either run pip install " + str(_pip_package) + empty_if_none(", download and install " + str(_win_package) +
+                                                                       " or install from source.",_win_package),
                      "If available on your platform, run pip" + get_python_versions(_style="Minor") + " install " + str(_pip_package) +
                      " otherwise download and install from source."][platform_to_int()]
         return _err_msg + empty_if_none("\n" + str(_import_comment), _import_comment)

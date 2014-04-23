@@ -22,6 +22,7 @@
 			<delimiter>;</delimiter>
 			<has_header>True</has_header>
 			<csv_dialect>csv</csv_dialect>
+            <lineterminator>\n</lineterminator>
 			<quoting>minimal</quoting>
 		</resource>		
 		<resource type="spreadsheet" uuid="{86470370-FF78-48A4-9759-A3BAE4EE22A1}" caption="excel-file">
