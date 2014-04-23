@@ -22,16 +22,16 @@ class Test(unittest.TestCase):
 
 
     def test_1_Load_Save(self):
-        _resources_node = load_xml(Test_Resource_Dir + "/resources.xml").find("resources")
+        _resources_node = load_xml(os.path.join(Test_Resource_Dir, "resources.xml")).find("resources")
         _resources = Resources(_resources_node = _resources_node)
         _da = FlatfileDataset(_resource= _resources.get_resource("{86470370-FF78-48A4-9759-A3BAE4EE22FE}"))
         _da._log_level = DATASET_LOGLEVEL_DETAIL
         _da.load()
         print("Source: " + pretty_list(_da.data_table))
-        _da.save(_save_as = Test_Resource_Dir + "/csv_out.csv")
+        _da.save(_save_as = os.path.join(Test_Resource_Dir, "csv_out.csv"))
         print("Log: " + pretty_list(_da._log))
-        _f_a = open(Test_Resource_Dir + "/csv_out.csv", "r")
-        _f_b = open(Test_Resource_Dir + "/csv_cmp.csv", "r")
+        _f_a = open(os.path.join(Test_Resource_Dir, "csv_out.csv", "r")
+        _f_b = open(os.path.join(Test_Resource_Dir, "csv_cmp.csv", "r")
         _a = _f_a.read()
         _b = _f_b.read()
         _f_a.close()
