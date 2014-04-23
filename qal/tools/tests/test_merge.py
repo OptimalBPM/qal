@@ -4,8 +4,7 @@ Created on Nov 3, 2013
 @author: Nicklas Boerjesson
 """
 import unittest
-from aptdaemon.worker import trans_only_installs_pkgs_from_high_trust_repos
-from qal.tools.merge import Merge 
+from qal.tools.merge import Merge
 from qal.common.listhelper import pretty_list
 from qal.dataset.custom import DATASET_LOGLEVEL_DETAIL
 from qal.common.resources import Resources
