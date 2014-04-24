@@ -147,7 +147,7 @@ class DatabaseAbstractionLayer(object):
                     _connection_string = "DRIVER=FreeTDS;SERVER=" + self.db_server + ";DATABASE=" + \
                                          self.db_databasename +";TDS VERSION=8.0;UID=" + self.db_username + ";PWD=" + \
                                          self.db_password + ";PORT="+str(self.db_port) + ";Trusted_Connection=no"
-                elif platform.system().lower() == 'win32':
+                elif platform.system().lower() == 'windows':
                     _connection_string = "Driver={SQL Server};Server=" + self.db_server + ";DATABASE=" + \
                                          self.db_databasename +";UID=" + self.db_username + ";PWD=" + self.db_password +\
                                          ";PORT="+str(self.db_port) + ";Trusted_Connection=no"
@@ -159,7 +159,7 @@ class DatabaseAbstractionLayer(object):
 
                 if platform.system().lower() == 'linux':
                     drivername = "DB2"
-                elif platform.system().lower() == 'win32':
+                elif platform.system().lower() == 'windows':
                     drivername = "{IBM DATA SERVER DRIVER for ODBC - C:/PROGRA~1/IBM}"
                 else:
                     raise Exception("connect_to_db: DB2 connections on " + platform.system() + " not supported yet.")
