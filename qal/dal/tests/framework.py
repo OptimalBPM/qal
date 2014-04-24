@@ -15,14 +15,14 @@ def get_default_dal(_db_type, _db_name = ""):
     """Returns a default database connection for the given db typ.
     Read from environment variable first, then assume files are in /config/subdirectory.
     # TODO: Fix so it uses \ on the windows platform. """
-    cfg_Path = os.path.expanduser(os.getenv('OPTIMAL_BPM_TESTCFG', os.path.join(os.path.dirname(os.path.realpath( __file__ )) , '/config/')))
+    cfg_Path = os.path.expanduser(os.getenv('OPTIMAL_BPM_TESTCFG', os.path.join(os.path.dirname(os.path.realpath( __file__ )) , 'config')))
     print("Testing config path set to: "+ cfg_Path)
         
-    cfg_MySQL      = cfg_Path + 'MySQL.conf'
-    cfg_PostgreSQL = cfg_Path + 'PostgreSQL.conf'
-    cfg_Oracle     = cfg_Path + 'Oracle.conf'
-    cfg_DB2        = cfg_Path + 'DB2.conf'
-    cfg_SQLServer  = cfg_Path + 'SQL_Server.conf'
+    cfg_MySQL      = os.path.join(cfg_Path, "MySQL.conf")
+    cfg_PostgreSQL = os.path.join(cfg_Path, "PostgreSQL.conf")
+    cfg_Oracle     = os.path.join(cfg_Path, "Oracle.conf")
+    cfg_DB2        = os.path.join(cfg_Path, "DB2.conf")
+    cfg_SQLServer  = os.path.join(cfg_Path, "SQL_Server.conf")
 
 
     cfg_file = ''
