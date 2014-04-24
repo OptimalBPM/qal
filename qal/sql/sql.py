@@ -10,7 +10,7 @@
 
 
     :warning: Changes and new classes must satisfy both the import/export of data structures and schema generation.
-    :copyright: Copyright 2010-2013 by Nicklas Boerjesson
+    :copyright: Copyright 2010-2014 by Nicklas Boerjesson
     :license: BSD, see LICENSE for details.
 """
 

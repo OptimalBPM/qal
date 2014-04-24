@@ -5,11 +5,11 @@
 
     QAL is designed to be a general library of data, data mining and database management functions.
     
-    :copyright: Copyright 2010-2013 by Nicklas Boerjesson
+    :copyright: Copyright 2010-2014 by Nicklas Boerjesson
     :license: BSD, see LICENSE for details.
 
 """
 # Version and release information used by Sphinx for documentation and setuptools for package generation. 
 __version__ = '0.3'
-__release__ = '0.3.3'
-__copyright__ = '2010-2013, Nicklas Boerjesson'
+__release__ = '0.3.4'
+__copyright__ = '2010-2014, Nicklas Boerjesson'

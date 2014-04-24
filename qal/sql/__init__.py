@@ -8,6 +8,6 @@
     * Currently available qal.dataset:s : flat file, matrix, XPath(XML/HTML/XHTML) and spreadsheet(Excel-formats/.odt).      
     * RBDMS Platforms (qal.dal.types) : MySQL, PostgreSQL, Oracle, DB2 and SQL server
     
-    :copyright: Copyright 2010-2013 by Nicklas Boerjesson
+    :copyright: Copyright 2010-2014 by Nicklas Boerjesson
     :license: BSD, see LICENSE for details.
 """

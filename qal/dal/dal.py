@@ -5,7 +5,7 @@
     
     The goal with DAL is to hide the connection-related differences between the most common database backends.
     
-    :copyright: Copyright 2010-2013 by Nicklas Boerjesson
+    :copyright: Copyright 2010-2014 by Nicklas Boerjesson
     :license: BSD, see LICENSE for details.
 """
 

@@ -4,7 +4,7 @@
     .. note::
         Will probably be deprecated or at least rewritten when QAL switches completely to lxml.
 
-    :copyright: Copyright 2010-2013 by Nicklas Boerjesson
+    :copyright: Copyright 2010-2014 by Nicklas Boerjesson
     :license: BSD, see LICENSE for details. 
 """
 

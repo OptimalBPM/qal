@@ -8,6 +8,6 @@
     There are diff, merge and transform classes, but also nmap-based network 
     discovery of RDBMS hosts and a collection of functions for querying information from them.
     
-    :copyright: Copyright 2010-2013 by Nicklas Boerjesson
+    :copyright: Copyright 2010-2014 by Nicklas Boerjesson
     :license: BSD, see LICENSE for details.
 """
