@@ -141,7 +141,7 @@ class Resources(XML_Translation):
         
         for _curr_resource_node in _resources_node.findall("resource"):
             
-            if _curr_resource_node.get("uuid") != None:
+            if _curr_resource_node.get("uuid") is not None:
                 self._debug_print("parse_xml: Create new resource object")
                 _new_resource = Resource()
                 _new_resource.uuid = _curr_resource_node.get("uuid")

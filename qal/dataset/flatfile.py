@@ -94,7 +94,7 @@ class FlatfileDataset(CustomDataset):
         self.csv_dialect = _resource.data.get("csv_dialect")
         self.quoting = _resource.data.get("quoting")
         self.escapechar = _resource.data.get("escapechar")
-        if self.lineterminator is not None:
+        if _resource.data.get("lineterminator") is not None:
             self.lineterminator = bytes(_resource.data.get("lineterminator"), "UTF-8").decode("unicode-escape")
         else:
             self.lineterminator = None
