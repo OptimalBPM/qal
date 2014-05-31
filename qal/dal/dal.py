@@ -171,6 +171,7 @@ class DatabaseAbstractionLayer(object):
                 #_connection_string = "DSN=" + self.db_server + ";UID=" + self.db_username + ";PWD=" + self.db_password
                 _connection = pyodbc.connect(_connection_string, autocommit=self.db_autocommit)
 
+
                 # DSN-less?{IBM DB2 ODBC DRIVER} ?? http://www.webmasterworld.com/forum88/4434.htm
                 _connection_string =  "Driver=" + drivername + ";Database=" + self.db_databasename +";hostname=" + \
                                       self.db_server + ";port="+str(self.db_port) + ";protocol=TCPIP; uid=" + \
