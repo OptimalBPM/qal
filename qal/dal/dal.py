@@ -144,9 +144,9 @@ class DatabaseAbstractionLayer(object):
 
             if self.db_type == DB_SQLSERVER:
                 if platform.system().lower() == 'linux':
-                    _connection_string = "DRIVER=FreeTDS;SERVER=" + self.db_server + ";DATABASE=" + \
-                                         self.db_databasename +";TDS VERSION=8.0;UID=" + self.db_username + ";PWD=" + \
-                                         self.db_password + ";PORT="+str(self.db_port) + ";Trusted_Connection=no"
+                    _connection_string = "DRIVER={FreeTDS};SERVER=" + self.db_server + ";DATABASE=" + \
+                                         self.db_databasename +";TDS_VERSION=8.0;UID=" + self.db_username + ";PWD=" + \
+                                         self.db_password + ";PORT="+str(self.db_port) + ";Trusted_Connection=no;"
                 elif platform.system().lower() == 'windows':
                     _connection_string = "Driver={SQL Server};Server=" + self.db_server + ";DATABASE=" + \
                                          self.db_databasename +";UID=" + self.db_username + ";PWD=" + self.db_password +\
