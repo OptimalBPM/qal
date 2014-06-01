@@ -41,7 +41,7 @@ class Test(unittest.TestCase):
         
         
         self.make_select_all_skeleton_SQL = "SELECT * FROM "+ citate("test", db_type)
-        
+        self.make_select_all_skeleton_SQL_columns = "SELECT "+ citate("Column1", db_type) + ", " + citate("Column2", db_type) + " FROM "+ citate("test", db_type)
         if db_type == DB_MYSQL:
             self.create_temporary_table_SQL+= " ENGINE=InnoDB"
             
@@ -69,6 +69,10 @@ class Test(unittest.TestCase):
 
     def test_4_select_all_skeleton(self):
         self.assertEqual(select_all_skeleton("test").as_sql(db_type), self.make_select_all_skeleton_SQL)
+
+    def test_5_select_all_skeleton_columns(self):
+        self.assertEqual(select_all_skeleton("test", ["Column1", "Column2"]).as_sql(db_type), self.make_select_all_skeleton_SQL_columns)
+
         
 
 if __name__ == "__main__":

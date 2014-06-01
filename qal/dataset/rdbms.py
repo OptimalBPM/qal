@@ -40,7 +40,7 @@ class RDBMSDataset(CustomDataset):
         
         self.table_name = _resource.data.get("db_table_name")
         
-        self.query =   _resource.data.get("db_query")
+        self.query = _resource.data.get("db_query")
 
 
     def write_resource_settings(self, _resource):
@@ -72,7 +72,10 @@ class RDBMSDataset(CustomDataset):
     def _structure_init(self):
         """Initializes the SQL queries that data is to be applied to, starts a database transaction"""
         self._rdbms_init_deletes()
-        self._rdbms_init_updates()
+        if len(self._structure_key_fields) < len(self.field_names):
+            self._rdbms_init_updates()
+        else:
+            raise Exception("Error in RDBMSDataset.structure_init: Updates cannot be made when there are no non-key fields.")
         self._rdbms_init_inserts()
         
         self.dal.start()
@@ -118,7 +121,8 @@ class RDBMSDataset(CustomDataset):
         
     def _rdbms_init_updates(self):
         """Generates DELETE and INSERT instances populated with the indata """
-        
+
+
         # Add assignments to all fields except the key fields and add conditions for all key fields.
                 
         _field_names_ex_keys = []
@@ -218,13 +222,10 @@ class RDBMSDataset(CustomDataset):
             """Query all values from a table from a RDBMS resource"""
             if not self.dal.connected:
                 self.dal.connect_to_db()
-            if not self.field_names:
-                self.data_table = self.dal.query(select_all_skeleton(self.table_name).as_sql(self.dal.db_type))
-                self.field_names = self.dal.field_names
-            else
 
-
-             self.field_types = self.dal.field_types
+            self.data_table = self.dal.query(select_all_skeleton(self.table_name, self.field_names).as_sql(self.dal.db_type))
+            self.field_names = self.dal.field_names
+            self.field_types = self.dal.field_types
         else:
             raise Exception("RDBMSDataset.load(): data_table must be set.")
         

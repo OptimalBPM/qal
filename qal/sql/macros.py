@@ -89,21 +89,16 @@ def copy_to_table(_dal, _values, _field_names, _field_types, _table_name, _creat
     return _table_name
 
     
-def select_all_skeleton(_table_name):
+def select_all_skeleton(_table_name, _column_names = None):
     """Returns a "SELECT * FROM _table_name"-structure. """
     _expression = ParameterIdentifier(_table_name)
+    if (_column_names is None) or (_column_names == []):
+        _fields = None
+    else:
+        _fields = make_column_identifiers(_column_names)
     _source = ParameterSource(_expression, _conditions = None, _alias = None, _join_type = None)
-    _select = VerbSelect(_fields = None, _sources = [_source], _operator =  "AND")
+    _select = VerbSelect(_fields = _fields, _sources = [_source], _operator =  "AND")
     
     return _select
             
    
-
-def select_columns_skeleton(_table_name, _column_names):
-    """Returns a "SELECT * FROM _table_name"-structure. """
-    _expression = ParameterIdentifier(_table_name)
-    _fields = make_column_identifiers(_column_names)
-    _source = ParameterSource(_expression, _conditions = None, _alias = None, _join_type = None)
-    _select = VerbSelect(_fields = _fields, _sources = [_source], _operator =  "AND")
-
-    return _select

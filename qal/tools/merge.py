@@ -187,7 +187,7 @@ class Merge(object):
 
 
     def _mappings_to_fields(self, _dataset,  _use_dest = True):
-        _dataset.key_fields = []
+
         _dataset.field_names = []
         _dataset.field_types = []
         self.key_fields = []
@@ -200,10 +200,7 @@ class Merge(object):
                 _curr_source_ref = _curr_mapping.dest_reference
             else:
                 _curr_source_ref = _curr_mapping.src_reference
-
             _dataset.field_names.append(_curr_source_ref)
-            if _curr_mapping.is_key == True:
-                self.key_fields.append(_dataset.field_names.index(_curr_source_ref))
             if hasattr(_dataset, "filename"):
                 _dataset.field_types.append("string")
                 if hasattr(_dataset, "field_xpaths"):
@@ -235,13 +232,16 @@ class Merge(object):
             self.destination._log_level = self.destination_log_level
 
              
-    def _make_shortcuts(self):
-        """Make a list of which source column index maps to which destination column index""" 
-        _shortcuts = []       
+    def _make_shortcuts_readd_keys(self):
+        """Make a list of which source column index maps to which destination column index and readd keys"""
+        _shortcuts = []
+        self.key_fields = []
 
         # Make mapping
         for _curr_mapping in self.mappings:
             _src_idx  = self.source.field_names.index(_curr_mapping.src_reference)
+            if _curr_mapping.is_key:
+                self.key_fields.append(_src_idx)
             _dest_idx = self.destination.field_names.index(_curr_mapping.dest_reference)
             _shortcuts.append([_src_idx, _dest_idx, _curr_mapping])
             
@@ -251,7 +251,7 @@ class Merge(object):
     def _remap_and_transform(self):
         """Create a remapped source data set that has the same data in the same columns as the destination data set.
         Also applies transformations and remaps keys."""
-        _shortcuts = self._make_shortcuts()
+        _shortcuts = self._make_shortcuts_readd_keys()
 
         _mapped_source = []
         # Loop all rows in the source data set
