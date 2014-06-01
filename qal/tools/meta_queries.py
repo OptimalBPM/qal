@@ -51,6 +51,7 @@ ORDER BY table_type, table_name "
 table_list_mysql_by_database_name = "SHOW TABLES IN :DATABASE"
 table_list_oracle_by_database_name = "select table_name from dba_tables;"
 table_list_db2_by_database_name = "SELECT NAME FROM SYSIBM.SYSTABLES WHERE Type = 'T';"
+table_list_mssql_by_database_name = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES"
 
 table_list_db2_by_schema = "select NAME from sysibm.systables \
 where CREATOR  = ':USER' \
@@ -78,10 +79,10 @@ def table_list_sql_by_schema(_db_type, _user):
 
 def table_list_sql_by_database_name(_db_type, _database):
     """List tables in a specified database"""
-    if not(_db_type in [0,1,3]):
-        raise Exception("table_list_sql_by_database_name: Only MySQL, Postgres and DB2 is supported currently!") 
+    if not(_db_type in [0,1,3,4]):
+        raise Exception("table_list_sql_by_database_name: Only MySQL, Postgres, DB2 and SQL Server is supported currently!")
     
-    SQL = [table_list_mysql_by_database_name, table_list_postgresql_by_database_name, table_list_oracle_by_database_name, table_list_db2_by_database_name, table_list_sqlserver][_db_type]
+    SQL = [table_list_mysql_by_database_name, table_list_postgresql_by_database_name, table_list_oracle_by_database_name, table_list_db2_by_database_name, table_list_mssql_by_database_name][_db_type]
     SQL = SQL.replace(":DATABASE", _database)
     return SQL
 
@@ -117,8 +118,10 @@ class Meta_Queries(object):
         
     def table_list_by_database_name(self, _database_name):
         """List tables in the specified database"""
+        """TODO: Refactor so either MySQL gets connection's name or all else goes by database name(which won't work)"""
         rows = self.dal.query(table_list_sql_by_database_name(self.dal.db_type, _database_name))
-        print("SQL:\n"+ table_list_sql_by_database_name(self.dal.db_type, _database_name) + "\n_database_name:" + _database_name + "\nrows: \n" + str(rows))
+        print("SQL:\n"+ table_list_sql_by_database_name(self.dal.db_type, _database_name) + "\n_database_name:" +
+              _database_name + "\nrows: \n" + str(rows))
         columns = list()
         for row in rows:
             columns.append(row[0])
