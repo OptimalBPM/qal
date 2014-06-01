@@ -201,10 +201,9 @@ class Merge(object):
             else:
                 _curr_source_ref = _curr_mapping.src_reference
 
-
             _dataset.field_names.append(_curr_source_ref)
             if _curr_mapping.is_key == True:
-                self.key_fields.append(_curr_mapping_idx)
+                self.key_fields.append(_dataset.field_names.index(_curr_source_ref))
             if hasattr(_dataset, "filename"):
                 _dataset.field_types.append("string")
                 if hasattr(_dataset, "field_xpaths"):

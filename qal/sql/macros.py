@@ -98,3 +98,12 @@ def select_all_skeleton(_table_name):
     return _select
             
    
+
+def select_columns_skeleton(_table_name, _column_names):
+    """Returns a "SELECT * FROM _table_name"-structure. """
+    _expression = ParameterIdentifier(_table_name)
+    _fields = make_column_identifiers(_column_names)
+    _source = ParameterSource(_expression, _conditions = None, _alias = None, _join_type = None)
+    _select = VerbSelect(_fields = _fields, _sources = [_source], _operator =  "AND")
+
+    return _select
