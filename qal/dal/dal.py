@@ -135,7 +135,7 @@ class DatabaseAbstractionLayer(object):
                                                      _pip_package="pyodbc",
                                                      _apt_package="None",
                                                      _win_package=None,
-                                                     _import_comment="2014-04-16: " +
+                                                     _import_comment="Linux 2014-04-16: " +
                                                                      "No apt package (python3-pyodbc)"+
                                                                      " available at this time."))
             import platform
