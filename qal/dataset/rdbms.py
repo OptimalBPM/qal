@@ -72,10 +72,8 @@ class RDBMSDataset(CustomDataset):
     def _structure_init(self):
         """Initializes the SQL queries that data is to be applied to, starts a database transaction"""
         self._rdbms_init_deletes()
-        if len(self._structure_key_fields) < len(self.field_names):
+        if len(self._structure_key_fields) <= len(self.field_names):
             self._rdbms_init_updates()
-        else:
-            raise Exception("Error in RDBMSDataset.structure_init: Updates cannot be made when there are no non-key fields.")
         self._rdbms_init_inserts()
         
         self.dal.start()

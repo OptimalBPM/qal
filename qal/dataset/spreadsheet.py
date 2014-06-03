@@ -6,7 +6,7 @@ Created on Dec 28, 2013
 from qal.common.strings import make_path_absolute, bool_to_binary_int, string_to_bool
 
 from qal.dataset.custom import CustomDataset
-
+from qal.tools.discover import import_error_to_help
 
 
 class SpreadsheetDataset(CustomDataset):
@@ -98,7 +98,11 @@ class SpreadsheetDataset(CustomDataset):
         
         #TODO: Check file type
         if _extension.lower() in [".xls", ".xlsx"]:
-            from xlrd import open_workbook
+            try:
+                from xlrd import open_workbook
+            except ImportError as _err:
+                raise Exception(import_error_to_help(_module="xlrd", _err_obj=_err, _pip_package="xlrd",
+                                                     _apt_package=None, _win_package=None))
             try:
                 _workbook = open_workbook(make_path_absolute(self.filename, self._base_path))
                 _sheet = _workbook.sheet_by_name(self.sheet_name)

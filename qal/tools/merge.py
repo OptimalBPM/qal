@@ -213,6 +213,7 @@ class Merge(object):
             self.source.load()
         except Exception as e:
             raise Exception("Merge._load_datasets: Failed loading data for source data set.\n" + \
+                            "Check your mappings and other settings.\n" + \
                             "Dataset: " + str(self.source.__class__.__name__) + "\n"+ \
                             "Error: " + str(e))
         if self.source.field_names is None or len(self.source.field_names) == 0:
@@ -223,6 +224,7 @@ class Merge(object):
             self.destination.load()
         except Exception as e:
             raise Exception("Merge._load_datasets: Failed loading data for destination data set.\n" + \
+                            "Check your mappings and other settings.\n" + \
                             "Dataset: " + str(self.destination.__class__.__name__) + "\n"+ \
                             "Error: " + str(e))
         if self.destination.field_names is None or len(self.destination.field_names) == 0:

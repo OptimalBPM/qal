@@ -136,7 +136,8 @@ class CustomDataset(object):
         
         #print("_insert: " + str(_insert))
         #print("Before apply: " + str(_sorted_dest))
-        
+        if len(self._structure_key_fields) >= len(self.field_names):
+            raise Exception("Error in RDBMSDataset.structure_init: Updates cannot be made when there are no non-key fields.")
 
         if _insert:
             _insert_idx = len(_insert) - 1

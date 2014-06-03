@@ -133,9 +133,9 @@ class DatabaseAbstractionLayer(object):
             except ImportError as _err:
                 raise Exception(import_error_to_help(_module="pyodbc", _err_obj=_err,
                                                      _pip_package="pyodbc",
-                                                     _apt_package="None",
+                                                     _apt_package=None,
                                                      _win_package=None,
-                                                     _import_comment="Linux 2014-04-16: " +
+                                                     _import_comment="(For Linux) 2014-04-16: " +
                                                                      "No apt package (python3-pyodbc)"+
                                                                      " available at this time."))
             import platform
@@ -188,10 +188,10 @@ class DatabaseAbstractionLayer(object):
             except ImportError as _err:
                 raise Exception(import_error_to_help(_module="cx_Oracle", _err_obj=_err,
                                                      _pip_package="cx_Oracle",
-                                                     _apt_package="None",
+                                                     _apt_package=None,
                                                      _win_package="Download and install binary .msi package from " +
                                                                   "http://cx-oracle.sourceforge.net/ and install.",
-                                                     _import_comment="2014-04-16: No python3-pyodbc available at" +
+                                                     _import_comment="(Linux) 2014-04-16: No python3-pyodbc available at" +
                                                                      " build time."))
 
             _connection_string = self.db_username + '/' +  self.db_password + '@' + self.db_server + ':' + \

@@ -89,7 +89,7 @@ class CustomTransformation(object):
             _result = self._transform(_value)
             return self.do_on_done(_value=_result)
         except Exception as e:
-            self.do_on_done(_error=str(e))
+            self.do_on_done(_error="Order: " + str(self.order) + ", " + str(e))
             raise
 
     def _transform(self, _value):
