@@ -89,13 +89,13 @@ def discover_services(_ip, _ports, _verbose = False):
 def get_python_versions(_style=None):
     _major, _minor, _release, _state, _build = sys.version_info
 
-    if _style == "Major":
+    if _style.lower() == "major":
         return str(_major)
-    elif _style == "Minor":
+    elif _style.lower() == "minor":
         return str(_major) + "." + str(_minor)
-    elif _style == "Release":
+    elif _style.lower() == "release":
         return str(_major) + "." + str(_minor) + "." + str(_release)
-    elif _style == "Full" or _style is None:
+    elif _style.lower() == "full" or _style is None:
         return str(_major) + "." + str(_minor) + "." + str(_release) + " " + _state + " build " + str(_build)
     else:
         raise Exception("Error in get_python_versions: Invalid _style-parameter :'"+ _style + "'")

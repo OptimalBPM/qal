@@ -5,7 +5,7 @@ Created on Nov 3, 2013
 """
 import unittest
 from qal.tools.discover import import_error_to_help
-from source.qal.tools.discover import platform_to_int
+from source.qal.tools.discover import platform_to_int, get_python_versions
 
 
 class Discover_test(unittest.TestCase):
@@ -18,13 +18,13 @@ class Discover_test(unittest.TestCase):
             self.assertEqual(import_error_to_help(_module="pymysql", _err_obj="No module named 'pymysql'",
                                                   _pip_package="pymysql3", _apt_package="python3-mysql",
                                                   _win_package="pymysql3.msi"),
-                             "The python 3.3 module \"pymysql\" is not installed.\nRun sudo pip3 install pymysql3" +
+                             "The python " +get_python_versions(_style="minor") + " module \"pymysql\" is not installed.\nRun sudo pip3 install pymysql3" +
                              " or sudo apt-get install python3-mysql")
         if platform_to_int() == 1:
             self.assertEqual(import_error_to_help(_module="pymysql", _err_obj="No module named 'pymysql'",
                                                   _pip_package="pymysql3", _apt_package="python3-mysql",
                                                   _win_package="pymysql3.msi"),
-                             "The python 3.3 module \"pymysql\" is not installed.\nEither run pip install pymysql3" +
+                             "The python " +get_python_versions(_style="minor") + " module \"pymysql\" is not installed.\nEither run pip install pymysql3" +
                              ", download and install pymysql3.msi or install from source.")
         else:
             self.assertTrue(True)
