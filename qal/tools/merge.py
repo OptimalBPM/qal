@@ -286,6 +286,11 @@ class Merge(object):
         return _mapped_source, _mapped_keys
            
     def execute(self, _commit = True):
+        """
+        Execute the merge and return the results.
+        :param _commit: Actually save the result
+        :return: The merged dataset, the destination log, deletes, inserts, updates
+        """
         
         # Load resources
         self._load_datasets()

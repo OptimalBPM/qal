@@ -87,6 +87,15 @@ def discover_services(_ip, _ports, _verbose = False):
     return _detected_services
 
 def get_python_versions(_style=None):
+    """
+    Return the current version of python, styled in different ways:
+    * major : 3
+    * minor : 3.4
+    * release : 3.4.4
+    * build : 3.4.4 build 1300
+
+    :param _style: Style of the the result.
+    """
     _major, _minor, _release, _state, _build = sys.version_info
 
     if _style.lower() == "major":

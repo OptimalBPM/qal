@@ -1,8 +1,8 @@
-'''
+"""
 Created on Aug 17, 2010
 
 @author: Nicklas Boerjesson
-'''
+"""
 
 from qal.common.listhelper import CI_index
 

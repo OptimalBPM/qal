@@ -21,31 +21,46 @@ class DatabaseAbstractionLayer(object):
     # Events
     
     on_connect = None
-    
+    """Triggered on connect"""
     # Properties
     
     connected = False
+    """Is true if connected"""
     
     db_connection = None
-
+    """The database connection"""
     db_type = None
+    """Database type"""
     db_server = ''
+    """Server name"""
     db_databasename = ''
+    """Database name"""
     db_username = ''
+    """Username"""
     db_password = ''
+    """Password"""
     db_instance = ''
+    """Instance"""
     db_driver = None
+    """Database driver"""
     db_autocommit = True
+    """Autocommit. If True, the SQL is committed immidiately, if False, commit needs to be called to commit changes."""
     db_port = None
+    """The TCP port of the database server"""
     
     field_names = None
+    """The field names of the dataset"""
     field_types = None
+    """The field types of the fields as defined in conversions.py"""
     
     # Postgres transaction object
     _pg_xact = None
     
     def read_ini_settings(self, _ini_parser):
-        """Read setting from the settings.Parser object"""
+        """
+        Read setting from the settings.
+        :param _ini_parser: ConfigParser object
+        """
         if _ini_parser.Parser.has_option("database", "type"):
             self.db_type        = string_to_db_type(_ini_parser.Parser.get("database", "type"))
             self.db_server      = _ini_parser.Parser.get("database", "server")   
@@ -61,6 +76,10 @@ class DatabaseAbstractionLayer(object):
             
             
     def read_resource_settings(self, _resource):
+        """
+        Read settings from a resource object
+        :param _resource: A resource object
+        """
         if _resource.type.upper() != 'RDBMS':
             raise Exception("DAL.read_resource_settings error: Wrong resource type - " + _resource.type)
         self.db_type =         string_to_db_type(_resource.data.get("db_type"))
@@ -73,6 +92,10 @@ class DatabaseAbstractionLayer(object):
         self.db_autocommit =      _resource.data.get("db_autocommit")
 
     def write_resource_settings(self, _resource):
+        """
+        Write settings to a resource object
+        :param _resource: A resource object.
+        """
         _resource.type = 'RDBMS'
         _resource.data.clear()
         _resource.data["db_type"] = db_type_to_string(self.db_type)
@@ -86,7 +109,7 @@ class DatabaseAbstractionLayer(object):
 
                        
     def connect_to_db(self):
-        '''Connects to the database'''
+        """Connects to the database"""
         if self.db_type == DB_MYSQL:
             try:
                 import pymysql
@@ -227,11 +250,6 @@ class DatabaseAbstractionLayer(object):
             self.resource = _resource
             self.read_resource_settings(_resource)
 
-
-
-    def select(self, params):
-        pass
-    
     def execute(self, _sql):
         """Execute the SQL statement, expect no dataset"""
         
@@ -314,6 +332,7 @@ class DatabaseAbstractionLayer(object):
         self.db_connection.close()
         
     def start(self):
+        """Start transaction"""
         if self.db_type == DB_POSTGRESQL and self._pg_xact == None:
             self._pg_xact = self.db_connection.xact()
             self._pg_xact.start()
