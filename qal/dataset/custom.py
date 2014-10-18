@@ -103,6 +103,8 @@ class CustomDataset(object):
         """Save the data to the underlying target."""
         raise Exception('CustomDataset.save is not implemented in class: ' + self.__class__.__name__)
 
+    def clear_log(self):
+        self._log = []
     
     def _structure_insert_row(self, _row_idx, _row_data, _commit=None,_no_logging = False):
         """Inserts a row at _row_idx in the self.data_table, containing _row_data\

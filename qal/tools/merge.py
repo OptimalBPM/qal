@@ -200,11 +200,12 @@ class Merge(object):
                 _curr_source_ref = _curr_mapping.dest_reference
             else:
                 _curr_source_ref = _curr_mapping.src_reference
-            _dataset.field_names.append(_curr_source_ref)
-            if hasattr(_dataset, "filename"):
-                _dataset.field_types.append("string")
-                if hasattr(_dataset, "field_xpaths"):
-                    _dataset.field_xpaths.append(_curr_source_ref)
+            if _curr_source_ref is not None and _curr_source_ref != "":
+                _dataset.field_names.append(_curr_source_ref)
+                if hasattr(_dataset, "filename"):
+                    _dataset.field_types.append("string")
+                    if hasattr(_dataset, "field_xpaths"):
+                        _dataset.field_xpaths.append(_curr_source_ref)
 
     def _load_datasets(self):
         
@@ -241,12 +242,16 @@ class Merge(object):
 
         # Make mapping
         for _curr_mapping in self.mappings:
-            _src_idx  = self.source.field_names.index(_curr_mapping.src_reference)
-            if _curr_mapping.is_key:
-                self.key_fields.append(_src_idx)
+            if _curr_mapping.src_reference is not None and _curr_mapping.src_reference != "":
+                _src_idx  = self.source.field_names.index(_curr_mapping.src_reference)
+                if _curr_mapping.is_key:
+                    self.key_fields.append(_src_idx)
+            else:
+               _src_idx = None
+
             _dest_idx = self.destination.field_names.index(_curr_mapping.dest_reference)
             _shortcuts.append([_src_idx, _dest_idx, _curr_mapping])
-            
+
         return _shortcuts
          
 
@@ -267,10 +272,14 @@ class Merge(object):
             # structure while applying transformations.
             for _curr_shortcut in _shortcuts:
                 try:
-                    _value = perform_transformations(_curr_row[_curr_shortcut[0]], _curr_shortcut[2].transformations)
+                    if _curr_shortcut[0] is not None:
+                        _source_value = _curr_row[_curr_shortcut[0]]
+                    else:
+                        _source_value = None
+                    _value = perform_transformations(_source_value, _curr_shortcut[2].transformations)
                 except Exception as e:
                     raise Exception("Merge._remap_and_transform:\nError in applying transformations for row " + 
-                                    str(_curr_idx) + ", column \"" + self.destination.field_names[_curr_shortcut[0]] + 
+                                    str(_curr_idx) + ", column \"" + self.destination.field_names[_source_value] +
                                     "\":\n" + str(e))
                 # Set the correct field in the destination data set
                 _curr_mapped[_curr_shortcut[1]] = _value
@@ -280,11 +289,15 @@ class Merge(object):
         _mapped_keys = []
         for _curr_key_fields_idx in range(len(self.key_fields)):
             for _curr_shortcut in _shortcuts:
-                if self.key_fields[_curr_key_fields_idx]==_curr_shortcut[0]:
+                if self.key_fields[_curr_key_fields_idx]== _curr_shortcut[0]:
                     _mapped_keys.append(_curr_shortcut[1])
 
         return _mapped_source, _mapped_keys
-           
+
+    def clear_log(self):
+        if self.destination is not None:
+            self.destination.clear_log()
+
     def execute(self, _commit = True):
         """
         Execute the merge and return the results.

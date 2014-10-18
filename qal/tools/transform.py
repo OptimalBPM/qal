@@ -114,12 +114,13 @@ class Trim(CustomTransformation):
 
     def _transform(self, _value):
         """Make transformation"""
-        if self.value == "beginning":
-            return _value.lstrip()
-        elif self.value =="end":
-            return _value.rstrip()
-        else:
-            return _value.strip()
+        if _value is not None:
+            if self.value == "beginning":
+                return _value.lstrip()
+            elif self.value =="end":
+                return _value.rstrip()
+            else:
+                return _value.strip()
         
 class IfEmpty(CustomTransformation):
     """IfEmpty returns a specified value if the input value is NULL."""
@@ -220,7 +221,10 @@ class Replace(CustomTransformation):
         return _xml_node
 
     def _transform(self, _value):
-        """Make transformation"""
+        """Make replace transformation"""
+        # It is a string operation, None will be handled as a string.
+        if _value is None:
+            _value = ""
         if self.old is None:
             raise Exception("Replace.transform: old value has to have a value.")
         else:
@@ -229,7 +233,8 @@ class Replace(CustomTransformation):
             _new = ""
         else:
             _new = self.new
-        
+
+
         if self.max:
             return _value.replace(_old, _new, int(self.max))
         else:
