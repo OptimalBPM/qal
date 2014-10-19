@@ -11,7 +11,7 @@ in the sql_test for convenience and that those tests use datasets.
 '''
 import unittest
 from qal.sql.xml import SQL_XML
-from qal.tools.diff import diff_strings
+from qal.common.diff import diff_strings
 from qal.dal.types import db_types, DB_POSTGRESQL
 
 

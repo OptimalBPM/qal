@@ -6,7 +6,7 @@ Created on Nov 3, 2013
 import unittest
 from qal.common.listhelper import pretty_list
 from qal.dataset.flatfile import FlatfileDataset
-from qal.tools.diff import compare
+from qal.common.diff import compare
 
 
 import os

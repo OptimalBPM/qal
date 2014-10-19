@@ -10,7 +10,7 @@ from qal.common.listhelper import pretty_list
 from qal.dataset.flatfile import FlatfileDataset
 from qal.common.resources import Resources
 from lxml import etree
-from qal.tools.diff import diff_files
+from qal.common.diff import diff_files
 from qal.dataset.spreadsheet import SpreadsheetDataset
 
 import os

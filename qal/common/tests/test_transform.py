@@ -4,7 +4,7 @@ Created on Nov 3, 2013
 @author: Nicklas Boerjesson
 """
 import unittest
-from qal.tools.transform import Trim, Replace, IfEmpty, Cast
+from qal.common.transform import Trim, Replace, IfEmpty, Cast
 from lxml import etree
 from datetime import datetime
 

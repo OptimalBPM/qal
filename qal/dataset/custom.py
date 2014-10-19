@@ -10,7 +10,7 @@ from datetime import datetime
 from qal.dal.types import DB_DB2,DB_ORACLE, DB_POSTGRESQL
 from qal.sql.utils import db_specific_object_reference
 from qal.common.strings import empty_if_none
-from qal.tools.diff import compare 
+from qal.common.diff import compare
 
 DATASET_LOGLEVEL_NONE = 0
 DATASET_LOGLEVEL_LOW = 1

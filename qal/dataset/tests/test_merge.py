@@ -4,7 +4,7 @@ Created on Nov 3, 2013
 @author: Nicklas Boerjesson
 """
 import unittest
-from qal.tools.merge import Merge
+from qal.dataset.merge import Merge
 from qal.common.listhelper import pretty_list
 from qal.dataset.custom import DATASET_LOGLEVEL_DETAIL
 from qal.common.resources import Resources
