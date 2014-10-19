@@ -53,7 +53,7 @@ class Merge_test(unittest.TestCase):
         
         """Test merge two files"""
         
-        copyfile(os.path.join(Test_Resource_Dir,"csv_dest_orig.csv"), os.path.join(Test_Resource_Dir, "csv_out.csv"))
+        copyfile(os.path.join(Test_Resource_Dir,"csv_dest_orig.csv"), os.path.join(Test_Resource_Dir, "csv_out_merge.csv"))
         
         _merge_xml = self._parse_xml(os.path.join(Test_Resource_Dir,"test_merge_two_files.xml"))
         _merge = Merge(_xml_node = _merge_xml)
