@@ -4,18 +4,19 @@ Created on Nov 3, 2013
 @author: Nicklas Boerjesson
 """
 import unittest
-from qal.dataset.merge import Merge
+from shutil import copyfile
+import datetime
+import os
+
+from lxml import etree
+
+from qal.tools.merge import Merge
 from qal.common.listhelper import pretty_list
 from qal.dataset.custom import DATASET_LOGLEVEL_DETAIL
 from qal.common.resources import Resources
 from qal.dal.dal import DatabaseAbstractionLayer
 from qal.sql.macros import copy_to_table
-from lxml import etree
-from shutil import copyfile
-import datetime
 
-
-import os
 Test_Script_Dir = os.path.dirname(__file__)
 Test_Resource_Dir = os.path.join(Test_Script_Dir, 'resources')
 
