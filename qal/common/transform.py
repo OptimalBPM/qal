@@ -27,17 +27,17 @@ def perform_transformations(_input, _transformations):
 def make_transformation_array_from_xml_node(_xml_node, _substitution= None):
     _result = []
     for _curr_node in _xml_node:
-        if _curr_node.tag == 'trim':
+        if _curr_node.tag.lower() == 'trim':
             _result.append(Trim(_xml_node=_curr_node, _substitution=_substitution))
-        elif _curr_node.tag == 'IfEmpty':
+        elif _curr_node.tag.lower() == 'ifempty':
             _result.append(IfEmpty(_xml_node=_curr_node, _substitution=_substitution))
-        elif _curr_node.tag == 'cast':
+        elif _curr_node.tag.lower() == 'cast':
             _result.append(Cast(_xml_node=_curr_node, _substitution=_substitution))
-        elif _curr_node.tag == 'replace':
+        elif _curr_node.tag.lower() == 'replace':
             _result.append(Replace(_xml_node=_curr_node, _substitution=_substitution))
     
     return _result
-        
+
 def make_transformations_xml_node(_transformations):
     _xml_node = etree.Element("transformations")
     for _curr_transformation in _transformations:
@@ -59,11 +59,11 @@ class CustomTransformation(object):
         """
         Constructor
         """
-        if _xml_node != None:
-            self.load_from_xml_node(_xml_node)
-
         if _substitution != None:
             self.substitution = _substitution
+
+        if _xml_node != None:
+            self.load_from_xml_node(_xml_node)
 
     def do_on_done(self, _value=None, _error=None):
         if self.on_done:
@@ -103,7 +103,7 @@ class Trim(CustomTransformation):
     value = None
 
     def load_from_xml_node(self, _xml_node):
-        super(Trim, self ).load_from_xml_node(_xml_node)
+        super(Trim, self).load_from_xml_node(_xml_node)
         self.value = _xml_node.text
     
     def as_xml_node(self):
@@ -127,7 +127,7 @@ class IfEmpty(CustomTransformation):
     value = None
     
     def load_from_xml_node(self, _xml_node):
-        super(IfEmpty, self ).load_from_xml_node(_xml_node)
+        super(IfEmpty, self).load_from_xml_node(_xml_node)
         self.value = _xml_node.text
     
     def as_xml_node(self):
@@ -158,7 +158,7 @@ class Cast(CustomTransformation):
     """A format string where applicable"""
     
     def load_from_xml_node(self, _xml_node):
-        super(Cast, self ).load_from_xml_node(_xml_node)
+        super(Cast, self).load_from_xml_node(_xml_node)
         self.dest_type = isnone(_xml_node.find("dest_type"))
         self.format_string = isnone(_xml_node.find("format_string"))
     
@@ -215,7 +215,7 @@ class Replace(CustomTransformation):
     """The max number of times to replace"""
     
     def load_from_xml_node(self, _xml_node):
-        super(Replace, self ).load_from_xml_node(_xml_node)
+        super(Replace, self).load_from_xml_node(_xml_node)
         self.old = isnone(_xml_node.find("old"))
         self.new = isnone(_xml_node.find("new"))
         self.max = isnone(_xml_node.find("max"))
@@ -253,4 +253,3 @@ class Replace(CustomTransformation):
                 return _value.replace(_old, str(_new))
         else:
             return _value
-            
