@@ -314,7 +314,7 @@ class Merge(object):
 
         return _data_table
 
-    def execute(self, _commit=True):
+    def execute(self, _commit=True, _sql=None):
         """
         Execute the merge and return the results.
         :param _commit: Actually save the result
@@ -346,6 +346,10 @@ class Merge(object):
 
         if _commit:
             self.destination.save()
+
+        if _sql is not None:
+            self.destination.dal.query(_sql)
+            self.destination.dal.commit()
 
         return _merged_dataset, self.destination._log, _deletes, _inserts, _updates
 
