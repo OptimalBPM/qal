@@ -16,16 +16,15 @@ class Substitution(object):
     """
     builtin_substitutions = None
 
-
     def __init__(self):
+
         self.builtin_substitutions = {
             "identity": self._builtin_identity,
             "uuid": self._builtin_uuid,
             "username": self._builtin_username,
             "curr_datetime": self._builtin_curr_datetime
-
         }
-
+        self._builtin_identity_value = None
 
     def _builtin_username(self):
         """TODO: Secure this, this value depends on environment variables. On the other hand, the users doesn't need
@@ -38,7 +37,7 @@ class Substitution(object):
         return uuid.uuid4()
     def _builtin_identity(self):
         """Returns an int identity value"""
-        if not hasattr(self, "_builtin_identity_value"):
+        if self._builtin_identity_value is None:
             self._builtin_identity_value = 0
 
         _result = self._builtin_identity_value
@@ -65,12 +64,3 @@ class Substitution(object):
                     _input = _input.replace(_curr_subst, str(_var_func()))
 
         return _input
-
-
-
-
-
-
-
-
-# Built-in variables

@@ -237,16 +237,20 @@ class Replace(CustomTransformation):
             raise Exception("Replace.transform: old value has to have a value.")
         else:
             _old = self.old
-        if self.new is None:
-            _new = ""
-        else:
-            _new = self.new
 
-        if self.substitution is not None:
-            _new = self.substitution.substitute(_new)
+        if _value.find(_old) > -1:
+            if self.new is None:
+                _new = ""
+            else:
+                _new = self.new
 
-        if self.max:
-            return _value.replace(_old, _new, int(self.max))
+            if self.substitution is not None and _value.find(_old) > -1:
+                _new = self.substitution.substitute(_new)
+
+            if self.max:
+                return _value.replace(_old, str(_new), int(self.max))
+            else:
+                return _value.replace(_old, str(_new))
         else:
-            return _value.replace(_old, _new)
+            return _value
             
