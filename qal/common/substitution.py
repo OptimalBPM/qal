@@ -16,6 +16,7 @@ class Substitution(object):
     """
     builtin_substitutions = None
 
+
     def __init__(self):
         self.builtin_substitutions = {
             "identity": self._builtin_identity,
@@ -47,7 +48,7 @@ class Substitution(object):
     def set_identity(self, _value):
         self._builtin_identity_value = int(_value)
 
-    def replace(self, _input):
+    def substitute(self, _input):
         """ The replace method scans _input for known substitution variables.
         It tries to keep the value within the same data type.
         :param _input: The substitution string, potentially holding substitution variables

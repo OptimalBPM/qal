@@ -176,7 +176,6 @@ class RDBMSDataset(CustomDataset):
             """Override parent to add SQL handling"""
             _execute_many_data = self._extract_data_columns_from_diff_row(range(len(self.field_names)), _row_data)
 
-
             # Apply and commit changes to the structure
 
             self.dal.executemany(self._structure_insert_sql, [_execute_many_data])

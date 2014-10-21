@@ -396,7 +396,11 @@ class XpathDataset(CustomDataset):
 
             # Last column is a reference
             print("_row_data: " + str(_row_data))
-            _row_node = self.data_table[_row_idx][len(self.data_table[_row_idx]) -1]
+            _last_row_idx = len(self.data_table) -1
+            if _row_idx > _last_row_idx:
+                _row_node = self.data_table[_last_row_idx][len(self.data_table[_last_row_idx]) -1]
+            else:
+                _row_node = self.data_table[_row_idx][len(self.data_table[_row_idx]) -1]
 
             _new_element = etree.Element(self._structure_row_node_name)
 

@@ -23,9 +23,9 @@ Test_Resource_Dir = os.path.join(Test_Script_Dir, 'resources')
 c_file_result = [
                 ['7369', 'SMITH', 'CLERK', 7902, datetime.datetime(1980, 12, 17, 0, 0), 0.0, 800.0, 20.0], 
                 ['7499', 'ALLEN', 'SALE;SMAN', 7698, datetime.datetime(1981, 2, 20, 0, 0), 300.0, 1600.0, 30.0], 
-                ['7521', 'WARD', 'SALESMAN', 7698, datetime.datetime(1981, 2, 22, 0, 0), 500.0, 1250.0, 30.0], 
-                ['7566', 'JONES', 'MANAGER', 7839, datetime.datetime(1981, 4, 2, 0, 0), 0.0, 2975.0, 20.0], 
-                ['7654', 'MARTIN', 'SALESMAN', 7698, datetime.datetime(1981, 9, 28, 0, 0), 1400.0, 1250.0, 30.0], 
+                ['7521', 'WARD', 'SALESMAN', 7698, datetime.datetime(1981, 2, 22, 0, 0), 500.0, 1250.0, 30.0],
+                ['7566', 'JONES', 'MANAGER', 7839, datetime.datetime(1981, 4, 2, 0, 0), 0.0, 2975.0, 20.0],
+                ['7654', 'MARTIN', 'SALESMAN', 7698, datetime.datetime(1981, 9, 28, 0, 0), 1400.0, 1250.0, 30.0],
                 ['7698', 'BLAKE', 'MANAGER', 7839, datetime.datetime(1981, 5, 1, 0, 0), 0.0, 2850.0, 30.0], 
                 ['7782', 'CLARK', 'MANAGER', 7839, datetime.datetime(1981, 6, 9, 0, 0), 0.0, 2450.0, 10.0], 
                 ['7788', 'SCOTT', 'ANALYST', 7566, datetime.datetime(1982, 12, 9, 0, 0), 0.0, 3000.0, 20.0], 
@@ -33,7 +33,9 @@ c_file_result = [
                 ['7876', 'ADAMS', 'CLERK', 7788, datetime.datetime(1983, 1, 12, 0, 0), 0.0, 1100.5, 20.0], 
                 ['7900', 'JAMES', 'CLERK', 7698, datetime.datetime(1981, 12, 3, 0, 0), 0.0, 950.0, 30.0], 
                 ['7902', 'FORD', 'ANALYST', 7566, datetime.datetime(1981, 12, 3, 0, 0), 0.0, 3000.0, 20.0], 
-                ['7934', 'MILLER', 'CLERK', 7782, datetime.datetime(1982, 1, 23, 0, 0), 0.0, 1300.0, 10.0]
+                ['7934', 'MILLER', 'CLERK', 7782, datetime.datetime(1982, 1, 23, 0, 0), 0.0, 1300.0, 10.0],
+                ['8000', 'EMPTY IDENTITY1', '', 7839, datetime.datetime(2013, 1, 1, 0, 0), 0.0, 99999.0, 10.0],
+                ['8001', 'EMPTY IDENTITY2', '', 7698, datetime.datetime(2013, 1, 2, 0, 0), 0.0, 99999.0, 10.0]
                 ]
 
 c_table_result =[
@@ -54,7 +56,7 @@ class Merge_test(unittest.TestCase):
         
         """Test merge two files"""
         
-        copyfile(os.path.join(Test_Resource_Dir,"csv_dest_orig.csv"), os.path.join(Test_Resource_Dir, "csv_out_merge.csv"))
+        copyfile(os.path.join(Test_Resource_Dir,"csv_dest_orig.csv"), os.path.join(Test_Resource_Dir, "csv_out.csv"))
         
         _merge_xml = self._parse_xml(os.path.join(Test_Resource_Dir,"test_merge_two_files.xml"))
         _merge = Merge(_xml_node = _merge_xml)
@@ -66,7 +68,7 @@ class Merge_test(unittest.TestCase):
 
 
         _result = _merge.execute()
-        print("Source:\n" + pretty_list(_merge.source.data_table)) 
+        print("Source:\n" + pretty_list(_merge.source.data_table))
         print("Result:\n" + pretty_list(_result[0]))
         print("Log:\n" + pretty_list(_merge.destination._log)) 
         
@@ -97,8 +99,6 @@ class Merge_test(unittest.TestCase):
 
         copy_to_table(_dest_dal, _dest_data, _field_names, _field_types, _dest_table_name, _create_table = True, _drop_existing = True)
 
-   
-         
         _merge_xml = self._parse_xml(os.path.join(Test_Resource_Dir, "test_merge_two_tables.xml"))
         _merge = Merge(_xml_node = _merge_xml)  
         _merge.destination_log_level = DATASET_LOGLEVEL_DETAIL

@@ -30,7 +30,7 @@ class Diff_test(unittest.TestCase):
         #print(str(_dataset_dest))
         _missing_left, _missing_right, _difference, _sorted = compare(_dataset_source, _dataset_dest, [0], True)
         self.assertEqual(_missing_left, [[9, 7, ['7844', 'TURNER', 'SALESMAN', '7698', '1981-09-08 00:00:00', '1500', '', '30']], 
-                                         [2, 12, ['7999', 'BORJESSON', 'HACKER', '7839', '2013-01-01', '99999', '', '10']]], 'Missing left differs')
+                                         [12, 12, ['7999', 'BORJESSON', 'HACKER', '7839', '2013-01-01', '99999', '', '10']]], 'Missing left differs')
         self.assertEqual(_missing_right, [[6,6,['7782', 'CLARK', 'MANAGER', '7839', '1981-06-09 00:00:00', '2450', '', '10']], 
                                           [7,6,['7788', 'SCOTT', 'ANALYST', '7566', '1982-12-09 00:00:00', '3000', '', '20']]], 'Missing right differs')
 

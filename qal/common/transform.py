@@ -24,17 +24,17 @@ def perform_transformations(_input, _transformations):
         _input = _curr_transformation.transform(_input)
     return _input    
     
-def make_transformation_array_from_xml_node(_xml_node):
+def make_transformation_array_from_xml_node(_xml_node, _substitution= None):
     _result = []
     for _curr_node in _xml_node:
         if _curr_node.tag == 'trim':
-            _result.append(Trim(_curr_node))
+            _result.append(Trim(_xml_node=_curr_node, _substitution=_substitution))
         elif _curr_node.tag == 'IfEmpty':
-            _result.append(IfEmpty(_curr_node))
+            _result.append(IfEmpty(_xml_node=_curr_node, _substitution=_substitution))
         elif _curr_node.tag == 'cast':
-            _result.append(Cast(_curr_node))
+            _result.append(Cast(_xml_node=_curr_node, _substitution=_substitution))
         elif _curr_node.tag == 'replace':
-            _result.append(Replace(_curr_node))
+            _result.append(Replace(_xml_node=_curr_node, _substitution=_substitution))
     
     return _result
         
@@ -45,25 +45,25 @@ def make_transformations_xml_node(_transformations):
     
     return _xml_node
 
-
 class CustomTransformation(object):
     """
     This is the base class for all transformations
     """
-    
-    """Order dictates when the transformation is run."""
     order = None
-    """On done is an event, triggered when the transformation has been run. Conveys the resulting value or error message."""
+    """Order dictates when the transformation is run."""
     on_done = None
-    
-    def __init__(self, _xml_node = None):
-        
+    """On done is an event, triggered when the transformation has been run. Conveys the resulting value or error message."""
+    substitution = None
+    """An optional instance of the substitution class. Usually shared by several transformations."""
+    def __init__(self, _xml_node = None, _substitution = None):
         """
         Constructor
         """
-        
         if _xml_node != None:
             self.load_from_xml_node(_xml_node)
+
+        if _substitution != None:
+            self.substitution = _substitution
 
     def do_on_done(self, _value=None, _error=None):
         if self.on_done:
@@ -78,7 +78,7 @@ class CustomTransformation(object):
     def as_xml_node(self):
         raise Exception("CustomTransformation.as_xml_node : Should not be called. Not implemented in base class, use init_base_to_node().")
         
-    def load_from_xml_node(self, _xml_node = None):
+    def load_from_xml_node(self, _xml_node):
         if _xml_node != None:
             self.order = _xml_node.get("order")
         else:
@@ -101,7 +101,7 @@ class Trim(CustomTransformation):
     """Trim returns a copy of the string in which all chars have been trimmed from the beginning and the end of the string (default whitespace characters).
     If the value parameter is set to either "beginning" or "end", only the left or right end of the string is trimmed, respectively."""
     value = None
-    
+
     def load_from_xml_node(self, _xml_node):
         super(Trim, self ).load_from_xml_node(_xml_node)
         self.value = _xml_node.text
@@ -117,7 +117,7 @@ class Trim(CustomTransformation):
         if _value is not None:
             if self.value == "beginning":
                 return _value.lstrip()
-            elif self.value =="end":
+            elif self.value == "end":
                 return _value.rstrip()
             else:
                 return _value.strip()
@@ -139,7 +139,10 @@ class IfEmpty(CustomTransformation):
     def _transform(self, _value):
         """Make transformation"""
         if _value is None or _value == "":
-            return self.value
+            if self.substitution is not None:
+                return self.substitution.substitute(self.value)
+            else:
+                return self.value
         else:
             return _value
         
@@ -150,7 +153,9 @@ class Cast(CustomTransformation):
     """
     
     dest_type = None
+    """The destination type"""
     format_string = None
+    """A format string where applicable"""
     
     def load_from_xml_node(self, _xml_node):
         super(Cast, self ).load_from_xml_node(_xml_node)
@@ -203,8 +208,11 @@ class Cast(CustomTransformation):
 class Replace(CustomTransformation):
     """Replace returns a copy of the string in which the occurrences of old have been replaced with new, optionally restricting the number of replacements to max."""
     old = None
+    """The old value"""
     new = None
+    """The new value"""
     max = None
+    """The max number of times to replace"""
     
     def load_from_xml_node(self, _xml_node):
         super(Replace, self ).load_from_xml_node(_xml_node)
@@ -234,6 +242,8 @@ class Replace(CustomTransformation):
         else:
             _new = self.new
 
+        if self.substitution is not None:
+            _new = self.substitution.substitute(_new)
 
         if self.max:
             return _value.replace(_old, _new, int(self.max))

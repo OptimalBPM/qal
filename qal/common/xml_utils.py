@@ -190,3 +190,10 @@ class XML_Translation(object):
         return _node
 
 
+
+
+def xml_isnone(_node):
+    if _node == None or _node.text == None:
+        return None
+    else:
+        return _node.text

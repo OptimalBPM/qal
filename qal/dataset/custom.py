@@ -162,7 +162,7 @@ class CustomDataset(object):
             # Loop the sorted destination dataset backwards and apply changes
             for _curr_row_idx in range(len(self.data_table), -1, -1):
 
-                # Make deletes
+                # Make deletes first, as they displace everything after them
                 while _delete_idx > -1 and _delete[_delete_idx][1] == _curr_row_idx:
                     self._structure_delete_row(_curr_row_idx, _commit=_commit)
                     _delete_idx-= 1

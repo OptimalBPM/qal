@@ -87,20 +87,29 @@ def compare(_left, _right, _key_columns, _full):
     _difference = []
 
     # Order _left and _right using key columns
-    if len(_key_columns) == 1:   
-        _left_s = sorted(_left, key=lambda d: ( d[_key_columns[0]]))
-        _right_s = sorted(_right, key=lambda d: ( d[_key_columns[0]]))
-    elif len(_key_columns) == 2:   
-        _left_s = sorted(_left, key=lambda d: ( d[_key_columns[0]], d[_key_columns[1]]))
-        _right_s = sorted(_right, key=lambda d: ( d[_key_columns[0]], d[_key_columns[1]]))
-    elif len(_key_columns) == 3:   
-        _left_s = sorted(_left, key=lambda d: ( d[_key_columns[0]], d[_key_columns[1]], d[_key_columns[2]]))
-        _right_s = sorted(_right, key=lambda d: ( d[_key_columns[0]], d[_key_columns[1]], d[_key_columns[2]]))
-    elif len(_key_columns) == 0:
-        raise Exception("Error in compare, at least one key column is required.")
-    else:
-        raise Exception("Err..sorry, only 3 key columns are supported currently, too tired to make it dynamic. :-)")
-        
+    try:
+        if len(_key_columns) == 1:
+            _left_s = sorted(_left, key=lambda d: ( d[_key_columns[0]]))
+            _right_s = sorted(_right, key=lambda d: ( d[_key_columns[0]]))
+        elif len(_key_columns) == 2:
+            _left_s = sorted(_left, key=lambda d: ( d[_key_columns[0]], d[_key_columns[1]]))
+            _right_s = sorted(_right, key=lambda d: ( d[_key_columns[0]], d[_key_columns[1]]))
+        elif len(_key_columns) == 3:
+            _left_s = sorted(_left, key=lambda d: ( d[_key_columns[0]], d[_key_columns[1]], d[_key_columns[2]]))
+            _right_s = sorted(_right, key=lambda d: ( d[_key_columns[0]], d[_key_columns[1]], d[_key_columns[2]]))
+        elif len(_key_columns) == 0:
+            raise Exception("Error in compare, at least one key column is required.")
+        else:
+            raise Exception("Err..sorry, only 3 key columns are supported currently, too tired to make it dynamic. :-)")
+    except TypeError as e:
+        if str(e).find("TypeError: unorderable types"):
+            raise Exception("There seem to be data of different types in the same column.\n"
+                            "Perhaps data need to be cast to some common data type, for example string. \n"
+                            "Error:" + str(e))
+        else:
+            raise Exception(str(e))
+
+
     # From top, loop data sets, compare all rows
     _left_idx = _right_idx = 0
     _left_len = len(_left_s)
@@ -130,12 +139,12 @@ def compare(_left, _right, _key_columns, _full):
     if _left_idx < _left_len:   
         for _curr_item in _left_s[_left_idx: _left_len]:
             # print("_missing_right.append (post) " + str([_left_idx, len(_missing_right) + 1, _curr_item]))
-            _missing_right.append([_left_idx, len(_missing_right) + 1, _curr_item])
+            _missing_right.append([_left_idx, _left_idx, _curr_item])
 
     if _right_idx < _right_len:
         for _curr_item in _right_s[_right_idx: _right_len]:
             # print("_missing_left.append (post)" + str([len(_missing_left) + 1, _right_idx,_curr_item]))
-            _missing_left.append([len(_missing_left) + 1, _right_idx,_curr_item])
+            _missing_left.append([_right_idx, _right_idx,_curr_item])
 
     return _missing_left, _missing_right, _difference, _right_s
 

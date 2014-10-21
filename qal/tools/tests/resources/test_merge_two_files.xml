@@ -8,12 +8,11 @@
 		    <src_datatype>string</src_datatype>
 		    <transformations>
 		    	<trim order="1">end</trim>
-		        <IfEmpty order="2">NULL</IfEmpty>
-		        <replace order="3">
-		        	<old>cc</old>
-		        	<new>c</new>
-		        	<max>1</max>
-		        </replace>
+		        <IfEmpty order="2">::identity::</IfEmpty>
+                <cast order="5">
+		      		<dest_type>string</dest_type>
+		        	<format_string></format_string>
+		        </cast>
 		    </transformations>
 		    <dest_reference>emp_no</dest_reference>
 		  </field_mapping>
