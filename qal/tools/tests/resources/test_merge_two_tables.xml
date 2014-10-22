@@ -59,6 +59,7 @@
         <insert>True</insert>
         <update>True</update>
         <delete>True</delete>
+        <post_execute_sql>SELECT * FROM table_dst</post_execute_sql>
     </settings>
     <resources>
         <resource caption="destination" type="RDBMS" uuid="dest_uuid">

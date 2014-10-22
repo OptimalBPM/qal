@@ -22,6 +22,7 @@ class Merge(object):
     destination = None
     resources = None
     destination_log_level = None
+    post_execute_sql = None
     insert = None
     delete = None
     update = None
@@ -55,6 +56,7 @@ class Merge(object):
         etree.SubElement(_xml_node, "insert").text = str(self.insert)
         etree.SubElement(_xml_node, "update").text = str(self.update)
         etree.SubElement(_xml_node, "delete").text = str(self.delete)
+        etree.SubElement(_xml_node, "post_execute_sql").text = self.post_execute_sql
         return _xml_node
 
 
@@ -124,6 +126,7 @@ class Merge(object):
             self.insert = string_to_bool(xml_isnone(_xml_node.find("insert")))
             self.update = string_to_bool(xml_isnone(_xml_node.find("update")))
             self.delete = string_to_bool(xml_isnone(_xml_node.find("delete")))
+            self.post_execute_sql = xml_isnone(_xml_node.find("post_execute_sql"))
         else:
             raise Exception("Merge.load_settings_from_xml_node: Missing 'settings'-node.")
 
@@ -314,7 +317,7 @@ class Merge(object):
 
         return _data_table
 
-    def execute(self, _commit=True, _sql=None):
+    def execute(self, _commit=True):
         """
         Execute the merge and return the results.
         :param _commit: Actually save the result
@@ -347,9 +350,9 @@ class Merge(object):
         if _commit:
             self.destination.save()
 
-        if _sql is not None:
-            self.destination.dal.query(_sql)
-            self.destination.dal.commit()
+            if self.post_execute_sql is not None:
+                self.destination.dal.query(self.post_execute_sql)
+                self.destination.dal.commit()
 
         return _merged_dataset, self.destination._log, _deletes, _inserts, _updates
 
