@@ -105,7 +105,8 @@ def binary_int_to_bool(_value):
         return True
 
 def string_to_bool(_value):
-    if _value.lower() == "true":
+    """Converts "True" to True None to False. Case-insensitive."""
+    if _value is None or _value.lower() == "true":
         return True
     else:
         return False
