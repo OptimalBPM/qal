@@ -23,7 +23,7 @@ def load_xml(_filename):
 class Test(unittest.TestCase):
 
 
-    def test_1_Load_Save(self, _has_header = None, _resource = None):
+    def test_1_Load_Save_xls(self, _has_header = None, _resource = None):
         _resources_node = load_xml(os.path.join(Test_Resource_Dir, "resources.xml")).find("resources")
         _resources = Resources(_resources_node = _resources_node)
         _da = SpreadsheetDataset(_resource= _resources.get_resource("{86470370-FF78-48A4-9759-A3BAE4EE22A1}"))
@@ -44,12 +44,12 @@ class Test(unittest.TestCase):
             [7902.0, 'FORD', 'ANALYST', 7566.0, '1981-12-03 00:00:00', 3000.0, '', 20.0],
             [7934.0, 'MILLER', 'CLERK', 7782.0, '1982-01-23 00:00:00', 1300.0, '', 10.0]
             ]
-        , "test_1_Load_Save: Data doesn't match")
+        , "test_1_Load_Save: Loaded data doesn't match")
 
 
 
-        #_da.save(_save_as = Test_Resource_Dir + "/excel_out.csv")
-        #pretty_list(_da.data_table)
+        _da.save(_save_as = Test_Resource_Dir + "/excel_out.xls")
+        pretty_list(_da.data_table)
 
         # _f_a = open(Test_Resource_Dir + "/excel_out.csv", "r")
         # _f_b = open(Test_Resource_Dir + "/excel_cmp.csv", "r")
@@ -59,8 +59,6 @@ class Test(unittest.TestCase):
         # _f_b.close()
         # self.assertEqual(_a, _b, "test_1_Load_Save: Files are not equal")
         #
-        
-        
 
 
 if __name__ == "__main__":

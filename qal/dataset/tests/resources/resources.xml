@@ -26,7 +26,7 @@
 			<quoting>minimal</quoting>
 		</resource>		
 		<resource type="spreadsheet" uuid="{86470370-FF78-48A4-9759-A3BAE4EE22A1}" caption="excel-file">
-			<filename>excel_in.xlsx</filename>
+			<filename>excel_in.xls</filename>
 			<has_header>True</has_header>
 			<sheet_name>Sheet1</sheet_name>
 		</resource>	

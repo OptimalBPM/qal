@@ -11,13 +11,8 @@ import re
 from lxml import etree
 from datetime import date, datetime
 from qal.common.strings import empty_when_none
+from qal.common.xml_utils import xml_isnone
 
-
-def isnone( _node):
-    if _node is None or _node.text is None:
-        return None
-    else:
-        return _node.text  
 
 def perform_transformations(_input, _transformations):
     for _curr_transformation in _transformations:
@@ -159,8 +154,8 @@ class Cast(CustomTransformation):
     
     def load_from_xml_node(self, _xml_node):
         super(Cast, self).load_from_xml_node(_xml_node)
-        self.dest_type = isnone(_xml_node.find("dest_type"))
-        self.format_string = isnone(_xml_node.find("format_string"))
+        self.dest_type = xml_isnone(_xml_node.find("dest_type"))
+        self.format_string = xml_isnone(_xml_node.find("format_string"))
     
     def as_xml_node(self):
         _xml_node = self.init_base_to_node("cast")
@@ -216,9 +211,9 @@ class Replace(CustomTransformation):
     
     def load_from_xml_node(self, _xml_node):
         super(Replace, self).load_from_xml_node(_xml_node)
-        self.old = isnone(_xml_node.find("old"))
-        self.new = isnone(_xml_node.find("new"))
-        self.max = isnone(_xml_node.find("max"))
+        self.old = xml_isnone(_xml_node.find("old"))
+        self.new = xml_isnone(_xml_node.find("new"))
+        self.max = xml_isnone(_xml_node.find("max"))
     
     def as_xml_node(self):
         _xml_node = self.init_base_to_node("replace")
