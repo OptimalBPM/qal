@@ -187,6 +187,7 @@ class Merge(object):
             # Handle non-existing output files
             if hasattr(self.destination, "filename") and not exists( make_path_absolute(self.destination.filename,
                                                                                         self.destination._base_path)):
+                self.destination.field_names = [_curr_mapping.dest_reference for _curr_mapping in self.mappings]
                 self.destination.data_table = []
             else:
                 self.destination.load()

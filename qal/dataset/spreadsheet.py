@@ -213,13 +213,12 @@ class SpreadsheetDataset(CustomDataset):
             _sheet = _workbook.create_sheet(title = _sheet_name)
 
             if _header_offset > 0:
-                for _curr_col_idx in range(1, _number_of_columns):
+                for _curr_col_idx in range(0, _number_of_columns):
+                    _sheet.cell(row=1 + self.y_offset, column=1 + _curr_col_idx + _x_offset).value = _field_names[_curr_col_idx]
 
-                    _sheet.cell(row=1 + self.y_offset, column=_curr_col_idx + _x_offset).value = _field_names[_curr_col_idx]
-
-            for _curr_row_idx in range(1 + self.y_offset + _header_offset, _number_of_rows - 1):
-                for _curr_col_idx in range(1, _number_of_columns):
-                    _sheet.cell(row=_curr_row_idx, column=_curr_col_idx + _x_offset).value = \
+            for _curr_row_idx in range(0, _number_of_rows -1):
+                for _curr_col_idx in range(0, _number_of_columns):
+                    _sheet.cell(row=1 + _curr_row_idx + _y_offset + _header_offset, column=1 + _curr_col_idx + _x_offset).value = \
                         _data_table[_curr_row_idx][_curr_col_idx]
 
             _workbook.save(filename=_filename)
@@ -247,7 +246,7 @@ class SpreadsheetDataset(CustomDataset):
                 for _curr_col_idx in range(0, _number_of_columns):
                     _sheet.write(self.y_offset, _curr_col_idx + _x_offset, label=_field_names[_curr_col_idx])
             # Write data
-            for _curr_row_idx in range(self.y_offset + _header_offset, _number_of_rows + self.y_offset + _header_offset - 1):
+            for _curr_row_idx in range(0, _number_of_rows - 1):
                 for _curr_col_idx in range(0, _number_of_columns):
                     _sheet.write(_curr_row_idx + _y_offset + _header_offset, _curr_col_idx + _x_offset,
                                  label=_data_table[_curr_row_idx][_curr_col_idx])
