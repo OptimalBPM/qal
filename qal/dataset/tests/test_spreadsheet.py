@@ -36,7 +36,6 @@ _test_data_xls= [
             [7934.0, 'MILLER', 'CLERK', 7782.0, '1982-01-23 00:00:00', 1300.0, '', 10.0]
             ]
 
-
 _test_data_xlsx= [
             [7369.0, 'SMITH', 'CLERKX', 7902.0, '1980-12-17 00:00:00', 800.0, '', 20.0],
             [7499.0, 'ALLEN', 'SALE;SMAN', 7698.0, '1981-02-20 00:00:00', 1600.0, 300.0, 30.0],
@@ -59,7 +58,7 @@ def load_xml(_filename):
 
 class Test(unittest.TestCase):
     """Reads, writes, and reads again .xls and .xlsx-files while comparing with stored matrixes off data"""
-    def _test_1_Load_Save_xls(self, _has_header = None, _resource = None):
+    def test_1_Load_Save_xls(self, _has_header = None, _resource = None):
 
         _resources_node = load_xml(os.path.join(Test_Resource_Dir, "resources.xml")).find("resources")
         _resources = Resources(_resources_node = _resources_node)

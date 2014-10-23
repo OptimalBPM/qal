@@ -5,9 +5,10 @@ Created on Nov 3, 2013
 """
 
 from lxml import etree
+from os.path import exists
 
 from qal.common.resources import Resources, Resource
-from qal.common.strings import string_to_bool
+from qal.common.strings import string_to_bool, make_path_absolute
 from qal.common.mapping import Mapping
 
 from qal.common.transform import perform_transformations, IfEmpty, Replace
@@ -183,12 +184,18 @@ class Merge(object):
 
         # Load destination dataset
         try:
-            self.destination.load()
+            # Handle non-existing output files
+            if hasattr(self.destination, "filename") and not exists( make_path_absolute(self.destination.filename,
+                                                                                        self.destination._base_path)):
+                self.destination.data_table = []
+            else:
+                self.destination.load()
         except Exception as e:
             raise Exception("Merge._load_datasets: Failed loading data for destination data set.\n" + \
                             "Check your mappings and other settings.\n" + \
                             "Dataset: " + str(self.destination.__class__.__name__) + "\n" + \
                             "Error: " + str(e))
+
         if self.destination.field_names is None or len(self.destination.field_names) == 0:
             self._mappings_to_fields(self.destination, True)
 
@@ -271,7 +278,10 @@ class Merge(object):
         def find_max(_curr_shortcut):
 
             if _curr_shortcut[1] is not None:
-                _dest_max = max([if_empty(x[_curr_shortcut[1]]) for x in _destination_dataset.data_table])
+                if len(_destination_dataset.data_table) > 0:
+                    _dest_max = max([if_empty(x[_curr_shortcut[1]]) for x in _destination_dataset.data_table])
+                else:
+                    _dest_max = 0
                 if _curr_shortcut[0] is not None:
                     _src_max = max([if_empty(x[_curr_shortcut[0]]) for x in _source_dataset.data_table])
                     if _src_max > _dest_max:
@@ -350,7 +360,7 @@ class Merge(object):
         if _commit:
             self.destination.save()
 
-            if self.post_execute_sql is not None:
+            if self.post_execute_sql is not None and self.post_execute_sql != "" and hasattr(self.destination, "dal"):
                 self.destination.dal.query(self.post_execute_sql)
                 self.destination.dal.commit()
 
