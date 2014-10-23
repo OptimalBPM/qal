@@ -29,7 +29,12 @@
 			<filename>excel_in.xls</filename>
 			<has_header>True</has_header>
 			<sheet_name>Sheet1</sheet_name>
-		</resource>	
+		</resource>
+		<resource type="spreadsheet" uuid="{86470370-FF78-48A4-9759-A3BAE4EE22A2}" caption="excel-file">
+			<filename>excel_in.xlsx</filename>
+			<has_header>True</has_header>
+			<sheet_name>Sheet1</sheet_name>
+		</resource>
 		<resource type="xpath" uuid="{0B8B71C1-D3A8-4F16-B8E1-9C73E196254C}" caption="html-file">
 			<!-- Source : http://www.bot.or.th/English/Statistics/FinancialMarkets/ExchangeRate/_layouts/Application/ExchangeRate/ExchangeRate.aspx 
 			  XPath to first data row in HTML: /html/body/form/table/tbody/tr[4]/td[2]/table/tbody/tr[2]/td/table[2]/tbody/tr/td/table/tbody/tr[10]/td/table/tbody/tr[3]/td
