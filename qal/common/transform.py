@@ -282,12 +282,14 @@ class ReplaceRegex(CustomTransformation):
             _value = ""
         if self.compiled_regex is None:
 
-            if self.pattern is None:
+            if (self.pattern is None):
                 raise Exception("ReplaceRegex.transform: pattern has to have a value.")
             else:
                 self.compiled_regex = re.compile(self.pattern)
+        elif (self.pattern is not None and self.compiled_regex.pattern != self.pattern):
+                self.compiled_regex = re.compile(self.pattern)
 
-        if self.compiled_regex.match(_value):
+        if self.compiled_regex.search(_value):
             if self.new is None:
                 _new = ""
             else:
