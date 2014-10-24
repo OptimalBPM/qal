@@ -280,13 +280,10 @@ class ReplaceRegex(CustomTransformation):
         # It is a string operation, None will be handled as a string.
         if _value is None:
             _value = ""
-        if self.compiled_regex is None:
-
-            if (self.pattern is None):
-                raise Exception("ReplaceRegex.transform: pattern has to have a value.")
-            else:
-                self.compiled_regex = re.compile(self.pattern)
-        elif (self.pattern is not None and self.compiled_regex.pattern != self.pattern):
+        if (self.pattern is None):
+            raise Exception("ReplaceRegex.transform: pattern has to have a value.")
+        else:
+            if self.compiled_regex is None or self.compiled_regex.pattern != self.pattern:
                 self.compiled_regex = re.compile(self.pattern)
 
         if self.compiled_regex.search(_value):
