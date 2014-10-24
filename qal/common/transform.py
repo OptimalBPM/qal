@@ -31,7 +31,7 @@ def make_transformation_array_from_xml_node(_xml_node, _substitution= None):
         elif _curr_node.tag.lower() == 'replace':
             _result.append(Replace(_xml_node=_curr_node, _substitution=_substitution))
         elif _curr_node.tag.lower() == 'replace_regex':
-            _result.append(Replace_Regex(_xml_node=_curr_node, _substitution=_substitution))
+            _result.append(ReplaceRegex(_xml_node=_curr_node, _substitution=_substitution))
     return _result
 
 def make_transformations_xml_node(_transformations):
@@ -250,7 +250,7 @@ class Replace(CustomTransformation):
         else:
             return _value
 
-class Replace_Regex(CustomTransformation):
+class ReplaceRegex(CustomTransformation):
     """Replace returns a copy of the string in which the occurrences of old have been replaced with new, optionally restricting the number of replacements to max."""
     pattern = None
     """The old value"""
@@ -262,7 +262,7 @@ class Replace_Regex(CustomTransformation):
     """The compiled regular expression"""
 
     def load_from_xml_node(self, _xml_node):
-        super(Replace_Regex, self).load_from_xml_node(_xml_node)
+        super(ReplaceRegex, self).load_from_xml_node(_xml_node)
         self.pattern = xml_isnone(_xml_node.find("pattern"))
         self.new = xml_isnone(_xml_node.find("new"))
         self.max = xml_isnone(_xml_node.find("max"))
@@ -283,7 +283,7 @@ class Replace_Regex(CustomTransformation):
         if self.compiled_regex is None:
 
             if self.pattern is None:
-                raise Exception("Replace_Regex.transform: pattern has to have a value.")
+                raise Exception("ReplaceRegex.transform: pattern has to have a value.")
             else:
                 self.compiled_regex = re.compile(self.pattern)
 

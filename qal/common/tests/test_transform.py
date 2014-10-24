@@ -51,10 +51,11 @@ class Transform_test(unittest.TestCase):
         """Test replace transformation input/output and XML encoding/decoding"""
         _tree = self._parse_xml(Test_Resource_Dir + "/test_merge_two_files.xml")
         _xml_def = _tree.find("mappings/field_mappings/field_mapping/transformations/replace_regex")
-        _tested = Replace_Regex(_xml_def)
+        _tested = ReplaceRegex(_xml_def)
         _result = _tested.transform("MILLER KING")
         self.assertEqual(_result, "KULLER KUNG", "Results differ")
         self.assertEqual(etree.tostring(_xml_def).strip(), etree.tostring(_tested.as_xml_node()), "XML in/out differ")
+
     def test_5_cast(self):
         """Test trim transformation input/output and XML encoding/decoding"""
         _tree = self._parse_xml(Test_Resource_Dir + "/test_merge_two_files.xml")
