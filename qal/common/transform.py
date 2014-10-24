@@ -251,7 +251,7 @@ class Replace(CustomTransformation):
             return _value
 
 class ReplaceRegex(CustomTransformation):
-    """Replace returns a copy of the string in which the occurrences of old have been replaced with new, optionally restricting the number of replacements to max."""
+    """ReplaceRegex returns a copy of the string in which the occurrences of old have been replaced with new, optionally restricting the number of replacements to max."""
     pattern = None
     """The old value"""
     new = None
