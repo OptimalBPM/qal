@@ -4,7 +4,7 @@ Created on Nov 3, 2013
 @author: Nicklas Boerjesson
 """
 import unittest
-from qal.common.transform import Trim, Replace, IfEmpty, Cast
+from qal.common.transform import Trim, Replace, IfEmpty, Cast, Replace_Regex
 from lxml import etree
 from datetime import datetime
 
@@ -20,7 +20,7 @@ class Transform_test(unittest.TestCase):
         return _tree.parse(_filename, _parser)
         
 
-    def test_trim(self):
+    def test_1_trim(self):
         """Test trim transformation input/output and XML encoding/decoding"""
         _tree = self._parse_xml(Test_Resource_Dir + "/test_merge_two_files.xml")
         _xml_def = _tree.find("mappings/field_mappings/field_mapping/transformations/trim")
@@ -29,7 +29,7 @@ class Transform_test(unittest.TestCase):
         self.assertEqual(_result, ' test', "Results differ")
         self.assertEqual(etree.tostring(_xml_def).strip(), etree.tostring(_tested.as_xml_node()), "XML in/out differ")
         
-    def test_IfEmpty(self):
+    def test_2_IfEmpty(self):
         """Test trim transformation input/output and XML encoding/decoding"""
         _tree = self._parse_xml(Test_Resource_Dir + "/test_merge_two_files.xml")
         _xml_def = _tree.find("mappings/field_mappings/field_mapping/transformations/IfEmpty")
@@ -38,16 +38,24 @@ class Transform_test(unittest.TestCase):
         self.assertEqual(_result, 'NULL', "Results differ")
         self.assertEqual(etree.tostring(_xml_def).strip(), etree.tostring(_tested.as_xml_node()), "XML in/out differ")
         
-    def test_replace(self):
+    def test_3_replace(self):
         """Test replace transformation input/output and XML encoding/decoding"""
         _tree = self._parse_xml(Test_Resource_Dir + "/test_merge_two_files.xml")
         _xml_def = _tree.find("mappings/field_mappings/field_mapping/transformations/replace")
         _tested = Replace(_xml_def)
         _result = _tested.transform("unneccessary cc")
         self.assertEqual(_result, "unnecessary cc", "Results differ")
-        self.assertEqual(etree.tostring(_xml_def).strip(), etree.tostring(_tested.as_xml_node()), "XML in/out differ")  
-        
-    def test_cast(self):
+        self.assertEqual(etree.tostring(_xml_def).strip(), etree.tostring(_tested.as_xml_node()), "XML in/out differ")
+
+    def test_4_replace_regex(self):
+        """Test replace transformation input/output and XML encoding/decoding"""
+        _tree = self._parse_xml(Test_Resource_Dir + "/test_merge_two_files.xml")
+        _xml_def = _tree.find("mappings/field_mappings/field_mapping/transformations/replace_regex")
+        _tested = Replace_Regex(_xml_def)
+        _result = _tested.transform("MILLER KING")
+        self.assertEqual(_result, "KULLER KUNG", "Results differ")
+        self.assertEqual(etree.tostring(_xml_def).strip(), etree.tostring(_tested.as_xml_node()), "XML in/out differ")
+    def test_5_cast(self):
         """Test trim transformation input/output and XML encoding/decoding"""
         _tree = self._parse_xml(Test_Resource_Dir + "/test_merge_two_files.xml")
         _xml_def = _tree.find("mappings/field_mappings/field_mapping[src_reference='hiredate']/transformations/cast[@order='5']")

@@ -28,11 +28,11 @@
 		        	<new></new>
 		        	<max/>
 		        </replace>	        
-		        <replace order="3">
-		        	<old>ms. </old>
-		        	<new></new>
+		        <replace_regex order="3">
+		        	<pattern>[MK]I</pattern>
+		        	<new>KU</new>
 		        	<max/>
-		        </replace>	        
+		        </replace_regex>
 		    </transformations>
 		    <dest_reference>name</dest_reference>
 		  </field_mapping>

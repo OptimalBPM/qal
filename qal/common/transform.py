@@ -30,7 +30,8 @@ def make_transformation_array_from_xml_node(_xml_node, _substitution= None):
             _result.append(Cast(_xml_node=_curr_node, _substitution=_substitution))
         elif _curr_node.tag.lower() == 'replace':
             _result.append(Replace(_xml_node=_curr_node, _substitution=_substitution))
-    
+        elif _curr_node.tag.lower() == 'replace_regex':
+            _result.append(Replace_Regex(_xml_node=_curr_node, _substitution=_substitution))
     return _result
 
 def make_transformations_xml_node(_transformations):
@@ -246,5 +247,58 @@ class Replace(CustomTransformation):
                 return _value.replace(_old, str(_new), int(self.max))
             else:
                 return _value.replace(_old, str(_new))
+        else:
+            return _value
+
+class Replace_Regex(CustomTransformation):
+    """Replace returns a copy of the string in which the occurrences of old have been replaced with new, optionally restricting the number of replacements to max."""
+    pattern = None
+    """The old value"""
+    new = None
+    """The new value"""
+    max = None
+    """The max number of times to replace"""
+    compiled_regex = None
+    """The compiled regular expression"""
+
+    def load_from_xml_node(self, _xml_node):
+        super(Replace_Regex, self).load_from_xml_node(_xml_node)
+        self.pattern = xml_isnone(_xml_node.find("pattern"))
+        self.new = xml_isnone(_xml_node.find("new"))
+        self.max = xml_isnone(_xml_node.find("max"))
+
+    def as_xml_node(self):
+        _xml_node = self.init_base_to_node("replace_regex")
+        etree.SubElement(_xml_node, "pattern").text = self.pattern
+        etree.SubElement(_xml_node, "new").text = self.new
+        etree.SubElement(_xml_node, "max").text = self.max
+
+        return _xml_node
+
+    def _transform(self, _value):
+        """Make replace transformation"""
+        # It is a string operation, None will be handled as a string.
+        if _value is None:
+            _value = ""
+        if self.compiled_regex is None:
+
+            if self.pattern is None:
+                raise Exception("Replace_Regex.transform: pattern has to have a value.")
+            else:
+                self.compiled_regex = re.compile(self.pattern)
+
+        if self.compiled_regex.match(_value):
+            if self.new is None:
+                _new = ""
+            else:
+                _new = self.new
+
+            if self.substitution is not None:
+                _new = self.substitution.substitute(_new)
+
+            if self.max:
+                return self.compiled_regex.sub(_new, _value, int(self.max))
+            else:
+                return self.compiled_regex.sub(_new, _value)
         else:
             return _value
