@@ -15,21 +15,35 @@ from qal.common.transform import perform_transformations, IfEmpty, Replace
 from qal.dataset.factory import dataset_from_resource
 
 from qal.common.xml_utils import xml_isnone
+from qal.dataset.rdbms import RDBMSDataset
+from qal.sql.macros import create_table_skeleton
+from qal.tools.meta_queries import Meta_Queries
+
 
 class Merge(object):
-    mappings = None
-    key_fields = None
-    source = None
-    destination = None
-    resources = None
-    destination_log_level = None
-    post_execute_sql = None
-    insert = None
-    delete = None
-    update = None
     """
     The merge class takes two datasets and merges them together.
     """
+    mappings = None
+    """A list of Mapping(qal.common.mapping) instances"""
+    key_fields = None
+    """A list of key field field indexes (in the destination dataset)"""
+    source = None
+    """The source dataset"""
+    destination = None
+    """The destination dataset"""
+    resources = None
+    """A instance of a Resources object(see qal.common.resources)"""
+    destination_log_level = None
+    """The log level to pass to the destination dataset"""
+    post_execute_sql = None
+    """An optional SQL that is exececute in the destination context, only applicable to RDBMS destinations"""
+    insert = None
+    """If data that exists in the source should be inserted into the destination."""
+    delete = None
+    """If data that do not exist in the source should be deleted the destination."""
+    update = None
+    """If rows that are different in the source should be updated in the destination"""
 
     def __init__(self, _xml_node=None):
         """
@@ -184,11 +198,14 @@ class Merge(object):
 
         # Load destination dataset
         try:
-            # Handle non-existing output files
-            if hasattr(self.destination, "filename") and not exists( make_path_absolute(self.destination.filename,
-                                                                                        self.destination._base_path)):
+            # Handle non-existing destination files or tables
+            if (hasattr(self.destination, "filename") and
+                    not exists( make_path_absolute(self.destination.filename,self.destination._base_path))) or \
+                    (isinstance(self.destination, RDBMSDataset) and
+                        len(Meta_Queries.table_info(self.destination.dal, self.destination.table_name)) == 0):
                 self.destination.field_names = [_curr_mapping.dest_reference for _curr_mapping in self.mappings]
                 self.destination.data_table = []
+
             else:
                 self.destination.load()
         except Exception as e:
@@ -335,14 +352,15 @@ class Merge(object):
         :return: The merged dataset, the destination log, deletes, inserts, updates
         """
 
-        # Load both source and destination data
+
+        # Load both source and destination data tables
         self._load_datasets()
 
         # Make shortcuts between source and destination and add key fields
         _shortcuts, self.key_fields = self._make_shortcuts_readd_keys(self.mappings, self.source, self.destination)
 
-        # Create a remapped version of the source dataset data table to match the column order of the destination
-        _mapped_source, _mapped_keys = self._remap( _shortcuts, self.key_fields, self.source, self.destination)
+        # Create a remapped version of the source dataset data table to match the field order of the destination
+        _mapped_source, _mapped_keys = self._remap(_shortcuts, self.key_fields, self.source, self.destination)
 
         # If there are any identity references, find and set identity seed to the highest value in
         # either source or destination. If there aren't any, it will start att zero.
@@ -351,7 +369,8 @@ class Merge(object):
         # Apply substitutions, transformations
         _mapped_source = self.apply_modifications(_shortcuts, _mapped_source)
 
-        """Merge the datasets"""
+
+        #Merge the datasets
         _merged_dataset, _deletes, _inserts, _updates = self.destination.apply_new_data(_mapped_source, _mapped_keys,
                                                                                         _insert=self.insert,
                                                                                         _update=self.update,
@@ -362,7 +381,7 @@ class Merge(object):
             self.destination.save()
 
             if self.post_execute_sql is not None and self.post_execute_sql != "" and hasattr(self.destination, "dal"):
-                self.destination.dal.query(self.post_execute_sql)
+                self.destination.dal.execute(self.post_execute_sql)
                 self.destination.dal.commit()
 
         return _merged_dataset, self.destination._log, _deletes, _inserts, _updates

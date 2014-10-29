@@ -103,6 +103,8 @@ def make_insert_sql_with_parameters(_table_name, _field_names, _db_type, _field_
     return _insert.as_sql(_db_type) + _values_sql
 
 
+
+
 def copy_to_table(_dal, _values, _field_names, _field_types, _table_name, _create_table=None, _drop_existing=None):
     """Copy a matrix of data into a table on the resource, return the table name.
 

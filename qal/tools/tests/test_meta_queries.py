@@ -14,8 +14,7 @@ from qal.dal.types import DB_MYSQL, DB_POSTGRESQL, DB_ORACLE, DB_DB2, DB_SQLSERV
 class TestSQL_Meta_queries(unittest.TestCase):
     def check_list_column(self,_db_type):
         dal = get_default_dal(_db_type, "")
-        meta_queries = Meta_Queries(dal)
-        columns = meta_queries.table_info('Table1')
+        columns = Meta_Queries.table_info(dal, 'Table1')
         if columns == ['Table1ID', 'Table1Name', 'Table1Changed']: 
             return True
         else:

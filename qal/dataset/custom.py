@@ -128,7 +128,7 @@ class CustomDataset(object):
         self.data_table.pop(_row_idx)
         
         
-    def _structure_init(self):
+    def _structure_init(self, _dataset):
         """Initialize underlying structure before applying data to it.\
         Overridden by subclasses."""
         pass
@@ -192,22 +192,31 @@ class CustomDataset(object):
         :parameter list _key_fields: An array with the indices of the fields that should be used to match source rows to destination rows. 
         
         -- note:
-            If there are different data types in the _new_data_table columns and the existing dataset.data_table, they will be considered different and be updated. 
+            If there are different data types in the _new_data_table columns and the existing dataset.data_table,
+            they will be considered different and be updated.
             It is also possible that the keys will not match. So cast these before applying.
         """
          
         self._structure_key_fields = _key_fields
         
         # Some data sets needs to initialize the underlying structure to work, and work efficiently
-        self._structure_init()        
-        
-        # Compare the source and destination table to generate difference sets
-        _deletes, _inserts, _updates, _dest_sorted = compare(
-                                                          _left = _new_data_table, 
-                                                          _right = self.data_table, 
-                                                          _key_columns = _key_fields, 
-                                                          _full = True)
-        
+        self._structure_init(_new_data_table)
+
+        if len(self._structure_key_fields) > 0:
+            #  If there are defined keys Compare the source and destination table to generate difference sets
+            _deletes, _inserts, _updates, _dest_sorted = compare(
+                                                              _left = _new_data_table,
+                                                              _right = self.data_table,
+                                                              _key_columns = _key_fields,
+                                                              _full = True)
+        else:
+            # If there are no keys, just make inserts of all rows
+            _inserts = [[0, 0,_new_data_table[_curr_idx]] for _curr_idx in range(len(_new_data_table) - 1, -1, -1)]
+            # There will be no deletes or updates
+            _deletes = _updates = []
+            # We have no indexes to sort with, keep current sort order
+            _dest_sorted = _new_data_table
+
         # Merge the data into the structure. 
         # Note: in RDBMSDataset, this currently means writing to the underlying database, since there is no in-memory structure.
 

@@ -3,13 +3,14 @@ Created on Jan 8, 2012
 
 @author: Nicklas Boerjesson
 '''
+from qal.dal.conversions import python_type_to_SQL_type
 
 from qal.dal.types import DB_DB2,DB_ORACLE, DB_POSTGRESQL
 from qal.sql.utils import db_specific_object_reference
 from qal.sql.sql import VerbInsert, VerbDelete, VerbUpdate, ParameterConditions
 from qal.sql.sql import ParameterSource, ParameterIdentifier, ParameterParameter,ParameterCondition, ParameterAssignment
 from qal.dal.dal import DatabaseAbstractionLayer
-from qal.sql.macros import select_all_skeleton
+from qal.sql.macros import select_all_skeleton, create_table_skeleton
 from qal.sql.base import SqlList
 
 from qal.sql.macros import make_insert_sql_with_parameters
@@ -69,16 +70,35 @@ class RDBMSDataset(CustomDataset):
         if _resource != None:
             self.read_resource_settings(_resource)        
 
-    def _structure_init(self):
+    def _structure_init(self, _dataset):
+
         """Initializes the SQL queries that data is to be applied to, starts a database transaction"""
+        # If field types aren't set, that means that the table isn't created.
+        # They would have been populated as part of the loading process
+        if len(self.field_types) == 0:
+            if len(_dataset) == 0:
+                raise Exception("RDBMSDataset.structure_init error: The _dataset cannot be empty "
+                                "for field types to be derived from it.")
+            try:
+                self.field_types = [python_type_to_SQL_type(type(_curr_value)) for _curr_value in _dataset[0]]
+                _create_table_sql = create_table_skeleton(self.table_name, self.field_names, self.field_types).as_sql(self.dal.db_type)
+                print("Creating " + self.table_name + " table..\n"+_create_table_sql)
+                self.dal.execute(_create_table_sql)
+            except Exception as e:
+                raise Exception("Merge.execute: An error occurred creating destination table: " + str(e))
+
+
         self._rdbms_init_deletes()
         if len(self._structure_key_fields) <= len(self.field_names):
             self._rdbms_init_updates()
+
+
         self._rdbms_init_inserts()
         
         self.dal.start()
 
-        super(RDBMSDataset, self)._structure_init()
+
+        super(RDBMSDataset, self)._structure_init(_dataset)
 
     def _extract_data_columns_from_diff_row(self, _field_indexes, _diff_row):    
         """Extracts columns specified in _field_indexes from _diff_list"""
@@ -90,7 +110,7 @@ class RDBMSDataset(CustomDataset):
     
 
     def _rdbms_init_deletes(self):
-        """Generates a VerbDelete instance populated with the indata"""
+        """Generates a VerbDelete instance populated with the structural indata"""
         
         _source = ParameterSource()
         _source.expression.append(ParameterIdentifier(self.table_name))
@@ -112,13 +132,13 @@ class RDBMSDataset(CustomDataset):
 
     
     def _rdbms_init_inserts(self):
-        """Generates a VerbInsert instance populated with the indata"""
+        """Generates a VerbInsert instance populated with the structural indata"""
 
         self._structure_insert_sql = make_insert_sql_with_parameters(self.table_name, self.field_names,self.dal.db_type, self.field_types)
 
         
     def _rdbms_init_updates(self):
-        """Generates DELETE and INSERT instances populated with the indata """
+        """Generates DELETE and INSERT instances populated with the structural indata """
 
 
         # Add assignments to all fields except the key fields and add conditions for all key fields.

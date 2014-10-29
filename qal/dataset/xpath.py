@@ -332,10 +332,10 @@ class XpathDataset(CustomDataset):
         
         return _root_node_name, _row_node_name, _row_node_parent_xpath
     
-    def _structure_init(self):
+    def _structure_init(self, _dataset):
         """Initializes the XML structure that data is to be applied to."""
         print("XpathDataset._structure_init")
-        super(XpathDataset, self)._structure_init()
+        super(XpathDataset, self)._structure_init(_dataset)
 
         # Parse important information data from XPath 
         _root_node_name, self._structure_row_node_name, _parent_xpath = self._structure_parse_root_path(self.rows_xpath)

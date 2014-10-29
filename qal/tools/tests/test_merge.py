@@ -9,6 +9,7 @@ import datetime
 import os
 
 from lxml import etree
+from qal.sql.sql import VerbDropTable
 
 from qal.tools.merge import Merge
 from qal.common.listhelper import pretty_list
@@ -40,6 +41,12 @@ c_file_result = [
 
 c_table_result =[
                 [1, 'source', datetime.datetime(2001, 1, 1, 0, 0)],
+                [2, 'source', datetime.datetime(2001, 1, 2, 0, 0)],
+                [3, 'source_new', datetime.datetime(2014, 1, 1, 0, 0)]
+                ]
+
+c_table_new_result =[
+                [1, 'Post-execute-sql-name', datetime.datetime(2001, 1, 1, 0, 0)],
                 [2, 'source', datetime.datetime(2001, 1, 2, 0, 0)],
                 [3, 'source_new', datetime.datetime(2014, 1, 1, 0, 0)]
                 ]
@@ -76,23 +83,23 @@ class Merge_test(unittest.TestCase):
         self.assertEqual(_result[0], c_file_result, "Merge result differs")
 
     def test_2_Merge_tables(self):
-        
+
         _resources_node = self._parse_xml(os.path.join(Test_Resource_Dir, "test_merge_two_tables.xml")).find("resources")
-        _resources = Resources(_resources_node = _resources_node)        
+        _resources = Resources(_resources_node = _resources_node)
         print("merge_test.test_Merge_tables: Staging source")
         _source_data = [[1, 'source', datetime.datetime(2001, 1, 1, 0, 0)], [2, 'source', datetime.datetime(2001, 1, 2, 0, 0)], [3, 'source_new', datetime.datetime(2014, 1, 1, 0, 0)]]
         _field_names = ["ID", "Name", "Changed"]
         _field_types = ["integer", "string(200)", "timestamp"]
-        
+
         _source_dal = DatabaseAbstractionLayer(_resource= _resources.get_resource("source_uuid"))
         _source_table_name = 'table_src'
         _source_dal.connect_to_db()
 
         copy_to_table(_source_dal, _source_data, _field_names, _field_types, _source_table_name, _create_table = True, _drop_existing = True)
-        
+
         print("merge_test.test_Merge_tables: Staging destination")
         _dest_data = [[1, 'dest', datetime.datetime(2001, 1, 1, 0, 0)], [2, 'dest', datetime.datetime(2001, 1, 2, 0, 0)], [3, 'dest', datetime.datetime(2014, 1, 4, 0, 0)]]
-        
+
         _dest_dal = DatabaseAbstractionLayer(_resource= _resources.get_resource("dest_uuid"))
         _dest_table_name = 'table_dst'
         _dest_dal.connect_to_db()
@@ -100,23 +107,66 @@ class Merge_test(unittest.TestCase):
         copy_to_table(_dest_dal, _dest_data, _field_names, _field_types, _dest_table_name, _create_table = True, _drop_existing = True)
 
         _merge_xml = self._parse_xml(os.path.join(Test_Resource_Dir, "test_merge_two_tables.xml"))
-        _merge = Merge(_xml_node = _merge_xml)  
+        _merge = Merge(_xml_node = _merge_xml)
         _merge.destination_log_level = DATASET_LOGLEVEL_DETAIL
         print(etree.tostring(_merge.as_xml_node()))
         print(etree.tostring(_merge_xml))
-        
+
         self.assertEqual(etree.tostring(_merge.as_xml_node()), etree.tostring(_merge_xml), "Input/output XML does not match")
 
         _result = _merge.execute()
-        
+
         _dest_result = _merge.destination.load()
-        
-        print("Source:\n" + pretty_list(_merge.source.data_table)) 
+
+        print("Source:\n" + pretty_list(_merge.source.data_table))
         print("Result:\n" + pretty_list(_dest_result))
         print("Log:\n" + pretty_list(_merge.destination._log))
-        
+
         self.assertEqual(_dest_result, c_table_result)
 
+    def test_3_Merge_to_nonexisting(self):
+
+        _resources_node = self._parse_xml(os.path.join(Test_Resource_Dir, "test_merge_no_keys_to_nonexisting.xml")).find("resources")
+        _resources = Resources(_resources_node = _resources_node)
+        print("merge_test.test_Merge_tables: Staging source")
+        _source_data = [[1, 'source', datetime.datetime(2001, 1, 1, 0, 0)], [2, 'source', datetime.datetime(2001, 1, 2, 0, 0)], [3, 'source_new', datetime.datetime(2014, 1, 1, 0, 0)]]
+        _field_names = ["ID", "Name", "Changed"]
+        _field_types = ["integer", "string(200)", "timestamp"]
+
+        _source_dal = DatabaseAbstractionLayer(_resource= _resources.get_resource("source_uuid"))
+        _source_table_name = 'table_src'
+        _source_dal.connect_to_db()
+        copy_to_table(_source_dal, _source_data, _field_names, _field_types, _source_table_name, _create_table = True, _drop_existing = True)
+
+
+        _dest_dal = DatabaseAbstractionLayer(_resource= _resources.get_resource("dest_uuid"))
+        _dest_table_name = 'table_new'
+
+        # drop table
+        _dest_dal.connect_to_db()
+        try:
+            _dest_dal.execute(VerbDropTable(_dest_table_name).as_sql(_dest_dal.db_type))
+            _dest_dal.commit()
+        except Exception as e:
+            print("copy_to_table - Ignoring error when dropping the table \"" + _dest_table_name + "\": " + str(e))
+
+        _merge_xml = self._parse_xml(os.path.join(Test_Resource_Dir, "test_merge_no_keys_to_nonexisting.xml"))
+        _merge = Merge(_xml_node = _merge_xml)
+        _merge.destination_log_level = DATASET_LOGLEVEL_DETAIL
+        print(etree.tostring(_merge.as_xml_node()))
+        print(etree.tostring(_merge_xml))
+
+        self.assertEqual(etree.tostring(_merge.as_xml_node()), etree.tostring(_merge_xml), "Input/output XML does not match")
+
+        _result = _merge.execute()
+
+        _dest_result = _merge.destination.load()
+
+        print("Source:\n" + pretty_list(_merge.source.data_table))
+        print("Result:\n" + pretty_list(_dest_result))
+        print("Log:\n" + pretty_list(_merge.destination._log))
+
+        self.assertEqual(_dest_result, c_table_new_result)
         
 
 if __name__ == "__main__":
