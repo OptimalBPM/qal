@@ -60,8 +60,6 @@ and type = 'T';"
 
 _table_list_oracle_by_schema = "select table_name from user_tables WHERE TABLESPACE_NAME = ':USER' AND table_name NOT LIKE 'DEF$_%'"
 
-
-
 def _table_info_sql(_db_type, _table_name, _database_name):
     """Lists information about a table"""
     SQL = [_table_info_mysql, _table_info_postgresql, _table_info_oracle, _table_info_db2, _table_info_sqlserver][_db_type]
@@ -98,10 +96,11 @@ class Meta_Queries(object):
         :param _table_name: The name of the table to list columns for
         :return: A list of column names
         """
-
-        rows = _dal.query(_table_info_sql(_dal.db_type, _table_name, _dal.db_databasename))
-        columns = list()
-        for row in rows:
+        if not _dal.connected:
+            _dal.connect_to_db()
+        _rows = _dal.query(_table_info_sql(_dal.db_type, _table_name, _dal.db_databasename))
+        columns = []
+        for row in _rows:
             columns.append(row[0])
         return columns   
      
@@ -113,7 +112,8 @@ class Meta_Queries(object):
         :param _schema_name: A schema name
         :return: A list of table names
         """
-
+        if not _dal.connected:
+            _dal.connect_to_db()
         rows = _dal.query(_table_list_sql_by_schema(_dal.db_type, _schema_name))
         columns = list()
         for row in rows:
@@ -128,6 +128,9 @@ class Meta_Queries(object):
         :param _database_name: A database name
         :return: A list of table names
         """
+        if not _dal.connected:
+            _dal.connect_to_db()
+
         """TODO: Refactor so either MySQL gets connection's name or all else goes by database name(which won't work)"""
         rows = _dal.query(_table_list_sql_by_database_name(_dal.db_type, _database_name))
         print("SQL:\n"+ _table_list_sql_by_database_name(_dal.db_type, _database_name) + "\n_database_name:" +
@@ -144,6 +147,8 @@ class Meta_Queries(object):
         :param _dal: A connected instance of DatabaseAbstractionLayer (see qal.dal)
         :return: A list or sequence names
         """
+        if not _dal.connected:
+            _dal.connect_to_db()
         rows = _dal.query("SELECT SEQUENCE_NAME FROM USER_SEQUENCES")
         sequences = list()
         for row in rows:
