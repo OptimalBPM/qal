@@ -94,9 +94,9 @@ class Meta_Queries(object):
     @staticmethod
     def table_info(_dal, _table_name):
         """
-        List column in the specified table
+        List columns in the specified table
         :param _table_name: The name of the table to list columns for
-        :return:
+        :return: A list of column names
         """
 
         rows = _dal.query(_table_info_sql(_dal.db_type, _table_name, _dal.db_databasename))
@@ -107,7 +107,13 @@ class Meta_Queries(object):
      
     @staticmethod
     def table_list_by_schema(_dal, _schema_name):
-        """List tables in the specified schema"""
+        """
+        List tables in the specified schema
+        :param _dal: A connected instance of DatabaseAbstractionLayer (see qal.dal)
+        :param _schema_name: A schema name
+        :return: A list of table names
+        """
+
         rows = _dal.query(_table_list_sql_by_schema(_dal.db_type, _schema_name))
         columns = list()
         for row in rows:
@@ -116,7 +122,12 @@ class Meta_Queries(object):
 
     @staticmethod
     def table_list_by_database_name(_dal, _database_name):
-        """List tables in the specified database"""
+        """
+        List tables in the specified database
+        :param _dal: A connected instance of DatabaseAbstractionLayer (see qal.dal)
+        :param _database_name: A database name
+        :return: A list of table names
+        """
         """TODO: Refactor so either MySQL gets connection's name or all else goes by database name(which won't work)"""
         rows = _dal.query(_table_list_sql_by_database_name(_dal.db_type, _database_name))
         print("SQL:\n"+ _table_list_sql_by_database_name(_dal.db_type, _database_name) + "\n_database_name:" +
@@ -128,7 +139,11 @@ class Meta_Queries(object):
 
     @staticmethod
     def oracle_all_sequences(_dal):
-        """Oracle specific: List all sequences"""
+        """
+        Oracle specific: List all sequences in an Oracle database
+        :param _dal: A connected instance of DatabaseAbstractionLayer (see qal.dal)
+        :return: A list or sequence names
+        """
         rows = _dal.query("SELECT SEQUENCE_NAME FROM USER_SEQUENCES")
         sequences = list()
         for row in rows:
