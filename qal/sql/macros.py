@@ -116,7 +116,6 @@ def copy_to_table(_dal, _values, _field_names, _field_types, _table_name, _creat
     :return: The name of the destination table.
     """
 
-
     if _drop_existing == True:
         try:
             _dal.execute(VerbDropTable(_table_name).as_sql(_dal.db_type))
