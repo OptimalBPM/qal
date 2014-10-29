@@ -104,7 +104,7 @@ def python_type_to_SQL_type(_python_type):
     elif (_python_type == int):
         return "integer"    
     elif (_python_type == datetime):
-        return "timestamp"
+        return "datetime"
     elif (_python_type == bool):
         return "boolean"
     else:
