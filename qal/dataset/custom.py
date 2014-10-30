@@ -211,11 +211,11 @@ class CustomDataset(object):
                                                               _full = True)
         else:
             # If there are no keys, just make inserts of all rows
-            _inserts = [[0, 0,_new_data_table[_curr_idx]] for _curr_idx in range(len(_new_data_table) - 1, -1, -1)]
+            _inserts = [[0, 0, _new_data_table[_curr_idx]] for _curr_idx in range(len(_new_data_table) - 1, -1, -1)]
             # There will be no deletes or updates
             _deletes = _updates = []
             # We have no indexes to sort with, keep current sort order
-            _dest_sorted = _new_data_table
+            _dest_sorted = []
 
         # Merge the data into the structure. 
         # Note: in RDBMSDataset, this currently means writing to the underlying database, since there is no in-memory structure.
