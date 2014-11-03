@@ -50,8 +50,9 @@ class Substitution(object):
         self._builtin_identity_value = int(_value)
 
     def substitute(self, _input):
-        """ The replace method scans _input for known substitution variables.
+        """ The substitute method scans _input for known substitution variables.
         It tries to keep the value within the same data type.
+
         :param _input: The substitution string, potentially holding substitution variables
         :return: Returns a value where all substitutions are made
         """

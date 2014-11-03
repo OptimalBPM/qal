@@ -186,8 +186,7 @@ class CustomDataset(object):
     
     def apply_new_data(self, _new_data_table, _key_fields, _insert=None, _update=None, _delete=None, _commit=True):
         """This function applies a new data table unto the existing, matches are made using the key fields.
-      
-        
+
         :parameter 2D-list _new_data_table: A two-dimensional list contains the data. Must match the existing column-wise.
         :parameter list _key_fields: An array with the indices of the fields that should be used to match source rows to destination rows. 
         

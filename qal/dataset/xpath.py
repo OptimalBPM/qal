@@ -60,8 +60,8 @@ class XpathDataset(CustomDataset):
     """
 
     def __init__(self, _filename = None, _rows_xpath = None,  _resource = None):
-
         """Constructor.
+
         :param str _filename: Name of the file to parser
         :param str _rows_xpath: Path to nodes holding the rows.
         :param Resource _resource : An instance of a :py:class: qal.common.resource.resource
@@ -133,6 +133,7 @@ class XpathDataset(CustomDataset):
         
     def _structure_parse_qal_xpath(self, _qal_xpath):
         """Parse the trailing attribute identifier from the QAL xpath string. ":" isn't allowed in xpath.
+
         :param str _qal_xpath: QAL xpath string. Ex. "library/books/book | library/books"
         """
         _parts = _qal_xpath.split("::")

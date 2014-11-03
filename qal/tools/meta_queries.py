@@ -93,6 +93,7 @@ class Meta_Queries(object):
     def table_info(_dal, _table_name):
         """
         List columns in the specified table
+
         :param _table_name: The name of the table to list columns for
         :return: A list of column names
         """
@@ -108,6 +109,7 @@ class Meta_Queries(object):
     def table_list_by_schema(_dal, _schema_name):
         """
         List tables in the specified schema
+
         :param _dal: A connected instance of DatabaseAbstractionLayer (see qal.dal)
         :param _schema_name: A schema name
         :return: A list of table names
@@ -124,6 +126,7 @@ class Meta_Queries(object):
     def table_list_by_database_name(_dal, _database_name):
         """
         List tables in the specified database
+
         :param _dal: A connected instance of DatabaseAbstractionLayer (see qal.dal)
         :param _database_name: A database name
         :return: A list of table names
@@ -144,6 +147,7 @@ class Meta_Queries(object):
     def oracle_all_sequences(_dal):
         """
         Oracle specific: List all sequences in an Oracle database
+
         :param _dal: A connected instance of DatabaseAbstractionLayer (see qal.dal)
         :return: A list or sequence names
         """

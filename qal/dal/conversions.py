@@ -48,6 +48,7 @@ Arguably, they should be declared in qal.dal.types instead.
 def mysql_type_to_SQL_type(_type_code):
     """
     Convert the internal MySQL type to the SQL type
+
     :param _type_code: A MySQL field constant
     """
     if _type_code in (
@@ -93,6 +94,7 @@ def mysql_type_to_SQL_type(_type_code):
 def python_type_to_SQL_type(_python_type):
     """
     Convert a python data type to ab SQL type.
+
     :param _python_type: A Python internal type
     """
     if (_python_type == str):
@@ -113,6 +115,7 @@ def python_type_to_SQL_type(_python_type):
         
 def parse_description(_descriptions, _db_type):
     """Convert field descriptions to field name- and field type-lists.
+
     :param _descriptions: A list of descriptions
     :param _db_type: The database type
     """
