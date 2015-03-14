@@ -27,7 +27,7 @@ def sql_for_all_databases(_SQLObj):
         print("\n\r<code>")
         print(_SQLObj.as_sql(index))
         print("</code>\n\r")
-        index = index + 1        
+        index+=1
             
 class class_SQL_Meta_XML_Test(unittest.TestCase):
 

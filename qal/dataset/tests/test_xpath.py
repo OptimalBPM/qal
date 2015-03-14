@@ -20,12 +20,10 @@ def load_xml(_filename):
     return etree.parse(_filename)
 
 
-
-
 class Test(unittest.TestCase):
-    def __init__(self, methodName='runTest' ):
+    def __init__(self, methodName='runTest'):
         self.maxDiff = None
-        super(Test, self ).__init__( methodName)
+        super(Test, self).__init__(methodName)
 
 
     def test_1_apply_new_data(self):
