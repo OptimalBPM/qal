@@ -9,6 +9,7 @@ import datetime
 import uuid
 from getpass import getuser
 
+
 class Substitution(object):
     """The Substitution class is responsible for replacing and generating variables for a substitution session.
     Using a session one can, for example, keep track of an identity increment.
@@ -25,16 +26,19 @@ class Substitution(object):
         }
         self._builtin_identity_value = None
 
-    def _builtin_username(self):
+    @staticmethod
+    def _builtin_username():
         """TODO: Secure this, this value depends on environment variables. On the other hand, the users doesn't need
         to use this function to insert a false user name.
         """
         return getuser()
 
-    def _builtin_curr_datetime(self):
+    @staticmethod
+    def _builtin_curr_datetime():
         return datetime.datetime.now()
 
-    def _builtin_uuid(self):
+    @staticmethod
+    def _builtin_uuid():
         return uuid.uuid4()
 
     def _builtin_identity(self):

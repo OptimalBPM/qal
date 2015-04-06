@@ -1,17 +1,16 @@
-'''
+"""
 Created on Sep 14, 2012
 
 @author: Nicklas Boerjesson
-'''
+"""
 from datetime import date
 import datetime
 from itertools import islice
-from qal.common.strings import make_path_absolute, string_to_bool
-
-from qal.dataset.custom import CustomDataset
-
 import csv
 from urllib.parse import unquote
+
+from qal.common.strings import make_path_absolute, string_to_bool
+from qal.dataset.custom import CustomDataset
 
 
 class FlatfileDataset(CustomDataset):
@@ -40,50 +39,52 @@ class FlatfileDataset(CustomDataset):
     """What character is used to indicate the end of a line. typically "\\n"."""
     skipinitialspace = None
     """True if initial spaces should be disregarded."""
-    
-    def __init__(self, _delimiter = None, _filename = None, _has_header = None, _csv_dialect = None, _resource = None, _quoting = None, _quotechar = None, _skipinitialspace = None):
+
+    def __init__(self, _delimiter=None, _filename=None, _has_header=None, _csv_dialect=None, _resource=None,
+                 _quoting=None, _quotechar=None, _skipinitialspace=None):
         """Constructor"""
-        super(FlatfileDataset, self ).__init__()
-       
-        if _resource != None:
+        super(FlatfileDataset, self).__init__()
+
+        if _resource is not None:
             self.read_resource_settings(_resource)
         else:
-            if _delimiter != None: 
+            if _delimiter is not None:
                 self.delimiter = _delimiter
-            else:  
-                self.delimiter = None    
-            if _filename != None: 
+            else:
+                self.delimiter = None
+            if _filename is not None:
                 self.filename = _filename
             else:
-                self.filename = None      
-            if _has_header != None: 
+                self.filename = None
+            if _has_header is not None:
                 self.has_header = _has_header
             else:
                 self.has_header = None
-                  
-            if _csv_dialect != None: 
+
+            if _csv_dialect is not None:
                 self.csv_dialect = _csv_dialect
             else:
-                self.csv_dialect = None      
-             
-            if _quoting != None: 
+                self.csv_dialect = None
+
+            if _quoting is not None:
                 self.quoting = _quoting
             else:
                 self.quoting = None
 
-            if _quotechar != None:
+            if _quotechar is not None:
                 self.quotechar = _quotechar
             else:
                 self.quotechar = None
 
-            if _skipinitialspace != None:
+            if _skipinitialspace is not None:
                 self.skipinitialspace = _skipinitialspace
             else:
                 self.skipinitialspace = None
-        
+
     def read_resource_settings(self, _resource):
         if _resource.type.upper() != 'FLATFILE':
-            raise Exception("FlatfileDataset.read_resource_settings.parse_resource error: Wrong resource type: " + _resource.type)
+            raise Exception(
+                "FlatfileDataset.read_resource_settings.parse_resource error: Wrong resource type: " + _resource.type)
         self._base_path = _resource.base_path
         self.filename = _resource.data.get("filename")
         self.delimiter = _resource.data.get("delimiter")
@@ -98,7 +99,7 @@ class FlatfileDataset(CustomDataset):
             self.lineterminator = bytes(_resource.data.get("lineterminator"), "UTF-8").decode("unicode-escape")
         else:
             self.lineterminator = None
-        self.quotechar = _resource.data.get("quotechar") or '"'       
+        self.quotechar = _resource.data.get("quotechar") or '"'
         self.skipinitialspace = _resource.data.get("skipinitialspace")
 
     def write_resource_settings(self, _resource):
@@ -114,9 +115,10 @@ class FlatfileDataset(CustomDataset):
         _resource.data["lineterminator"] = self.lineterminator
         _resource.data["quotechar"] = self.quotechar
         _resource.data["skipinitialspace"] = self.skipinitialspace
-         
-    def _quotestr_to_constants(self, _str):
-        if _str == None:
+
+    @staticmethod
+    def _quotestr_to_constants(_str):
+        if _str is None:
             return csv.QUOTE_NONE
         elif _str.upper() == "MINIMAL":
             return csv.QUOTE_MINIMAL
@@ -126,74 +128,71 @@ class FlatfileDataset(CustomDataset):
             return csv.QUOTE_NONNUMERIC
         else:
             raise Exception("Error in _quotestr_to_constants: " + str(_str) + " is an invalid quotestr.")
-            
 
     def load(self):
         """Load data"""
-        print("FlatfileDataset.load: Filename='" + str(self.filename) + "', Delimiter='"+str(self.delimiter)+"'" +
-              ", Base_path "+ str(self._base_path))
-        
-        _file = open( make_path_absolute(self.filename, self._base_path), 'r')
-        _reader = csv.reader(_file, 
-                             delimiter=self.delimiter, 
+        print("FlatfileDataset.load: Filename='" + str(self.filename) + "', Delimiter='" + str(self.delimiter) + "'" +
+              ", Base_path " + str(self._base_path))
+
+        _file = open(make_path_absolute(self.filename, self._base_path), 'r')
+        _reader = csv.reader(_file,
+                             delimiter=self.delimiter,
                              quoting=self._quotestr_to_constants(self.quoting),
-                             quotechar = self.quotechar,
-                             skipinitialspace = self.skipinitialspace
+                             quotechar=self.quotechar,
+                             skipinitialspace=self.skipinitialspace
                              )
         _first_row = True
         self.data_table = []
         for _row in _reader:
             # Save header row if existing.
-            if (_first_row):
-                if self.has_header == True:
+            if _first_row:
+                if self.has_header:
                     self.field_names = [_curr_col.replace("'", "").replace("\"", "") for _curr_col in _row]
                     print("self.field_names :" + str(self.field_names))
                 else:
                     self.field_names = []
-                    for _curr_idx in range(0,len(_row)):
-                        self.field_names.append("Field_"+ str(_curr_idx))
+                    for _curr_idx in range(0, len(_row)):
+                        self.field_names.append("Field_" + str(_curr_idx))
 
                 _first_row = False
             else:
                 self.data_table.append(_row)
 
         _file.close()
-        return self.data_table   
+        return self.data_table
 
-    def save(self, _save_as = None):
+    def save(self, _save_as=None):
         """Save data"""
 
-        print("FlatfileDataset.save: Filename='" + str(self.filename) + "', Delimiter='"+str(self.delimiter)+"'")
-        
+        print("FlatfileDataset.save: Filename='" + str(self.filename) + "', Delimiter='" + str(self.delimiter) + "'")
+
         if _save_as:
             _filename = _save_as
         else:
-            _filename =  make_path_absolute(self.filename, self._base_path)
-            
+            _filename = make_path_absolute(self.filename, self._base_path)
+
         _file = open(_filename, 'w')
 
         # Work around silly line terminator default, has to be set if passed.
         if self.lineterminator:
-            _writer = csv.writer(_file,                              
-                             delimiter=self.delimiter, 
-                             quoting=self._quotestr_to_constants(self.quoting),
-                             quotechar = self.quotechar,
-                             skipinitialspace = self.skipinitialspace,
-                             lineterminator = self.lineterminator
-                             )
+            _writer = csv.writer(_file,
+                                 delimiter=self.delimiter,
+                                 quoting=self._quotestr_to_constants(self.quoting),
+                                 quotechar=self.quotechar,
+                                 skipinitialspace=self.skipinitialspace,
+                                 lineterminator=self.lineterminator
+                                 )
         else:
-            _writer = csv.writer(_file,                              
-                             delimiter=self.delimiter, 
-                             quoting=self._quotestr_to_constants(self.quoting),
-                             quotechar = self.quotechar,
-                             skipinitialspace = self.skipinitialspace
-                             )
+            _writer = csv.writer(_file,
+                                 delimiter=self.delimiter,
+                                 quoting=self._quotestr_to_constants(self.quoting),
+                                 quotechar=self.quotechar,
+                                 skipinitialspace=self.skipinitialspace
+                                 )
 
-            
-        if self.has_header == True:
+        if self.has_header:
             _writer.writerow(self.field_names)
-    
-            
+
         _writer.writerows(self.data_table)
-            
+
         _file.close()

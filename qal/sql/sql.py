@@ -3,10 +3,13 @@
     qal.sql.sql holds the class structure representation of SQL
     ***********************************************************
     .. note:: 
-        * The mySQL DDL implementation defaults to using innoDB, since stuff like foreign keys and other very important security features are lacking from myISAM.
-        * All ParameterBase descendants property names are named in a specific way, so that one from that name can discern what types are allowed. For example: sources means that it is a list of ParameterSource.
+        * The mySQL DDL implementation defaults to using innoDB, since stuff like foreign keys and other very important
+        security features are lacking from myISAM.
+        * All ParameterBase descendants property names are named in a specific way, so that one from that name can
+        discern what types are allowed. For example: sources means that it is a list of ParameterSource.
         * Parameter_* means that it is some form of input, Verb_* means that this statement can be executed stand alone.
-        * No parameters can be required in either Verb_* or Parameter_* classes. If they are, the classes cannot be inspected by qal.sql.meta.list_class_properties.
+        * No parameters can be required in either Verb_* or Parameter_* classes. If they are, the classes cannot be
+        inspected by qal.sql.meta.list_class_properties.
 
 
     :warning: Changes and new classes must satisfy both the import/export of data structures and schema generation.
@@ -26,11 +29,6 @@ from qal.sql.utils import add_operator, parenthesise, oracle_add_escape, add_com
     citate, check_not_null, curr_user, db_specific_datatype, curr_datetime, add_comma_rs, oracle_create_auto_increment, \
     handle_temp_table_ref, datatype_to_parameter
 from qal.sql.types import condition_part
-from qal.dataset.flatfile import FlatfileDataset
-from qal.dataset.xpath import XpathDataset
-from qal.dataset.matrix import MatrixDataset
-from qal.dal.types import DB_SQLSERVER
-from qal.common.strings import make_path_absolute
 
 
 class ParameterExpression(ParameterExpressionItem):
@@ -41,18 +39,18 @@ class ParameterExpression(ParameterExpressionItem):
     def __init__(self, _expressionitems=None, _operator=None):
         super(ParameterExpression, self).__init__(_operator)
 
-        if _expressionitems != None:
+        if _expressionitems is not None:
             self.expressionitems = _expressionitems
         else:
             self.expressionitems = SqlList()
 
     def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
-        result = ''
+        result = ""
         # Loop expressions
         for index, item in enumerate(self.expressionitems):
             # Some want || instead of + for concatenation
-            if (_db_type == DB_POSTGRESQL or _db_type == DB_DB2):
+            if _db_type == DB_POSTGRESQL or _db_type == DB_DB2:
                 result += add_operator(index, make_operator(item.operator, True)) + item.as_sql(_db_type)
             else:
                 result += add_operator(index, make_operator(item.operator, False)) + item.as_sql(_db_type)
@@ -65,17 +63,16 @@ class ParameterExpression(ParameterExpressionItem):
 class ParameterString(ParameterExpressionItem):
     """Holds a string parameter/value"""
 
-    string_value = ''
-    escape_character = ''
+    string_value = ""
+    escape_character = ""
 
-    def __init__(self, _string_value='', _operator=None, _escape_character=None):
+    def __init__(self, _string_value="", _operator=None, _escape_character=None):
         super(ParameterString, self).__init__(_operator)
         self.string_value = _string_value
-        if (_escape_character != None):
+        if _escape_character is not None:
             self.escape_character = _escape_character
         else:
-            self.escape_character = ''
-
+            self.escape_character = ""
 
     def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
@@ -87,9 +84,9 @@ class ParameterString(ParameterExpressionItem):
 
 class ParameterNumeric(ParameterExpressionItem):
     """Holds a numeric parameter/value"""
-    numeric_value = ''
+    numeric_value = ""
 
-    def __init__(self, _numeric_value='', _operator=None):
+    def __init__(self, _numeric_value="", _operator=None):
         super(ParameterNumeric, self).__init__(_operator)
         self.numeric_value = _numeric_value
 
@@ -100,7 +97,7 @@ class ParameterNumeric(ParameterExpressionItem):
         try:
             float(self.numeric_value)
         except ValueError:
-            if (str(self.numeric_value).lower() != 'null') and (check_for_param_content(self.numeric_value) == False):
+            if (str(self.numeric_value).lower() != "null") and (check_for_param_content(self.numeric_value) is False):
                 raise Exception("A numeric parameter must be numeric. Value:" + self.numeric_value)
         return str(self.numeric_value)
         # TODO: Check if any flavors allow other decimal signs.
@@ -109,12 +106,11 @@ class ParameterNumeric(ParameterExpressionItem):
 class ParameterParameter(ParameterExpressionItem):
     """Holds a parameter to be used in prepared statements."""
 
-    datatype = ''
+    datatype = ""
 
-    def __init__(self, _datatype='', _operator=None):
+    def __init__(self, _datatype="", _operator=None):
         super(ParameterParameter, self).__init__(_operator)
         self.datatype = _datatype
-
 
     def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
@@ -127,7 +123,7 @@ class ParameterIn(ParameterExpressionItem):
     """Hold an SQL IN-statement"""
     in_values = None
 
-    def __init__(self, _in_values='', _operator=None):
+    def __init__(self, _in_values="", _operator=None):
         super(ParameterIn, self).__init__(_operator)
         self.in_values = _in_values
 
@@ -135,7 +131,7 @@ class ParameterIn(ParameterExpressionItem):
         """Generate SQL for specified database engine"""
 
         # Handle strings separately. Somewhat non-pythonic, but the alternative would be far more complicated.
-        if (type(self.in_values) is ParameterString):
+        if type(self.in_values) is ParameterString:
             return "IN " + parenthesise(self.in_values.string_value)
         else:
             return "IN " + parenthesise(self.in_values.as_sql(_db_type))
@@ -145,121 +141,117 @@ class ParameterDataset(ParameterExpressionItem, ParameterRemotable):
     """Holds a dataset from an external, non-SQL source"""
     data_source = None
 
-
     def __init__(self, _data_source=None):
-
-
-        if (_data_source != None):
+        super(ParameterDataset).__init__()
+        if _data_source is not None:
             self.data_source = _data_source
         else:
             self.data_source = None
-
         self.resource_uuid = None
 
     def dataset_to_sql(self):
         """Generate SQL for specified database engine """
 
         # TODO: Is this used?
-        if (self._dataset.loaded):
+        if self._dataset.loaded:
 
-            _SQL = ''
+            _SQL = ""
 
             print("in dataset_to_sql" + str(self._dataset))
 
             return _SQL
         else:
-            raise Exception('Dataset_To_SQL: Dataset not loaded.');
+            raise Exception("Dataset_To_SQL: Dataset not loaded.")
 
     def _generate_sql(self, _db_type):
-        if (self.data_source):
+        if self.data_source:
 
             """Handle relative filename"""
-            if hasattr(self.data_source, 'filename'):
+            if hasattr(self.data_source, "filename"):
                 self.data_source.filename = self.data_source.filename
                 self.data_source._base_path = self._base_path
 
             self.data_source.load()
             return "(" + self.data_source.as_sql(_db_type) + ")"
         else:
-            raise Exception('ParameterDataset.as_sql : data_source not set.');
+            raise Exception("ParameterDataset.as_sql : data_source not set.")
 
 
 class ParameterIdentifier(ParameterExpressionItem):
     """Holds an identifier(column-, table or other reference)"""
-    identifier = ''
-    prefix = ''
+    identifier = ""
+    prefix = ""
 
-    def __init__(self, _identifier='', _operator=None, _prefix=None):
+    def __init__(self, _identifier="", _operator=None, _prefix=None):
         super(ParameterIdentifier, self).__init__(_operator)
         self.identifier = _identifier
-        if _prefix != None:
+        if _prefix is not None:
             self.prefix = _prefix
         else:
-            self.prefix = ''
-
+            self.prefix = ""
 
     def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
         # Add prefix if set
-        if self.prefix != '':
-            _tmp_prefix = self.prefix + '.'
+        if self.prefix != "":
+            _tmp_prefix = self.prefix + "."
         else:
-            _tmp_prefix = ''
+            _tmp_prefix = ""
         # Add quote if needed
         if _db_type in (DB_POSTGRESQL, DB_DB2, DB_ORACLE):
-            return _tmp_prefix + '"' + str(handle_temp_table_ref(self.identifier, _db_type)) + '"'
+            return _tmp_prefix + "\"" + str(handle_temp_table_ref(self.identifier, _db_type)) + "\""
         else:
             return _tmp_prefix + str(handle_temp_table_ref(self.identifier, _db_type))
 
 
 class ParameterCast(ParameterExpressionItem):
+    # noinspection PyPep8
     """A Cast() converts an expression to a specified datatype.
-    Properties:
-    * expression is a list of expression items(sql_types.expression_item_types()).
-    * datatype is a string containing the datatype(as defined in sql_types.data_types())
+        Properties:
+        * expression is a list of expression items(sql_types.expression_item_types()).
+        * datatype is a string containing the datatype(as defined in sql_types.data_types())
 
-    Example: http://192.168.0.210/mediawiki/index.php/Unified_BPM_DatabaseAbstractionLayer#ParameterCast.28ParameterExpressionItem.29"""
+        Example: http://192.168.0.210/mediawiki/index.php/Unified_BPM_DatabaseAbstractionLayer#ParameterCast.28ParameterExpressionItem.29"""
 
-    expression = ''
-    datatype = ''
+    expression = ""
+    datatype = ""
 
     def make_cast(self, _value):
         """Generate the CAST syntax"""
-        return str('CAST' + parenthesise(_value + ' AS ' + self.datatype))
+        return str("CAST" + parenthesise(_value + " AS " + self.datatype))
 
     def __init__(self, _expression=None, _datatype=None, _operator=None):
         super(ParameterCast, self).__init__(_operator)
-        if _expression != None:
+        if _expression is not None:
             self.expression = _expression
         else:
             self.expression = SqlList(expression_item_types())
 
         self.datatype = _datatype
 
-    def _generate_sql(self, _DB_Type):
+    def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
-        return self.make_cast(self.expression.as_sql(_DB_Type))
+        return self.make_cast(self.expression.as_sql(_db_type))
 
 
 class ParameterFunction(ParameterExpressionItem):
     """Holds an SQL function call"""
     parameters = None
-    name = ''
+    name = ""
 
-    def __init__(self, _parameters=None, _name='', _operator=None):
+    def __init__(self, _parameters=None, _name="", _operator=None):
         super(ParameterFunction, self).__init__(_operator)
 
-        if _parameters != None:
+        if _parameters is not None:
             self.parameters = _parameters
         else:
             self.parameters = SqlList(expression_item_types())
 
         self.name = _name
 
-
     def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
-        result = ''
+        result = ""
         for index, item in enumerate(self.parameters):
             result += add_comma(index, item.as_sql(_db_type))
         return make_function(self.name, result)
@@ -277,7 +269,7 @@ class ParameterWhen(ParameterBase):
 
     def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
-        return 'WHEN ' + self.conditions.as_sql(_db_type) + ' THEN ' + self.result.as_sql(_db_type)
+        return "WHEN " + self.conditions.as_sql(_db_type) + " THEN " + self.result.as_sql(_db_type)
 
 
 class ParameterCase(ParameterExpressionItem):
@@ -288,23 +280,21 @@ class ParameterCase(ParameterExpressionItem):
     def __init__(self, _when_statements=None, _else_statement=None, _operator=None):
         super(ParameterCase, self).__init__(_operator)
 
-        if _when_statements != None:
+        if _when_statements is not None:
             self.when_statements = _when_statements
         else:
             self.when_statements = SqlList(expression_item_types())
 
         self.else_statement = _else_statement
 
-    def _generate_sql(self, _DB_Type):
+    def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
-        result = 'CASE'
+        result = "CASE"
         for item in self.when_statements:
-            result += ' ' + item.as_sql(_DB_Type)
-        if self.else_statement != None:
-            result += ' else_statement ' + self.else_statement.as_sql(_DB_Type)
-        result += ' END'
-        return result
-
+            result += " " + item.as_sql(_db_type)
+        if self.else_statement is not None:
+            result += " else_statement " + self.else_statement.as_sql(_db_type)
+        result += " END"
         return result
 
 
@@ -320,11 +310,11 @@ class ParameterSet(ParameterBase):
 
         # One can either have tabular source data, or an SQL expression 
 
-        if _subsets != None:
+        if _subsets is not None:
             self.subsets = _subsets
         else:
             self.subsets = SqlList(tabular_expression_item_types())
-        if _set_operator != None:
+        if _set_operator is not None:
             self.set_operator = _set_operator
         else:
             self.set_operator = None
@@ -333,9 +323,9 @@ class ParameterSet(ParameterBase):
         """Generate SQL for specified database engine"""
         _sqls = []
         # Loop all expressions into a list. 
-        [_sqls.append(none_as_sql(x, _db_type, '')) for x in self.subsets]
+        [_sqls.append(none_as_sql(x, _db_type, "")) for x in self.subsets]
         # Separate them with operators.
-        return ('\n' + self.set_operator + '\n').join(_sqls)
+        return ("\n" + self.set_operator + "\n").join(_sqls)
 
 
 class ParameterSource(ParameterBase, ParameterRemotable):
@@ -344,20 +334,20 @@ class ParameterSource(ParameterBase, ParameterRemotable):
     expression = None
 
     conditions = None
-    alias = ''
+    alias = ""
     join_type = None
 
-    def __init__(self, _expression=None, _conditions=None, _alias='', _join_type=None):
+    def __init__(self, _expression=None, _conditions=None, _alias="", _join_type=None):
         super(ParameterSource, self).__init__()
 
         # One can either have tabular source data i union:ed sets, a sub select, an SQL identifier or a noSQL data set. 
 
-        if _expression != None:
+        if _expression is not None:
             self.expression = _expression
         else:
             self.expression = SqlList(expression_item_types())
 
-        if _conditions != None:
+        if _conditions is not None:
             self.conditions = _conditions
         else:
             self.conditions = ParameterConditions()
@@ -369,7 +359,7 @@ class ParameterSource(ParameterBase, ParameterRemotable):
 
     def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
-        _sql = none_as_sql(self.expression, _db_type, '')
+        _sql = none_as_sql(self.expression, _db_type, "")
 
         return _sql
 
@@ -396,27 +386,27 @@ class VerbSelect(ParameterExpressionItem, ParameterRemotable):
     top_limit = None
 
     # Internal variables
-    _post_verb = ''
-    _post_sql = ''
+    _post_verb = ""
+    _post_sql = ""
 
     # TODO: Implement GROUP BY and HAVING-support.
-    # GROUP_BY = ''
-    #HAVING = ''
+    # GROUP_BY = ""
+    # HAVING = ""
 
     def __init__(self, _fields=None, _sources=None, _operator=None, _order_by=None):
         super(VerbSelect, self).__init__(_operator)
 
-        if _fields != None:
+        if _fields is not None:
             self.fields = _fields
         else:
             self.fields = SqlList("ParameterIdentifier")
 
-        if _sources != None:
+        if _sources is not None:
             self.sources = _sources
         else:
             self.sources = SqlList("ParameterSource")
 
-        if _order_by != None:
+        if _order_by is not None:
             self.order_by = _order_by
         else:
             self.order_by = SqlList("ParameterExpressionItem")
@@ -426,15 +416,14 @@ class VerbSelect(ParameterExpressionItem, ParameterRemotable):
 
     def add_limit(self, _db_type):
         """Generate SQL for specified database engine for limits on number of rows (TOP/LIMIT/FETCH FIRST)"""
-        if self.top_limit != None and int(self.top_limit) > 0:
-            if (_db_type in [DB_MYSQL, DB_POSTGRESQL]):
-                self._post_sql = 'LIMIT ' + str(int(self.top_limit))
-            elif (_db_type in [DB_DB2]):
-                self._post_sql = 'FETCH FIRST ' + str(int(self.top_limit)) + ' ROWS ONLY '
-                # Oracles' solution is not handled here, but in the as_sql-WHERE handling.
-            elif (_db_type != DB_ORACLE):
-                self._post_verb = 'TOP ' + str(int(self.top_limit)) + ' '
-
+        if self.top_limit is not None and int(self.top_limit) > 0:
+            if _db_type in [DB_MYSQL, DB_POSTGRESQL]:
+                self._post_sql = "LIMIT " + str(int(self.top_limit))
+            elif _db_type in [DB_DB2]:
+                self._post_sql = "FETCH FIRST " + str(int(self.top_limit)) + " ROWS ONLY "
+                # Oracles" solution is not handled here, but in the as_sql-WHERE handling.
+            elif _db_type != DB_ORACLE:
+                self._post_verb = "TOP " + str(int(self.top_limit)) + " "
 
     def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
@@ -443,30 +432,29 @@ class VerbSelect(ParameterExpressionItem, ParameterRemotable):
             self.add_limit(_db_type)
 
         # Add select and its fields
-        result = 'SELECT ' + self._post_verb
-        if (self.fields != None) and (len(self.fields) > 0):
+        result = "SELECT " + self._post_verb
+        if (self.fields is not None) and (len(self.fields) > 0):
             for index, item in enumerate(self.fields):
                 result += add_comma(index, item.as_sql(_db_type))
         else:
-            result += '*'
-
+            result += "*"
 
         # Add FROM
         if len(self.sources) > 0:
-            result += ' FROM '
+            result += " FROM "
             result += self.sources[0].as_sql(_db_type)
-            if self.sources[0].alias != None and self.sources[0].alias != '':
-                if (_db_type != DB_ORACLE):
-                    result += ' AS ' + self.sources[0].alias
+            if self.sources[0].alias is not None and self.sources[0].alias != "":
+                if _db_type != DB_ORACLE:
+                    result += " AS " + self.sources[0].alias
                 else:
-                    result += ' ' + self.sources[0].alias
+                    result += " " + self.sources[0].alias
 
         # DB2 needs a dummy FROM, even if there is no source table. 
-        elif (_db_type == DB_DB2):
-            result += ' FROM sysibm.sysdummy1 '
+        elif _db_type == DB_DB2:
+            result += " FROM sysibm.sysdummy1 "
         # Oracle, too, needs a dummy FROM, even if there is no source table. 
-        elif (_db_type == DB_ORACLE):
-            result += ' FROM dual '
+        elif _db_type == DB_ORACLE:
+            result += " FROM dual "
 
         # Add joins
         if len(self.sources) > 1:
@@ -476,48 +464,49 @@ class VerbSelect(ParameterExpressionItem, ParameterRemotable):
                     """As as_sql is not called, as_sql has to be called explicitly."""
                     item.as_sql(_db_type)
                     if item.join_type:
-                        result += ' ' + item.join_type
-                    result += ' JOIN ' + none_as_sql(item.expression, _db_type,
-                                                     _error='VerbSelect: Joins must contain a statement or a reference to a table.')
-                    result += ' AS ' + error_on_blank(item.alias, 'VerbSelect: Joins must have aliases.')
+                        result += " " + item.join_type
+                    result += " JOIN " + none_as_sql(item.expression, _db_type,
+                                                     _error="VerbSelect: Joins must contain a "
+                                                            "statement or a reference to a table.")
+                    result += " AS " + error_on_blank(item.alias, "VerbSelect: Joins must have aliases.")
                     if item.join_type != "CROSS":
-                        result += ' ON ' + none_as_sql(item.conditions, _db_type,
-                                                       _error='VerbSelect: Joins must have conditions.')
+                        result += " ON " + none_as_sql(item.conditions, _db_type,
+                                                       _error="VerbSelect: Joins must have conditions.")
 
         # Add WHERE 
         if len(self.sources) > 0:
             _num_conds = len(self.sources[0].conditions)
             if _num_conds > 0:
-                result += ' WHERE ' + self.sources[0].conditions.as_sql(_db_type)
+                result += " WHERE " + self.sources[0].conditions.as_sql(_db_type)
 
             # Add Oracles TOP/LIMIT solution
             # TODO: Check out: Would this ever be applicable without sources?
-            if (_db_type == DB_ORACLE):
+            if _db_type == DB_ORACLE:
                 _num_conds = len(self.sources[0].conditions)
                 if _num_conds > 0:
-                    result += ' AND '
+                    result += " AND "
                 else:
-                    result += ' WHERE '
-                #This is a *very* ugly solution, but the only way I could find out.
-                if (self.top_limit > 0):
-                    result += '(ROWNUM < ' + str(int(self.top_limit) + 1) + ')'
+                    result += " WHERE "
+                # This is a *very* ugly solution, but the only way I could find out.
+                if self.top_limit > 0:
+                    result += "(ROWNUM < " + str(int(self.top_limit) + 1) + ")"
 
         if len(self.order_by) > 0:
-            orderresult = ''
+            orderresult = ""
             for currItem in self.order_by:
-                if orderresult == '':
-                    orderresult = ' ORDER BY '
+                if orderresult == "":
+                    orderresult = " ORDER BY "
                 else:
-                    orderresult += ', '
+                    orderresult += ", "
 
                 orderresult += currItem.as_sql(_db_type)
             result += orderresult
 
-        if self._post_sql != '':
+        if self._post_sql != "":
             result += DEFAULT_ROWSEP + self._post_sql
 
-        self._post_sql = ''
-        self._post_verb = ''
+        self._post_sql = ""
+        self._post_verb = ""
 
         return result
 
@@ -532,16 +521,16 @@ class ParameterCondition(ParameterBase):
     """This class holds a condition, that is a comparison (IF A=B)"""
     left = None
     right = None
-    operator = ''
-    and_or = ''
+    operator = ""
+    and_or = ""
 
-    def __init__(self, _left=None, _right=None, _operator='', _and_or=''):
+    def __init__(self, _left=None, _right=None, _operator="", _and_or=""):
         super(ParameterCondition, self).__init__()
-        if _left != None:
+        if _left is not None:
             self.left = _left
         else:
             self.left = SqlList(condition_part())
-        if _right != None:
+        if _right is not None:
             self.right = _right
         else:
             self.right = SqlList(condition_part())
@@ -550,36 +539,39 @@ class ParameterCondition(ParameterBase):
         self.and_or = _and_or
 
     def as_sql(self, _db_type, _index=0):
-        """Generate SQL for specified database engine (index if for handling when it is the first in a list of conditions)"""
-        """Note that the ParameterBase.as_sql is not called, this is because 1) Conditions are in context 2) Needs _index argument"""
+        """Generate SQL for specified database engine
+        (index if for handling when it is the first in a list of conditions)"""
+        """Note that the ParameterBase.as_sql is not called, this is because
+        1) Conditions are in context 2) Needs _index argument"""
         # TODO: Handle ILIKE for PostgreSQL.
-        if (_index != 0):
+        if _index != 0:
             error_on_blank(self.and_or,
-                           'ParameterCondition: Conditions must be separated by a logical operator. "and_or" is not set.')
-            _result = ' ' + self.and_or + ' '
+                           "ParameterCondition: Conditions must be separated by a logical operator. "
+                           "\"and_or\" is not set.")
+            _result = " " + self.and_or + " "
 
         else:
-            _result = ''
+            _result = ""
 
         _result += parenthesise(
-            self.left.as_sql(_db_type) + ' ' + db_specific_operator(self.operator, _db_type) + ' ' + self.right.as_sql(
+            self.left.as_sql(_db_type) + " " + db_specific_operator(self.operator, _db_type) + " " + self.right.as_sql(
                 _db_type))
         return _result
 
 
 class ParameterAssignment(ParameterBase):
-    """This class holds a assignment, that is assign the result of the expression to the right to the identifier on the left."""
+    """This class holds a assignment. The identifier on the left is assigned the result of the expression to the right.
+    """
     left = None
     right = None
 
-
     def __init__(self, _left=None, _right=None):
         super(ParameterAssignment, self).__init__()
-        if _left != None:
+        if _left is not None:
             self.left = _left
         else:
             self.left = None
-        if _right != None:
+        if _right is not None:
             self.right = _right
         else:
             self.right = None
@@ -588,7 +580,7 @@ class ParameterAssignment(ParameterBase):
         """Generate SQL for specified database engine"""
         # TODO: Handle ILIKE for PostgreSQL.
 
-        _result = self.left.as_sql(_db_type) + ' = ' + self.right.as_sql(_db_type)
+        _result = self.left.as_sql(_db_type) + " = " + self.right.as_sql(_db_type)
         return _result
 
 
@@ -598,30 +590,29 @@ class ParameterConditions(SqlList):
     def __init__(self):
         super(ParameterConditions, self).__init__(["ParameterCondition", "ParameterConditions"])
 
-
     def get_first_and_or(self):
         """Return the first and/or to know if it should add its own
-        (If it is the first condition there is no point in adding its or, but rather the parent conditions' operator."""
+        (If it is the first condition there is no point in adding its or, but rather the parent conditions" operator."""
         if (len(self)) > 0:
             _first_item = self[0]
-            if (hasattr(_first_item, "get_first_and_or")):
+            if hasattr(_first_item, "get_first_and_or"):
                 return _first_item.get_first_and_or()
             else:
-                return ' ' + _first_item.and_or + ' '
+                return " " + _first_item.and_or + " "
         else:
-            raise "ParameterConditions: Invalid structure - Cannot get and_or operator from empty list of conditions."
-
+            raise Exception(
+                "ParameterConditions: Invalid structure - Cannot get and_or operator from empty list of conditions.")
 
     def as_sql(self, _db_type, _parent_index=0):
         """Generate SQL for specified database engine"""
-        _result = ''
+        _result = ""
 
         for _index, _item in enumerate(self):
             _result += _item.as_sql(_db_type, _index)
 
         _result = parenthesise(_result)
 
-        if (_parent_index != 0):
+        if _parent_index != 0:
             _result = self.get_first_and_or() + _result
 
         return _result
@@ -630,180 +621,178 @@ class ParameterConditions(SqlList):
 class ParameterField(ParameterBase):
     """Holds a field definition (SELECT _FIELD1 AS _FIELD) """
     expression = None
-    alias = ''
+    alias = ""
 
-    def __init__(self, _expression=None, _alias=''):
+    def __init__(self, _expression=None, _alias=""):
         super(ParameterField, self).__init__()
-        if _expression == None:
+        if _expression is None:
             self.expression = SqlList(expression_item_types())
         else:
             self.expression = _expression
         self.alias = _alias
 
-    def _generate_sql(self, _DB_Type):
+    def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
-        if self.alias != '':
-            return self.expression.as_sql(_DB_Type) + ' AS ' + self.alias
+        if self.alias != "":
+            return self.expression.as_sql(_db_type) + " AS " + self.alias
         else:
-            return self.expression.as_sql(_DB_Type)
+            return self.expression.as_sql(_db_type)
 
 
 class ParameterConstraint(ParameterBase):
     """Hold a key constraint declaration"""
-    name = ''
+    name = ""
     constraint_type = None
     references = None  # First key is considered local in a FK.
     checkconditions = None
 
-    def __init__(self, _name='', _constraint_type=None, _references=None, _checkconditions=None):
+    def __init__(self, _name="", _constraint_type=None, _references=None, _checkconditions=None):
         super(ParameterConstraint, self).__init__()
         self.name = _name
         self.constraint_type = _constraint_type
-        if _references != None:
+        if _references is not None:
             self.references = _references
         else:
             self.references = SqlList()
 
-        if _checkconditions != None:
+        if _checkconditions is not None:
             self.checkconditions = _checkconditions
         else:
             self.checkconditions = SqlList(["ParameterCondition", "ParameterConditions"])
 
-
     def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
-        result = 'CONSTRAINT ' + db_specific_object_reference(self.name, _db_type) + ' ' + self.constraint_type
-        if (self.constraint_type == "CHECK"):
-            result += ' ' + self.checkconditions.as_sql(_db_type)
-        if (self.constraint_type == "FOREIGN KEY"):
-            result += ' ' + parenthesise(self.references[0].as_sql(_db_type)) + ' REFERENCES ' + citate(
+        result = "CONSTRAINT " + db_specific_object_reference(self.name, _db_type) + " " + self.constraint_type
+        if self.constraint_type == "CHECK":
+            result += " " + self.checkconditions.as_sql(_db_type)
+        if self.constraint_type == "FOREIGN KEY":
+            result += " " + parenthesise(self.references[0].as_sql(_db_type)) + " REFERENCES " + citate(
                 self.references[1].identifier, _db_type) + parenthesise(self.references[2].as_sql(_db_type))
-        if (self.constraint_type == "PRIMARY KEY"):
-            result += ' ' + parenthesise(comma_separate(self.references, _db_type))
-        if (self.constraint_type == "UNIQUE"):
-            result += ' ' + parenthesise(comma_separate(self.references, _db_type))
-        if (self.constraint_type == "DEFAULT"):
-            result += ' ' + parenthesise(self.references[0].as_sql(_db_type))
+        if self.constraint_type == "PRIMARY KEY":
+            result += " " + parenthesise(comma_separate(self.references, _db_type))
+        if self.constraint_type == "UNIQUE":
+            result += " " + parenthesise(comma_separate(self.references, _db_type))
+        if self.constraint_type == "DEFAULT":
+            result += " " + parenthesise(self.references[0].as_sql(_db_type))
         return result
 
 
 class VerbCreateIndex(ParameterBase):
     """Holds a statement for creating database indices"""
-    name = ''
+    name = ""
     index_type = None
-    tablename = ''
+    tablename = ""
     columnnames = None
 
-
-    def __init__(self, _name='', _index_type=None, _tablename='', _columnnames=None):
+    def __init__(self, _name="", _index_type=None, _tablename="", _columnnames=None):
         super(VerbCreateIndex, self).__init__()
         self.name = _name
         self.index_type = _index_type
         self.tablename = _tablename
-        if _columnnames != None:
+        if _columnnames is not None:
             self.columnnames = _columnnames
         else:
-            self.columnnames = SqlList('string')
+            self.columnnames = SqlList("string")
 
     def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
         check_not_null("VerbCreateIndex",
                        [[self.name, "name"], [self.index_type, "index_type"], [self.tablename, "tablename"]])
         # Handle DB2s strange deviation #1
-        if (_db_type == DB_DB2 and (self.index_type == "CLUSTERED" or self.index_type == "NONCLUSTERED")):
-            result = 'CREATE INDEX ' + db_specific_object_reference(self.name, _db_type) + chr(13)
+        if _db_type == DB_DB2 and (self.index_type == "CLUSTERED" or self.index_type == "NONCLUSTERED"):
+            result = "CREATE INDEX " + db_specific_object_reference(self.name, _db_type) + chr(13)
         else:
-            result = 'CREATE ' + self.index_type + ' INDEX ' + db_specific_object_reference(self.name, _db_type) + chr(
+            result = "CREATE " + self.index_type + " INDEX " + db_specific_object_reference(self.name, _db_type) + chr(
                 13)
 
-        result += 'ON ' + self.tablename + '('
+        result += "ON " + self.tablename + "("
         for index, item in enumerate(self.columnnames):
             result += add_comma(index, db_specific_object_reference(item, _db_type))
-        result += ')'
+        result += ")"
         # Handle DB2s strange deviation #2
-        if (_db_type == DB_DB2 and self.index_type == "CLUSTERED"):
-            result += chr(13) + 'CLUSTER'
+        if _db_type == DB_DB2 and self.index_type == "CLUSTERED":
+            result += chr(13) + "CLUSTER"
         return result
 
 
 class ParameterColumndefinition(ParameterBase):
     """Holds a physical table column definition (not to confused with ParameterField which is a reference to one) """
-    name = ''
-    datatype = ''
+    name = ""
+    datatype = ""
     notnull = None
-    default = ''
+    default = ""
 
-    def __init__(self, _name='', _datatype='', _notnull=None, _default=''):
+    def __init__(self, _name="", _datatype="", _notnull=None, _default=""):
         super(ParameterColumndefinition, self).__init__()
         self.name = _name
         self.datatype = _datatype
         self.notnull = _notnull
         self.default = _default
 
-
     def _generate_sql(self, _db_type, _mysql_pk=False):
         """Generate SQL for specified database engine"""
-        result = db_specific_object_reference(self.name, _db_type) + ' ' + db_specific_datatype(self.datatype, _db_type)
-        if (_db_type == DB_MYSQL and _mysql_pk == True and self.datatype.lower() == 'serial'):
-            result += ' PRIMARY KEY'
+        result = db_specific_object_reference(self.name, _db_type) + " " + db_specific_datatype(self.datatype, _db_type)
+        if _db_type == DB_MYSQL and _mysql_pk is True and self.datatype.lower() == "serial":
+            result += " PRIMARY KEY"
 
-        if (self.notnull == True and _db_type != DB_ORACLE ):
-            result += ' NOT NULL'
+        # Add Oracle NOT NULL later
+        if self.notnull is True and _db_type != DB_ORACLE:
+            result += " NOT NULL"
 
-        if (self.default != ''):
+        if self.default != "":
 
             tmp_default = self.default
-            tmp_default = tmp_default.replace('::curruser::', curr_user(_db_type))
-            tmp_default = tmp_default.replace('::currdatetime::', curr_datetime(_db_type))
+            tmp_default = tmp_default.replace("::curruser::", curr_user(_db_type))
+            tmp_default = tmp_default.replace("::currdatetime::", curr_datetime(_db_type))
             if _db_type not in (DB_MYSQL, DB_DB2):
-                result += ' DEFAULT ' + parenthesise(tmp_default)
+                result += " DEFAULT " + parenthesise(tmp_default)
             else:
-                result += ' DEFAULT ' + tmp_default
+                result += " DEFAULT " + tmp_default
 
-        if (self.notnull == True and _db_type == DB_ORACLE ):
-            result += ' NOT NULL'
+        if self.notnull is True and _db_type == DB_ORACLE:
+            result += " NOT NULL"
 
-        if (self.notnull == False):
-            result += ' NULL'
+        if not self.notnull:
+            result += " NULL"
 
         return result
 
 
 class ParameterDDL(ParameterBase):
     """Parent class for SQL DDL(Data Definition Language) statement classes"""
-    _post_sql = ''
+    _post_sql = ""
 
+    # noinspection PyUnusedLocal
     def __init__(self, _operator=None):
         super(ParameterDDL, self).__init__()
-        self._post_sql = ''
+        self._post_sql = ""
 
 
 class VerbCreateTable(ParameterDDL):
     """Holds a CREATE TABLE statement"""
-    name = ''
+    name = ""
     columns = None
     constraints = None
     _post_statements = None
 
     def __init__(self, _name=None, _columns=None, _constraints=None):
         super(VerbCreateTable, self).__init__()
-        if _name != None:
+        if _name is not None:
             self.name = _name
         else:
-            self.name = ''
+            self.name = ""
 
-        if _columns != None:
+        if _columns is not None:
             self.columns = _columns
         else:
             self.columns = SqlList("ParameterColumndefinition")
 
-        if _constraints != None:
+        if _constraints is not None:
             self.constraints = _constraints
         else:
             self.constraints = SqlList(["ParameterConstraint", "ParameterConstraints"])
 
         self._post_statements = list()
-
 
     def get_post_statements(self):
         """Return post statements. That is statements run after the main SQL"""
@@ -811,27 +800,26 @@ class VerbCreateTable(ParameterDDL):
 
     def make_columns(self, _db_type):
         """Generate DDL for all columns"""
-        result = ''
+        result = ""
         for index, item in enumerate(self.columns):
-            if (item.datatype.lower() == 'serial'):
-                if (_db_type == DB_ORACLE):
+            if item.datatype.lower() == "serial":
+                if _db_type == DB_ORACLE:
                     self._post_statements.append(oracle_create_auto_increment(self, item))
                 if (_db_type == DB_MYSQL and len(
-                        self.constraints) == 0):  # TODO: This might have to really look for primary key constraints to be safe.
-                    result += add_comma_rs(index, item._generate_sql(_db_type, True), self._row_separator)
+                        self.constraints) == 0):  # TODO: This might have to really look for PK constraints to be safe.
+                    result += add_comma_rs(index, item._generate_sql(_db_type, True), self.row_separator)
                 else:
-                    result += add_comma_rs(index, item.as_sql(_db_type), self._row_separator)
+                    result += add_comma_rs(index, item.as_sql(_db_type), self.row_separator)
             else:
-                result += add_comma_rs(index, item.as_sql(_db_type), self._row_separator)
+                result += add_comma_rs(index, item.as_sql(_db_type), self.row_separator)
         return result
 
     def make_constraints(self, _db_type):
         """Generate SQL for all constraints"""
-        result = ''
+        result = ""
         for index, item in enumerate(self.constraints):
-            result += add_comma_rs(index, item.as_sql(_db_type), self._row_separator)
+            result += add_comma_rs(index, item.as_sql(_db_type), self.row_separator)
         return result
-
 
     def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
@@ -846,18 +834,18 @@ class VerbCreateTable(ParameterDDL):
             else:
                 _result = "CREATE TABLE "
 
-            _result += citate(self.name[1:len(self.name)], _db_type) + " (" + self._row_separator
+            _result += citate(self.name[1:len(self.name)], _db_type) + " (" + self.row_separator
         else:
             _result = "CREATE TABLE "
-            _result += citate(self.name, _db_type) + " (" + self._row_separator
+            _result += citate(self.name, _db_type) + " (" + self.row_separator
 
         _result += self.make_columns(_db_type)
-        if (len(self.constraints) > 0):
-            _result += ',' + self._row_separator + self.make_constraints(_db_type)
-        _result += self._row_separator + ')'
+        if len(self.constraints) > 0:
+            _result += "," + self.row_separator + self.make_constraints(_db_type)
+        _result += self.row_separator + ")"
 
         if _db_type == DB_MYSQL:
-            _result += ' ENGINE=InnoDB'
+            _result += " ENGINE=InnoDB"
 
         return _result
 
@@ -871,27 +859,27 @@ class VerbInsert(ParameterBase):
 
     def __init__(self, _destination_identifier=None, _column_identifiers=None, _select=None):
         super(VerbInsert, self).__init__()
-        if _destination_identifier != None:
+        if _destination_identifier is not None:
             self.destination_identifier = _destination_identifier
         else:
             self.destination_identifier = None
 
-        if _column_identifiers != None:
+        if _column_identifiers is not None:
             self.column_identifiers = _column_identifiers
         else:
             self.column_identifiers = SqlList("ParameterIdentifier")
 
-        if _select != None:
+        if _select is not None:
             self.data = _select
         else:
             self.data = None
 
-    def makeIdentifiers(self, _db_type):
+    def make_identifiers(self, _db_type):
         """Generate SQL for the identifiers"""
-        result = ''
+        result = ""
         for currIndex, currIdent in enumerate(self.column_identifiers):
             if currIndex > 0:
-                result = result + ', '
+                result += ", "
             result = result + currIdent.as_sql(_db_type)
         return result
 
@@ -899,18 +887,18 @@ class VerbInsert(ParameterBase):
         """Generate SQL for specified database engine"""
 
         if len(self.column_identifiers) > 0:
-            result = 'INSERT INTO ' + self.destination_identifier.as_sql(_db_type) + ' (' + self.makeIdentifiers(
-                _db_type) + ')' + DEFAULT_ROWSEP
+            result = "INSERT INTO " + self.destination_identifier.as_sql(_db_type) + " (" + self.make_identifiers(
+                _db_type) + ")" + DEFAULT_ROWSEP
             # Add data and remove parenthesis. Removing them here could certainly be seen as ugly but the reason 
             # is that MySQL cannot handle them. It would break everything else any other way.
             if self.data:
-                tmpSQL = self.data.as_sql(_db_type)
+                tmpsql = self.data.as_sql(_db_type)
                 if isinstance(self.data, ParameterSet):
-                    result = result + tmpSQL
+                    result = result + tmpsql
                 else:
-                    result = result + tmpSQL.lstrip('(').rstrip(')')
+                    result = result + tmpsql.lstrip("(").rstrip(")")
         else:
-            raise Exception('VerbInsert.as_sql: No column_identifiers specified!')
+            raise Exception("VerbInsert.as_sql: No column_identifiers specified!")
 
         return result
 
@@ -924,17 +912,17 @@ class VerbUpdate(ParameterBase):
 
     def __init__(self, _table_identifier=None, _assignments=None, _conditions=None):
         super(VerbUpdate, self).__init__()
-        if _table_identifier != None:
+        if _table_identifier is not None:
             self.table_identifier = _table_identifier
         else:
             self.table_identifier = None
 
-        if _assignments != None:
+        if _assignments is not None:
             self.assignments = _assignments
         else:
             self.assignments = SqlList("ParameterAssignment")
 
-        if _conditions != None:
+        if _conditions is not None:
             self.conditions = _conditions
         else:
             self.conditions = ParameterConditions()
@@ -950,11 +938,11 @@ class VerbUpdate(ParameterBase):
         """Generate SQL for specified database engine"""
 
         if len(self.assignments) > 0:
-            _result = 'UPDATE ' + self.table_identifier.as_sql(_db_type) + DEFAULT_ROWSEP
-            _result += 'SET' + DEFAULT_ROWSEP + self._generate_assignments_sql(_db_type) + DEFAULT_ROWSEP
-            _result += 'WHERE ' + self.conditions.as_sql(_db_type)
+            _result = "UPDATE " + self.table_identifier.as_sql(_db_type) + DEFAULT_ROWSEP
+            _result += "SET" + DEFAULT_ROWSEP + self._generate_assignments_sql(_db_type) + DEFAULT_ROWSEP
+            _result += "WHERE " + self.conditions.as_sql(_db_type)
         else:
-            raise Exception('.as_sql(_db_type) + DEFAULT_ROWSEP.as_sql: No column_identifiers specified!')
+            raise Exception(".as_sql(_db_type) + DEFAULT_ROWSEP.as_sql: No column_identifiers specified!")
 
         return _result
 
@@ -966,94 +954,95 @@ class VerbDropTable(ParameterBase):
        The name of the table to be dropped.
     """
 
-
     def __init__(self, _name=None):
         super(VerbDropTable, self).__init__()
 
-        if _name != None:
+        if _name is not None:
             self.name = _name
         else:
             self.name = None
 
-
     def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
-        return 'DROP TABLE ' + citate(self.name, _db_type)
+        return "DROP TABLE " + citate(self.name, _db_type)
 
 
 class VerbDelete(ParameterBase):
     """This class holds a DELETE statement"""
     sources = None
     """
-       @warning: Important! The first source must have a ParameterIdentifier as expression that specifies the target table.
+       @warning: Important! The first source must have a ParameterIdentifier as expression
+       that specifies the target table.
     """
 
-
+    # noinspection PyUnusedLocal
     def __init__(self, _sources=None, _operator=None):
         super(VerbDelete, self).__init__()
 
-        if _sources != None:
+        if _sources is not None:
             self.sources = _sources
         else:
             self.sources = SqlList("ParameterSource")
 
-
     def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
 
-        result = ''
+        result = ""
         # Add FROM
         if len(self.sources) > 0:
             # Extract target table from expression in first source.
             if (len(self.sources[0].expression) > 0 and
                     isinstance(self.sources[0].expression[0], ParameterIdentifier)):
-                if (_db_type == DB_POSTGRESQL):
-                    result += 'DELETE FROM ' + self.sources[0].expression[0].as_sql(_db_type) + ' ' + self.sources[
+                if _db_type == DB_POSTGRESQL:
+                    result += "DELETE FROM " + self.sources[0].expression[0].as_sql(_db_type) + " " + self.sources[
                         0].alias + DEFAULT_ROWSEP
                 else:
-                    result += 'DELETE ' + self.sources[0].expression[0].as_sql(_db_type) + DEFAULT_ROWSEP
+                    result += "DELETE " + self.sources[0].expression[0].as_sql(_db_type) + DEFAULT_ROWSEP
 
             else:
                 raise Exception("Error from VerbDelete.as_sql: Could not find identifier in first source expression.")
 
-            if (_db_type != DB_POSTGRESQL):
-                result += 'FROM  '
+            if _db_type != DB_POSTGRESQL:
+                result += "FROM  "
                 result += self.sources[0].as_sql(_db_type)
-                if self.sources[0].alias != '':
-                    if (_db_type != DB_ORACLE):
-                        result += ' AS ' + self.sources[0].alias
+                if self.sources[0].alias != "":
+                    if _db_type != DB_ORACLE:
+                        result += " AS " + self.sources[0].alias
                     else:
-                        result += ' ' + self.sources[0].alias
+                        result += " " + self.sources[0].alias
 
         # Add JOINS/USING
         if len(self.sources) > 1:
             for index, item in enumerate(self.sources):
                 if index > 0:
-                    if (_db_type != DB_POSTGRESQL):
-                        result += ' JOIN ' + none_as_sql(item.expression, _db_type,
-                                                         _error='VerbDelete: Joins must contain a statement or a reference to a table.')
+                    if _db_type != DB_POSTGRESQL:
+                        result += " JOIN " + none_as_sql(item.expression, _db_type,
+                                                         _error="VerbDelete: Joins must contain a statement " +
+                                                                "or a reference to a table.")
                     else:
-                        result += ' USING ' + none_as_sql(item.expression, _db_type,
-                                                          _error='VerbDelete(for Postgresql): Joins must contain a statement or a reference to a table.')
-                    result += ' AS ' + error_on_blank(item.alias, 'VerbDelete: Joins must have aliases.')
-                    if (_db_type != DB_POSTGRESQL):
-                        result += ' ON ' + none_as_sql(item.conditions, _db_type,
-                                                       _error='VerbDelete: Joins must have conditions.')
+                        result += " USING " + none_as_sql(item.expression, _db_type,
+                                                          _error="VerbDelete(for Postgresql): Joins must contain "
+                                                                 "a statement or a reference to a table.")
+                    result += " AS " + error_on_blank(item.alias, "VerbDelete: Joins must have aliases.")
+                    if _db_type != DB_POSTGRESQL:
+                        result += " ON " + none_as_sql(item.conditions, _db_type,
+                                                       _error="VerbDelete: Joins must have conditions.")
 
         # Add WHERE 
         if len(self.sources) > 0:
             _num_conds = len(self.sources[0].conditions)
             if (_db_type == DB_POSTGRESQL) and (len(self.sources) > 1):
                 _num_conds += len(self.sources[1].conditions)
-            if (_num_conds > 0):
-                result += ' WHERE '
+            if _num_conds > 0:
+                result += " WHERE "
                 if len(self.sources[0].conditions) > 0:
                     result += self.sources[0].conditions.as_sql(_db_type)
                 if (_db_type == DB_POSTGRESQL) and (len(self.sources) > 1) and (len(self.sources[1].conditions) > 0):
-                    result += ' ' + self.sources[1].conditions.as_sql(_db_type)
+                    result += " " + self.sources[1].conditions.as_sql(_db_type)
                     if len(self.sources) > 2:
                         raise Exception(
-                            'VerbDelete: To be able to generalize functionality, only one join is allowed due to Postgresql proprietary DELETE FROM .. USING syntax.')
+                            "VerbDelete: To be able to generalize functionality, only one join is allowed " +
+                            "due to Postgresql proprietary DELETE FROM .. USING syntax.")
 
         return result
 
@@ -1068,11 +1057,11 @@ class VerbCustom(ParameterDDL):
     """This class holds custom statements (written, not generated) for all platforms.
     This is for when what is currenctly implementet do not suffice"""
 
-    sql_mysql = ''
-    sql_postgresql = ''
-    sql_oracle = ''
-    sql_db2 = ''
-    sql_sqlserver = ''
+    sql_mysql = ""
+    sql_postgresql = ""
+    sql_oracle = ""
+    sql_db2 = ""
+    sql_sqlserver = ""
 
     def _generate_sql(self, _db_type):
         """Return the specified SQLs for each database engine"""
@@ -1080,10 +1069,8 @@ class VerbCustom(ParameterDDL):
 
     def __init__(self):
         super(VerbCustom, self).__init__()
-        self.sql_mysql = ''
-        self.sql_postgresql = ''
-        self.sql_oracle = ''
-        self.sql_db2 = ''
-        self.sql_sqlserver = ''
-    
-        
+        self.sql_mysql = ""
+        self.sql_postgresql = ""
+        self.sql_oracle = ""
+        self.sql_db2 = ""
+        self.sql_sqlserver = ""

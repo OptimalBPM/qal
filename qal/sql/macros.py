@@ -18,8 +18,6 @@ def make_column_definitions(_field_names, _field_types):
     :return: A list of ParameterColumndefinition
     """
     _columns = SqlList()
-    _field_counter = 0
-    _curr_column = None
     for _field_counter in range(0, len(_field_names)):
         _columns.append(
             ParameterColumndefinition(_name=_field_names[_field_counter], _datatype=_field_types[_field_counter]))
@@ -47,13 +45,12 @@ def make_column_identifiers(_field_names):
     """
 
     _columns = SqlList()
-    _field_counter = 0
-    _curr_column = None
     for _field_counter in range(0, len(_field_names)):
         _columns.append(ParameterIdentifier(_identifier=_field_names[_field_counter]))
     return _columns
 
 
+# noinspection PyUnusedLocal
 def make_delete_skeleton(_table_name, _key_fields):
     # TODO: Implement make_delete_skeleton
 
@@ -64,10 +61,14 @@ def make_delete_skeleton(_table_name, _key_fields):
     :return:
     """
     raise Exception("make_delete_skeleton isn't implemented")
+
+    """
+    TODO: Implement this:
     _destination_identifier = ParameterIdentifier(_identifier=_table_name)
 
     _column_identifiers = make_column_identifiers(_key_fields)
     return VerbDelete()
+    """
 
 
 def make_update_skeleton(_table_name):
@@ -103,8 +104,6 @@ def make_insert_sql_with_parameters(_table_name, _field_names, _db_type, _field_
     return _insert.as_sql(_db_type) + _values_sql
 
 
-
-
 def copy_to_table(_dal, _values, _field_names, _field_types, _table_name, _create_table=None, _drop_existing=None):
     """Copy a matrix of data into a table on the resource, return the table name.
 
@@ -118,14 +117,14 @@ def copy_to_table(_dal, _values, _field_names, _field_types, _table_name, _creat
     :return: The name of the destination table.
     """
 
-    if _drop_existing == True:
+    if _drop_existing:
         try:
             _dal.execute(VerbDropTable(_table_name).as_sql(_dal.db_type))
             _dal.commit()
         except Exception as e:
             print("copy_to_table - Ignoring error when dropping the table \"" + _table_name + "\": " + str(e))
 
-    if _create_table == True:
+    if _create_table:
         # Always create temporary table even if it ends up empty.
         _create_table_sql = create_table_skeleton(_table_name, _field_names, _field_types).as_sql(_dal.db_type)
         print("Creating " + _table_name + " table..\n" + _create_table_sql)

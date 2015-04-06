@@ -5,26 +5,21 @@
     :license: BSD, see LICENSE for details.
 """
 import datetime
-
 import unittest
-
 import os
-import uuid
 from uuid import UUID
-from source.qal.common.substitution import Substitution
-
 from getpass import getuser
+
+from source.qal.common.substitution import Substitution
 
 Test_Script_Dir = os.path.dirname(__file__)
 Test_Resource_Dir = os.path.join(Test_Script_Dir, 'resources')
 
-
 subst = Substitution()
 subst.set_identity(0)
 
+
 class Test(unittest.TestCase):
-
-
     def test_1_single_value(self):
         self.assertEqual(0, subst.substitute("::identity::"))
 
@@ -45,6 +40,7 @@ class Test(unittest.TestCase):
         _result = subst.substitute("::uuid::")
         self.assertTrue(isinstance(_result, UUID))
 
+
 if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testDev']
+    # import sys;sys.argv = ['', 'Test.testDev']
     unittest.main()

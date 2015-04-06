@@ -4,10 +4,12 @@ Created on Oct 20, 2014
 @author: Nicklas Boerjesson
 """
 from lxml import etree
+
 from qal.common.substitution import Substitution
 from qal.common.strings import string_to_bool, empty_when_none
 from qal.common.transform import make_transformation_array_from_xml_node, make_transformations_xml_node
 from qal.common.xml_utils import xml_isnone
+
 
 class Mapping(object):
     is_key = None
@@ -21,8 +23,6 @@ class Mapping(object):
     substitution = None
     """An instance of the substitution class. Kept for maintaining things lite incrementors and similar."""
 
-
-
     def __init__(self, _xml_node=None, _substitution=None):
         """
         Constructor
@@ -34,13 +34,11 @@ class Mapping(object):
         else:
             self.substitution = _substitution
 
-        if _xml_node != None:
+        if _xml_node is not None:
             self.load_from_xml_node(_xml_node)
 
-
-
     def load_from_xml_node(self, _xml_node):
-        if _xml_node != None:
+        if _xml_node is not None:
             self.is_key = string_to_bool(xml_isnone(_xml_node.find("is_key")))
             self.src_reference = xml_isnone(_xml_node.find("src_reference"))
             self.src_datatype = xml_isnone(_xml_node.find("src_datatype"))

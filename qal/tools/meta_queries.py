@@ -6,7 +6,6 @@ Created on Oct 3, 2010
 @todo: These SQL:s could be moved into an XML file(VerbCustom).
 The gain is yet somewhat marginal. They should not move in to the database due to versioning.  
 """
-from builtins import classmethod
 
 _table_info_postgresql = "SELECT a.attname AS COLUMN_NAME, t.typname AS DATA_TYPE,\
        CASE WHEN a.attlen > -1 THEN a.attlen  ELSE a.atttypmod END - 4 AS DATA_LENGTH, NOT a.attnotnull AS NULLABLE \
@@ -16,7 +15,7 @@ WHERE c.relname = ':TABLENAME'\
   AND a.attrelid = c.oid\
   AND a.atttypid = t.oid \
 ORDER BY a.attnum;"
-  
+
 _table_info_mysql = "SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE AS NULLABLE, CHARACTER_MAXIMUM_LENGTH AS DATA_LENGTH \
 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA=':DATABASENAME' AND TABLE_NAME = ':TABLENAME'"
 
@@ -39,8 +38,7 @@ WHERE \
 (tbl.name=':TABLENAME') \
 ORDER BY clmns.column_id ASC"
 
-_table_list_mysql_by_database_name =  _table_list_oracle_by_schema = table_list_sqlserver = ""
-
+table_list_sqlserver = ""
 
 _table_list_postgresql_by_database_name = "SELECT  table_name \
 FROM information_schema.tables \
@@ -58,35 +56,45 @@ _table_list_db2_by_schema = "select NAME from sysibm.systables \
 where CREATOR  = ':USER' \
 and type = 'T';"
 
-_table_list_oracle_by_schema = "select table_name from user_tables WHERE TABLESPACE_NAME = ':USER' AND table_name NOT LIKE 'DEF$_%'"
+_table_list_oracle_by_schema = "select table_name from user_tables " \
+                               "WHERE TABLESPACE_NAME = ':USER' AND table_name NOT LIKE 'DEF$_%'"
+
 
 def _table_info_sql(_db_type, _table_name, _database_name):
     """Lists information about a table"""
-    SQL = [_table_info_mysql, _table_info_postgresql, _table_info_oracle, _table_info_db2, _table_info_sqlserver][_db_type]
-    SQL = SQL.replace(":TABLENAME", _table_name)
-    SQL = SQL.replace(":DATABASENAME", _database_name)
-    return SQL
+    _sql = [_table_info_mysql, _table_info_postgresql, _table_info_oracle, _table_info_db2, _table_info_sqlserver][
+        _db_type]
+    _sql = _sql.replace(":TABLENAME", _table_name)
+    _sql = _sql.replace(":DATABASENAME", _database_name)
+    return _sql
+
 
 def _table_list_sql_by_schema(_db_type, _user):
     """List tables in a schema"""
-    if not(_db_type in [2,3]):
-        raise Exception("table_list_sql_by_schema: Only DB2 and Oracle supported currently!") 
-    
-    SQL = [_table_list_mysql_by_database_name, _table_list_postgresql_by_database_name, _table_list_oracle_by_schema, _table_list_db2_by_schema, table_list_sqlserver][_db_type]
-    SQL = SQL.replace(":USER", _user)
-    return SQL
+    if not (_db_type in [2, 3]):
+        raise Exception("table_list_sql_by_schema: Only DB2 and Oracle supported currently!")
+
+    _sql = [_table_list_mysql_by_database_name, _table_list_postgresql_by_database_name, _table_list_oracle_by_schema,
+           _table_list_db2_by_schema, table_list_sqlserver][_db_type]
+    _sql = _sql.replace(":USER", _user)
+    return _sql
+
 
 def _table_list_sql_by_database_name(_db_type, _database):
     """List tables in a specified database"""
-    if not(_db_type in [0,1,3,4]):
-        raise Exception("table_list_sql_by_database_name: Only MySQL, Postgres, DB2 and SQL Server is supported currently!")
-    
-    SQL = [_table_list_mysql_by_database_name, _table_list_postgresql_by_database_name, _table_list_oracle_by_database_name, _table_list_db2_by_database_name, _table_list_mssql_by_database_name][_db_type]
-    SQL = SQL.replace(":DATABASE", _database)
-    return SQL
+    if not (_db_type in [0, 1, 3, 4]):
+        raise Exception(
+            "table_list_sql_by_database_name: Only MySQL, Postgres, DB2 and SQL Server is supported currently!")
+
+    _sql = \
+        [_table_list_mysql_by_database_name, _table_list_postgresql_by_database_name,
+         _table_list_oracle_by_database_name, _table_list_db2_by_database_name,
+         _table_list_mssql_by_database_name][_db_type]
+    _sql = _sql.replace(":DATABASE", _database)
+    return _sql
 
 
-class Meta_Queries(object):
+class MetaQueries(object):
     """The meta queries class collects methods for gathering meta data about a database."""
 
     @staticmethod
@@ -103,8 +111,8 @@ class Meta_Queries(object):
         columns = []
         for row in _rows:
             columns.append(row[0])
-        return columns   
-     
+        return columns
+
     @staticmethod
     def table_list_by_schema(_dal, _schema_name):
         """
@@ -120,7 +128,7 @@ class Meta_Queries(object):
         columns = list()
         for row in rows:
             columns.append(row[0])
-        return columns    
+        return columns
 
     @staticmethod
     def table_list_by_database_name(_dal, _database_name):
@@ -136,7 +144,7 @@ class Meta_Queries(object):
 
         """TODO: Refactor so either MySQL gets connection's name or all else goes by database name(which won't work)"""
         rows = _dal.query(_table_list_sql_by_database_name(_dal.db_type, _database_name))
-        print("SQL:\n"+ _table_list_sql_by_database_name(_dal.db_type, _database_name) + "\n_database_name:" +
+        print("SQL:\n" + _table_list_sql_by_database_name(_dal.db_type, _database_name) + "\n_database_name:" +
               _database_name + "\nrows: \n" + str(rows))
         columns = list()
         for row in rows:
@@ -158,4 +166,3 @@ class Meta_Queries(object):
         for row in rows:
             sequences.append(row[0])
         return sequences    
-        

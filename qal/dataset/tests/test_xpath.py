@@ -7,24 +7,26 @@ Created on Dec 17, 2013
 
 import unittest
 from shutil import copyfile
+import os
+
+from lxml import etree
 
 from qal.dataset.xpath import XpathDataset
 from qal.common.resources import Resources
 from qal.dataset.custom import DATASET_LOGLEVEL_DETAIL
-from lxml import etree
-import os
+
 Test_Script_Dir = os.path.dirname(__file__)
 Test_Resource_Dir = os.path.join(Test_Script_Dir, 'resources')
+
 
 def load_xml(_filename):
     return etree.parse(_filename)
 
 
 class Test(unittest.TestCase):
-    def __init__(self, methodName='runTest'):
+    def __init__(self, _method_name='runTest'):
         self.maxDiff = None
-        super(Test, self).__init__(methodName)
-
+        super(Test, self).__init__(_method_name)
 
     def test_1_apply_new_data(self):
         """This tests checks so that(by the id-attribute):
@@ -35,9 +37,9 @@ class Test(unittest.TestCase):
         4. And that the visual layout of the destination file is kept.
         5. That bk113 is added.
         """
-        
+
         copyfile(Test_Resource_Dir + "/xml_dest_in.xml", Test_Resource_Dir + "/xml_out.xml")
-        
+
         _resources_node = load_xml(Test_Resource_Dir + "/resources.xml").find("resources")
         _resources = Resources(_resources_node=_resources_node)
 
@@ -53,8 +55,8 @@ class Test(unittest.TestCase):
         _destination.apply_new_data(_source.data_table, [2], _insert=True, _update=True, _delete=True)
 
         print(str(_destination.data_table))
-        _destination.save(_save_as = Test_Resource_Dir + "/xml_out.xml")
-        
+        _destination.save(_save_as=Test_Resource_Dir + "/xml_out.xml")
+
         _f_a = open(Test_Resource_Dir + "/xml_cmp.xml", "r")
         _f_b = open(Test_Resource_Dir + "/xml_out.xml", "r")
         _a = _f_a.read()
@@ -62,11 +64,10 @@ class Test(unittest.TestCase):
         _f_a.close()
         _f_b.close()
         self.assertEqual(_a, _b, "test_1_Load_Save: Files are not equal")
-        
-        #TODO: Add more tests. Especially against no existing destination and more complex files, more levels.
-        
+
+        # TODO: Add more tests. Especially against no existing destination and more complex files, more levels.
 
 
 if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
+    # import sys;sys.argv = ['', 'Test.testName']
     unittest.main()
