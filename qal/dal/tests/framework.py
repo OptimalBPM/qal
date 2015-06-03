@@ -6,7 +6,7 @@ Created on Oct 6, 2010
 
 import os
 
-from qal.common.settings import UBPMSettings
+from qal.common.settings import BPMSettings
 from qal.dal.dal import DatabaseAbstractionLayer
 from qal.dal.types import DB_MYSQL, DB_POSTGRESQL, DB_ORACLE, DB_DB2, DB_SQLSERVER
 
@@ -38,9 +38,9 @@ def get_default_dal(_db_type, _db_name=""):
     else:
         raise Exception("GetConnection: Invalid database type.")
 
-    settings = UBPMSettings(cfg_file)
+    settings = BPMSettings(cfg_file)
     if settings.parser.has_section("database"):
-        if _db_name != "":
+        if _db_name:
             settings.parser.set("database", "database_name", _db_name)
         _dal = DatabaseAbstractionLayer(settings)
         _dal.connect_to_db()
