@@ -8,7 +8,7 @@ Contains functionality for reading settings from ini-files
 import configparser
 
 
-class UBPMSettings(object):
+class BPMSettings(object):
     """This class is responsible for reading settings from ini-files and holding them in memory."""
 
     parser = None
@@ -19,10 +19,13 @@ class UBPMSettings(object):
 
     def get(self, _section, _option, _default=None):
         """Get a certain option"""
-        if (_default is not None) and (not self.parser.has_option(_section, _option)):
-            return _default
+        if self.parser.has_section(_section):
+            if not self.parser.has_option(_section, _option):
+                return _default
+            else:
+                return self.parser.get(_section, _option)
         else:
-            return self.parser.get(_section, _option)
+            return _default
 
     def __init__(self, filename):
         """Constructor"""
