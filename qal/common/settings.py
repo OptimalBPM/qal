@@ -12,10 +12,12 @@ class BPMSettings(object):
     """This class is responsible for reading settings from ini-files and holding them in memory."""
 
     parser = None
+    filename = None
 
-    def reload(self, filename):
+    def reload(self, _filename):
         """Reload all information"""
-        self.parser.read(filename)
+        self.parser.read(_filename)
+        self.filename = _filename
 
     def get(self, _section, _option, _default=None):
         """Get a certain option"""
@@ -27,9 +29,10 @@ class BPMSettings(object):
         else:
             return _default
 
-    def __init__(self, filename):
+    def __init__(self, _filename = None):
         """Constructor"""
         self.parser = configparser.ConfigParser()
-        if filename != '':
+        if _filename:
+            self.filename = _filename
             # TODO: Add better config support.
-            self.reload(filename)
+            self.reload(_filename)
