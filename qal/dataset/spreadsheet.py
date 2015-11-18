@@ -255,7 +255,7 @@ class SpreadsheetDataset(CustomDataset):
                     _sheet.write(_curr_row_idx + _y_offset + _header_offset, _curr_col_idx + _x_offset,
                                  label=_data_table[_curr_row_idx][_curr_col_idx])
 
-            _workbook.save(filename=_filename)
+            _workbook.save(filename_or_stream=_filename)
         except IOError as e:
             raise Exception("SpreadsheetDataset.save_xls: Error saving file:" + str(e))
 
