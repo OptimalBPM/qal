@@ -243,7 +243,7 @@ class CustomDataset(object):
 
         _add_field_names = (len(self.data_table) > 0) and (len(self.field_names) == len(self.data_table[0]))
 
-        # TODO: If is i a large number of rows, make an insert into a temp table instead.
+        # TODO: Handle large number of rows, split up result or insert into temp table directly (OB1-175)
         for _row in self.data_table:
             _curr_row = []
             for _col_idx in range(len(_row)):
@@ -251,17 +251,16 @@ class CustomDataset(object):
                 _col = _row[_col_idx]
                 if _col.lower() == '':
                     _str_col = 'NULL'
-                elif _col.lower() in ['true', 'false']:
-                    if _col.lower() == 'true':
-                        if _db_type == DB_POSTGRESQL:
-                            _str_col = 'TRUE'
-                        else:
-                            _str_col = '\'1\''
+                if _col.lower() == 'true':
+                    if _db_type == DB_POSTGRESQL:
+                        _str_col = 'TRUE'
                     else:
-                        if _db_type == DB_POSTGRESQL:
-                            _str_col = 'FALSE'
-                        else:
-                            _str_col = '\'0\''
+                        _str_col = '\'1\''
+                elif _col.lower() == 'false':
+                    if _db_type == DB_POSTGRESQL:
+                        _str_col = 'FALSE'
+                    else:
+                        _str_col = '\'0\''
                 else:
                     _str_col = _col
 
