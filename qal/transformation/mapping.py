@@ -4,10 +4,10 @@ Created on Oct 20, 2014
 @author: Nicklas Boerjesson
 """
 from lxml import etree
+from qal.transformation.substitution import Substitution
 
-from qal.common.substitution import Substitution
 from qal.common.strings import string_to_bool, empty_when_none
-from qal.common.transform import make_transformation_array_from_xml_node, make_transformations_xml_node
+from qal.transformation.transform import make_transformation_array_from_xml_node, make_transformations_xml_node
 from qal.common.xml_utils import xml_isnone
 
 

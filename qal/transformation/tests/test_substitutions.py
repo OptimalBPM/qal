@@ -10,7 +10,7 @@ import os
 from uuid import UUID
 from getpass import getuser
 
-from source.qal.common.substitution import Substitution
+from qal.transformation.substitution import Substitution
 
 Test_Script_Dir = os.path.dirname(__file__)
 Test_Resource_Dir = os.path.join(Test_Script_Dir, 'resources')

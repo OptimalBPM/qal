@@ -9,7 +9,7 @@ import os
 
 from lxml import etree
 
-from qal.common.transform import Trim, Replace, ReplaceRegex, IfEmpty, Cast
+from qal.transformation.transform import Trim, Replace, ReplaceRegex, IfEmpty, Cast
 
 Test_Script_Dir = os.path.dirname(__file__)
 Test_Resource_Dir = os.path.join(Test_Script_Dir, 'resources')
@@ -23,7 +23,7 @@ class TransformTest(unittest.TestCase):
 
     def test_1_trim(self):
         """Test trim transformation input/output and XML encoding/decoding"""
-        _tree = self._parse_xml(Test_Resource_Dir + "/test_merge_two_files.xml")
+        _tree = self._parse_xml(Test_Resource_Dir + "/test_transform.xml")
         _xml_def = _tree.find("mappings/field_mappings/field_mapping/transformations/trim")
         _tested = Trim(_xml_def)
         _result = _tested.transform(' test ')
@@ -32,7 +32,7 @@ class TransformTest(unittest.TestCase):
 
     def test_2_IfEmpty(self):
         """Test trim transformation input/output and XML encoding/decoding"""
-        _tree = self._parse_xml(Test_Resource_Dir + "/test_merge_two_files.xml")
+        _tree = self._parse_xml(Test_Resource_Dir + "/test_transform.xml")
         _xml_def = _tree.find("mappings/field_mappings/field_mapping/transformations/IfEmpty")
         _tested = IfEmpty(_xml_def)
         _result = _tested.transform(None)
@@ -41,7 +41,7 @@ class TransformTest(unittest.TestCase):
 
     def test_3_replace(self):
         """Test replace transformation input/output and XML encoding/decoding"""
-        _tree = self._parse_xml(Test_Resource_Dir + "/test_merge_two_files.xml")
+        _tree = self._parse_xml(Test_Resource_Dir + "/test_transform.xml")
         _xml_def = _tree.find("mappings/field_mappings/field_mapping/transformations/replace")
         _tested = Replace(_xml_def)
         _result = _tested.transform("unneccessary cc")
@@ -50,7 +50,7 @@ class TransformTest(unittest.TestCase):
 
     def test_4_replace_regex(self):
         """Test replace transformation input/output and XML encoding/decoding"""
-        _tree = self._parse_xml(Test_Resource_Dir + "/test_merge_two_files.xml")
+        _tree = self._parse_xml(Test_Resource_Dir + "/test_transform.xml")
         _xml_def = _tree.find("mappings/field_mappings/field_mapping/transformations/replace_regex")
         _tested = ReplaceRegex(_xml_def)
         _result = _tested.transform("MILLER KING")
@@ -59,7 +59,7 @@ class TransformTest(unittest.TestCase):
 
     def test_5_cast(self):
         """Test trim transformation input/output and XML encoding/decoding"""
-        _tree = self._parse_xml(Test_Resource_Dir + "/test_merge_two_files.xml")
+        _tree = self._parse_xml(Test_Resource_Dir + "/test_transform.xml")
         _xml_def = _tree.find(
             "mappings/field_mappings/field_mapping[src_reference='hiredate']/transformations/cast[@order='5']")
         _tested = Cast(_xml_def)
