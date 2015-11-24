@@ -126,7 +126,10 @@ def sql_property_to_type(_property_name, _json_ref = None):
         return ['string']
 
     elif _property_name == 'numeric_value':
-        return ['decimal']
+        if _json_ref:
+            return ['number']
+        else:
+            return ['decimal']
 
     elif _property_name in ['notnull', 'has_header']:
         return ['boolean']
