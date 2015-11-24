@@ -7,6 +7,7 @@ Created on Nov 22, 2015
 import json
 import unittest
 import os
+from jsonschema import Draft4Validator
 
 from qal.sql.json import  SQLJSON
 from qal.common.diff import diff_strings
@@ -55,15 +56,29 @@ class ClassSQLMetaXMLTest(unittest.TestCase):
                 print(_str_sql_out, file=f_out)
                 print(_str_sql_out, file=f_in)
 
-    # TODO: This test generates the SQL schema file. It sou
+    """Test generation of JSON schema and compare with existing"""
     def test_1_generate_json_schema(self):
+
         meta_json = SQLJSON()
         print()
         f = open(os.path.join(Test_Resource_Dir, "../../", "JSON.json"), "w")
+        _schema = meta_json.generate_schema()
 
-        json.dump(meta_json.generate_schema(), f)
+        json.dump(_schema, f)
         f.close()
-        # TODO: Compare to old XML Schema. Or don̈́'t. Only ties down development?
+
+        Draft4Validator.check_schema(_schema)
+
+
+        # Check schema
+
+
+
+        # TODO: This test generates the JSON schema file, it should not change within patch versions, compare with previous
+        # when implementation is done...
+
+
+
 
         # Test XML-to-Structure with a create table verb and back to XML. Should generate an identical file.
 """
