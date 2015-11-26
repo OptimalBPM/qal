@@ -101,12 +101,12 @@ def sql_property_to_type(_property_name, _json_ref = None):
 
     def _handle_json_ref(_name, _types = None):
         if _types:
-            if _json_ref != "":
+            if _json_ref is not None and _json_ref != "" :
                 return [{"$ref": _json_ref + _name}, _types]
             else:
                 return [_name, _types]
         else:
-            if _json_ref != "":
+            if _json_ref is not None and _json_ref != "":
                 return [{"$ref": _json_ref + _name}]
             else:
                 return [_name]
@@ -120,7 +120,7 @@ def sql_property_to_type(_property_name, _json_ref = None):
     if _property_name in ['name', 'default', 'tablename', 'alias', 'default', 'operator',
                           'identifier', 'escape_character', 'string_value', 'operator', 'sql_mysql',
                           'sql_postgresql', 'sql_oracle', 'sql_db2', 'sql_sqlserver', 'row_separator',
-                          'prefix', 'direction', 'operator', 'table', 'parameters', 'delimiter',
+                          'prefix', 'direction', 'operator', 'table', 'delimiter',
                           'filename', 'target_table', 'resource_uuid', 'temporary_table_name',
                           'temporary_table_name_prefix', 'rows_xpath', "quotechar", "skipinitialspace"]:
         return ['string']
