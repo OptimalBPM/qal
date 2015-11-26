@@ -63,7 +63,7 @@ def set_operator():
 
 def join_types():
     """Returns a list of the supported join types"""
-    return ['INNER', 'LEFT OUTER', 'RIGHT OUTER', 'FULL OUTER', 'CROSS']
+    return ['', 'INNER', 'LEFT OUTER', 'RIGHT OUTER', 'FULL OUTER', 'CROSS']
 
 
 def expression_item_types():
