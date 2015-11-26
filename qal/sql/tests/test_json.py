@@ -12,6 +12,7 @@ from jsonschema import Draft4Validator
 from qal.sql.json import  SQLJSON
 from qal.common.diff import diff_strings
 from qal.dal.types import db_types, DB_POSTGRESQL
+from qal.sql.xml import SQLXML
 
 Test_Script_Dir = os.path.dirname(__file__)
 Test_Resource_Dir = os.path.join(Test_Script_Dir, 'resources')
@@ -81,9 +82,10 @@ class ClassSQLMetaXMLTest(unittest.TestCase):
 
 
         # Test XML-to-Structure with a create table verb and back to XML. Should generate an identical file.
-"""
+
     def test_2_create_table(self):
-        meta_xml = SQLXML()
+        meta_JSON = SQLJSON()
+        meta_JSON.debuglevel = 4
 
         # Generate structure from manual create.
         #        from test_sql import gen_simple_create
@@ -93,19 +95,21 @@ class ClassSQLMetaXMLTest(unittest.TestCase):
         #        _str_xml_out = _XMLOut.toxml()
 
         #        meta_xml.debuglevel = 4
-        f = open(Test_Resource_Dir + "/_test_CREATE_TABLE_in.xml", "r")
-        _str_xml_in = f.read()
+        f = open(Test_Resource_Dir + "/_test_CREATE_TABLE_in.json", "r")
+        _str_json_in = f.read()
         f.close()
-        structure = meta_xml.xml_to_sql_structure(_str_xml_in)
-        meta_xml.schema_uri = '../../SQL.xsd'
-        _XMLOut = meta_xml.sql_structure_to_xml(structure)
-        _str_xml_out = _XMLOut.toxml()
+        structure = meta_JSON.json_to_sql_structure(_str_json_in)
+        meta_JSON.schema_uri = '../../SQL.json'
 
-        f_out = open(Test_Resource_Dir + "/_test_CREATE_TABLE_out.xml", "w")
-        print(_str_xml_out, file=f_out)
+
+        _str_json_out = meta_JSON.sql_structure_to_json(structure)
+
+
+        f_out = open(Test_Resource_Dir + "/_test_CREATE_TABLE_out.json", "w")
+        print(_str_json_out, file=f_out)
         f_out.close()
 
-        self.assertEqual(_str_xml_in, _str_xml_out)
+        self.assertEqual(_str_json_in, _str_json_out)
 
         #
 
@@ -113,7 +117,7 @@ class ClassSQLMetaXMLTest(unittest.TestCase):
     # self.assertEqual(_str_xml_in,_str_xml_out)
 
     # sql_for_all_databases(_XMLOut)
-
+"""
     # Test XML-to-Structure with a create table verb and back to XML. Should generate an identical file.
     def test_3_select(self):
         meta_xml = SQLXML()

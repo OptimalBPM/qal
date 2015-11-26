@@ -101,12 +101,12 @@ def sql_property_to_type(_property_name, _json_ref = None):
 
     def _handle_json_ref(_name, _types = None):
         if _types:
-            if _json_ref:
+            if _json_ref != "":
                 return [{"$ref": _json_ref + _name}, _types]
             else:
                 return [_name, _types]
         else:
-            if _json_ref:
+            if _json_ref != "":
                 return [{"$ref": _json_ref + _name}]
             else:
                 return [_name]
@@ -126,7 +126,7 @@ def sql_property_to_type(_property_name, _json_ref = None):
         return ['string']
 
     elif _property_name == 'numeric_value':
-        if _json_ref:
+        if _json_ref is not None:
             return ['number']
         else:
             return ['decimal']

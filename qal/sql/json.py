@@ -5,8 +5,10 @@ Created on Nov 22, 2012
 
 """
 from csv import list_dialects
+import json
+import string
 
-from qal.sql.meta import list_class_properties, list_parameter_classes, list_verb_classes
+from qal.sql.meta import list_class_properties, list_parameter_classes, list_verb_classes, find_class
 from qal.sql.types import sql_property_to_type, and_or, \
     constraint_types, index_types, verbs, expression_item_types, \
     condition_part, set_operator, tabular_expression_item_types, data_source_types
@@ -27,6 +29,34 @@ class SQLJSON():
     """The resources"""
     _resources = None
 
+    # Debugging
+    debuglevel = 2
+    nestinglevel = 0
+    def __init__(self):
+        """
+        Constructor
+        """
+        self.debuglevel = 2
+        self.nestinglevel = 0
+
+    def _print_nestinglevel(self, _value):
+        """Prints the current nesting level. Not thread safe."""
+        self._debug_print(_value + ' level: ' + str(self.nestinglevel), 4)
+
+
+    def _get_up(self, _value):
+        """Gets up one nesting level. Not thread safe."""
+        self.nestinglevel -= 1
+        self._print_nestinglevel("Leaving " + _value)
+
+    def _go_down(self, _value):
+        """Gets down one nesting level. Not thread safe."""
+        self.nestinglevel += 1
+        self._print_nestinglevel("Entering " + _value)
+    def _debug_print(self, _value, _debuglevel=3):
+        """Prints a debug message if the debugging level is sufficient."""
+        if self.debuglevel >= _debuglevel:
+            print(_value)
     def _child_array_of(self, _types):
         if len(_types) > 1:
             return {
@@ -125,3 +155,175 @@ class SQLJSON():
                 "properties": self._add_child_property(_curr_class)}})
 
         return _result
+
+    def _list_to_dict(self, _list):
+        _result = []
+        for _curr_item in _list:
+            _result.append(self._object_to_dict(_curr_item))
+
+        return _result
+
+
+
+    def _object_to_dict(self, _object):
+        if _object is not None and _object != "":
+            self._debug_print("_object_to_dict: Encoding " + _object.__class__.__name__)
+
+            _content = None
+
+            if hasattr(_object, "__dict__"):
+                _content = {}
+                for _curr_property_name, _curr_property in sorted(_object.__dict__.items()):
+                    if not _curr_property_name.lower() in ['row_separator'] and \
+                            not hasattr(_curr_property, '__call__') and _curr_property_name[0:1] != '_':
+
+                        # Property is a list
+                        if isinstance(_curr_property, list):
+                            _content[_curr_property_name] = self._list_to_dict(_curr_property)
+                        elif hasattr(_curr_property, 'as_sql'):
+                            _content[_curr_property_name] = self._object_to_dict(_curr_property)
+                        else:
+                            _curr_type = sql_property_to_type(_curr_property_name,_json_ref="")
+                            if str(_curr_property).isnumeric() and len(_curr_type) > 1:
+                                _content[_curr_property_name] = _curr_type[1][_curr_property]
+                            else:
+                                _content[_curr_property_name] = str(_curr_property) # Do something about lowercase (_curr_type == "boolean"))
+
+            elif isinstance(_object, list):
+
+                _content = self._xml_encode_list(_document, _object_node, _object)
+            else:
+                _content = str(_object)
+
+            return {_object.__class__.__name__: _content}
+
+
+    def sql_structure_to_json(self, _structure):
+        """Translates an SQL structure into JSON"""
+
+        # Recurse structure
+        _json = self._object_to_dict(_structure)
+
+        return json.dumps({"statement": _json})
+
+    def json_get_allowed_value(_value, _type):
+        """Check if a value is allowed in a certain XML node"""
+
+
+        if _value in _type[1] or _value == "":
+            return _value
+        # Check for correct string format.
+        elif _value[0:8].lower() == "varchar(" and _value[8:len(value) - 1].isnumeric() and _value[len(value) - 1] == ")":
+            return value
+        else:
+            raise Exception("json_get_allowed_value: " + str(_value) + " is not a valid value in a " + _type[0])
+
+    def _parse_array_dict(self, _list, _parent_obj):
+        self._go_down("_parse_array_dict")
+        self._debug_print("_parse_array_dict: Parsing list")
+
+        # Loop nodes and parse them.
+
+        _result = []
+        for _curr_item in _list:
+            for _curr_key, _curr_value in _curr_item.items():
+                _new_item = self._parse_class_dict(_curr_key, _curr_value, _parent_obj)
+            _result.append(_new_item)
+
+        self._get_up("_parse_array_dict")
+        return _result
+
+    def _parse_class_dict(self, _classname, _dict, _parent_obj):
+        self._go_down("_parse_class_json")
+
+        self._debug_print("_parse_class_json: Parsing " + _classname)
+
+
+        # Check for base typesError in VerbCreateIndex, name is not set.
+        if _classname.lower() in ['str', 'int', 'float', 'datetime']:
+            return str(_dict[_classname])
+
+            # Find and instatiate the actual class.
+        _obj, _obj_name = find_class(_classname)
+
+        if hasattr(_obj, 'as_sql'):
+            _obj._parent = _parent_obj
+            _obj._base_path = self.base_path
+            self._debug_print(
+                "_parse_class_json: Found matching Parameter class for " + _classname + " : " + _obj_name)
+
+        elif isinstance(_obj, list):
+            # If this is a list, parse it and return.
+            self._debug_print("_parse_class_json: Found matching list class for " + _classname + " : " + _obj_name)
+            return {_classname : self._parse_array_dict(_dict, _obj)}
+        else:
+            raise Exception("_parse_class_json: Could not find matching class : " + _obj_name)
+
+        # Loop the object's properties
+        for _curr_item_key, _curr_obj in _obj.__dict__.items():
+
+            if _curr_item_key != 'row_separator':
+                if _curr_item_key in _dict:
+                    _curr_value = _dict[_curr_item_key]
+                    self._debug_print("_parse_class_json: Parsing property " + _curr_item_key)
+
+                    if isinstance(_curr_obj, list):
+                        _obj.__dict__[_curr_item_key] = self._parse_array_dict(_curr_value, _obj)
+                    else:
+                        # Match the property to a type.
+                        _curr_type = sql_property_to_type(_curr_item_key, _json_ref="")
+                        if _curr_type[0].lower() in ['string', 'datatypes', 'boolean','integer', 'float', 'number']:
+                            _obj.__dict__[_curr_item_key] = _curr_value
+                        elif _curr_type[0:5] == 'verb_' or _curr_type[0:10] == 'parameter_':
+                            raise Exception(
+                                "_parse_class_xml_node: Strange VERB/PARAMETER happened parsing.. parent: " +
+                                _parent.__class__.__name__ + "Class: " + _classname + " Currtype: " + _curr_type)
+
+                        elif len(_curr_type) > 1 and type(_curr_type[1]) == list:
+                            if isinstance(_curr_value, dict):
+                                _obj.__dict__[_curr_item_key] = self._parse_class_dict(_curr_item_key, _curr_value,
+                                                                                       _curr_obj)
+                            else:
+                                # Base types doesn't have any children.
+                                _obj.__dict__[_curr_item_key] = _curr_value
+
+                        else:
+                            _obj.__dict__[_curr_item_key] = self._parse_class_dict(_curr_type[0], _curr_value, _curr_obj)
+
+        if self._resources and hasattr(_obj,
+                                       'resource_uuid') and _obj.resource_uuid is not None and _obj.resource_uuid != '':
+            _obj._resource = self._resources.get_resource(_obj.resource_uuid)
+            self._debug_print("_parse_class_dict: Added resource_uuid for " + _obj_name + ": " + _obj.resource_uuid,
+                              1)
+
+        self._get_up("_parse_class_dict")
+        return _obj
+
+
+    def json_to_sql_structure(self, _json, _base_path = None):
+        """Translates an XML file into a class structure"""
+        _dict = json.loads(_json)
+
+
+        if _base_path:
+            self.base_path = os.path.dirname(_base_path)
+
+
+        if "resources" in _dict:
+            #_resources = _dict['resources']
+
+            # Send XML here, since resources now uses lxml
+
+            # self._resources = Resources(_resources_xml=_resources_node.toxml(), _base_path=_base_path)
+            self._resources = None
+
+        if "statement" in _dict:
+
+            # There is always just one top verb
+            for _curr_key, _curr_value in _dict["statement"].items():
+                if _curr_key in verbs():
+                    _result = self._parse_class_dict(_curr_key, _curr_value, None)
+
+            return _result
+        else:
+            raise Exception("json_to_sql_structure: No \"statement\"-attribute found.")
