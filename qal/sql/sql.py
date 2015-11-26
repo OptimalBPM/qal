@@ -306,7 +306,7 @@ class ParameterSet(ParameterBase):
     set_operator = None
 
     def __init__(self, _subsets=None, _set_operator=None):
-        super(ParameterBase, self).__init__()
+        super(ParameterSet, self).__init__()
 
         # One can either have tabular source data, or an SQL expression 
 
