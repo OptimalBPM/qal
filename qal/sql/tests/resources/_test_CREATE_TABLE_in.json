@@ -1,48 +1,45 @@
 {
   "statement": {
     "VerbCreateTable": {
+      "columns": [
+        {
+          "ParameterColumndefinition": {
+            "name": "Table1ID",
+            "notnull": "True",
+            "default": "",
+            "datatype": "serial"
+          }
+        },
+        {
+          "ParameterColumndefinition": {
+            "name": "Table1Name",
+            "notnull": "False",
+            "default": "",
+            "datatype": "VARCHAR(400)"
+          }
+        },
+        {
+          "ParameterColumndefinition": {
+            "name": "Table1Changed",
+            "notnull": "False",
+            "default": "::currdatetime::",
+            "datatype": "timestamp"
+          }
+        }
+      ],
+      "name": "Table1",
       "constraints": [
         {
           "ParameterConstraint": {
-            "constraint_type": "PRIMARY KEY",
-            "checkconditions": [],
             "name": "PK_Table1_Table1ID",
-            "references": [
-              {
-                "ParameterIdentifier": {
-                  "operator": "C",
-                  "prefix": "",
-                  "identifier": "Table1ID"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "ParameterConstraint": {
-            "constraint_type": "FOREIGN KEY",
             "checkconditions": [],
-            "name": "FK_Table1_Table1ID_Table2_Table2ID",
+            "constraint_type": "PRIMARY KEY",
             "references": [
               {
                 "ParameterIdentifier": {
                   "operator": "C",
-                  "prefix": "",
-                  "identifier": "Table1ID"
-                }
-              },
-              {
-                "ParameterIdentifier": {
-                  "operator": "C",
-                  "prefix": "",
-                  "identifier": "Table2"
-                }
-              },
-              {
-                "ParameterIdentifier": {
-                  "operator": "C",
-                  "prefix": "",
-                  "identifier": "Table2ID"
+                  "identifier": "Table1ID",
+                  "prefix": ""
                 }
               }
             ]
@@ -50,7 +47,37 @@
         },
         {
           "ParameterConstraint": {
-            "constraint_type": "CHECK",
+            "name": "FK_Table1_Table1ID_Table2_Table2ID",
+            "checkconditions": [],
+            "constraint_type": "FOREIGN KEY",
+            "references": [
+              {
+                "ParameterIdentifier": {
+                  "operator": "C",
+                  "identifier": "Table1ID",
+                  "prefix": ""
+                }
+              },
+              {
+                "ParameterIdentifier": {
+                  "operator": "C",
+                  "identifier": "Table2",
+                  "prefix": ""
+                }
+              },
+              {
+                "ParameterIdentifier": {
+                  "operator": "C",
+                  "identifier": "Table2ID",
+                  "prefix": ""
+                }
+              }
+            ]
+          }
+        },
+        {
+          "ParameterConstraint": {
+            "name": "CK_Table1_Name",
             "checkconditions": [
               {
                 "ParameterCondition": {
@@ -63,7 +90,6 @@
                       }
                     }
                   ],
-                  "and_or": "AND",
                   "right": [
                     {
                       "ParameterNumeric": {
@@ -71,7 +97,8 @@
                         "operator": "+"
                       }
                     }
-                  ]
+                  ],
+                  "and_or": "AND"
                 }
               },
               {
@@ -81,31 +108,31 @@
                     {
                       "ParameterIdentifier": {
                         "operator": "C",
-                        "prefix": "T1",
-                        "identifier": "firstname"
+                        "identifier": "firstname",
+                        "prefix": "T1"
                       }
                     }
                   ],
-                  "and_or": "AND",
                   "right": [
                     {
                       "ParameterString": {
-                        "operator": "+",
                         "escape_character": "",
-                        "string_value": "%icklas"
+                        "string_value": "%icklas",
+                        "operator": "+"
                       }
                     }
-                  ]
+                  ],
+                  "and_or": "AND"
                 }
               }
             ],
-            "name": "CK_Table1_Name",
+            "constraint_type": "CHECK",
             "references": [
               {
                 "ParameterIdentifier": {
                   "operator": "C",
-                  "prefix": "",
-                  "identifier": "Table1ID"
+                  "identifier": "Table1ID",
+                  "prefix": ""
                 }
               }
             ]
@@ -113,48 +140,21 @@
         },
         {
           "ParameterConstraint": {
-            "constraint_type": "UNIQUE",
-            "checkconditions": [],
             "name": "UQ_Table1_Name",
+            "checkconditions": [],
+            "constraint_type": "UNIQUE",
             "references": [
               {
                 "ParameterIdentifier": {
                   "operator": "C",
-                  "prefix": "",
-                  "identifier": "Table1ID"
+                  "identifier": "Table1ID",
+                  "prefix": ""
                 }
               }
             ]
           }
         }
-      ],
-      "columns": [
-        {
-          "ParameterColumndefinition": {
-            "notnull": "True",
-            "name": "Table1ID",
-            "default": "",
-            "datatype": "serial"
-          }
-        },
-        {
-          "ParameterColumndefinition": {
-            "notnull": "False",
-            "name": "Table1Name",
-            "default": "",
-            "datatype": "varchar(400)"
-          }
-        },
-        {
-          "ParameterColumndefinition": {
-            "notnull": "False",
-            "name": "Table1Changed",
-            "default": "::currdatetime::",
-            "datatype": "timestamp"
-          }
-        }
-      ],
-      "name": "Table1"
+      ]
     }
   }
 }
