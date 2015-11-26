@@ -175,22 +175,24 @@ class SQLJSON():
 
             if hasattr(_object, "__dict__"):
                 _content = {}
-                for _curr_property_name, _curr_property in sorted(_object.__dict__.items()):
+                for _curr_property_name, _curr_property_value in sorted(_object.__dict__.items()):
                     if not _curr_property_name.lower() in ['row_separator'] and \
-                            not hasattr(_curr_property, '__call__') and _curr_property_name[0:1] != '_':
+                            not hasattr(_curr_property_value, '__call__') and _curr_property_name[0:1] != '_':
 
                         # Property is a list
-                        if isinstance(_curr_property, list):
-                            _content[_curr_property_name] = self._list_to_dict(_curr_property)
-                        elif hasattr(_curr_property, 'as_sql'):
-                            _content[_curr_property_name] = self._object_to_dict(_curr_property)
+                        if isinstance(_curr_property_value, list):
+                            _content[_curr_property_name] = self._list_to_dict(_curr_property_value)
+                        elif hasattr(_curr_property_value, 'as_sql'):
+                            _content[_curr_property_name] = self._object_to_dict(_curr_property_value)
                         else:
                             _curr_type = sql_property_to_type(_curr_property_name,_json_ref="")
-                            if str(_curr_property).isnumeric() and len(_curr_type) > 1:
-                                _content[_curr_property_name] = _curr_type[1][_curr_property]
+                            if str(_curr_property_value).isnumeric() and len(_curr_type) > 1:
+                                _content[_curr_property_name] = _curr_type[1][_curr_property_value]
                             else:
-                                _content[_curr_property_name] = str(_curr_property) # Do something about lowercase (_curr_type == "boolean"))
-
+                                if _curr_property_value is not None:
+                                    _content[_curr_property_name] = str(_curr_property_value) # Do something about lowercase (_curr_type == "boolean"))
+                                else:
+                                    _content[_curr_property_name] = None
             elif isinstance(_object, list):
 
                 _content = self._xml_encode_list(_document, _object_node, _object)
