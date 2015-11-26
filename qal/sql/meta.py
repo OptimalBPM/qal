@@ -33,20 +33,21 @@ def list_verb_classes():
     return result
 
 
-def list_class_properties(_class_name):
+def list_class_properties(_class_name, _result = None):
     """List properties for the class specified in _class_name"""
     _class_name = _class_name.rpartition(".")[2]
-    result = list()
+    if _result is None:
+        _result = list()
     if _class_name in globals():
         for k in globals()[_class_name].__dict__.items():
-            if not hasattr(k[1], '__call__') and k[0][0:1] != '_':
-                result.append(k[0])
+            if not hasattr(k[1], '__call__') and k[0][0:1] != '_' and k[0] not in _result:
+                _result.append(k[0])
         _mro_length = len(globals()[_class_name]().__class__.__mro__)
         if _mro_length > 2:
             for _mro_idx in range(1, _mro_length - 1):
-                result.extend(list_class_properties(globals()[_class_name]().__class__.__mro__[_mro_idx].__name__))
+                list_class_properties(globals()[_class_name]().__class__.__mro__[_mro_idx].__name__, _result)
 
-    return result
+    return _result
 
 
 def find_class(_name, _raise_error=True):
