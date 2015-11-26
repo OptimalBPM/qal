@@ -149,7 +149,7 @@ def sql_property_to_type(_property_name, _json_ref = None):
         return _handle_json_ref('set_operator', set_operator())
 
     elif _property_name == 'join_type':
-        return _handle_json_ref('join_type', join_types())
+        return _handle_json_ref('join_types', join_types())
 
     elif _property_name == 'data':
         return _handle_json_ref('tabular_expression_item', tabular_expression_item_types())

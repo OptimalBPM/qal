@@ -12,7 +12,7 @@ import os
 from qal.sql.meta import list_class_properties, list_parameter_classes, list_verb_classes, find_class
 from qal.sql.types import sql_property_to_type, and_or, \
     constraint_types, index_types, verbs, expression_item_types, \
-    condition_part, set_operator, tabular_expression_item_types, data_source_types
+    condition_part, set_operator, tabular_expression_item_types, data_source_types, in_types, join_types
 from qal.dal.types import db_types
 from qal.common.xml_utils import XMLTranslation, xml_base_type_value, find_child_node, xml_get_text, \
     xml_set_cdata, xml_get_numeric, xml_get_boolean, xml_get_allowed_value, xml_find_non_text_child
@@ -100,17 +100,21 @@ class SQLXML(XMLTranslation):
                                            "(integer|string|string(\(.*\))|serial|timestamp)")
         self._add_child_string_restriction(_document, _parent_node, "db_types", db_types())
         self._add_child_string_restriction(_document, _parent_node, "and_or", and_or())
+        self._add_child_string_restriction(_document, _parent_node, "in_types", in_types())
+
         self._add_child_string_restriction(_document, _parent_node, "index_types", index_types())
         self._add_child_string_restriction(_document, _parent_node, "constraint_types", constraint_types())
         self._add_child_string_restriction(_document, _parent_node, "set_operator", set_operator())
-        self._add_child_string_restriction(_document, _parent_node, "data_source", data_source_types())
+        self._add_child_string_restriction(_document, _parent_node, "data_source_types", data_source_types())
         self._add_child_string_restriction(_document, _parent_node, "csv_dialects", list_dialects())
+        self._add_child_string_restriction(_document, _parent_node, "join_types", join_types())
 
         self._add_child_type_restriction(_document, _parent_node, "statement", verbs())
         self._add_child_type_restriction(_document, _parent_node, "condition_part", condition_part())
         self._add_child_type_restriction(_document, _parent_node, "tabular_expression_item",
                                          tabular_expression_item_types())
 
+        self._add_child_array_of(_document, _parent_node, 'Array_string', ['Array_string'])
         self._add_child_array_of(_document, _parent_node, 'Array_ParameterString', ['ParameterString'])
         self._add_child_array_of(_document, _parent_node, 'Array_ParameterConstraint', ['ParameterConstraint'])
         self._add_child_array_of(_document, _parent_node, 'Array_ParameterColumndefinition',
@@ -126,7 +130,7 @@ class SQLXML(XMLTranslation):
         self._add_child_array_of(_document, _parent_node, 'Array_expression_item', expression_item_types())
         self._add_child_array_of(_document, _parent_node, 'Array_tabular_expression_item',
                                  tabular_expression_item_types())
-        self._add_child_array_of(_document, _parent_node, 'Array_list', '*')
+        self._add_child_array_of(_document, _parent_node, 'Array_list', '')
 
     def _add_child_property_node(self, _document, _parent_node, _property_name):
         _curr_node = _document.createElementNS(self.namespace, self.prefix_schema + ":element")
@@ -356,7 +360,7 @@ class SQLXML(XMLTranslation):
         _doc.encoding = self.encoding
         # Create the root element "statement".
         _statement = _doc.createElement(self.prefix_own + ":statement")
-        _statement.setAttribute("xmlns:" + self.prefix_xml, 'http://www.w3.org/2001/XMLSchema')
+        _statement.setAttribute("xmlns:" + self.prefix_xml, 'http://www.w3.org/2001/XMLSchema-instance')
         _statement.setAttribute(self.prefix_xml + ":schemaLocation", self.namespace + ' ' + self.schema_uri)
         _statement.setAttribute("xmlns:" + self.prefix_own, self.namespace)
         _doc.appendChild(_statement)
