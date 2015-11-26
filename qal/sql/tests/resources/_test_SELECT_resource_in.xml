@@ -1,4 +1,4 @@
-<sql:statement xmlns:sql="http://www.optimalbpm.se/XMLschema/DAL/SQL" xmlns:xsi="http://www.w3.org/2001/XMLSchema" xsi:schemaLocation="http://www.optimalbpm.se/XMLschema/DAL/SQL ../../dal/SQL.xsd">
+<sql:statement xmlns:sql="http://www.optimalbpm.se/XMLschema/DAL/SQL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.optimalbpm.se/XMLschema/DAL/SQL ../../dal/SQL.xsd">
 
 	<sql:VerbSelect>
 		<sql:order_by>
