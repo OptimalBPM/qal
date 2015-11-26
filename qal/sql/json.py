@@ -17,7 +17,7 @@ from qal.dal.types import db_types
 
 class SQLJSON():
     """
-    This class converts XML into a class structure(declare in SQL.py) that holds the statements.
+    This class converts the SQL structure(see SQL.py) into a JSON-compatible dict and back.
     """
 
     """Encoding of the document"""
@@ -198,13 +198,13 @@ class SQLJSON():
             return {_object.__class__.__name__: _content}
 
 
-    def sql_structure_to_json(self, _structure):
+    def sql_structure_to_dict(self, _structure):
         """Translates an SQL structure into JSON"""
 
         # Recurse structure
         _json = self._object_to_dict(_structure)
 
-        return json.dumps({"statement": _json})
+        return {"statement": _json}
 
     def json_get_allowed_value(_value, _type):
         """Check if a value is allowed in a certain XML node"""
@@ -300,9 +300,9 @@ class SQLJSON():
         return _obj
 
 
-    def json_to_sql_structure(self, _json, _base_path = None):
+    def dict_to_sql_structure(self, _dict, _base_path = None):
         """Translates an XML file into a class structure"""
-        _dict = json.loads(_json)
+
 
 
         if _base_path:

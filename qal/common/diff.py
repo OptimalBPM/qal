@@ -170,3 +170,83 @@ def diff_to_text(_missing_left, _missing_right, _different):
     raise Exception("diff_to_text is not implemented")
 
 
+"""
+A dictionary difference calculator
+Originally posted as:
+http://stackoverflow.com/questions/1165352/fast-comparison-between-two-python-dictionary/1165552#1165552
+"""
+
+
+class DictDiffer(object):
+    """
+    Calculate the difference between two dictionaries as:
+    (1) items added
+    (2) items removed
+    (3) keys same in both but changed values
+    (4) keys same in both and unchanged values
+
+    """
+
+    def __init__(self, current_dict, past_dict):
+        """
+        Compares two dicts
+
+        :param current_dict: The correct dict
+        :param past_dict: The old dict
+
+        """
+
+        self.current_dict, self.past_dict = current_dict, past_dict
+        self.current_keys, self.past_keys = [
+            set(d.keys()) for d in (current_dict, past_dict)
+        ]
+        self.intersect = self.current_keys.intersection(self.past_keys)
+
+    def added(self):
+        """
+        A list of added items
+
+        """
+        return self.current_keys - self.intersect
+
+    def removed(self):
+        """
+        Returns a list of removed items
+
+        """
+        return self.past_keys - self.intersect
+
+    def changed(self):
+        """
+        Returns a list of changed items
+
+        """
+        return set(o for o in self.intersect
+                   if self.past_dict[o] != self.current_dict[o])
+
+    def unchanged(self):
+        """
+        Returns a list of unchanged items
+
+        """
+        return set(o for o in self.intersect
+                   if self.past_dict[o] == self.current_dict[o])
+
+    @staticmethod
+    def compare_documents(_left, _right):
+        # TODO: This must probably be using field xpaths or something. JSON XPaths might be useful
+        # The problem is if a field is in a list of objects. Then fieldId will not be unique in the list of objects.
+        # How about always using xpaths for a change? The problem is fieldIds in lists.
+        pass
+        _changes = []
+        _differ = DictDiffer(_left, _right)
+        for _property in _differ.added():
+            _changes.append({"propertyId": _property, "before": None, "after": _right[_property]})
+
+        for _property in _differ.removed():
+            _changes.append({"propertyId": _property, "before": _left[_property], "after": None})
+
+        for _property in _differ.changed():
+            _changes.append({"propertyId": _property, "before": _left[_property], "after": _right[_property]})
+
+        return _changes

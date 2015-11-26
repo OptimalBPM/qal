@@ -10,7 +10,7 @@ import os
 from jsonschema import Draft4Validator
 
 from qal.sql.json import  SQLJSON
-from qal.common.diff import diff_strings
+from qal.common.diff import diff_strings, DictDiffer
 from qal.dal.types import db_types, DB_POSTGRESQL
 from qal.sql.xml import SQLXML
 
@@ -84,8 +84,8 @@ class ClassSQLMetaXMLTest(unittest.TestCase):
         # Test XML-to-Structure with a create table verb and back to XML. Should generate an identical file.
 
     def test_2_create_table(self):
-        meta_JSON = SQLJSON()
-        meta_JSON.debuglevel = 4
+        _meta_dict = SQLJSON()
+        _meta_dict.debuglevel = 4
 
         # Generate structure from manual create.
         #        from test_sql import gen_simple_create
@@ -96,20 +96,21 @@ class ClassSQLMetaXMLTest(unittest.TestCase):
 
         #        meta_xml.debuglevel = 4
         f = open(Test_Resource_Dir + "/_test_CREATE_TABLE_in.json", "r")
-        _str_json_in = f.read()
+        dict_in = json.loads(f.read())
         f.close()
-        structure = meta_JSON.json_to_sql_structure(_str_json_in)
-        meta_JSON.schema_uri = '../../SQL.json'
+        _structure = _meta_dict.dict_to_sql_structure(dict_in)
+        _meta_dict.schema_uri = '../../SQL.json'
 
 
-        _str_json_out = meta_JSON.sql_structure_to_json(structure)
+        _dict_out = _meta_dict.sql_structure_to_dict(_structure)
 
 
         f_out = open(Test_Resource_Dir + "/_test_CREATE_TABLE_out.json", "w")
-        print(_str_json_out, file=f_out)
+        print(json.dumps(_dict_out), file=f_out)
         f_out.close()
+        _changes = DictDiffer.compare_documents(dict_in, _dict_out)
 
-        self.assertEqual(_str_json_in, _str_json_out)
+        self.assertTrue(len(_changes) == 0)
 
         #
 
