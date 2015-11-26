@@ -11,7 +11,7 @@ import string
 from qal.sql.meta import list_class_properties, list_parameter_classes, list_verb_classes, find_class
 from qal.sql.types import sql_property_to_type, and_or, \
     constraint_types, index_types, verbs, expression_item_types, \
-    condition_part, set_operator, tabular_expression_item_types, data_source_types
+    condition_part, set_operator, tabular_expression_item_types, data_source_types, join_types, in_types
 from qal.dal.types import db_types
 
 
@@ -80,11 +80,13 @@ class SQLJSON():
         _result["datatypes"] = {"type": "string", "pattern": "(integer|string|string(\(.*\))|serial|timestamp)"}
         _result["db_types"] = {"type": "string", "enum": db_types()}
         _result["and_or"] = {"type": "string", "enum": and_or()}
+        _result["in_types"] = {"type": "string", "enum": in_types()}
         _result["index_types"] = {"type": "string", "enum": index_types()}
         _result["constraint_types"] = {"type": "string", "enum": constraint_types()}
         _result["set_operator"] = {"type": "string", "enum": set_operator()}
-        _result["data_source"] = {"type": "string", "enum": data_source_types()}
+        _result["data_source_types"] = {"type": "string", "enum": data_source_types()}
         _result["csv_dialects"] = {"type": "string", "enum": list_dialects()}
+        _result["join_types"] = {"type": "string", "enum": join_types()}
 
         _result["csv_dialects"] = {"type": "string", "enum": list_dialects()}
         _result["statement"] = {"type": "object", "oneOf": [{"$ref": "#/definitions/" + x} for x in verbs()]}

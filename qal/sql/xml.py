@@ -53,13 +53,14 @@ class SQLXML(XMLTranslation):
         _complex_node = _document.createElementNS(self.namespace, self.prefix_schema + ":complexType")
         _complex_node.setAttribute("name", _name)
         _sequence_node = _document.createElementNS(self.namespace, self.prefix_schema + ":choice")
+        _sequence_node.setAttribute("minOccurs", '0')
+        _sequence_node.setAttribute("maxOccurs", 'unbounded')
         _complex_node.appendChild(_sequence_node)
         for currType in _types:
             _element_node = _document.createElementNS(self.namespace, self.prefix_schema + ":element")
             _element_node.setAttribute("name", currType)
             _element_node.setAttribute("type", currType)
-            _element_node.setAttribute("minOccurs", '0')
-            _element_node.setAttribute("maxOccurs", 'unbounded')
+
             _sequence_node.appendChild(_element_node)
 
         _parent_node.appendChild(_complex_node)
