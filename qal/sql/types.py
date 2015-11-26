@@ -86,7 +86,7 @@ def in_types():
 
 def condition_part():
     """Returns a list of the supported condition parts"""
-    return ['ParameterConditions', 'ParameterCondition', 'ParameterExpression'] + expression_item_types()
+    return ['ParameterConditions', 'ParameterCondition'] + expression_item_types()
 
 def make_json_type_ref(_json_ref, type_name):
 
