@@ -113,12 +113,12 @@ class SQLXML(XMLTranslation):
         self._add_child_string_restriction(_document, _parent_node, "index_types", index_types())
         self._add_child_string_restriction(_document, _parent_node, "constraint_types", constraint_types())
         self._add_child_string_restriction(_document, _parent_node, "set_operator", set_operator())
-        self._add_child_string_restriction(_document, _parent_node, "data_source_types", data_source_types())
         self._add_child_string_restriction(_document, _parent_node, "csv_dialects", list_dialects())
         self._add_child_string_restriction(_document, _parent_node, "join_types", join_types())
 
         self._add_child_type_restriction(_document, _parent_node, "statement", verbs())
         self._add_child_type_restriction(_document, _parent_node, "condition_part", condition_part())
+        self._add_child_type_restriction(_document, _parent_node, "data_source_types", data_source_types())
         self._add_child_type_restriction(_document, _parent_node, "tabular_expression_item",
                                          tabular_expression_item_types())
 
