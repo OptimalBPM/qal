@@ -8,6 +8,8 @@ from csv import list_dialects
 import json
 import string
 
+from qal.dataset.custom import CustomDataset
+from qal.sql.base import ParameterBase
 from qal.sql.meta import list_class_properties, list_parameter_classes, list_verb_classes, find_class
 from qal.sql.types import sql_property_to_type, and_or, \
     constraint_types, index_types, verbs, expression_item_types, \
@@ -84,7 +86,7 @@ class SQLJSON():
         _result["index_types"] = {"type": "string", "enum": index_types()}
         _result["constraint_types"] = {"type": "string", "enum": constraint_types()}
         _result["set_operator"] = {"type": "string", "enum": set_operator()}
-        _result["data_source_types"] = {"type": "string", "enum": data_source_types()}
+
         _result["csv_dialects"] = {"type": "string", "enum": list_dialects()}
         _result["join_types"] = {"type": "string", "enum": join_types()}
 
@@ -94,6 +96,10 @@ class SQLJSON():
                                      "oneOf": [{"$ref": "#/definitions/" + x} for x in condition_part()]}
         _result["tabular_expression_item"] = {"type": "object", "oneOf": [{"$ref": "#/definitions/" + x} for x in
                                                                           tabular_expression_item_types()]}
+        _result["data_source_types"] = {"type": "object", "oneOf": [{"$ref": "#/definitions/" + x} for x in
+                                                                    data_source_types()]}
+
+        _result["Array_string"] = {"type" : "array", "items": {"type": "string"}}
 
         _result["Array_ParameterString"] = self._child_array_of(['#/definitions/ParameterString'])
         _result["Array_ParameterConstraint"] = self._child_array_of(['#/definitions/ParameterConstraint'])
@@ -161,8 +167,10 @@ class SQLJSON():
     def _list_to_dict(self, _list):
         _result = []
         for _curr_item in _list:
-            _result.append(self._object_to_dict(_curr_item))
-
+            if isinstance(_curr_item, ParameterBase) or isinstance(_curr_item, CustomDataset) :
+                _result.append(self._object_to_dict(_curr_item))
+            else:
+                _result.append(_curr_item)
         return _result
 
 
@@ -230,9 +238,11 @@ class SQLJSON():
 
         _result = []
         for _curr_item in _list:
-            for _curr_key, _curr_value in _curr_item.items():
-                _new_item = self._parse_attribute(_curr_key, _curr_value, _parent_obj)
-            _result.append(_new_item)
+            if isinstance(_curr_item, dict):
+                for _curr_key, _curr_value in _curr_item.items():
+                    _result.append(self._parse_attribute(_curr_key, _curr_value, _parent_obj))
+            else:
+                _result.append(_curr_item)
 
         self._get_up("_parse_array_dict")
         return _result

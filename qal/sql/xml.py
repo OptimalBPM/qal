@@ -175,6 +175,10 @@ class SQLXML(XMLTranslation):
         for _curr_class in list_verb_classes():
             self._add_child_type_node(_document, _parentnode, _curr_class)
 
+        # Then add datasets.
+        for _curr_class in data_source_types():
+            self._add_child_type_node(_document, _parentnode, _curr_class)
+
     def generate_schema(self):
         """Generates an XML schema based on the class structure in SQL.py"""
         # Create the minidom document

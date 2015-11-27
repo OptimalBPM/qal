@@ -104,8 +104,11 @@ class ClassSQLMetaXMLTest(unittest.TestCase):
         print(json.dumps(_dict_out), file=f_out)
         f_out.close()
         _changes = DictDiffer.compare_documents(dict_in, _dict_out)
-
-        self.assertTrue(len(_changes) == 0)
+        if len(_changes) == 0:
+            self.assertTrue(True)
+        else:
+            DictDiffer.pretty_print_diff(_changes)
+            self.assertTrue(False)
 
     # Test XML-to-Structure with a create table verb and back to XML. Should generate an identical file.
     def test_3_select(self):
@@ -127,8 +130,11 @@ class ClassSQLMetaXMLTest(unittest.TestCase):
         print(json.dumps(_dict_out), file=f_out)
         f_out.close()
         _changes = DictDiffer.compare_documents(dict_in, _dict_out)
-
-        self.assertTrue(len(_changes) == 0)
+        if len(_changes) == 0:
+            self.assertTrue(True)
+        else:
+            DictDiffer.pretty_print_diff(_changes)
+            self.assertTrue(False)
 
     #        if _str_xml_in != _str_xml_out:
     #            print(diff_strings(_str_xml_in, _str_xml_out))
@@ -189,7 +195,7 @@ class ClassSQLMetaXMLTest(unittest.TestCase):
             self.assertTrue(False)
 
 
-"""
+
     def test_6_insert_matrix_csv(self):
         _meta_xml = SQLXML()
         _meta_xml.schema_uri = '../../SQL.xsd'
@@ -218,7 +224,7 @@ class ClassSQLMetaXMLTest(unittest.TestCase):
         self.assertEqual(_str_xml_comp[:-2], _str_xml_out[:-1],
                          'test_6_insert_matrix_csv: The generated XML file differs.\n' + diff_strings(_str_xml_comp,
                                                                                                       _str_xml_out))
-
+"""
     def test_7_delete(self):
         _meta_xml = SQLXML()
         _meta_xml.schema_uri = '../../SQL.xsd'

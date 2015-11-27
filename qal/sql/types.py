@@ -43,7 +43,7 @@ def data_types():
 
 def data_source_types():
     """Returns a list of the supported data source types"""
-    return ['FlatfileDataset', 'XpathDataset', 'MatrixDataset']
+    return ['FlatfileDataset', 'XpathDataset', 'MatrixDataset', 'SpreadsheetDataset', 'RDBMSDataset']
 
 
 def boolean():
@@ -122,7 +122,7 @@ def sql_property_to_type(_property_name, _json_ref = None):
                           'sql_postgresql', 'sql_oracle', 'sql_db2', 'sql_sqlserver', 'row_separator',
                           'prefix', 'direction', 'operator', 'table', 'delimiter',
                           'filename', 'target_table', 'resource_uuid', 'temporary_table_name',
-                          'temporary_table_name_prefix', 'rows_xpath', "quotechar", "skipinitialspace"]:
+                          'temporary_table_name_prefix', 'rows_xpath', "quotechar", "skipinitialspace", ]:
         return ['string']
 
     elif _property_name == 'numeric_value':

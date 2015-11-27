@@ -13,7 +13,8 @@ from qal.sql.remotable import *
 from qal.dataset.flatfile import FlatfileDataset  # @UnusedWildImport #IGNORE:W0401
 from qal.dataset.xpath import XpathDataset  # @UnusedWildImport #IGNORE:W0401
 from qal.dataset.matrix import MatrixDataset  # @UnusedWildImport #IGNORE:W0401
-
+from qal.dataset.spreadsheet import SpreadsheetDataset # @UnusedWildImport #IGNORE:W0401
+from qal.dataset.rdbms import RDBMSDataset # @UnusedWildImport #IGNORE:W0401
 
 def list_parameter_classes():
     """List all parameter classes"""
