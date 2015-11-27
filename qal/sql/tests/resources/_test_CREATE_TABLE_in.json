@@ -15,7 +15,7 @@
             "name": "Table1Name",
             "notnull": "False",
             "default": "",
-            "datatype": "VARCHAR(400)"
+            "datatype": "string(400)"
           }
         },
         {
