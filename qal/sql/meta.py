@@ -41,7 +41,7 @@ def list_class_properties(_class_name, _result = None):
         _result = list()
     if _class_name in globals():
         for k in globals()[_class_name].__dict__.items():
-            if not hasattr(k[1], '__call__') and k[0][0:1] != '_' and k[0] not in _result:
+            if not (hasattr(k[1], '__call__') or isinstance(k[1], staticmethod)) and k[0][0:1] != '_' and k[0] not in _result:
                 _result.append(k[0])
         _mro_length = len(globals()[_class_name]().__class__.__mro__)
         if _mro_length > 2:
