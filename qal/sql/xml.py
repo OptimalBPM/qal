@@ -56,10 +56,17 @@ class SQLXML(XMLTranslation):
         _sequence_node.setAttribute("minOccurs", '0')
         _sequence_node.setAttribute("maxOccurs", 'unbounded')
         _complex_node.appendChild(_sequence_node)
-        for currType in _types:
+        if isinstance(_types, list):
+            for currType in _types:
+                _element_node = _document.createElementNS(self.namespace, self.prefix_schema + ":element")
+                _element_node.setAttribute("name", currType)
+                _element_node.setAttribute("type", currType)
+
+                _sequence_node.appendChild(_element_node)
+        else:
             _element_node = _document.createElementNS(self.namespace, self.prefix_schema + ":element")
-            _element_node.setAttribute("name", currType)
-            _element_node.setAttribute("type", currType)
+            _element_node.setAttribute("name", "str")
+            _element_node.setAttribute("type", _types)
 
             _sequence_node.appendChild(_element_node)
 
@@ -115,7 +122,7 @@ class SQLXML(XMLTranslation):
         self._add_child_type_restriction(_document, _parent_node, "tabular_expression_item",
                                          tabular_expression_item_types())
 
-        self._add_child_array_of(_document, _parent_node, 'Array_string', ['Array_string'])
+        self._add_child_array_of(_document, _parent_node, 'Array_string', 'xsd:string')
         self._add_child_array_of(_document, _parent_node, 'Array_ParameterString', ['ParameterString'])
         self._add_child_array_of(_document, _parent_node, 'Array_ParameterConstraint', ['ParameterConstraint'])
         self._add_child_array_of(_document, _parent_node, 'Array_ParameterColumndefinition',
