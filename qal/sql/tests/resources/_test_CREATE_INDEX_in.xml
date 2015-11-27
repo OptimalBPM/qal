@@ -1,14 +1,1 @@
-<?xml version="1.0" ?>
-<sql:statement xmlns:sql="http://www.optimalbpm.se/XMLschema/DAL/SQL"
-               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-               xsi:schemaLocation="http://www.optimalbpm.se/XMLschema/DAL/SQL ../../SQL.xsd">
-    <sql:VerbCreateIndex>
-        <sql:columnnames>
-            <sql:str>Table1Name</sql:str>
-            <sql:str>Table1Date</sql:str>
-        </sql:columnnames>
-        <sql:index_type>CLUSTERED</sql:index_type>
-        <sql:name>ind_Table1ID</sql:name>
-        <sql:tablename>Table1</sql:tablename>
-    </sql:VerbCreateIndex>
-</sql:statement>
+<?xml version="1.0" ?><sql:statement xmlns:sql="http://www.optimalbpm.se/XMLschema/DAL/SQL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.optimalbpm.se/XMLschema/DAL/SQL ../../SQL.xsd"><sql:VerbCreateIndex><sql:columnnames><sql:str>Table1Name</sql:str><sql:str>Table1Date</sql:str></sql:columnnames><sql:index_type>CLUSTERED</sql:index_type><sql:name>ind_Table1ID</sql:name><sql:tablename>Table1</sql:tablename></sql:VerbCreateIndex></sql:statement>
