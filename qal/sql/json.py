@@ -284,15 +284,18 @@ class SQLJSON():
                                 _parent.__class__.__name__ + "Class: " + _classname + " Currtype: " + _curr_type)
 
                         elif len(_curr_type) > 1 and type(_curr_type[1]) == list:
+                            # There are several possible types that can be children
                             if isinstance(_curr_value, dict):
-                                _obj.__dict__[_curr_item_key] = self._parse_class_dict(_curr_item_key, _curr_value,
+                                _first_key, first_value = next(iter(_curr_value.items()))
+                                _obj.__dict__[_curr_item_key] = self._parse_class_dict(_first_key, first_value,
                                                                                        _curr_obj)
                             else:
                                 # Base types doesn't have any children.
                                 _obj.__dict__[_curr_item_key] = _curr_value
 
                         else:
-                            _obj.__dict__[_curr_item_key] = self._parse_class_dict(_curr_type[0], _curr_value, _curr_obj)
+                            _first_key, first_value = next(iter(_curr_value.items()))
+                            _obj.__dict__[_curr_item_key] = self._parse_class_dict(_first_key, first_value, _curr_obj)
 
         if self._resources and hasattr(_obj,
                                        'resource_uuid') and _obj.resource_uuid is not None and _obj.resource_uuid != '':

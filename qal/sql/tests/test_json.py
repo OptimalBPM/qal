@@ -142,13 +142,13 @@ class ClassSQLMetaXMLTest(unittest.TestCase):
         # _meta_dict.debuglevel = 4
 
         # Generate structure from manual create.
-        from qal.sql.tests.test_sql import gen_simple_insert
-        _structure = gen_simple_insert()
+        #from qal.sql.tests.test_sql import gen_simple_insert
+        #_structure = gen_simple_insert()
 
-        # f = open(Test_Resource_Dir + "/_test_INSERT_in.json", "r")
-        # dict_in = json.loads(f.read())
-        # f.close()
-        # _structure = _meta_dict.dict_to_sql_structure(dict_in)
+        f = open(Test_Resource_Dir + "/_test_INSERT_in.json", "r")
+        dict_in = json.loads(f.read())
+        f.close()
+        _structure = _meta_dict.dict_to_sql_structure(dict_in)
 
         _dict_out = _meta_dict.sql_structure_to_dict(_structure)
 
@@ -156,8 +156,11 @@ class ClassSQLMetaXMLTest(unittest.TestCase):
         print(json.dumps(_dict_out), file=f_out)
         f_out.close()
         _changes = DictDiffer.compare_documents(dict_in, _dict_out)
-
-        self.assertTrue(len(_changes) == 0)
+        if len(_changes) == 0:
+            self.assertTrue(True)
+        else:
+            DictDiffer.pretty_print_diff(_changes)
+            self.assertTrue(False)
 """
     def test_5_create_index(self):
         meta_xml = SQLXML()

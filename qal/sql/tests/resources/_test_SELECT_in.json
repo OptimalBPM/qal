@@ -1,0 +1,315 @@
+{
+  "statement": {
+    "VerbSelect": {
+      "order_by": [
+        {
+          "ParameterOrderByItem": {
+            "expressionitems": [
+              {
+                "ParameterIdentifier": {
+                  "prefix": "T1",
+                  "identifier": "Field1",
+                  "operator": "C"
+                }
+              }
+            ],
+            "direction": "desc",
+            "operator": "C"
+          }
+        },
+        {
+          "ParameterOrderByItem": {
+            "expressionitems": [
+              {
+                "ParameterIdentifier": {
+                  "prefix": "T2",
+                  "identifier": "Field1",
+                  "operator": "C"
+                }
+              }
+            ],
+            "direction": "asc",
+            "operator": "C"
+          }
+        }
+      ],
+      "top_limit": "1",
+      "fields": [
+        {
+          "ParameterField": {
+            "expression": [
+              {
+                "ParameterExpression": {
+                  "expressionitems": [
+                    {
+                      "ParameterIdentifier": {
+                        "prefix": "T1",
+                        "identifier": "CountryPrefix",
+                        "operator": "C"
+                      }
+                    },
+                    {
+                      "ParameterString": {
+                        "string_value": "+",
+                        "escape_character": "",
+                        "operator": "C"
+                      }
+                    },
+                    {
+                      "ParameterIdentifier": {
+                        "prefix": "T1",
+                        "identifier": "PhoneNumber",
+                        "operator": "C"
+                      }
+                    },
+                    {
+                      "ParameterFunction": {
+                        "parameters": [
+                          {
+                            "ParameterCast": {
+                              "expression": [
+                                {
+                                  "ParameterExpression": {
+                                    "expressionitems": [
+                                      {
+                                        "ParameterIdentifier": {
+                                          "prefix": "T2",
+                                          "identifier": "CountryPrefix",
+                                          "operator": "C"
+                                        }
+                                      },
+                                      {
+                                        "ParameterString": {
+                                          "string_value": "+",
+                                          "escape_character": "",
+                                          "operator": "C"
+                                        }
+                                      },
+                                      {
+                                        "ParameterIdentifier": {
+                                          "prefix": "T2",
+                                          "identifier": "PhoneNumber",
+                                          "operator": "C"
+                                        }
+                                      }
+                                    ],
+                                    "operator": "+"
+                                  }
+                                }
+                              ],
+                              "datatype": "string(200)",
+                              "operator": "C"
+                            }
+                          },
+                          {
+                            "ParameterExpression": {
+                              "expressionitems": [
+                                {
+                                  "ParameterIdentifier": {
+                                    "prefix": "T2",
+                                    "identifier": "CountryPrefix",
+                                    "operator": "C"
+                                  }
+                                },
+                                {
+                                  "ParameterString": {
+                                    "string_value": "+",
+                                    "escape_character": "",
+                                    "operator": "C"
+                                  }
+                                },
+                                {
+                                  "ParameterIdentifier": {
+                                    "prefix": "T2",
+                                    "identifier": "PhoneNumber",
+                                    "operator": "C"
+                                  }
+                                }
+                              ],
+                              "operator": "+"
+                            }
+                          }
+                        ],
+                        "operator": "C",
+                        "name": "Simple"
+                      }
+                    }
+                  ],
+                  "operator": "+"
+                }
+              }
+            ],
+            "alias": "Field1"
+          }
+        },
+        {
+          "ParameterField": {
+            "expression": [
+              {
+                "ParameterExpression": {
+                  "expressionitems": [
+                    {
+                      "ParameterIdentifier": {
+                        "prefix": "T2",
+                        "identifier": "CountryPrefix",
+                        "operator": "C"
+                      }
+                    },
+                    {
+                      "ParameterString": {
+                        "string_value": "+",
+                        "escape_character": "",
+                        "operator": "C"
+                      }
+                    },
+                    {
+                      "ParameterIdentifier": {
+                        "prefix": "T2",
+                        "identifier": "PhoneNumber",
+                        "operator": "C"
+                      }
+                    }
+                  ],
+                  "operator": "+"
+                }
+              }
+            ],
+            "alias": "Field2"
+          }
+        }
+      ],
+      "resource_uuid": null,
+      "operator": "C",
+      "sources": [
+        {
+          "ParameterSource": {
+            "conditions": [
+              {
+                "ParameterCondition": {
+                  "left": [
+                    {
+                      "ParameterNumeric": {
+                        "numeric_value": "1.3",
+                        "operator": "+"
+                      }
+                    }
+                  ],
+                  "right": [
+                    {
+                      "ParameterNumeric": {
+                        "numeric_value": "2.4",
+                        "operator": "+"
+                      }
+                    }
+                  ],
+                  "and_or": "AND",
+                  "operator": ">"
+                }
+              },
+              {
+                "ParameterCondition": {
+                  "left": [
+                    {
+                      "ParameterIdentifier": {
+                        "prefix": "T1",
+                        "identifier": "firstname",
+                        "operator": "C"
+                      }
+                    }
+                  ],
+                  "right": [
+                    {
+                      "ParameterString": {
+                        "string_value": "%icklas",
+                        "escape_character": "",
+                        "operator": "+"
+                      }
+                    }
+                  ],
+                  "and_or": "AND",
+                  "operator": "LIKE"
+                }
+              }
+            ],
+            "resource_uuid": null,
+            "join_type": null,
+            "alias": "T1",
+            "expression": [
+              {
+                "ParameterIdentifier": {
+                  "prefix": "",
+                  "identifier": "testtable",
+                  "operator": "C"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "ParameterSource": {
+            "conditions": [
+              {
+                "ParameterCondition": {
+                  "left": [
+                    {
+                      "ParameterNumeric": {
+                        "numeric_value": "1.3",
+                        "operator": "+"
+                      }
+                    }
+                  ],
+                  "right": [
+                    {
+                      "ParameterNumeric": {
+                        "numeric_value": "2.4",
+                        "operator": "+"
+                      }
+                    }
+                  ],
+                  "and_or": "AND",
+                  "operator": ">"
+                }
+              },
+              {
+                "ParameterCondition": {
+                  "left": [
+                    {
+                      "ParameterIdentifier": {
+                        "prefix": "T1",
+                        "identifier": "firstname",
+                        "operator": "C"
+                      }
+                    }
+                  ],
+                  "right": [
+                    {
+                      "ParameterString": {
+                        "string_value": "%icklas",
+                        "escape_character": "",
+                        "operator": "+"
+                      }
+                    }
+                  ],
+                  "and_or": "AND",
+                  "operator": "LIKE"
+                }
+              }
+            ],
+            "resource_uuid": null,
+            "join_type": null,
+            "alias": "T2",
+            "expression": [
+              {
+                "ParameterIdentifier": {
+                  "prefix": "",
+                  "identifier": "testtable",
+                  "operator": "C"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

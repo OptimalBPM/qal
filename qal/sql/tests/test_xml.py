@@ -136,6 +136,7 @@ class ClassSQLMetaXMLTest(unittest.TestCase):
     #        sql_for_all_databases(param)
 
     def test_4_insert(self):
+        # NOTE: This test is not complete, column definitions and destination is missing. However this is fixed in json
         meta_xml = SQLXML()
         #        meta_xml.debuglevel = 4
 
