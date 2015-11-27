@@ -1,0 +1,17 @@
+{
+  "statement": {
+    "VerbCreateIndex": {
+      "name": "ind_Table1ID",
+      "columnnames": [
+        {
+          "str": "Table1Name"
+        },
+        {
+          "str": "Table1Date"
+        }
+      ],
+      "tablename": "Table1",
+      "index_type": "CLUSTERED"
+    }
+  }
+}
