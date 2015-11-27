@@ -178,6 +178,12 @@ def db_specific_datatype_parse_length(_value):
 def db_specific_datatype(value, db_type):
     """
     Converts general DAL datatypes(as defined in sql_types) database-type specific (see dal_types) representations.
+
+    @note: VARCHAR:
+    For some reason, DB2 and Oracle doesn't support unspecified column lengths unless using BLOBs and cumbersome
+    select constructs and casts. So DB2 will get 3100(max is 32704, but 4000 is the default page size for
+    the table space so 3100 allows for the unspecified column to be at least usable.)
+    Oracle is 4000 (limitations confirmed as of dec. 2012).
     """
 
     # Database order: [DB_MYSQL, DB_POSTGRESQL, DB_ORACLE, DB_DB2, DB_SQLSERVER]
@@ -185,19 +191,20 @@ def db_specific_datatype(value, db_type):
     # noinspection PyUnusedLocal
     result = ''
     if value.lower() == "integer":
-        result = unenumerate(['INTEGER', 'INTEGER', 'NUMBER', 'INT', 'int'], db_type)
+        result = unenumerate(['INTEGER', 'integer', 'NUMBER', 'INT', 'int'], db_type)
     elif value[:6].lower() == "string" or value[:7].lower() == "varchar":
         strlength = db_specific_datatype_parse_length(value)
         if strlength.lower() != '':
-            result = unenumerate(['VARCHAR', 'VARCHAR', 'VARCHAR2', 'VARCHAR', 'varchar'], db_type)
+            result = unenumerate(['VARCHAR', 'varchar', 'VARCHAR2', 'VARCHAR', 'varchar'], db_type)
             result += parenthesise(db_specific_datatype_parse_length(value))
         else:
             # @attention: For some reason, DB2 and Oracle doesn't support unspecified column 
             # lengths unless using BLOBs and cumbersome select constructs and casts.
             # So DB2 will get 3100(max is 32704, but 4000 is the default page size for 
             # the table space so 3100 allows for the unspecified column to be at least usable.)
-            # Oracle is 4000 (limitations confirmed as of dec. 2012). 
-            result = unenumerate(['TEXT', 'VARCHAR', 'VARCHAR2(4000)', 'VARCHAR(3100)', 'varchar(max)'], db_type)
+            # Oracle is 4000 (limitations confirmed as of dec. 2012).
+            # TODO: Document this behaviour
+            result = unenumerate(['TEXT', 'varchar', 'VARCHAR2(4000)', 'VARCHAR(3100)', 'varchar(max)'], db_type)
 
     elif value.lower() == "float":
         result = unenumerate(['DOUBLE', 'double precision', 'FLOAT', 'Double', 'float'], db_type)
@@ -207,11 +214,11 @@ def db_specific_datatype(value, db_type):
             ['INTEGER AUTO_INCREMENT', 'serial', 'integer', 'INT GENERATED ALWAYS AS IDENTITY', 'int IDENTITY(1,1)'],
             db_type)
     elif value.lower() == "timestamp":
-        result = unenumerate(['TIMESTAMP', 'TIMESTAMP', 'TIMESTAMP', 'TIMESTAMP', 'DATETIME'], db_type)
+        result = unenumerate(['TIMESTAMP', 'timestamp', 'TIMESTAMP', 'TIMESTAMP', 'DATETIME'], db_type)
     elif value.lower() == "datetime":
-        result = unenumerate(['DATETIME', 'TIMESTAMP', 'DATE', 'TIMESTAMP', 'DATETIME'], db_type)
+        result = unenumerate(['DATETIME', 'timestamp', 'DATE', 'TIMESTAMP', 'DATETIME'], db_type)
     elif value.lower() == "boolean":
-        result = unenumerate(['BOOL', 'BOOLEAN', 'NUMERIC(1)', 'DECIMAL(1)', 'BIT'], db_type)
+        result = unenumerate(['BOOL', 'boolean', 'NUMERIC(1)', 'DECIMAL(1)', 'BIT'], db_type)
 
         # elif (value.lower() == "timestamp"):
     # result = unenumerate(['TIMESTAMP DEFAULT CURRENT_TIMESTAMP', 'DATETIME DEFAULT(NOW())',

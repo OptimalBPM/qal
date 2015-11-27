@@ -216,9 +216,9 @@ class ParameterCast(ParameterExpressionItem):
     expression = ""
     datatype = ""
 
-    def make_cast(self, _value):
+    def make_cast(self, _value, _db_type):
         """Generate the CAST syntax"""
-        return str("CAST" + parenthesise(_value + " AS " + self.datatype))
+        return str("CAST" + parenthesise(_value + " AS " + db_specific_datatype(self.datatype, _db_type)))
 
     def __init__(self, _expression=None, _datatype=None, _operator=None):
         super(ParameterCast, self).__init__(_operator)
@@ -231,7 +231,7 @@ class ParameterCast(ParameterExpressionItem):
 
     def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
-        return self.make_cast(self.expression.as_sql(_db_type))
+        return self.make_cast(self.expression.as_sql(_db_type), _db_type)
 
 
 class ParameterFunction(ParameterExpressionItem):

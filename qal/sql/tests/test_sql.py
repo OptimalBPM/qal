@@ -46,8 +46,8 @@ END;"+DEFAULT_ROWSEP
 
 r_create_table_postgresql = "CREATE TABLE \"Table1\" (" + DEFAULT_ROWSEP + "\
 \"Table1ID\" serial NOT NULL," + DEFAULT_ROWSEP + "\
-\"Table1Name\" VARCHAR(400) NULL," + DEFAULT_ROWSEP + "\
-\"Table1Changed\" TIMESTAMP DEFAULT (current_timestamp) NULL," + DEFAULT_ROWSEP + "\
+\"Table1Name\" varchar(400) NULL," + DEFAULT_ROWSEP + "\
+\"Table1Changed\" timestamp DEFAULT (current_timestamp) NULL," + DEFAULT_ROWSEP + "\
 CONSTRAINT \"PK_Table1_Table1ID\" PRIMARY KEY (\"Table1ID\")," + DEFAULT_ROWSEP + "\
 CONSTRAINT \"FK_Table1_Table1ID_Table2_Table2ID\" FOREIGN KEY (\"Table1ID\") REFERENCES \"Table2\"(\"Table2ID\")," + DEFAULT_ROWSEP + "\
 CONSTRAINT \"CK_Table1_Name\" CHECK ((1.3 > 2.4) AND (T1.\"firstname\" ILIKE '%icklas'))," + DEFAULT_ROWSEP + "\
@@ -76,16 +76,16 @@ CONSTRAINT [UQ_Table1_Name] UNIQUE (Table1ID)" + DEFAULT_ROWSEP + "\
 
 
 # noinspection PyPep8
-r_SELECT_SQL = "SELECT (T1.CountryPrefix + '+' + T1.PhoneNumber + Simple(CAST((T2.CountryPrefix + '+' + T2.PhoneNumber) AS varchar(200)), (T2.CountryPrefix + '+' + T2.PhoneNumber))) AS Field1, (T2.CountryPrefix + '+' + T2.PhoneNumber) AS Field2 FROM testtable AS T1 JOIN testtable AS T2 ON ((1.3 > 2.4) AND (T1.firstname LIKE '%icklas')) WHERE ((1.3 > 2.4) AND (T1.firstname LIKE '%icklas')) ORDER BY T1.Field1 desc, T2.Field1 asc" + DEFAULT_ROWSEP + "LIMIT 1"
+r_SELECT_SQL = "SELECT (T1.CountryPrefix + '+' + T1.PhoneNumber + Simple(CAST((T2.CountryPrefix + '+' + T2.PhoneNumber) AS VARCHAR(200)), (T2.CountryPrefix + '+' + T2.PhoneNumber))) AS Field1, (T2.CountryPrefix + '+' + T2.PhoneNumber) AS Field2 FROM testtable AS T1 JOIN testtable AS T2 ON ((1.3 > 2.4) AND (T1.firstname LIKE '%icklas')) WHERE ((1.3 > 2.4) AND (T1.firstname LIKE '%icklas')) ORDER BY T1.Field1 desc, T2.Field1 asc" + DEFAULT_ROWSEP + "LIMIT 1"
 
 # noinspection PyPep8
-r_SELECT_DB_DB2 = "SELECT (T1.\"CountryPrefix\" || '+' || T1.\"PhoneNumber\" || Simple(CAST((T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS varchar(200)), (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\"))) AS Field1, (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS Field2 FROM \"testtable\" AS T1 JOIN \"testtable\" AS T2 ON ((1.3 > 2.4) AND (T1.\"firstname\" LIKE '%icklas')) WHERE ((1.3 > 2.4) AND (T1.\"firstname\" LIKE '%icklas')) ORDER BY T1.\"Field1\" desc, T2.\"Field1\" asc" + DEFAULT_ROWSEP + "FETCH FIRST 1 ROWS ONLY "
+r_SELECT_DB_DB2 = "SELECT (T1.\"CountryPrefix\" || '+' || T1.\"PhoneNumber\" || Simple(CAST((T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS VARCHAR(200)), (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\"))) AS Field1, (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS Field2 FROM \"testtable\" AS T1 JOIN \"testtable\" AS T2 ON ((1.3 > 2.4) AND (T1.\"firstname\" LIKE '%icklas')) WHERE ((1.3 > 2.4) AND (T1.\"firstname\" LIKE '%icklas')) ORDER BY T1.\"Field1\" desc, T2.\"Field1\" asc" + DEFAULT_ROWSEP + "FETCH FIRST 1 ROWS ONLY "
 
 # noinspection PyPep8
 r_SELECT_postgresql = "SELECT (T1.\"CountryPrefix\" || '+' || T1.\"PhoneNumber\" || Simple(CAST((T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS varchar(200)), (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\"))) AS Field1, (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS Field2 FROM \"testtable\" AS T1 JOIN \"testtable\" AS T2 ON ((1.3 > 2.4) AND (T1.\"firstname\" ILIKE '%icklas')) WHERE ((1.3 > 2.4) AND (T1.\"firstname\" ILIKE '%icklas')) ORDER BY T1.\"Field1\" desc, T2.\"Field1\" asc" + DEFAULT_ROWSEP + "LIMIT 1"
 
 # noinspection PyPep8
-r_SELECT_oracle = "SELECT (T1.\"CountryPrefix\" + '+' + T1.\"PhoneNumber\" + Simple(CAST((T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\") AS varchar(200)), (T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\"))) AS Field1, (T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\") AS Field2 FROM \"testtable\" T1 JOIN \"testtable\" AS T2 ON ((1.3 > 2.4) AND (T1.\"firstname\" LIKE '%icklas')) WHERE ((1.3 > 2.4) AND (T1.\"firstname\" LIKE '%icklas')) AND (ROWNUM < 2) ORDER BY T1.\"Field1\" desc, T2.\"Field1\" asc"
+r_SELECT_oracle = "SELECT (T1.\"CountryPrefix\" + '+' + T1.\"PhoneNumber\" + Simple(CAST((T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\") AS VARCHAR2(200)), (T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\"))) AS Field1, (T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\") AS Field2 FROM \"testtable\" T1 JOIN \"testtable\" AS T2 ON ((1.3 > 2.4) AND (T1.\"firstname\" LIKE '%icklas')) WHERE ((1.3 > 2.4) AND (T1.\"firstname\" LIKE '%icklas')) AND (ROWNUM < 2) ORDER BY T1.\"Field1\" desc, T2.\"Field1\" asc"
 
 # noinspection PyPep8
 r_SELECT_SQL_Server = "SELECT TOP 1 (T1.CountryPrefix + '+' + T1.PhoneNumber + Simple(CAST((T2.CountryPrefix + '+' + T2.PhoneNumber) AS varchar(200)), (T2.CountryPrefix + '+' + T2.PhoneNumber))) AS Field1, (T2.CountryPrefix + '+' + T2.PhoneNumber) AS Field2 FROM testtable AS T1 JOIN testtable AS T2 ON ((1.3 > 2.4) AND (T1.firstname LIKE '%icklas')) WHERE ((1.3 > 2.4) AND (T1.firstname LIKE '%icklas')) ORDER BY T1.Field1 desc, T2.Field1 asc"
@@ -165,7 +165,7 @@ def gen_simple_expression_2():
 
 
 def gen_simple_cast():
-    param = ParameterCast(None, 'varchar(200)', 'C')
+    param = ParameterCast(None, 'string(200)', 'C')
     param.expression.append(gen_simple_expression_2())
     return param
 
@@ -278,7 +278,7 @@ def gen_simple_create():
     # col1_constraint5 = ParameterConstraint('DF_Table1_name', C_DEFAULT, ['GETDATE()'])
 
     col1 = ParameterColumndefinition('Table1ID', 'serial', True)
-    col2 = ParameterColumndefinition('Table1Name', 'VARCHAR(400)', False)
+    col2 = ParameterColumndefinition('Table1Name', 'string(400)', False)
     col3 = ParameterColumndefinition('Table1Changed', 'timestamp', False)
     col3.default = '::currdatetime::'
     # col4 = ParameterColumndefinition('Table1Date', 'datetime', False, 'NOW()')
@@ -328,12 +328,14 @@ class ParameterTest(unittest.TestCase):
     def test_02_ParameterExpression_simple(self):
         self.maxDiff = None
         param = gen_simpleexpression_1()
-        _testvalue = "(T1.CountryPrefix + '+' + T1.PhoneNumber + Simple(CAST((T2.CountryPrefix + '+' + T2.PhoneNumber) AS varchar(200)), (T2.CountryPrefix + '+' + T2.PhoneNumber)))"
+        _testvalue = "(T1.CountryPrefix + '+' + T1.PhoneNumber + Simple(CAST((T2.CountryPrefix + '+' + T2.PhoneNumber) AS VARCHAR(200)), (T2.CountryPrefix + '+' + T2.PhoneNumber)))"
         # noinspection PyUnusedLocal
         pipe_testvalue = "(T1.CountryPrefix || '+' || T1.PhoneNumber || Simple(CAST((T2.CountryPrefix || '+' || T2.PhoneNumber) AS varchar(200)), (T2.CountryPrefix || '+' || T2.PhoneNumber)))"
         _postgres_testvalue = "(T1.\"CountryPrefix\" || '+' || T1.\"PhoneNumber\" || Simple(CAST((T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS varchar(200)), (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\")))"
-        _db2_testvalue = "(T1.\"CountryPrefix\" || '+' || T1.\"PhoneNumber\" || Simple(CAST((T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS varchar(200)), (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\")))"
-        _oracle_testvalue = "(T1.\"CountryPrefix\" + '+' + T1.\"PhoneNumber\" + Simple(CAST((T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\") AS varchar(200)), (T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\")))"
+        _db2_testvalue = "(T1.\"CountryPrefix\" || '+' || T1.\"PhoneNumber\" || Simple(CAST((T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS VARCHAR(200)), (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\")))"
+        _oracle_testvalue = "(T1.\"CountryPrefix\" + '+' + T1.\"PhoneNumber\" + Simple(CAST((T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\") AS VARCHAR2(200)), (T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\")))"
+        _sql_server_testvalue = "(T1.CountryPrefix + '+' + T1.PhoneNumber + Simple(CAST((T2.CountryPrefix + '+' + T2.PhoneNumber) AS varchar(200)), (T2.CountryPrefix + '+' + T2.PhoneNumber)))"
+
         paramclass = param.__class__.__name__
 
         self.assertEqual(param.as_sql(DB_MYSQL), _testvalue, paramclass + '.as_sql(DB_MYSQL) failed.')
@@ -341,15 +343,16 @@ class ParameterTest(unittest.TestCase):
         self.assertEqual(param.as_sql(DB_POSTGRESQL), _postgres_testvalue,
                          paramclass + '.as_sql(DB_POSTGRESQL) failed.')
         self.assertEqual(param.as_sql(DB_DB2), _db2_testvalue, paramclass + '.as_sql(DB_DB2) failed.')
-        self.assertEqual(param.as_sql(DB_SQLSERVER), _testvalue, paramclass + '.as_sql(DB_SQLSERVER) failed.')
+        self.assertEqual(param.as_sql(DB_SQLSERVER), _sql_server_testvalue, paramclass + '.as_sql(DB_SQLSERVER) failed.')
 
     def test_03_ParameterCast_simple(self):
         self.maxDiff = None
         param = gen_simple_cast()
-        _testvalue = "CAST((T2.CountryPrefix + '+' + T2.PhoneNumber) AS varchar(200))"
-        _db2_testvalue = "CAST((T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS varchar(200))"
+        _testvalue = "CAST((T2.CountryPrefix + '+' + T2.PhoneNumber) AS VARCHAR(200))"
+        _sql_server_testvalue = "CAST((T2.CountryPrefix + '+' + T2.PhoneNumber) AS varchar(200))"
+        _db2_testvalue = "CAST((T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS VARCHAR(200))"
         _postgres_testvalue = "CAST((T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS varchar(200))"
-        _oracle_testvalue = "CAST((T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\") AS varchar(200))"
+        _oracle_testvalue = "CAST((T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\") AS VARCHAR2(200))"
         paramclass = param.__class__.__name__
 
         self.assertEqual(param.as_sql(DB_MYSQL), _testvalue, paramclass + '.as_sql(DB_MYSQL) failed.')
@@ -357,16 +360,17 @@ class ParameterTest(unittest.TestCase):
         self.assertEqual(param.as_sql(DB_POSTGRESQL), _postgres_testvalue,
                          paramclass + '.as_sql(DB_POSTGRESQL) failed.')
         self.assertEqual(param.as_sql(DB_DB2), _db2_testvalue, paramclass + '.as_sql(DB_DB2) failed.')
-        self.assertEqual(param.as_sql(DB_SQLSERVER), _testvalue, paramclass + '.as_sql(DB_SQLSERVER) failed.')
+        self.assertEqual(param.as_sql(DB_SQLSERVER), _sql_server_testvalue, paramclass + '.as_sql(DB_SQLSERVER) failed.')
 
     # noinspection PyPep8
     def test_04_ParameterFunction_simple(self):
         self.maxDiff = None
         param = gen_simple_function()
-        _testvalue = "Simple(CAST((T2.CountryPrefix + '+' + T2.PhoneNumber) AS varchar(200)), (T2.CountryPrefix + '+' + T2.PhoneNumber))"
-        _db2_testvalue = "Simple(CAST((T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS varchar(200)), (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\"))"
+        _testvalue = "Simple(CAST((T2.CountryPrefix + '+' + T2.PhoneNumber) AS VARCHAR(200)), (T2.CountryPrefix + '+' + T2.PhoneNumber))"
+        _sql_server_testvalue = "Simple(CAST((T2.CountryPrefix + '+' + T2.PhoneNumber) AS varchar(200)), (T2.CountryPrefix + '+' + T2.PhoneNumber))"
+        _db2_testvalue = "Simple(CAST((T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS VARCHAR(200)), (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\"))"
         _postgres_testvalue = "Simple(CAST((T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS varchar(200)), (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\"))"
-        _oracle_testvalue = "Simple(CAST((T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\") AS varchar(200)), (T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\"))"
+        _oracle_testvalue = "Simple(CAST((T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\") AS VARCHAR2(200)), (T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\"))"
         paramclass = param.__class__.__name__
 
         self.assertEqual(param.as_sql(DB_MYSQL), _testvalue, paramclass + '.as_sql(DB_MYSQL) failed.')
@@ -374,16 +378,18 @@ class ParameterTest(unittest.TestCase):
         self.assertEqual(param.as_sql(DB_POSTGRESQL), _postgres_testvalue,
                          paramclass + '.as_sql(DB_POSTGRESQL) failed.')
         self.assertEqual(param.as_sql(DB_DB2), _db2_testvalue, paramclass + '.as_sql(DB_DB2) failed.')
-        self.assertEqual(param.as_sql(DB_SQLSERVER), _testvalue, paramclass + '.as_sql(DB_SQLSERVER) failed.')
+        self.assertEqual(param.as_sql(DB_SQLSERVER), _sql_server_testvalue, paramclass + '.as_sql(DB_SQLSERVER) failed.')
 
     # noinspection PyPep8
     def test_05_ParameterCase(self):
         self.maxDiff = None
         param = gen_simple_case()
-        _testvalue = "CASE WHEN ((1.3 > 2.4) AND (T1.firstname LIKE '%icklas')) THEN (T1.CountryPrefix + '+' + T1.PhoneNumber + Simple(CAST((T2.CountryPrefix + '+' + T2.PhoneNumber) AS varchar(200)), (T2.CountryPrefix + '+' + T2.PhoneNumber))) WHEN ((1.3 > 2.4) AND (T1.firstname LIKE '%icklas')) THEN (T2.CountryPrefix + '+' + T2.PhoneNumber) else_statement (T2.CountryPrefix + '+' + T2.PhoneNumber) END"
+        _testvalue = "CASE WHEN ((1.3 > 2.4) AND (T1.firstname LIKE '%icklas')) THEN (T1.CountryPrefix + '+' + T1.PhoneNumber + Simple(CAST((T2.CountryPrefix + '+' + T2.PhoneNumber) AS VARCHAR(200)), (T2.CountryPrefix + '+' + T2.PhoneNumber))) WHEN ((1.3 > 2.4) AND (T1.firstname LIKE '%icklas')) THEN (T2.CountryPrefix + '+' + T2.PhoneNumber) else_statement (T2.CountryPrefix + '+' + T2.PhoneNumber) END"
         _postgresql_testvalue = "CASE WHEN ((1.3 > 2.4) AND (T1.\"firstname\" ILIKE '%icklas')) THEN (T1.\"CountryPrefix\" || '+' || T1.\"PhoneNumber\" || Simple(CAST((T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS varchar(200)), (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\"))) WHEN ((1.3 > 2.4) AND (T1.\"firstname\" ILIKE '%icklas')) THEN (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") else_statement (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") END"
-        _db2_testvalue = "CASE WHEN ((1.3 > 2.4) AND (T1.\"firstname\" LIKE '%icklas')) THEN (T1.\"CountryPrefix\" || '+' || T1.\"PhoneNumber\" || Simple(CAST((T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS varchar(200)), (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\"))) WHEN ((1.3 > 2.4) AND (T1.\"firstname\" LIKE '%icklas')) THEN (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") else_statement (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") END"
-        _oracle_testvalue = "CASE WHEN ((1.3 > 2.4) AND (T1.\"firstname\" LIKE '%icklas')) THEN (T1.\"CountryPrefix\" + '+' + T1.\"PhoneNumber\" + Simple(CAST((T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\") AS varchar(200)), (T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\"))) WHEN ((1.3 > 2.4) AND (T1.\"firstname\" LIKE '%icklas')) THEN (T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\") else_statement (T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\") END"
+        _db2_testvalue = "CASE WHEN ((1.3 > 2.4) AND (T1.\"firstname\" LIKE '%icklas')) THEN (T1.\"CountryPrefix\" || '+' || T1.\"PhoneNumber\" || Simple(CAST((T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") AS VARCHAR(200)), (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\"))) WHEN ((1.3 > 2.4) AND (T1.\"firstname\" LIKE '%icklas')) THEN (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") else_statement (T2.\"CountryPrefix\" || '+' || T2.\"PhoneNumber\") END"
+        _oracle_testvalue = "CASE WHEN ((1.3 > 2.4) AND (T1.\"firstname\" LIKE '%icklas')) THEN (T1.\"CountryPrefix\" + '+' + T1.\"PhoneNumber\" + Simple(CAST((T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\") AS VARCHAR2(200)), (T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\"))) WHEN ((1.3 > 2.4) AND (T1.\"firstname\" LIKE '%icklas')) THEN (T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\") else_statement (T2.\"CountryPrefix\" + '+' + T2.\"PhoneNumber\") END"
+        _sql_server_testvalue = "CASE WHEN ((1.3 > 2.4) AND (T1.firstname LIKE '%icklas')) THEN (T1.CountryPrefix + '+' + T1.PhoneNumber + Simple(CAST((T2.CountryPrefix + '+' + T2.PhoneNumber) AS varchar(200)), (T2.CountryPrefix + '+' + T2.PhoneNumber))) WHEN ((1.3 > 2.4) AND (T1.firstname LIKE '%icklas')) THEN (T2.CountryPrefix + '+' + T2.PhoneNumber) else_statement (T2.CountryPrefix + '+' + T2.PhoneNumber) END"
+
         paramclass = param.__class__.__name__
 
         self.assertEqual(param.as_sql(DB_MYSQL), _testvalue, paramclass + '.as_sql(DB_MYSQL) failed.')
@@ -392,7 +398,7 @@ class ParameterTest(unittest.TestCase):
         self.assertEqual(param.as_sql(DB_POSTGRESQL), _postgresql_testvalue,
                          paramclass + '.as_sql(DB_POSTGRESQL) failed.')
         self.assertEqual(param.as_sql(DB_DB2), _db2_testvalue, paramclass + '.as_sql(DB_DB2) failed.')
-        self.assertEqual(param.as_sql(DB_SQLSERVER), _testvalue, paramclass + '.as_sql(DB_SQLSERVER) failed.')
+        self.assertEqual(param.as_sql(DB_SQLSERVER), _sql_server_testvalue, paramclass + '.as_sql(DB_SQLSERVER) failed.')
 
     def test_06_VerbSelect(self):
         self.maxDiff = None
