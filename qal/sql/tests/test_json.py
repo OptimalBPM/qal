@@ -161,29 +161,35 @@ class ClassSQLMetaXMLTest(unittest.TestCase):
         else:
             DictDiffer.pretty_print_diff(_changes)
             self.assertTrue(False)
-"""
+
     def test_5_create_index(self):
-        meta_xml = SQLXML()
-        meta_xml.schema_uri = '../../SQL.xsd'
-        #        meta_xml.debuglevel = 4
 
-        #        Generate structure from manual CREATE_INDEX.
-        #        from dal.sql import VerbCreateIndex
-        #        structure = VerbCreateIndex('ind_Table1ID', "CLUSTERED", 'Table1', ['Table1Name', 'Table1Date'])
-        #
-        f = open(Test_Resource_Dir + "/_test_CREATE_INDEX_in.xml", "r")
-        _str_xml_in = f.read()
+        _meta_dict = SQLJSON()
+        _meta_dict.debuglevel = 4
+
+        # Generate structure from manual create.
+        #from qal.sql.sql import VerbCreateIndex
+        #_structure = VerbCreateIndex('ind_Table1ID', "CLUSTERED", 'Table1', ['Table1Name', 'Table1Date'])
+
+        f = open(Test_Resource_Dir + "/_test_CREATE_INDEX_in.json", "r")
+        dict_in = json.loads(f.read())
         f.close()
-        structure = meta_xml.xml_to_sql_structure(_str_xml_in)
+        _structure = _meta_dict.dict_to_sql_structure(dict_in)
 
-        _xml_out = meta_xml.sql_structure_to_xml(structure)
-        _str_xml_out = _xml_out.toxml()
+        _dict_out = _meta_dict.sql_structure_to_dict(_structure)
+
         f_out = open(Test_Resource_Dir + "/_test_CREATE_INDEX_out.json", "w")
-        print(_str_xml_out, file=f_out)
+        print(json.dumps(_dict_out), file=f_out)
         f_out.close()
+        _changes = DictDiffer.compare_documents(dict_in, _dict_out)
+        if len(_changes) == 0:
+            self.assertTrue(True)
+        else:
+            DictDiffer.pretty_print_diff(_changes)
+            self.assertTrue(False)
 
-        self.assertEqual(_str_xml_in, _str_xml_out)
 
+"""
     def test_6_insert_matrix_csv(self):
         _meta_xml = SQLXML()
         _meta_xml.schema_uri = '../../SQL.xsd'

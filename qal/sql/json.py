@@ -231,35 +231,35 @@ class SQLJSON():
         _result = []
         for _curr_item in _list:
             for _curr_key, _curr_value in _curr_item.items():
-                _new_item = self._parse_class_dict(_curr_key, _curr_value, _parent_obj)
+                _new_item = self._parse_attribute(_curr_key, _curr_value, _parent_obj)
             _result.append(_new_item)
 
         self._get_up("_parse_array_dict")
         return _result
 
-    def _parse_class_dict(self, _classname, _dict, _parent_obj):
+    def _parse_attribute(self, _attribute_name, _attribute_value, _parent_obj):
         self._go_down("_parse_class_json")
 
-        self._debug_print("_parse_class_json: Parsing " + _classname)
+        self._debug_print("_parse_class_json: Parsing " + _attribute_name)
 
 
-        # Check for base typesError in VerbCreateIndex, name is not set.
-        if _classname.lower() in ['str', 'int', 'float', 'datetime']:
-            return str(_dict[_classname])
+        # Check for base types.
+        if _attribute_name.lower() in ['str', 'int', 'float', 'datetime']:
+            return str(_attribute_value)
 
             # Find and instatiate the actual class.
-        _obj, _obj_name = find_class(_classname)
+        _obj, _obj_name = find_class(_attribute_name)
 
         if hasattr(_obj, 'as_sql'):
             _obj._parent = _parent_obj
             _obj._base_path = self.base_path
             self._debug_print(
-                "_parse_class_json: Found matching Parameter class for " + _classname + " : " + _obj_name)
+                "_parse_class_json: Found matching Parameter class for " + _attribute_name + " : " + _obj_name)
 
         elif isinstance(_obj, list):
             # If this is a list, parse it and return.
-            self._debug_print("_parse_class_json: Found matching list class for " + _classname + " : " + _obj_name)
-            return {_classname : self._parse_array_dict(_dict, _obj)}
+            self._debug_print("_parse_class_json: Found matching list class for " + _attribute_name + " : " + _obj_name)
+            return {_attribute_name : self._parse_array_dict(_attribute_value, _obj)}
         else:
             raise Exception("_parse_class_json: Could not find matching class : " + _obj_name)
 
@@ -267,8 +267,8 @@ class SQLJSON():
         for _curr_item_key, _curr_obj in _obj.__dict__.items():
 
             if _curr_item_key != 'row_separator':
-                if _curr_item_key in _dict:
-                    _curr_value = _dict[_curr_item_key]
+                if _curr_item_key in _attribute_value:
+                    _curr_value = _attribute_value[_curr_item_key]
                     self._debug_print("_parse_class_json: Parsing property " + _curr_item_key)
 
                     if isinstance(_curr_obj, list):
@@ -281,29 +281,29 @@ class SQLJSON():
                         elif _curr_type[0:5] == 'verb_' or _curr_type[0:10] == 'parameter_':
                             raise Exception(
                                 "_parse_class_xml_node: Strange VERB/PARAMETER happened parsing.. parent: " +
-                                _parent.__class__.__name__ + "Class: " + _classname + " Currtype: " + _curr_type)
+                                _parent.__class__.__name__ + "Class: " + _attribute_name + " Currtype: " + _curr_type)
 
                         elif len(_curr_type) > 1 and type(_curr_type[1]) == list:
                             # There are several possible types that can be children
                             if isinstance(_curr_value, dict):
                                 _first_key, first_value = next(iter(_curr_value.items()))
-                                _obj.__dict__[_curr_item_key] = self._parse_class_dict(_first_key, first_value,
-                                                                                       _curr_obj)
+                                _obj.__dict__[_curr_item_key] = self._parse_attribute(_first_key, first_value,
+                                                                                      _curr_obj)
                             else:
                                 # Base types doesn't have any children.
                                 _obj.__dict__[_curr_item_key] = _curr_value
 
                         else:
                             _first_key, first_value = next(iter(_curr_value.items()))
-                            _obj.__dict__[_curr_item_key] = self._parse_class_dict(_first_key, first_value, _curr_obj)
+                            _obj.__dict__[_curr_item_key] = self._parse_attribute(_first_key, first_value, _curr_obj)
 
         if self._resources and hasattr(_obj,
                                        'resource_uuid') and _obj.resource_uuid is not None and _obj.resource_uuid != '':
             _obj._resource = self._resources.get_resource(_obj.resource_uuid)
-            self._debug_print("_parse_class_dict: Added resource_uuid for " + _obj_name + ": " + _obj.resource_uuid,
+            self._debug_print("_parse_attribute: Added resource_uuid for " + _obj_name + ": " + _obj.resource_uuid,
                               1)
 
-        self._get_up("_parse_class_dict")
+        self._get_up("_parse_attribute")
         return _obj
 
 
@@ -329,7 +329,7 @@ class SQLJSON():
             # There is always just one top verb
             for _curr_key, _curr_value in _dict["statement"].items():
                 if _curr_key in verbs():
-                    _result = self._parse_class_dict(_curr_key, _curr_value, None)
+                    _result = self._parse_attribute(_curr_key, _curr_value, None)
 
             return _result
         else:
