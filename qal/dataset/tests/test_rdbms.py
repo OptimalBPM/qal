@@ -26,7 +26,7 @@ def load_xml(_filename):
 
 
 class Test(unittest.TestCase):
-    def _test_1_Load_Save(self):
+    def test_1_Load_Save(self):
         _resources_node = load_xml(Test_Resource_Dir + "/resources.xml").find("resources")
         _resources = Resources(_resources_node=_resources_node)
 

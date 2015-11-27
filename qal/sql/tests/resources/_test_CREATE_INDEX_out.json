@@ -1,1 +1,1 @@
-{"statement": {"VerbCreateIndex": {"tablename": "Table1", "columnnames": ["Table1Name", "Table1Date"], "index_type": "CLUSTERED", "name": "ind_Table1ID"}}}
+{"statement": {"VerbCreateIndex": {"column_names": ["Table1Name", "Table1Date"], "tablename": "Table1", "name": "ind_Table1ID", "index_type": "CLUSTERED"}}}

@@ -682,17 +682,17 @@ class VerbCreateIndex(ParameterBase):
     name = ""
     index_type = None
     tablename = ""
-    columnnames = None
+    column_names = None
 
-    def __init__(self, _name="", _index_type=None, _tablename="", _columnnames=None):
+    def __init__(self, _name="", _index_type=None, _tablename="", _column_names=None):
         super(VerbCreateIndex, self).__init__()
         self.name = _name
         self.index_type = _index_type
         self.tablename = _tablename
-        if _columnnames is not None:
-            self.columnnames = _columnnames
+        if _column_names is not None:
+            self.column_names = _column_names
         else:
-            self.columnnames = SqlList("string")
+            self.column_names = SqlList("string")
 
     def _generate_sql(self, _db_type):
         """Generate SQL for specified database engine"""
@@ -706,7 +706,7 @@ class VerbCreateIndex(ParameterBase):
                 13)
 
         result += "ON " + self.tablename + "("
-        for index, item in enumerate(self.columnnames):
+        for index, item in enumerate(self.column_names):
             result += add_comma(index, db_specific_object_reference(item, _db_type))
         result += ")"
         # Handle DB2s strange deviation #2

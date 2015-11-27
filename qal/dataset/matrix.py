@@ -14,7 +14,6 @@ from qal.dataset.custom import CustomDataset
 class MatrixDataset(CustomDataset):
     """The matrix dataset holds a two-dimensional array of data"""
 
-    dal = None
 
     def __init__(self):
         """

@@ -241,12 +241,17 @@ class DictDiffer(object):
         _changes = []
         _differ = DictDiffer(_left, _right)
         for _property in _differ.added():
-            _changes.append({"propertyId": _property, "before": None, "after": _right[_property]})
+            _changes.append({"action": "added", "attribute": _property, "before": None, "after": _right[_property]})
 
         for _property in _differ.removed():
-            _changes.append({"propertyId": _property, "before": _left[_property], "after": None})
+            _changes.append({"action": "removed", "attribute": _property, "before": _left[_property], "after": None})
 
         for _property in _differ.changed():
-            _changes.append({"propertyId": _property, "before": _left[_property], "after": _right[_property]})
+            _changes.append({"action": "changed", "attribute": _property, "before": _left[_property], "after": _right[_property]})
 
         return _changes
+
+    @staticmethod
+    def pretty_print_diff(_changes):
+        for _curr_diff in _changes:
+            print("Attribute : " + str(_curr_diff["attribute"]) + "Action : " + str(_curr_diff["action"]) + "\nBefore : " + str(_curr_diff["before"]) + "\nAfter :  " + str(_curr_diff["after"]))

@@ -23,23 +23,21 @@ class RDBMSDataset(CustomDataset):
     """The RDMBS Dataset holds a two-dimensional array of data, typically representing a table in a database.
     If the data set is not a table but based on a more complex query, data will not be possible to apply to it."""
 
-    dal = None
     """An instance of the Database Abstraction Layer(DAL)"""
-    table_name = None
+    _dal = None
     """If set, all data in table "table_name" is loaded in its entirety into the data_table."""
+    table_name = None
+    """If set, and table_name is not, then the SQL statement contained is executed. It is a text string."""
     query = None
-    """If set, and table_name is not, then the SQL statement contained is executed. 
-    It is a text string. 
-
-    .. todo::
-    Make it possible for it to be a backend agnostic qal.sql.sql.VerbSelect object parsed from an XML structure."""
+    """
+    TODO:Make it possible for it to be a backend agnostic qal.sql.sql.VerbSelect object parsed from an XML structure."""
 
     def read_resource_settings(self, _resource):
         if _resource.type.upper() != 'RDBMS':
             raise Exception(
                 "RDBMSDataset.read_resource_settings.parse_resource error: Wrong resource type: " + _resource.type)
 
-        self.dal = DatabaseAbstractionLayer(_resource=_resource)
+        self._dal = DatabaseAbstractionLayer(_resource=_resource)
 
         self.table_name = _resource.data.get("db_table_name")
 
@@ -49,13 +47,13 @@ class RDBMSDataset(CustomDataset):
         """TODO: The RDBMS resource type is a special case, as it is both a database connection and/or a dataset definition.
         Should this be?"""
 
-        if self.dal is None:
+        if self._dal is None:
             # Clear, as the DAL is not going to
             _resource.type = 'RDBMS'
             _resource.data.clear()
         else:
             # Let the DAL go first
-            self.dal.write_resource_settings(_resource)
+            self._dal.write_resource_settings(_resource)
 
         # Add own parameters
         _resource.data["db_table_name"] = self.table_name
@@ -82,9 +80,9 @@ class RDBMSDataset(CustomDataset):
             try:
                 self.field_types = [python_type_to_sql_type(type(_curr_value)) for _curr_value in _dataset[0]]
                 _create_table_sql = create_table_skeleton(self.table_name, self.field_names, self.field_types).as_sql(
-                    self.dal.db_type)
+                    self._dal.db_type)
                 print("Creating " + self.table_name + " table..\n" + _create_table_sql)
-                self.dal.execute(_create_table_sql)
+                self._dal.execute(_create_table_sql)
             except Exception as e:
                 raise Exception("Merge.execute: An error occurred creating destination table: " + str(e))
 
@@ -94,7 +92,7 @@ class RDBMSDataset(CustomDataset):
 
         self._rdbms_init_inserts()
 
-        self.dal.start()
+        self._dal.start()
 
         super(RDBMSDataset, self)._structure_init(_dataset)
 
@@ -125,13 +123,13 @@ class RDBMSDataset(CustomDataset):
         _delete.sources.append(_source)
 
         # Fetch the resource
-        self._structure_delete_sql = _delete.as_sql(self.dal.db_type)
+        self._structure_delete_sql = _delete.as_sql(self._dal.db_type)
 
     def _rdbms_init_inserts(self):
         """Generates a VerbInsert instance populated with the structural indata"""
 
         self._structure_insert_sql = make_insert_sql_with_parameters(self.table_name, self.field_names,
-                                                                     self.dal.db_type, self.field_types)
+                                                                     self._dal.db_type, self.field_types)
 
     def _rdbms_init_updates(self):
         """Generates DELETE and INSERT instances populated with the structural indata """
@@ -180,7 +178,7 @@ class RDBMSDataset(CustomDataset):
 
         # Generate the SQL with all parameter place holders
 
-        self._structure_update_sql = _update.as_sql(self.dal.db_type)
+        self._structure_update_sql = _update.as_sql(self._dal.db_type)
 
     def _structure_insert_row(self, _row_idx, _row_data, _commit=True, _no_logging=None):
         if _commit is True:
@@ -189,7 +187,7 @@ class RDBMSDataset(CustomDataset):
 
             # Apply and commit changes to the structure
 
-            self.dal.executemany(self._structure_insert_sql, [_execute_many_data])
+            self._dal.executemany(self._structure_insert_sql, [_execute_many_data])
             if not _no_logging:
                 self.log_insert("N/A in RDBMS", _row_data, "Destination table: " + self.table_name)
         # Call parent
@@ -206,7 +204,7 @@ class RDBMSDataset(CustomDataset):
                                                                      _row_data)
 
             # Apply and commit changes to the database
-            self.dal.executemany(self._structure_update_sql, [_execute_data])
+            self._dal.executemany(self._structure_update_sql, [_execute_data])
             if not _no_logging:
                 self.log_update_row(_row_idx, self.data_table[_row_idx], _row_data,
                                     "Destination table: " + self.table_name)
@@ -221,7 +219,7 @@ class RDBMSDataset(CustomDataset):
             _key_values = self._extract_data_columns_from_diff_row(self._structure_key_fields,
                                                                    self.data_table[_row_idx])
             # Make the deletes
-            self.dal.executemany(self._structure_delete_sql, [_key_values])
+            self._dal.executemany(self._structure_delete_sql, [_key_values])
             if not _no_logging:
                 self.log_delete(_key_values, self.data_table[_row_idx], "Destination table: " + self.table_name)
 
@@ -232,13 +230,13 @@ class RDBMSDataset(CustomDataset):
     def load(self):
         if self.table_name and self.table_name != "":
             """Query all values from a table from a RDBMS resource"""
-            if not self.dal.connected:
-                self.dal.connect_to_db()
+            if not self._dal.connected:
+                self._dal.connect_to_db()
 
-            self.data_table = self.dal.query(
-                select_all_skeleton(self.table_name, self.field_names).as_sql(self.dal.db_type))
-            self.field_names = self.dal.field_names
-            self.field_types = self.dal.field_types
+            self.data_table = self._dal.query(
+                select_all_skeleton(self.table_name, self.field_names).as_sql(self._dal.db_type))
+            self.field_names = self._dal.field_names
+            self.field_types = self._dal.field_types
         else:
             raise Exception("RDBMSDataset.load(): data_table must be set.")
 
@@ -246,4 +244,4 @@ class RDBMSDataset(CustomDataset):
 
     def save(self):
         """Save data. Commits the transaction"""
-        self.dal.commit()
+        self._dal.commit()
