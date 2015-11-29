@@ -9,6 +9,7 @@ import json
 import string
 
 from qal.dataset.custom import CustomDataset
+from qal.dataset.xpath import xpath_data_formats
 from qal.sql.base import ParameterBase
 from qal.sql.meta import list_class_properties, list_parameter_classes, list_verb_classes, find_class
 from qal.sql.types import sql_property_to_type, and_or, \
@@ -91,6 +92,8 @@ class SQLJSON():
         _result["join_types"] = {"type": "string", "enum": join_types()}
 
         _result["csv_dialects"] = {"type": "string", "enum": list_dialects()}
+        _result["xpath_data_format"] = {"type": "string", "enum": xpath_data_formats()}
+
         _result["statement"] = {"type": "object", "oneOf": [{"$ref": "#/definitions/" + x} for x in verbs()]}
         _result["condition_part"] = {"type": "object",
                                      "oneOf": [{"$ref": "#/definitions/" + x} for x in condition_part()]}
