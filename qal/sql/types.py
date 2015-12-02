@@ -93,6 +93,10 @@ def make_json_type_ref(_json_ref, type_name):
     _result = {}
 
 
+def verbs():
+    """Returns a list of the supported verb types"""
+    return ["VerbCreateTable", "VerbCreateIndex", "VerbSelect", "VerbCustom", "VerbInsert"]
+
 def sql_property_to_type(_property_name, _json_ref = None):
     """Translates a property name to a type, like decimal or string.
     Property names in the SQL.py class structure are chosen to not collide."""
@@ -144,7 +148,7 @@ def sql_property_to_type(_property_name, _json_ref = None):
 
     # Simple types
 
-    elif _property_name == "datatype":
+    elif _property_name in ["datatype", "field_types"]:
         return _handle_json_ref("datatypes", data_types())
 
     elif _property_name == "set_operator":
@@ -153,7 +157,7 @@ def sql_property_to_type(_property_name, _json_ref = None):
     elif _property_name == "join_type":
         return _handle_json_ref("join_types", join_types())
 
-    elif _property_name == "data":
+    elif _property_name in ["data", "data_table"]:
         return _handle_json_ref("tabular_expression_item", tabular_expression_item_types())
 
     elif _property_name == "subsets":
@@ -214,7 +218,7 @@ def sql_property_to_type(_property_name, _json_ref = None):
         return _handle_json_ref("Array_ParameterSource")
 
     elif _property_name == "csv_dialect":
-        return _handle_json_ref("file_types", list_dialects())
+        return _handle_json_ref("csv_dialects", list_dialects())
 
     elif _property_name == "when_statements":
         return _handle_json_ref("Array_ParameterWhen")
@@ -227,7 +231,3 @@ def sql_property_to_type(_property_name, _json_ref = None):
     else:
         raise Exception("sql_property_to_type: Unrecognized property:" + _property_name)
 
-
-def verbs():
-    """Returns a list of the supported verb types"""
-    return ["VerbCreateTable", "VerbCreateIndex", "VerbSelect", "VerbCustom", "VerbInsert"]

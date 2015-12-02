@@ -87,11 +87,11 @@ class SQLJSON():
         _result["index_types"] = {"type": "string", "enum": index_types()}
         _result["constraint_types"] = {"type": "string", "enum": constraint_types()}
         _result["set_operator"] = {"type": "string", "enum": set_operator()}
+        _result["quoting"] = {"type": "string", "enum": quoting_types()}
 
         _result["csv_dialects"] = {"type": "string", "enum": list_dialects()}
         _result["join_types"] = {"type": "string", "enum": join_types()}
 
-        _result["csv_dialects"] = {"type": "string", "enum": list_dialects()}
         _result["xpath_data_format"] = {"type": "string", "enum": xpath_data_formats()}
 
         _result["statement"] = {"type": "object", "oneOf": [{"$ref": "#/definitions/" + x} for x in verbs()]}

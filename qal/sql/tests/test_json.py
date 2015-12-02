@@ -171,7 +171,7 @@ class ClassSQLMetaXMLTest(unittest.TestCase):
     def test_5_create_index(self):
 
         _meta_dict = SQLJSON()
-        _meta_dict.debuglevel = 4
+        #_meta_dict.debuglevel = 4
 
         # Generate structure from manual create.
         #from qal.sql.sql import VerbCreateIndex
@@ -197,6 +197,8 @@ class ClassSQLMetaXMLTest(unittest.TestCase):
 
 
     def test_6_insert_matrix_csv(self):
+        _meta_dict = SQLJSON()
+
         _meta_xml = SQLXML()
         _meta_xml.schema_uri = '../../SQL.xsd'
 
@@ -214,16 +216,30 @@ class ClassSQLMetaXMLTest(unittest.TestCase):
         # Compare compare-file with XML output file
         _xml_out = _meta_xml.sql_structure_to_xml(_structure)
         _str_xml_out = _xml_out.toxml()
-        f_out = open(Test_Resource_Dir + "/_test_INSERT_matrix_csv_out.json", "w")
+        f_out = open(Test_Resource_Dir + "/_test_INSERT_matrix_csv_out.xml", "w")
         print(_str_xml_out, file=f_out)
         f_out.close()
 
-        f_comp = open(Test_Resource_Dir + "/_test_INSERT_matrix_csv_cmp.json", "r")
+        f_comp = open(Test_Resource_Dir + "/_test_INSERT_matrix_csv_cmp.xml", "r")
         _str_xml_comp = f_comp.read()
+
 
         self.assertEqual(_str_xml_comp[:-2], _str_xml_out[:-1],
                          'test_6_insert_matrix_csv: The generated XML file differs.\n' + diff_strings(_str_xml_comp,
                                                                                                       _str_xml_out))
+
+        _dict_out = _meta_dict.sql_structure_to_dict(_structure)
+
+        f_out = open(Test_Resource_Dir + "/_test_INSERT_matrix_csv_out.json", "w")
+        print(json.dumps(_dict_out), file=f_out)
+        f_out.close()
+        _changes = DictDiffer.compare_documents(dict_in, _dict_out)
+        if len(_changes) == 0:
+            self.assertTrue(True)
+        else:
+            DictDiffer.pretty_print_diff(_changes)
+            self.assertTrue(False)
+
 """
     def test_7_delete(self):
         _meta_xml = SQLXML()

@@ -15,6 +15,7 @@ from qal.dataset.xpath import XpathDataset  # @UnusedWildImport #IGNORE:W0401
 from qal.dataset.matrix import MatrixDataset  # @UnusedWildImport #IGNORE:W0401
 from qal.dataset.spreadsheet import SpreadsheetDataset # @UnusedWildImport #IGNORE:W0401
 from qal.dataset.rdbms import RDBMSDataset # @UnusedWildImport #IGNORE:W0401
+from qal.dataset.custom import CustomDataset
 
 def list_parameter_classes():
     """List all parameter classes"""

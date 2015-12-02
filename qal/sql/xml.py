@@ -8,11 +8,13 @@ from xml.dom.minidom import Document
 from xml.sax.saxutils import escape
 from csv import list_dialects
 import os
+from qal.dataset.xpath import xpath_data_formats
 
 from qal.sql.meta import list_class_properties, list_parameter_classes, list_verb_classes, find_class
 from qal.sql.types import sql_property_to_type, and_or, \
     constraint_types, index_types, verbs, expression_item_types, \
-    condition_part, set_operator, tabular_expression_item_types, data_source_types, in_types, join_types
+    condition_part, set_operator, tabular_expression_item_types, data_source_types, in_types, join_types, data_types, \
+    quoting_types
 from qal.dal.types import db_types
 from qal.common.xml_utils import XMLTranslation, xml_base_type_value, find_child_node, xml_get_text, \
     xml_set_cdata, xml_get_numeric, xml_get_boolean, xml_get_allowed_value, xml_find_non_text_child
@@ -109,7 +111,8 @@ class SQLXML(XMLTranslation):
         self._add_child_string_restriction(_document, _parent_node, "db_types", db_types())
         self._add_child_string_restriction(_document, _parent_node, "and_or", and_or())
         self._add_child_string_restriction(_document, _parent_node, "in_types", in_types())
-
+        self._add_child_string_restriction(_document, _parent_node, "quoting", quoting_types())
+        self._add_child_string_restriction(_document, _parent_node, "xpath_data_format", xpath_data_formats())
         self._add_child_string_restriction(_document, _parent_node, "index_types", index_types())
         self._add_child_string_restriction(_document, _parent_node, "constraint_types", constraint_types())
         self._add_child_string_restriction(_document, _parent_node, "set_operator", set_operator())
@@ -121,6 +124,8 @@ class SQLXML(XMLTranslation):
         self._add_child_type_restriction(_document, _parent_node, "data_source_types", data_source_types())
         self._add_child_type_restriction(_document, _parent_node, "tabular_expression_item",
                                          tabular_expression_item_types())
+        self._add_child_type_restriction(_document, _parent_node, "field_types",
+                                         data_types())
 
         self._add_child_array_of(_document, _parent_node, 'Array_string', 'xsd:string')
         self._add_child_array_of(_document, _parent_node, 'Array_ParameterString', ['ParameterString'])
