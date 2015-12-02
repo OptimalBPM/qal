@@ -5,8 +5,6 @@ Created on Nov 22, 2012
 
 """
 from csv import list_dialects
-import json
-import string
 
 from qal.dataset.custom import CustomDataset
 from qal.dataset.xpath import xpath_data_formats
@@ -14,7 +12,7 @@ from qal.sql.base import ParameterBase
 from qal.sql.meta import list_class_properties, list_parameter_classes, list_verb_classes, find_class
 from qal.sql.types import sql_property_to_type, and_or, \
     constraint_types, index_types, verbs, expression_item_types, \
-    condition_part, set_operator, tabular_expression_item_types, data_source_types, join_types, in_types
+    condition_part, set_operator, tabular_expression_item_types, data_source_types, join_types, in_types, quoting_types
 from qal.dal.types import db_types
 
 
@@ -35,6 +33,7 @@ class SQLJSON():
     # Debugging
     debuglevel = 2
     nestinglevel = 0
+
     def __init__(self):
         """
         Constructor
@@ -46,7 +45,6 @@ class SQLJSON():
         """Prints the current nesting level. Not thread safe."""
         self._debug_print(_value + ' level: ' + str(self.nestinglevel), 4)
 
-
     def _get_up(self, _value):
         """Gets up one nesting level. Not thread safe."""
         self.nestinglevel -= 1
@@ -56,16 +54,18 @@ class SQLJSON():
         """Gets down one nesting level. Not thread safe."""
         self.nestinglevel += 1
         self._print_nestinglevel("Entering " + _value)
+
     def _debug_print(self, _value, _debuglevel=3):
         """Prints a debug message if the debugging level is sufficient."""
         if self.debuglevel >= _debuglevel:
             print(_value)
+
     def _child_array_of(self, _types):
-        if len(_types) > 1:
+        if len(_types) > 1 or isinstance(_types, dict):
             return {
                 "type": "array",
                 "minItems": 0,
-                "items": {"type": "object", "oneOf": [{"$ref": x} for x in _types]},
+                "items":_types,
                 "uniqueItems": True
             }
         elif len(_types) == 1:
@@ -94,15 +94,18 @@ class SQLJSON():
 
         _result["xpath_data_format"] = {"type": "string", "enum": xpath_data_formats()}
 
-        _result["statement"] = {"type": "object", "oneOf": [{"$ref": "#/definitions/" + x} for x in verbs()]}
-        _result["condition_part"] = {"type": "object",
-                                     "oneOf": [{"$ref": "#/definitions/" + x} for x in condition_part()]}
-        _result["tabular_expression_item"] = {"type": "object", "oneOf": [{"$ref": "#/definitions/" + x} for x in
-                                                                          tabular_expression_item_types()]}
-        _result["data_source_types"] = {"type": "object", "oneOf": [{"$ref": "#/definitions/" + x} for x in
-                                                                    data_source_types()]}
+        def make_one_of(_classes):
+            return {"type": "object",
+                    "anyOf":
+                         [{"properties": {x: {"$ref": "#/definitions/" + x}}} for x in _classes]
+                    }
 
-        _result["Array_string"] = {"type" : "array", "items": {"type": "string"}}
+        _result["statement"] = make_one_of(verbs())
+        _result["condition_part"] = make_one_of(condition_part())
+        _result["tabular_expression_item"] = make_one_of(tabular_expression_item_types())
+        _result["data_source_types"] = make_one_of(data_source_types())
+
+        _result["Array_string"] = {"type": "array", "items": {"type": "string"}}
 
         _result["Array_ParameterString"] = self._child_array_of(['#/definitions/ParameterString'])
         _result["Array_ParameterConstraint"] = self._child_array_of(['#/definitions/ParameterConstraint'])
@@ -115,14 +118,11 @@ class SQLJSON():
         _result["Array_ParameterCondition"] = self._child_array_of(['#/definitions/ParameterCondition'])
         _result["Array_ParameterField"] = self._child_array_of(['#/definitions/ParameterField'])
         _result["Array_ParameterAssignment"] = self._child_array_of(['#/definitions/ParameterAssignment'])
-        _result["Array_expression_item"] = self._child_array_of(
-            [{"$ref": "#/definitions/" + x} for x in expression_item_types()])
-        _result["Array_tabular_expression_item"] = self._child_array_of(
-            [{"$ref": "#/definitions/" + x} for x in tabular_expression_item_types()])
+        _result["Array_expression_item"] = self._child_array_of(make_one_of(expression_item_types()))
+        _result["Array_tabular_expression_item"] = self._child_array_of(make_one_of(tabular_expression_item_types()))
         _result["Array_list"] = self._child_array_of(['*'])
 
         return _result
-
 
     def _add_child_property(self, _class_name):
 
@@ -141,8 +141,8 @@ class SQLJSON():
 
         _result = {
             "$schema": "http://json-schema.org/draft-04/schema#",
-            "description": "QAL SQL Schema",
-            "title": "Message",
+            "description": "The JSON Schema for QAL SQL settings",
+            "title": "QAL SQL JSON Schema",
             "type": "object",
             "version": "0.5",
             "properties": {"statement": {"$ref": "#/definitions/statement"}},
@@ -170,13 +170,11 @@ class SQLJSON():
     def _list_to_dict(self, _list):
         _result = []
         for _curr_item in _list:
-            if isinstance(_curr_item, ParameterBase) or isinstance(_curr_item, CustomDataset) :
+            if isinstance(_curr_item, ParameterBase) or isinstance(_curr_item, CustomDataset):
                 _result.append(self._object_to_dict(_curr_item))
             else:
                 _result.append(_curr_item)
         return _result
-
-
 
     def _object_to_dict(self, _object):
         if _object is not None and _object != "":
@@ -196,12 +194,13 @@ class SQLJSON():
                         elif hasattr(_curr_property_value, 'as_sql'):
                             _content[_curr_property_name] = self._object_to_dict(_curr_property_value)
                         else:
-                            _curr_type = sql_property_to_type(_curr_property_name,_json_ref="")
+                            _curr_type = sql_property_to_type(_curr_property_name, _json_ref="")
                             if str(_curr_property_value).isnumeric() and len(_curr_type) > 1:
                                 _content[_curr_property_name] = _curr_type[1][_curr_property_value]
                             else:
                                 if _curr_property_value is not None:
-                                    _content[_curr_property_name] = str(_curr_property_value) # Do something about lowercase (_curr_type == "boolean"))
+                                    _content[_curr_property_name] = str(
+                                        _curr_property_value)  # Do something about lowercase (_curr_type == "boolean"))
                                 else:
                                     _content[_curr_property_name] = None
             elif isinstance(_object, list):
@@ -211,7 +210,6 @@ class SQLJSON():
                 _content = str(_object)
 
             return {_object.__class__.__name__: _content}
-
 
     def sql_structure_to_dict(self, _structure):
         """Translates an SQL structure into JSON"""
@@ -224,11 +222,11 @@ class SQLJSON():
     def json_get_allowed_value(_value, _type):
         """Check if a value is allowed in a certain XML node"""
 
-
         if _value in _type[1] or _value == "":
             return _value
         # Check for correct string format.
-        elif _value[0:8].lower() == "varchar(" and _value[8:len(value) - 1].isnumeric() and _value[len(value) - 1] == ")":
+        elif _value[0:8].lower() == "varchar(" and _value[8:len(value) - 1].isnumeric() and _value[
+                    len(value) - 1] == ")":
             return value
         else:
             raise Exception("json_get_allowed_value: " + str(_value) + " is not a valid value in a " + _type[0])
@@ -272,7 +270,7 @@ class SQLJSON():
         elif isinstance(_obj, list):
             # If this is a list, parse it and return.
             self._debug_print("_parse_class_json: Found matching list class for " + _attribute_name + " : " + _obj_name)
-            return {_attribute_name : self._parse_array_dict(_attribute_value, _obj)}
+            return {_attribute_name: self._parse_array_dict(_attribute_value, _obj)}
         else:
             raise Exception("_parse_class_json: Could not find matching class : " + _obj_name)
 
@@ -289,7 +287,7 @@ class SQLJSON():
                     else:
                         # Match the property to a type.
                         _curr_type = sql_property_to_type(_curr_item_key, _json_ref="")
-                        if _curr_type[0].lower() in ['string', 'datatypes', 'boolean','integer', 'float', 'number']:
+                        if _curr_type[0].lower() in ['string', 'datatypes', 'boolean', 'integer', 'float', 'number']:
                             _obj.__dict__[_curr_item_key] = _curr_value
                         elif _curr_type[0:5] == 'verb_' or _curr_type[0:10] == 'parameter_':
                             raise Exception(
@@ -319,18 +317,14 @@ class SQLJSON():
         self._get_up("_parse_attribute")
         return _obj
 
-
-    def dict_to_sql_structure(self, _dict, _base_path = None):
+    def dict_to_sql_structure(self, _dict, _base_path=None):
         """Translates an XML file into a class structure"""
-
-
 
         if _base_path:
             self.base_path = os.path.dirname(_base_path)
 
-
         if "resources" in _dict:
-            #_resources = _dict['resources']
+            # _resources = _dict['resources']
 
             # Send XML here, since resources now uses lxml
 

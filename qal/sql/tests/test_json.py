@@ -8,12 +8,13 @@ import json
 import os
 import unittest
 
-from jsonschema import Draft4Validator
+from jsonschema import Draft4Validator, validate
 
 from qal.common.diff import diff_strings, DictDiffer
 from qal.dal.types import db_types, DB_POSTGRESQL
 from qal.sql.json import SQLJSON
 from qal.sql.xml import SQLXML
+
 
 Test_Script_Dir = os.path.dirname(__file__)
 Test_Resource_Dir = os.path.join(Test_Script_Dir, 'resources')
@@ -85,6 +86,12 @@ class ClassSQLMetaXMLTest(unittest.TestCase):
 
         # Test XML-to-Structure with a create table verb and back to XML. Should generate an identical file.
 
+    def validate_json_against_sql_schema(self, _dict):
+        _f = open(os.path.join(Test_Resource_Dir, "../../JSON.json"), "r")
+        _schema = json.loads(_f.read())
+        validate(_dict, _schema)
+
+
     def test_2_create_table(self):
         _meta_dict = SQLJSON()
         # _meta_dict.debuglevel = 4
@@ -103,6 +110,11 @@ class ClassSQLMetaXMLTest(unittest.TestCase):
         f_out = open(Test_Resource_Dir + "/_test_CREATE_TABLE_out.json", "w")
         print(json.dumps(_dict_out), file=f_out)
         f_out.close()
+
+        self.validate_json_against_sql_schema(_dict_out)
+
+
+
         _changes = DictDiffer.compare_documents(dict_in, _dict_out)
         if len(_changes) == 0:
             self.assertTrue(True)
