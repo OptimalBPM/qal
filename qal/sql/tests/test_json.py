@@ -30,7 +30,7 @@ def sql_for_all_databases(_sqlobj):
         index += 1
 
 
-class ClassSQLMetaXMLTest(unittest.TestCase):
+class ClassSQLMetaJSONTest(unittest.TestCase):
     maxDiff = None
 
     def _compare_sql_files_for_all_db_types(self, _structure, _prefix, _overwrite=None):
@@ -141,6 +141,9 @@ class ClassSQLMetaXMLTest(unittest.TestCase):
         f_out = open(Test_Resource_Dir + "/_test_SELECT_out.json", "w")
         print(json.dumps(_dict_out), file=f_out)
         f_out.close()
+
+        self.validate_json_against_sql_schema(_dict_out)
+
         _changes = DictDiffer.compare_documents(dict_in, _dict_out)
         if len(_changes) == 0:
             self.assertTrue(True)
@@ -173,6 +176,8 @@ class ClassSQLMetaXMLTest(unittest.TestCase):
         f_out = open(Test_Resource_Dir + "/_test_INSERT_out.json", "w")
         print(json.dumps(_dict_out), file=f_out)
         f_out.close()
+
+        self.validate_json_against_sql_schema(_dict_out)
         _changes = DictDiffer.compare_documents(dict_in, _dict_out)
         if len(_changes) == 0:
             self.assertTrue(True)
@@ -192,13 +197,15 @@ class ClassSQLMetaXMLTest(unittest.TestCase):
         f = open(Test_Resource_Dir + "/_test_CREATE_INDEX_in.json", "r")
         dict_in = json.loads(f.read())
         f.close()
-        _structure = _meta_dict.dict_to_sql_structure(dict_in)
+        _structure = _meta_dict.dict_to_sql_structure(dict_in, _base_path=Test_Resource_Dir)
 
         _dict_out = _meta_dict.sql_structure_to_dict(_structure)
 
         f_out = open(Test_Resource_Dir + "/_test_CREATE_INDEX_out.json", "w")
         print(json.dumps(_dict_out), file=f_out)
         f_out.close()
+
+        self.validate_json_against_sql_schema(_dict_out)
         _changes = DictDiffer.compare_documents(dict_in, _dict_out)
         if len(_changes) == 0:
             self.assertTrue(True)
@@ -211,46 +218,33 @@ class ClassSQLMetaXMLTest(unittest.TestCase):
     def test_6_insert_matrix_csv(self):
         _meta_dict = SQLJSON()
 
-        _meta_xml = SQLXML()
-        _meta_xml.schema_uri = '../../SQL.xsd'
-
-        f = open(Test_Resource_Dir + "/_test_INSERT_matrix_csv_in.xml", "r")
-        _str_xml_in = f.read()
-        _structure = _meta_xml.xml_to_sql_structure(_str_xml_in,
-                                                    _base_path=Test_Resource_Dir + "/_test_INSERT_matrix_csv_in.xml")
-
+        _source_location = Test_Resource_Dir + "/_test_INSERT_matrix_csv_in.json"
+        f = open(_source_location, "r")
+        dict_in = json.loads(f.read())
+        f.close()
+        _structure = _meta_dict.dict_to_sql_structure(dict_in, _base_path=Test_Resource_Dir)
         # Add data matrix
         _structure.data.subsets[0].data_source.field_names = ['Column1', 'Column2']
         _structure.data.subsets[0].data_source.data_table = [['Matrix11', 'Matrix12'], ['Matrix21', 'Matrix22']]
         # Compare with all SQL flavours
         self._compare_sql_files_for_all_db_types(_structure, "_test_INSERT_matrix_csv")  # , _overwrite = True)
 
-        # Compare compare-file with XML output file
-        _xml_out = _meta_xml.sql_structure_to_xml(_structure)
-        _str_xml_out = _xml_out.toxml()
-        f_out = open(Test_Resource_Dir + "/_test_INSERT_matrix_csv_out.xml", "w")
-        print(_str_xml_out, file=f_out)
-        f_out.close()
-
-        f_comp = open(Test_Resource_Dir + "/_test_INSERT_matrix_csv_cmp.xml", "r")
-        _str_xml_comp = f_comp.read()
-
-
-        self.assertEqual(_str_xml_comp[:-2], _str_xml_out[:-1],
-                         'test_6_insert_matrix_csv: The generated XML file differs.\n' + diff_strings(_str_xml_comp,
-                                                                                                      _str_xml_out))
 
         _dict_out = _meta_dict.sql_structure_to_dict(_structure)
 
         f_out = open(Test_Resource_Dir + "/_test_INSERT_matrix_csv_out.json", "w")
         print(json.dumps(_dict_out), file=f_out)
         f_out.close()
-        _changes = DictDiffer.compare_documents(dict_in, _dict_out)
+
+        f_cmp = open(Test_Resource_Dir + "/_test_INSERT_matrix_csv_cmp.json", "r")
+        _dict_cmp = json.loads(f_cmp.read())
+        f_cmp.close()
+        _changes = DictDiffer.compare_documents(_dict_out, _dict_cmp)
         if len(_changes) == 0:
             self.assertTrue(True)
         else:
             DictDiffer.pretty_print_diff(_changes)
-            self.assertTrue(False)
+            self.assertTrue(False, "test_6_insert_matrix_csv: The generated XML file differs.")
 
 """
     def test_7_delete(self):

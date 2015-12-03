@@ -5,6 +5,7 @@ Created on Nov 22, 2012
 
 """
 from csv import list_dialects
+import os
 
 from qal.dataset.custom import CustomDataset
 from qal.dataset.xpath import xpath_data_formats
@@ -318,10 +319,10 @@ class SQLJSON():
         return _obj
 
     def dict_to_sql_structure(self, _dict, _base_path=None):
-        """Translates an XML file into a class structure"""
+        """Translates an JSON dict into a class structure"""
 
         if _base_path:
-            self.base_path = os.path.dirname(_base_path)
+            self.base_path = _base_path
 
         if "resources" in _dict:
             # _resources = _dict['resources']
