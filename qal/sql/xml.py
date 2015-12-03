@@ -309,6 +309,7 @@ class SQLXML(XMLTranslation):
 
         if _resources_node:
             self._debug_print("xml_to_sql_structure: Found resources.")
+            print("xml_to_sql_structure: Found resources.")
             # Send XML here, since resources now uses lxml      
             self._resources = Resources(_resources_xml=_resources_node.toxml(), _base_path=_base_path)
 

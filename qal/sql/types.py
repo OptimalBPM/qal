@@ -95,7 +95,7 @@ def make_json_type_ref(_json_ref, type_name):
 
 def verbs():
     """Returns a list of the supported verb types"""
-    return ["VerbCreateTable", "VerbCreateIndex", "VerbSelect", "VerbCustom", "VerbInsert"]
+    return ["VerbCreateTable", "VerbCreateIndex", "VerbSelect", "VerbCustom", "VerbInsert", "VerbDelete","VerbUpdate"]
 
 def sql_property_to_type(_property_name, _json_ref = None):
     """Translates a property name to a type, like decimal or string.

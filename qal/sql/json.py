@@ -232,22 +232,21 @@ class SQLJSON():
         else:
             raise Exception("json_get_allowed_value: " + str(_value) + " is not a valid value in a " + _type[0])
 
-    def _parse_array_dict(self, _list, _parent_obj):
+    def _parse_array_dict(self, _list, _parent_obj, _destination = []):
         self._go_down("_parse_array_dict")
         self._debug_print("_parse_array_dict: Parsing list")
 
         # Loop nodes and parse them.
 
-        _result = []
         for _curr_item in _list:
             if isinstance(_curr_item, dict):
                 for _curr_key, _curr_value in _curr_item.items():
-                    _result.append(self._parse_attribute(_curr_key, _curr_value, _parent_obj))
+                    _destination.append(self._parse_attribute(_curr_key, _curr_value, _parent_obj))
             else:
-                _result.append(_curr_item)
+                _destination.append(_curr_item)
 
         self._get_up("_parse_array_dict")
-        return _result
+        return _destination
 
     def _parse_attribute(self, _attribute_name, _attribute_value, _parent_obj):
         self._go_down("_parse_class_json")
@@ -284,7 +283,7 @@ class SQLJSON():
                     self._debug_print("_parse_class_json: Parsing property " + _curr_item_key)
 
                     if isinstance(_curr_obj, list):
-                        _obj.__dict__[_curr_item_key] = self._parse_array_dict(_curr_value, _obj)
+                        self._parse_array_dict(_curr_value, _obj, _curr_obj)
                     else:
                         # Match the property to a type.
                         _curr_type = sql_property_to_type(_curr_item_key, _json_ref="")

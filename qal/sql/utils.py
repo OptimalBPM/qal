@@ -6,6 +6,7 @@ Created on Oct 2, 2012
 from qal.dal.types import DB_POSTGRESQL, DB_MYSQL, DB_ORACLE, DB_DB2, DB_SQLSERVER
 from qal.common.listhelper import unenumerate
 
+# TODO: Property document this module
 
 def check_for_param_content(_value):
     if _value[0:8] == '::Param=':
