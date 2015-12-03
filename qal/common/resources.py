@@ -157,8 +157,9 @@ class Resources(XMLTranslation):
                     if isinstance(_curr_resource_value, list):
                         for _curr_item in _curr_resource_value:
                             _new_data.append(_curr_item)
+                        _new_resource.data[_curr_resource_key] = _new_data
                     else:
-                        _new_data.append(_curr_resource_value)
+                        _new_resource.data[_curr_resource_key] = _curr_resource_value
 
 
                 self.local_resources[_new_resource.uuid] = _new_resource
@@ -193,8 +194,9 @@ class Resources(XMLTranslation):
                 _new_resource.base_path = self.base_path
 
                 for _curr_resource_data in _curr_resource_node.findall("*"):
-                    _new_data = []
+
                     if len(_curr_resource_data.findall("item")) > 0:
+                        _new_data = []
                         for _curr_item in _curr_resource_data.findall("item"):
                             _new_data.append(_curr_item.text)
                         _new_resource.data[str(_curr_resource_data.tag).lower()] = _new_data

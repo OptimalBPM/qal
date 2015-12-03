@@ -1,0 +1,405 @@
+{
+  "resources": {
+    "{DD34A233-47A6-4C16-A26F-195711B49B97}": {
+      "_uuid": "{DD34A233-47A6-4C16-A26F-195711B49B97}",
+      "db_type": "MySQL",
+      "db_username": "bpmuser",
+      "_type": "rdbms",
+      "db_server": "localhost",
+      "_caption": "localhost_mysql",
+      "db_password": "test",
+      "db_databasename": "bpmtest"
+    },
+    "{0B8B71C1-D3A8-4F16-B8E1-9C73E196254C}": {
+      "rows_xpath": "/html/body/form/table/tr[4]/td[2]/table/tr[2]/td/table[2]/tr/td/table/tr[10]/td/table/tr[position()>2]",
+      "_uuid": "{0B8B71C1-D3A8-4F16-B8E1-9C73E196254C}",
+      "xpath_data_format": "HTML",
+      "_type": "xpath",
+      "field_types": [
+        "string",
+        "string"
+      ],
+      "_caption": "html-file",
+      "field_xpaths": [
+        "td[2]",
+        "td[3]"
+      ],
+      "filename": "_test_SELECT_resource_xpath_html_in.html",
+      "field_names": [
+        "file_htmlCode",
+        "file_htmlValue"
+      ]
+    },
+    "{969A610A-FCA6-4837-B33A-BAA8F13D8B70}": {
+      "rows_xpath": "/catalog/book[@id=\"bk111\"]",
+      "_uuid": "{969A610A-FCA6-4837-B33A-BAA8F13D8B70}",
+      "xpath_data_format": "XML",
+      "_type": "xpath",
+      "field_types": [
+        "string",
+        "float"
+      ],
+      "_caption": "xml-file",
+      "field_xpaths": [
+        "title",
+        "price"
+      ],
+      "filename": "_test_SELECT_resource_xpath_xml_in.xml",
+      "field_names": [
+        "file_xmltitle",
+        "file_xmlprice"
+      ]
+    },
+    "{1D62083E-88F7-4442-920D-0B6CC59BA2FF}": {
+      "_uuid": "{1D62083E-88F7-4442-920D-0B6CC59BA2FF}",
+      "db_type": "PostgreSQL",
+      "db_username": "bpmuser",
+      "_type": "rdbms",
+      "db_server": "localhost",
+      "_caption": "localhost_pg",
+      "db_password": "test",
+      "db_databasename": "bpmtest"
+    },
+    "{86470370-FF78-48A4-9759-A3BAE4EE22FE}": {
+      "_uuid": "{86470370-FF78-48A4-9759-A3BAE4EE22FE}",
+      "_type": "flatfile",
+      "delimiter": ",",
+      "_caption": "csv-file",
+      "filename": "_test_SELECT_resource_csv_in.txt",
+      "csv_dialect": "csv",
+      "has_header": "True"
+    }
+  },
+  "statement": {
+    "VerbSelect": {
+      "top_limit": "0",
+      "operator": "",
+      "resource_uuid": "{1D62083E-88F7-4442-920D-0B6CC59BA2FF}",
+      "fields": [
+        {
+          "ParameterField": {
+            "alias": "",
+            "expression": [
+              {
+                "ParameterIdentifier": {
+                  "identifier": "table_postgresID",
+                  "operator": "",
+                  "prefix": "PG"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "ParameterField": {
+            "alias": "",
+            "expression": [
+              {
+                "ParameterIdentifier": {
+                  "identifier": "table_mysqlID",
+                  "operator": "",
+                  "prefix": "MY"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "ParameterField": {
+            "alias": "",
+            "expression": [
+              {
+                "ParameterIdentifier": {
+                  "identifier": "table_postgresName",
+                  "operator": "",
+                  "prefix": "PG"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "ParameterField": {
+            "alias": "",
+            "expression": [
+              {
+                "ParameterIdentifier": {
+                  "identifier": "table_mysqlName",
+                  "operator": "",
+                  "prefix": "MY"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "ParameterField": {
+            "alias": "",
+            "expression": [
+              {
+                "ParameterIdentifier": {
+                  "identifier": "file_csvName",
+                  "operator": "",
+                  "prefix": "CSV"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "ParameterField": {
+            "alias": "",
+            "expression": [
+              {
+                "ParameterIdentifier": {
+                  "identifier": "file_htmlCode",
+                  "operator": "",
+                  "prefix": "HTML"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "ParameterField": {
+            "alias": "",
+            "expression": [
+              {
+                "ParameterIdentifier": {
+                  "identifier": "file_htmlValue",
+                  "operator": "",
+                  "prefix": "HTML"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "ParameterField": {
+            "alias": "",
+            "expression": [
+              {
+                "ParameterIdentifier": {
+                  "identifier": "file_xmltitle",
+                  "operator": "",
+                  "prefix": "XML"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "ParameterField": {
+            "alias": "",
+            "expression": [
+              {
+                "ParameterIdentifier": {
+                  "identifier": "file_xmlprice",
+                  "operator": "",
+                  "prefix": "XML"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "sources": [
+        {
+          "ParameterSource": {
+            "alias": "PG",
+            "join_type": "INNER",
+            "resource_uuid": "{1D62083E-88F7-4442-920D-0B6CC59BA2FF}",
+            "conditions": [],
+            "expression": [
+              {
+                "ParameterIdentifier": {
+                  "identifier": "table_postgres",
+                  "operator": "",
+                  "prefix": ""
+                }
+              }
+            ]
+          }
+        },
+        {
+          "ParameterSource": {
+            "alias": "MY",
+            "join_type": "INNER",
+            "resource_uuid": "{DD34A233-47A6-4C16-A26F-195711B49B97}",
+            "conditions": [
+              {
+                "ParameterCondition": {
+                  "right": [
+                    {
+                      "ParameterIdentifier": {
+                        "identifier": "table_mysqlID",
+                        "operator": "",
+                        "prefix": "MY"
+                      }
+                    }
+                  ],
+                  "left": [
+                    {
+                      "ParameterIdentifier": {
+                        "identifier": "table_postgresID",
+                        "operator": "",
+                        "prefix": "PG"
+                      }
+                    }
+                  ],
+                  "operator": "=",
+                  "and_or": "AND"
+                }
+              }
+            ],
+            "expression": [
+              {
+                "ParameterIdentifier": {
+                  "identifier": "table_mysql",
+                  "operator": "",
+                  "prefix": ""
+                }
+              }
+            ]
+          }
+        },
+        {
+          "ParameterSource": {
+            "alias": "CSV",
+            "join_type": "INNER",
+            "resource_uuid": "",
+            "conditions": [
+              {
+                "ParameterCondition": {
+                  "right": [
+                    {
+                      "ParameterCast": {
+                        "datatype": "integer",
+                        "operator": "",
+                        "expression": [
+                          {
+                            "ParameterIdentifier": {
+                              "identifier": "file_csvID",
+                              "operator": "",
+                              "prefix": "CSV"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "left": [
+                    {
+                      "ParameterIdentifier": {
+                        "identifier": "table_postgresID",
+                        "operator": "",
+                        "prefix": "PG"
+                      }
+                    }
+                  ],
+                  "operator": "=",
+                  "and_or": "AND"
+                }
+              }
+            ],
+            "expression": [
+              {
+                "ParameterDataset": {
+                  "data_source": "FlatfileDataset",
+                  "resource_uuid": "{86470370-FF78-48A4-9759-A3BAE4EE22FE}"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "ParameterSource": {
+            "alias": "HTML",
+            "join_type": "CROSS",
+            "resource_uuid": "",
+            "conditions": [],
+            "expression": [
+              {
+                "ParameterDataset": {
+                  "data_source": "XpathDataset",
+                  "resource_uuid": "{0B8B71C1-D3A8-4F16-B8E1-9C73E196254C}"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "ParameterSource": {
+            "alias": "XML",
+            "join_type": "INNER",
+            "resource_uuid": "",
+            "conditions": [
+              {
+                "ParameterCondition": {
+                  "right": [
+                    {
+                      "ParameterNumeric": {
+                        "numeric_value": "1.0",
+                        "operator": ""
+                      }
+                    }
+                  ],
+                  "left": [
+                    {
+                      "ParameterNumeric": {
+                        "numeric_value": "1.0",
+                        "operator": ""
+                      }
+                    }
+                  ],
+                  "operator": "=",
+                  "and_or": "AND"
+                }
+              }
+            ],
+            "expression": [
+              {
+                "ParameterDataset": {
+                  "data_source": "XpathDataset",
+                  "resource_uuid": "{969A610A-FCA6-4837-B33A-BAA8F13D8B70}"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "order_by": [
+        {
+          "ParameterOrderByItem": {
+            "expressionitems": [
+              {
+                "ParameterIdentifier": {
+                  "identifier": "table_postgresID",
+                  "operator": "",
+                  "prefix": "PG"
+                }
+              }
+            ],
+            "operator": "",
+            "direction": ""
+          }
+        },
+        {
+          "ParameterOrderByItem": {
+            "expressionitems": [
+              {
+                "ParameterIdentifier": {
+                  "identifier": "file_htmlCode",
+                  "operator": "",
+                  "prefix": "HTML"
+                }
+              }
+            ],
+            "operator": "",
+            "direction": ""
+          }
+        }
+      ]
+    }
+  }
+}

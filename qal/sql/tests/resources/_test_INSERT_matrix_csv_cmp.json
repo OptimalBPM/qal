@@ -1,0 +1,91 @@
+{
+  "statement": {
+    "VerbInsert": {
+      "column_identifiers": [
+        {
+          "ParameterIdentifier": {
+            "prefix": "",
+            "operator": "C",
+            "identifier": "Column1"
+          }
+        },
+        {
+          "ParameterIdentifier": {
+            "prefix": "",
+            "operator": "",
+            "identifier": "Column2"
+          }
+        }
+      ],
+      "destination_identifier": {
+        "ParameterIdentifier": {
+          "prefix": "",
+          "operator": "C",
+          "identifier": "Test"
+        }
+      },
+      "data": {
+        "ParameterSet": {
+          "set_operator": "UNION",
+          "subsets": [
+            {
+              "ParameterDataset": {
+                "data_source": {
+                  "MatrixDataset": {
+                    "field_names": [
+                      "Column1",
+                      "Column2"
+                    ],
+                    "data_table": [
+                      [
+                        "Matrix11",
+                        "Matrix12"
+                      ],
+                      [
+                        "Matrix21",
+                        "Matrix22"
+                      ]
+                    ],
+                    "field_types": []
+                  }
+                },
+                "resource_uuid": ""
+              }
+            },
+            {
+              "ParameterDataset": {
+                "data_source": {
+                  "FlatfileDataset": {
+                    "field_names": [
+                      "Column1",
+                      "Column2"
+                    ],
+                    "delimiter": ",",
+                    "filename": "_test_insert_csv_in.txt",
+                    "quotechar": null,
+                    "data_table": [
+                      [
+                        "CSV11",
+                        "CSV12"
+                      ],
+                      [
+                        "CSV21",
+                        "CSV22"
+                      ]
+                    ],
+                    "field_types": [],
+                    "csv_dialect": "excel-tab",
+                    "skipinitialspace": null,
+                    "has_header": "True",
+                    "quoting": null
+                  }
+                },
+                "resource_uuid": ""
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}
