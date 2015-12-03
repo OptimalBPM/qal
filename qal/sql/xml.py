@@ -371,7 +371,7 @@ class SQLXML(XMLTranslation):
             else:
                 xml_set_cdata(_object_node, _object)
 
-    def sql_structure_to_xml(self, _structure):
+    def sql_structure_to_xml(self, _structure, _resources = None):
         """Translates an XML structure into XML"""
         # Create the minidom document
         _doc = Document()
@@ -385,6 +385,7 @@ class SQLXML(XMLTranslation):
 
         # Recurse structure
         self._xml_encode_object(_doc, _statement, _structure)
-
+        if _resources is not None:
+            _statement.appendChild(_resources.as_xml_node())
         return _doc
 

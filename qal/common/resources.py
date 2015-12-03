@@ -48,6 +48,24 @@ class Resource(object):
         self.base_path = None
         self.data = {}
 
+    def as_json_dict(self):
+        """This function encode an XML structure into resource objects. Uses lxml as opposed to parse_xml()."""
+        _resource = {}
+        _resource["_caption"] = self.caption
+        _resource["_type"] = self.type
+        _resource["_uuid"] = self.uuid
+        # Loop data. Sorted to be predictable enough for testing purposes
+        for _curr_data_key, _curr_data_value in sorted(self.data.items()):
+            if _curr_data_value is not None:
+                if isinstance(_curr_data_value, list):
+                    _resource[_curr_data_key] = []
+                    for _curr_item in _curr_data_value:
+                        _resource[_curr_data_key].append(str(_curr_item))
+                else:
+                    _resource[_curr_data_key] = _curr_data_value
+
+        return _resource
+
     def as_xml_node(self):
         """This function encode an XML structure into resource objects. Uses lxml as opposed to parse_xml()."""
         _resource = etree.Element("resource")
@@ -80,7 +98,8 @@ class Resources(XMLTranslation):
     base_path = None
     """If resource was loaded from a file, its path is stores here, useful when translating relative paths."""
 
-    def __init__(self, _resources_node=None, _resources_xml=None, _external_resources_callback=None, _base_path=None):
+    def __init__(self, _resources_node=None, _resources_xml=None, _resources_json_dict=None, _external_resources_callback=None,
+                 _base_path=None):
         """
             The argument _resources_node is an XML node from which local resources are parsed.
             The argument _external_resources_callback is a user provided callback function, not implemented.
@@ -96,6 +115,8 @@ class Resources(XMLTranslation):
             self.base_path = None
         if _resources_node is not None or _resources_xml is not None:
             self.parse_xml(_resources_node, _resources_xml)
+        if _resources_json_dict is not None:
+            self.parse_json(_resources_json_dict)
 
     def get_resource(self, _uuid):
         """Returns the resource with the corresponding uuid"""
@@ -114,6 +135,36 @@ class Resources(XMLTranslation):
             raise Exception("get_resource: Resource not found - uuid: " + _uuid)
         else:
             return _resource
+
+    def parse_json(self, _resources_dict=None):
+        """Parses an dict structure into resource objects"""
+
+
+
+        self.local_resources = dict()
+
+        for _curr_key, _curr_resource in _resources_dict.items():
+            if "_uuid" in _curr_resource:
+                self._debug_print("Resources.parse_json: Create new resource object")
+                _new_resource = Resource()
+                _new_resource.uuid = _curr_resource["_uuid"]
+                _new_resource.type = _curr_resource["_type"]
+                _new_resource.caption = _curr_resource["_caption"]
+                _new_resource.base_path = self.base_path
+
+                for _curr_resource_key, _curr_resource_value in _curr_resource.items():
+                    _new_data = []
+                    if isinstance(_curr_resource_value, list):
+                        for _curr_item in _curr_resource_value:
+                            _new_data.append(_curr_item)
+                    else:
+                        _new_data.append(_curr_resource_value)
+
+
+                self.local_resources[_new_resource.uuid] = _new_resource
+                self._debug_print(
+                    "parse_xml: Append resource: " + _new_resource.caption + " uuid: " + _new_resource.uuid +
+                    " type: " + _new_resource.type, 4)
 
     def parse_xml(self, _resources_node=None, _resources_xml=None):
         """Parses an XML structure into resource objects. Uses lxml."""
@@ -167,3 +218,12 @@ class Resources(XMLTranslation):
             _xml_node.append(_curr_resource_value.as_xml_node())
 
         return _xml_node
+
+    def as_json_dict(self):
+        """This function encode resources structure into an XML structure."""
+        _result = {}
+        # Loop resources. Sorted to be predictable enough for testing purposes
+        for _curr_resource_key, _curr_resource_value in sorted(self.local_resources.items()):
+            _result[_curr_resource_key] =_curr_resource_value.as_json_dict()
+
+        return _result

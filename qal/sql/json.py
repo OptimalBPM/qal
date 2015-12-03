@@ -6,6 +6,7 @@ Created on Nov 22, 2012
 """
 from csv import list_dialects
 import os
+from qal.common.resources import Resources
 
 from qal.dataset.custom import CustomDataset
 from qal.dataset.xpath import xpath_data_formats
@@ -212,13 +213,16 @@ class SQLJSON():
 
             return {_object.__class__.__name__: _content}
 
-    def sql_structure_to_dict(self, _structure):
+    def sql_structure_to_dict(self, _statement, _resources = None):
         """Translates an SQL structure into JSON"""
 
         # Recurse structure
-        _json = self._object_to_dict(_structure)
+        _statement = self._object_to_dict(_statement)
+        if _resources is not None:
 
-        return {"statement": _json}
+            return {"statement": _statement, "resources": _resources.as_json_dict()}
+        else:
+            return {"statement": _statement}
 
     def json_get_allowed_value(_value, _type):
         """Check if a value is allowed in a certain XML node"""
@@ -328,8 +332,7 @@ class SQLJSON():
 
             # Send XML here, since resources now uses lxml
 
-            # self._resources = Resources(_resources_xml=_resources_node.toxml(), _base_path=_base_path)
-            self._resources = None
+            self._resources = Resources(_resources_json_dict=_dict["resources"], _base_path=_base_path)
 
         if "statement" in _dict:
 
