@@ -1,0 +1,71 @@
+{
+  "{0B8B71C1-D3A8-4F16-B8E1-9C73E196254C}": {
+    "_type": "xpath",
+    "_uuid": "{0B8B71C1-D3A8-4F16-B8E1-9C73E196254C}",
+    "field_types": [
+      "string",
+      "string"
+    ],
+    "_caption": "html-file",
+    "rows_xpath": "\n                /html/body/form/table/tr[4]/td[2]/table/tr[2]/td/table[2]/tr/td/table/tr[10]/td/table/tr[position()>2]\n            ",
+    "xpath_data_format": "HTML",
+    "filename": "_test_SELECT_resource_xpath_html_in.html",
+    "field_names": [
+      "file_htmlCode",
+      "file_htmlValue"
+    ],
+    "field_xpaths": [
+      "td[2]",
+      "td[3]"
+    ]
+  },
+  "{969A610A-FCA6-4837-B33A-BAA8F13D8B70}": {
+    "_type": "xpath",
+    "_uuid": "{969A610A-FCA6-4837-B33A-BAA8F13D8B70}",
+    "field_types": [
+      "string",
+      "float"
+    ],
+    "_caption": "xml-file",
+    "rows_xpath": "/catalog/book[@id=\"bk111\"]",
+    "xpath_data_format": "XML",
+    "filename": "_test_SELECT_resource_xpath_xml_in.xml",
+    "field_names": [
+      "file_xmltitle",
+      "file_xmlprice"
+    ],
+    "field_xpaths": [
+      "title",
+      "price"
+    ]
+  },
+  "{DD34A233-47A6-4C16-A26F-195711B49B97}": {
+    "_type": "rdbms",
+    "_uuid": "{DD34A233-47A6-4C16-A26F-195711B49B97}",
+    "password": "test",
+    "server": "localhost",
+    "_caption": "localhost_mysql",
+    "database": "ubpmtest",
+    "db_type": "MySQL",
+    "username": "ubpmuser"
+  },
+  "{86470370-FF78-48A4-9759-A3BAE4EE22FE}": {
+    "_type": "flatfile",
+    "has_header": "True",
+    "_uuid": "{86470370-FF78-48A4-9759-A3BAE4EE22FE}",
+    "_caption": "csv-file",
+    "csv_dialect": "excel-tab",
+    "filename": "_SELECT_resource_csv_in.txt",
+    "delimiter": ","
+  },
+  "{1D62083E-88F7-4442-920D-0B6CC59BA2FF}": {
+    "_type": "rdbms",
+    "_uuid": "{1D62083E-88F7-4442-920D-0B6CC59BA2FF}",
+    "password": "test",
+    "server": "localhost",
+    "_caption": "localhost_pg",
+    "database": "ubpmtest",
+    "db_type": "PostgreSQL",
+    "username": "ubpmuser"
+  }
+}
