@@ -158,10 +158,10 @@ def sql_property_to_type(_property_name, _json_ref = None):
         return _handle_json_ref("join_types", join_types())
 
     elif _property_name in ["data", "data_table"]:
-        return _handle_json_ref("tabular_expression_item", tabular_expression_item_types())
+        return _handle_json_ref("TabularExpressionItem", tabular_expression_item_types())
 
     elif _property_name == "subsets":
-        return _handle_json_ref("Array_tabular_expression_item", tabular_expression_item_types())
+        return _handle_json_ref("ArrayTabularExpressionItem", tabular_expression_item_types())
 
     elif _property_name == "and_or":
         return _handle_json_ref("and_or", and_or())
@@ -176,7 +176,7 @@ def sql_property_to_type(_property_name, _json_ref = None):
         return _handle_json_ref("xpath_data_format", xpath_data_formats())
 
     elif _property_name in ["expression", "parameters", "result", "else_statement", "orderby", "expressionitems"]:
-        return _handle_json_ref("Array_expression_item", expression_item_types())
+        return _handle_json_ref("ArrayExpressionItem", expression_item_types())
 
     elif _property_name in ["in_values"]:
         return _handle_json_ref("in_types", in_types())
@@ -190,44 +190,44 @@ def sql_property_to_type(_property_name, _json_ref = None):
 
     # Complex types
     elif _property_name in ["checkconditions", "conditions"]:
-        return _handle_json_ref("Array_ParameterCondition")
+        return _handle_json_ref("ArrayParameterCondition")
 
     elif _property_name in ["column_names", "field_names", "field_xpaths"]:
-        return _handle_json_ref("Array_string")
+        return _handle_json_ref("ArrayString")
 
     elif _property_name == "columns":
-        return _handle_json_ref("Array_ParameterColumndefinition")
+        return _handle_json_ref("ArrayParameterColumndefinition")
 
 
     elif _property_name in ["destination_identifier", "table_identifier"]:
         return _handle_json_ref("ParameterIdentifier")
 
     elif _property_name in ["column_identifiers", "references"]:
-        return _handle_json_ref("Array_ParameterIdentifier")
+        return _handle_json_ref("ArrayParameterIdentifier")
 
     elif _property_name == "constraints":
-        return _handle_json_ref("Array_ParameterConstraint")
+        return _handle_json_ref("ArrayParameterConstraint")
 
     elif _property_name == "fields":
-        return _handle_json_ref("Array_ParameterField")
+        return _handle_json_ref("ArrayParameterField")
 
     elif _property_name == "select":
         return _handle_json_ref("VerbSelect")
 
     elif _property_name == "sources":
-        return _handle_json_ref("Array_ParameterSource")
+        return _handle_json_ref("ArrayParameterSource")
 
     elif _property_name == "csv_dialect":
         return _handle_json_ref("csv_dialects", list_dialects())
 
     elif _property_name == "when_statements":
-        return _handle_json_ref("Array_ParameterWhen")
+        return _handle_json_ref("ArrayParameterWhen")
 
     elif _property_name == "order_by":
-        return _handle_json_ref("Array_ParameterOrderByItem")
+        return _handle_json_ref("ArrayParameterOrderByItem")
 
     elif _property_name == "assignments":
-        return _handle_json_ref("Array_ParameterAssignment")
+        return _handle_json_ref("ArrayParameterAssignment")
     else:
         raise Exception("sql_property_to_type: Unrecognized property:" + _property_name)
 

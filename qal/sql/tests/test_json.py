@@ -68,7 +68,7 @@ class ClassSQLMetaJSONTest(unittest.TestCase):
         f = open(os.path.join(Test_Resource_Dir, "../../../schema/", "sql.json"), "w")
         _schema = meta_json.generate_schema()
 
-        json.dump(_schema, f)
+        json.dump(obj=_schema, fp=f, sort_keys=True, indent=4)
         f.close()
 
         Draft4Validator.check_schema(_schema)

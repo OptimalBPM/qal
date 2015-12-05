@@ -14,7 +14,7 @@ from qal.sql.base import ParameterBase
 from qal.sql.meta import list_class_properties, list_parameter_classes, list_verb_classes, find_class
 from qal.sql.types import sql_property_to_type, and_or, \
     constraint_types, index_types, verbs, expression_item_types, \
-    condition_part, set_operator, tabular_expression_item_types, data_source_types, join_types, in_types, quoting_types
+    condition_part, set_operator, tabular_expression_item_types, join_types, in_types, quoting_types, data_source_types
 from qal.dal.types import db_types
 
 
@@ -104,25 +104,25 @@ class SQLJSON():
 
         _result["statement"] = make_one_of(verbs())
         _result["condition_part"] = make_one_of(condition_part())
-        _result["tabular_expression_item"] = make_one_of(tabular_expression_item_types())
+        _result["TabularExpressionItem"] = make_one_of(tabular_expression_item_types())
         _result["data_source_types"] = make_one_of(data_source_types())
 
-        _result["Array_string"] = {"type": "array", "items": {"type": "string"}}
+        _result["ArrayString"] = {"type": "array", "items": {"type": "string"}}
 
-        _result["Array_ParameterString"] = self._child_array_of(['#/definitions/ParameterString'])
-        _result["Array_ParameterConstraint"] = self._child_array_of(['#/definitions/ParameterConstraint'])
-        _result["Array_ParameterColumndefinition"] = self._child_array_of(['#/definitions/ParameterColumndefinition'])
-        _result["Array_ParameterSource"] = self._child_array_of(['#/definitions/ParameterSource'])
-        _result["Array_ParameterWhen"] = self._child_array_of(['#/definitions/ParameterWhen'])
-        _result["Array_ParameterIdentifier"] = self._child_array_of(['#/definitions/ParameterIdentifier'])
-        _result["Array_Statement"] = self._child_array_of(['#/definitions/statement'])
-        _result["Array_ParameterOrderByItem"] = self._child_array_of(['#/definitions/ParameterOrderByItem'])
-        _result["Array_ParameterCondition"] = self._child_array_of(['#/definitions/ParameterCondition'])
-        _result["Array_ParameterField"] = self._child_array_of(['#/definitions/ParameterField'])
-        _result["Array_ParameterAssignment"] = self._child_array_of(['#/definitions/ParameterAssignment'])
-        _result["Array_expression_item"] = self._child_array_of(make_one_of(expression_item_types()))
-        _result["Array_tabular_expression_item"] = self._child_array_of(make_one_of(tabular_expression_item_types()))
-        _result["Array_list"] = self._child_array_of(['*'])
+        _result["ArrayParameterString"] = self._child_array_of(['#/definitions/ParameterString'])
+        _result["ArrayParameterConstraint"] = self._child_array_of(['#/definitions/ParameterConstraint'])
+        _result["ArrayParameterColumndefinition"] = self._child_array_of(['#/definitions/ParameterColumndefinition'])
+        _result["ArrayParameterSource"] = self._child_array_of(['#/definitions/ParameterSource'])
+        _result["ArrayParameterWhen"] = self._child_array_of(['#/definitions/ParameterWhen'])
+        _result["ArrayParameterIdentifier"] = self._child_array_of(['#/definitions/ParameterIdentifier'])
+        _result["ArrayStatement"] = self._child_array_of(['#/definitions/statement'])
+        _result["ArrayParameterOrderByItem"] = self._child_array_of(['#/definitions/ParameterOrderByItem'])
+        _result["ArrayParameterCondition"] = self._child_array_of(['#/definitions/ParameterCondition'])
+        _result["ArrayParameterField"] = self._child_array_of(['#/definitions/ParameterField'])
+        _result["ArrayParameterAssignment"] = self._child_array_of(['#/definitions/ParameterAssignment'])
+        _result["ArrayExpressionItem"] = self._child_array_of(make_one_of(expression_item_types()))
+        _result["ArrayTabularExpressionItem"] = self._child_array_of(make_one_of(tabular_expression_item_types()))
+        _result["ArrayList"] = self._child_array_of(['*'])
 
         return _result
 

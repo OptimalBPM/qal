@@ -1,1 +1,1038 @@
-{"$schema": "http://json-schema.org/draft-04/schema#", "type": "object", "description": "The JSON Schema for QAL SQL settings", "definitions": {"ParameterSet": {"type": "object", "properties": {"subsets": {"$ref": "#/definitions/Array_tabular_expression_item"}, "set_operator": {"$ref": "#/definitions/set_operator"}, "row_separator": {"type": "string"}}}, "statement": {"type": "object", "anyOf": [{"properties": {"VerbCreateTable": {"$ref": "#/definitions/VerbCreateTable"}}}, {"properties": {"VerbCreateIndex": {"$ref": "#/definitions/VerbCreateIndex"}}}, {"properties": {"VerbSelect": {"$ref": "#/definitions/VerbSelect"}}}, {"properties": {"VerbCustom": {"$ref": "#/definitions/VerbCustom"}}}, {"properties": {"VerbInsert": {"$ref": "#/definitions/VerbInsert"}}}, {"properties": {"VerbDelete": {"$ref": "#/definitions/VerbDelete"}}}, {"properties": {"VerbUpdate": {"$ref": "#/definitions/VerbUpdate"}}}]}, "Array_ParameterOrderByItem": {"items": {"$ref": "#/definitions/ParameterOrderByItem"}, "uniqueItems": true, "type": "array", "minItems": 0}, "xpath_data_format": {"type": "string", "enum": ["XML", "XHTML", "HTML"]}, "VerbCreateIndex": {"type": "object", "properties": {"column_names": {"$ref": "#/definitions/Array_string"}, "tablename": {"type": "string"}, "name": {"type": "string"}, "index_type": {"$ref": "#/definitions/index_types"}, "row_separator": {"type": "string"}}}, "ParameterCase": {"type": "object", "properties": {"when_statements": {"$ref": "#/definitions/Array_ParameterWhen"}, "row_separator": {"type": "string"}, "else_statement": {"$ref": "#/definitions/Array_expression_item"}, "operator": {"type": "string"}}}, "VerbCustom": {"type": "object", "properties": {"sql_postgresql": {"type": "string"}, "sql_sqlserver": {"type": "string"}, "sql_oracle": {"type": "string"}, "sql_mysql": {"type": "string"}, "row_separator": {"type": "string"}, "sql_db2": {"type": "string"}}}, "db_types": {"type": "string", "enum": ["MySQL", "PostgreSQL", "Oracle", "DB2", "SQLserver"]}, "join_types": {"type": "string", "enum": ["", "INNER", "LEFT OUTER", "RIGHT OUTER", "FULL OUTER", "CROSS"]}, "ParameterAssignment": {"type": "object", "properties": {"left": {"$ref": "#/definitions/condition_part"}, "row_separator": {"type": "string"}, "right": {"$ref": "#/definitions/condition_part"}}}, "VerbSelect": {"type": "object", "properties": {"top_limit": {"type": "integer"}, "resource_uuid": {"type": "string"}, "row_separator": {"type": "string"}, "fields": {"$ref": "#/definitions/Array_ParameterField"}, "operator": {"type": "string"}, "order_by": {"$ref": "#/definitions/Array_ParameterOrderByItem"}, "sources": {"$ref": "#/definitions/Array_ParameterSource"}}}, "set_operator": {"type": "string", "enum": ["UNION", "INTERSECT", "DIFFERENCE"]}, "ParameterIdentifier": {"type": "object", "properties": {"prefix": {"type": "string"}, "identifier": {"type": "string"}, "row_separator": {"type": "string"}, "operator": {"type": "string"}}}, "ParameterField": {"type": "object", "properties": {"expression": {"$ref": "#/definitions/Array_expression_item"}, "row_separator": {"type": "string"}, "alias": {"type": "string"}}}, "ParameterCast": {"type": "object", "properties": {"expression": {"$ref": "#/definitions/Array_expression_item"}, "row_separator": {"type": "string"}, "datatype": {"$ref": "#/definitions/datatypes"}, "operator": {"type": "string"}}}, "ParameterExpression": {"type": "object", "properties": {"row_separator": {"type": "string"}, "expressionitems": {"$ref": "#/definitions/Array_expression_item"}, "operator": {"type": "string"}}}, "ParameterExpressionItem": {"type": "object", "properties": {"row_separator": {"type": "string"}, "operator": {"type": "string"}}}, "Array_ParameterWhen": {"items": {"$ref": "#/definitions/ParameterWhen"}, "uniqueItems": true, "type": "array", "minItems": 0}, "ParameterWhen": {"type": "object", "properties": {"row_separator": {"type": "string"}, "conditions": {"$ref": "#/definitions/Array_ParameterCondition"}, "result": {"$ref": "#/definitions/Array_expression_item"}}}, "ParameterSource": {"type": "object", "properties": {"resource_uuid": {"type": "string"}, "expression": {"$ref": "#/definitions/Array_expression_item"}, "row_separator": {"type": "string"}, "join_type": {"$ref": "#/definitions/join_types"}, "conditions": {"$ref": "#/definitions/Array_ParameterCondition"}, "alias": {"type": "string"}}}, "tabular_expression_item": {"type": "object", "anyOf": [{"properties": {"VerbSelect": {"$ref": "#/definitions/VerbSelect"}}}, {"properties": {"ParameterDataset": {"$ref": "#/definitions/ParameterDataset"}}}, {"properties": {"ParameterSet": {"$ref": "#/definitions/ParameterSet"}}}]}, "ParameterConstraint": {"type": "object", "properties": {"references": {"$ref": "#/definitions/Array_ParameterIdentifier"}, "name": {"type": "string"}, "checkconditions": {"$ref": "#/definitions/Array_ParameterCondition"}, "row_separator": {"type": "string"}, "constraint_type": {"$ref": "#/definitions/constraint_types"}}}, "ParameterRemotable": {"type": "object", "properties": {"resource_uuid": {"type": "string"}}}, "Array_ParameterField": {"items": {"$ref": "#/definitions/ParameterField"}, "uniqueItems": true, "type": "array", "minItems": 0}, "ParameterFunction": {"type": "object", "properties": {"name": {"type": "string"}, "row_separator": {"type": "string"}, "parameters": {"$ref": "#/definitions/Array_expression_item"}, "operator": {"type": "string"}}}, "Array_ParameterAssignment": {"items": {"$ref": "#/definitions/ParameterAssignment"}, "uniqueItems": true, "type": "array", "minItems": 0}, "Array_ParameterIdentifier": {"items": {"$ref": "#/definitions/ParameterIdentifier"}, "uniqueItems": true, "type": "array", "minItems": 0}, "ParameterBase": {"type": "object", "properties": {"row_separator": {"type": "string"}}}, "ParameterNumeric": {"type": "object", "properties": {"numeric_value": {"type": "number"}, "row_separator": {"type": "string"}, "operator": {"type": "string"}}}, "data_source_types": {"type": "object", "anyOf": [{"properties": {"FlatfileDataset": {"$ref": "#/definitions/FlatfileDataset"}}}, {"properties": {"XpathDataset": {"$ref": "#/definitions/XpathDataset"}}}, {"properties": {"MatrixDataset": {"$ref": "#/definitions/MatrixDataset"}}}, {"properties": {"SpreadsheetDataset": {"$ref": "#/definitions/SpreadsheetDataset"}}}, {"properties": {"RDBMSDataset": {"$ref": "#/definitions/RDBMSDataset"}}}]}, "index_types": {"type": "string", "enum": ["UNIQUE", "CLUSTERED", "NONCLUSTERED"]}, "Array_expression_item": {"items": {"type": "object", "anyOf": [{"properties": {"VerbSelect": {"$ref": "#/definitions/VerbSelect"}}}, {"properties": {"ParameterExpression": {"$ref": "#/definitions/ParameterExpression"}}}, {"properties": {"ParameterString": {"$ref": "#/definitions/ParameterString"}}}, {"properties": {"ParameterNumeric": {"$ref": "#/definitions/ParameterNumeric"}}}, {"properties": {"ParameterIdentifier": {"$ref": "#/definitions/ParameterIdentifier"}}}, {"properties": {"ParameterCast": {"$ref": "#/definitions/ParameterCast"}}}, {"properties": {"ParameterFunction": {"$ref": "#/definitions/ParameterFunction"}}}, {"properties": {"ParameterIn": {"$ref": "#/definitions/ParameterIn"}}}, {"properties": {"ParameterDataset": {"$ref": "#/definitions/ParameterDataset"}}}, {"properties": {"ParameterCase": {"$ref": "#/definitions/ParameterCase"}}}, {"properties": {"ParameterSet": {"$ref": "#/definitions/ParameterSet"}}}]}, "uniqueItems": true, "type": "array", "minItems": 0}, "ParameterIn": {"type": "object", "properties": {"row_separator": {"type": "string"}, "in_values": {"$ref": "#/definitions/in_types"}, "operator": {"type": "string"}}}, "Array_tabular_expression_item": {"items": {"type": "object", "anyOf": [{"properties": {"VerbSelect": {"$ref": "#/definitions/VerbSelect"}}}, {"properties": {"ParameterDataset": {"$ref": "#/definitions/ParameterDataset"}}}, {"properties": {"ParameterSet": {"$ref": "#/definitions/ParameterSet"}}}]}, "uniqueItems": true, "type": "array", "minItems": 0}, "quoting": {"type": "string", "enum": ["QUOTE_MINIMAL", "QUOTE_ALL", "QUOTE_NONE"]}, "VerbUpdate": {"type": "object", "properties": {"row_separator": {"type": "string"}, "conditions": {"$ref": "#/definitions/Array_ParameterCondition"}, "table_identifier": {"$ref": "#/definitions/ParameterIdentifier"}, "assignments": {"$ref": "#/definitions/Array_ParameterAssignment"}}}, "csv_dialects": {"type": "string", "enum": ["excel", "excel-tab", "unix"]}, "Array_ParameterColumndefinition": {"items": {"$ref": "#/definitions/ParameterColumndefinition"}, "uniqueItems": true, "type": "array", "minItems": 0}, "VerbDelete": {"type": "object", "properties": {"row_separator": {"type": "string"}, "sources": {"$ref": "#/definitions/Array_ParameterSource"}}}, "Array_ParameterSource": {"items": {"$ref": "#/definitions/ParameterSource"}, "uniqueItems": true, "type": "array", "minItems": 0}, "ParameterParameter": {"type": "object", "properties": {"row_separator": {"type": "string"}, "datatype": {"$ref": "#/definitions/datatypes"}, "operator": {"type": "string"}}}, "VerbInsert": {"type": "object", "properties": {"row_separator": {"type": "string"}, "destination_identifier": {"$ref": "#/definitions/ParameterIdentifier"}, "data": {"$ref": "#/definitions/tabular_expression_item"}, "column_identifiers": {"$ref": "#/definitions/Array_ParameterIdentifier"}}}, "ParameterDataset": {"type": "object", "properties": {"resource_uuid": {"type": "string"}, "row_separator": {"type": "string"}, "data_source": {"$ref": "#/definitions/data_source_types"}, "operator": {"type": "string"}}}, "ParameterColumndefinition": {"type": "object", "properties": {"name": {"type": "string"}, "row_separator": {"type": "string"}, "notnull": {"type": "boolean"}, "datatype": {"$ref": "#/definitions/datatypes"}, "default": {"type": "string"}}}, "Array_ParameterString": {"items": {"$ref": "#/definitions/ParameterString"}, "uniqueItems": true, "type": "array", "minItems": 0}, "constraint_types": {"type": "string", "enum": ["NOT NULL", "UNIQUE", "PRIMARY KEY", "FOREIGN KEY", "CHECK", "DEFAULT"]}, "and_or": {"type": "string", "enum": ["AND", "OR"]}, "in_types": {"type": "string", "enum": ["VerbSelect", "ParameterString"]}, "ParameterDDL": {"type": "object", "properties": {"row_separator": {"type": "string"}}}, "Array_list": {"items": {"$ref": "*"}, "uniqueItems": true, "type": "array", "minItems": 0}, "VerbCreateTable": {"type": "object", "properties": {"columns": {"$ref": "#/definitions/Array_ParameterColumndefinition"}, "row_separator": {"type": "string"}, "name": {"type": "string"}, "constraints": {"$ref": "#/definitions/Array_ParameterConstraint"}}}, "Array_string": {"items": {"type": "string"}, "type": "array"}, "ParameterCondition": {"type": "object", "properties": {"left": {"$ref": "#/definitions/condition_part"}, "row_separator": {"type": "string"}, "right": {"$ref": "#/definitions/condition_part"}, "and_or": {"$ref": "#/definitions/and_or"}, "operator": {"type": "string"}}}, "datatypes": {"pattern": "(integer|string|string(\\(.*\\))|serial|timestamp)", "type": "string"}, "Array_Statement": {"items": {"$ref": "#/definitions/statement"}, "uniqueItems": true, "type": "array", "minItems": 0}, "ParameterString": {"type": "object", "properties": {"string_value": {"type": "string"}, "row_separator": {"type": "string"}, "escape_character": {"type": "string"}, "operator": {"type": "string"}}}, "VerbDropTable": {"type": "object", "properties": {"row_separator": {"type": "string"}, "name": {"type": "string"}}}, "ParameterOrderByItem": {"type": "object", "properties": {"row_separator": {"type": "string"}, "expressionitems": {"$ref": "#/definitions/Array_expression_item"}, "direction": {"type": "string"}, "operator": {"type": "string"}}}, "condition_part": {"type": "object", "anyOf": [{"properties": {"ParameterConditions": {"$ref": "#/definitions/ParameterConditions"}}}, {"properties": {"ParameterCondition": {"$ref": "#/definitions/ParameterCondition"}}}, {"properties": {"VerbSelect": {"$ref": "#/definitions/VerbSelect"}}}, {"properties": {"ParameterExpression": {"$ref": "#/definitions/ParameterExpression"}}}, {"properties": {"ParameterString": {"$ref": "#/definitions/ParameterString"}}}, {"properties": {"ParameterNumeric": {"$ref": "#/definitions/ParameterNumeric"}}}, {"properties": {"ParameterIdentifier": {"$ref": "#/definitions/ParameterIdentifier"}}}, {"properties": {"ParameterCast": {"$ref": "#/definitions/ParameterCast"}}}, {"properties": {"ParameterFunction": {"$ref": "#/definitions/ParameterFunction"}}}, {"properties": {"ParameterIn": {"$ref": "#/definitions/ParameterIn"}}}, {"properties": {"ParameterDataset": {"$ref": "#/definitions/ParameterDataset"}}}, {"properties": {"ParameterCase": {"$ref": "#/definitions/ParameterCase"}}}, {"properties": {"ParameterSet": {"$ref": "#/definitions/ParameterSet"}}}]}, "Array_ParameterConstraint": {"items": {"$ref": "#/definitions/ParameterConstraint"}, "uniqueItems": true, "type": "array", "minItems": 0}, "Array_ParameterCondition": {"items": {"$ref": "#/definitions/ParameterCondition"}, "uniqueItems": true, "type": "array", "minItems": 0}, "ParameterConditions": {"type": "object", "properties": {}}}, "properties": {"statement": {"$ref": "#/definitions/statement"}}, "version": "0.5", "title": "QAL SQL JSON Schema", "required": ["statement"]}
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "definitions": {
+        "ArrayExpressionItem": {
+            "items": {
+                "anyOf": [
+                    {
+                        "properties": {
+                            "VerbSelect": {
+                                "$ref": "#/definitions/VerbSelect"
+                            }
+                        }
+                    },
+                    {
+                        "properties": {
+                            "ParameterExpression": {
+                                "$ref": "#/definitions/ParameterExpression"
+                            }
+                        }
+                    },
+                    {
+                        "properties": {
+                            "ParameterString": {
+                                "$ref": "#/definitions/ParameterString"
+                            }
+                        }
+                    },
+                    {
+                        "properties": {
+                            "ParameterNumeric": {
+                                "$ref": "#/definitions/ParameterNumeric"
+                            }
+                        }
+                    },
+                    {
+                        "properties": {
+                            "ParameterIdentifier": {
+                                "$ref": "#/definitions/ParameterIdentifier"
+                            }
+                        }
+                    },
+                    {
+                        "properties": {
+                            "ParameterCast": {
+                                "$ref": "#/definitions/ParameterCast"
+                            }
+                        }
+                    },
+                    {
+                        "properties": {
+                            "ParameterFunction": {
+                                "$ref": "#/definitions/ParameterFunction"
+                            }
+                        }
+                    },
+                    {
+                        "properties": {
+                            "ParameterIn": {
+                                "$ref": "#/definitions/ParameterIn"
+                            }
+                        }
+                    },
+                    {
+                        "properties": {
+                            "ParameterDataset": {
+                                "$ref": "#/definitions/ParameterDataset"
+                            }
+                        }
+                    },
+                    {
+                        "properties": {
+                            "ParameterCase": {
+                                "$ref": "#/definitions/ParameterCase"
+                            }
+                        }
+                    },
+                    {
+                        "properties": {
+                            "ParameterSet": {
+                                "$ref": "#/definitions/ParameterSet"
+                            }
+                        }
+                    }
+                ],
+                "type": "object"
+            },
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+        },
+        "ArrayList": {
+            "items": {
+                "$ref": "*"
+            },
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+        },
+        "ArrayParameterAssignment": {
+            "items": {
+                "$ref": "#/definitions/ParameterAssignment"
+            },
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+        },
+        "ArrayParameterColumndefinition": {
+            "items": {
+                "$ref": "#/definitions/ParameterColumndefinition"
+            },
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+        },
+        "ArrayParameterCondition": {
+            "items": {
+                "$ref": "#/definitions/ParameterCondition"
+            },
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+        },
+        "ArrayParameterConstraint": {
+            "items": {
+                "$ref": "#/definitions/ParameterConstraint"
+            },
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+        },
+        "ArrayParameterField": {
+            "items": {
+                "$ref": "#/definitions/ParameterField"
+            },
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+        },
+        "ArrayParameterIdentifier": {
+            "items": {
+                "$ref": "#/definitions/ParameterIdentifier"
+            },
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+        },
+        "ArrayParameterOrderByItem": {
+            "items": {
+                "$ref": "#/definitions/ParameterOrderByItem"
+            },
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+        },
+        "ArrayParameterSource": {
+            "items": {
+                "$ref": "#/definitions/ParameterSource"
+            },
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+        },
+        "ArrayParameterString": {
+            "items": {
+                "$ref": "#/definitions/ParameterString"
+            },
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+        },
+        "ArrayParameterWhen": {
+            "items": {
+                "$ref": "#/definitions/ParameterWhen"
+            },
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+        },
+        "ArrayStatement": {
+            "items": {
+                "$ref": "#/definitions/statement"
+            },
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+        },
+        "ArrayString": {
+            "items": {
+                "type": "string"
+            },
+            "type": "array"
+        },
+        "ArrayTabularExpressionItem": {
+            "items": {
+                "anyOf": [
+                    {
+                        "properties": {
+                            "VerbSelect": {
+                                "$ref": "#/definitions/VerbSelect"
+                            }
+                        }
+                    },
+                    {
+                        "properties": {
+                            "ParameterDataset": {
+                                "$ref": "#/definitions/ParameterDataset"
+                            }
+                        }
+                    },
+                    {
+                        "properties": {
+                            "ParameterSet": {
+                                "$ref": "#/definitions/ParameterSet"
+                            }
+                        }
+                    }
+                ],
+                "type": "object"
+            },
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+        },
+        "ParameterAssignment": {
+            "properties": {
+                "left": {
+                    "$ref": "#/definitions/condition_part"
+                },
+                "right": {
+                    "$ref": "#/definitions/condition_part"
+                },
+                "row_separator": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "ParameterBase": {
+            "properties": {
+                "row_separator": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "ParameterCase": {
+            "properties": {
+                "else_statement": {
+                    "$ref": "#/definitions/ArrayExpressionItem"
+                },
+                "operator": {
+                    "type": "string"
+                },
+                "row_separator": {
+                    "type": "string"
+                },
+                "when_statements": {
+                    "$ref": "#/definitions/ArrayParameterWhen"
+                }
+            },
+            "type": "object"
+        },
+        "ParameterCast": {
+            "properties": {
+                "datatype": {
+                    "$ref": "#/definitions/datatypes"
+                },
+                "expression": {
+                    "$ref": "#/definitions/ArrayExpressionItem"
+                },
+                "operator": {
+                    "type": "string"
+                },
+                "row_separator": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "ParameterColumndefinition": {
+            "properties": {
+                "datatype": {
+                    "$ref": "#/definitions/datatypes"
+                },
+                "default": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "notnull": {
+                    "type": "boolean"
+                },
+                "row_separator": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "ParameterCondition": {
+            "properties": {
+                "and_or": {
+                    "$ref": "#/definitions/and_or"
+                },
+                "left": {
+                    "$ref": "#/definitions/condition_part"
+                },
+                "operator": {
+                    "type": "string"
+                },
+                "right": {
+                    "$ref": "#/definitions/condition_part"
+                },
+                "row_separator": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "ParameterConditions": {
+            "properties": {},
+            "type": "object"
+        },
+        "ParameterConstraint": {
+            "properties": {
+                "checkconditions": {
+                    "$ref": "#/definitions/ArrayParameterCondition"
+                },
+                "constraint_type": {
+                    "$ref": "#/definitions/constraint_types"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "references": {
+                    "$ref": "#/definitions/ArrayParameterIdentifier"
+                },
+                "row_separator": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "ParameterDDL": {
+            "properties": {
+                "row_separator": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "ParameterDataset": {
+            "properties": {
+                "data_source": {
+                    "$ref": "#/definitions/data_source_types"
+                },
+                "operator": {
+                    "type": "string"
+                },
+                "resource_uuid": {
+                    "type": "string"
+                },
+                "row_separator": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "ParameterExpression": {
+            "properties": {
+                "expressionitems": {
+                    "$ref": "#/definitions/ArrayExpressionItem"
+                },
+                "operator": {
+                    "type": "string"
+                },
+                "row_separator": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "ParameterExpressionItem": {
+            "properties": {
+                "operator": {
+                    "type": "string"
+                },
+                "row_separator": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "ParameterField": {
+            "properties": {
+                "alias": {
+                    "type": "string"
+                },
+                "expression": {
+                    "$ref": "#/definitions/ArrayExpressionItem"
+                },
+                "row_separator": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "ParameterFunction": {
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "operator": {
+                    "type": "string"
+                },
+                "parameters": {
+                    "$ref": "#/definitions/ArrayExpressionItem"
+                },
+                "row_separator": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "ParameterIdentifier": {
+            "properties": {
+                "identifier": {
+                    "type": "string"
+                },
+                "operator": {
+                    "type": "string"
+                },
+                "prefix": {
+                    "type": "string"
+                },
+                "row_separator": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "ParameterIn": {
+            "properties": {
+                "in_values": {
+                    "$ref": "#/definitions/in_types"
+                },
+                "operator": {
+                    "type": "string"
+                },
+                "row_separator": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "ParameterNumeric": {
+            "properties": {
+                "numeric_value": {
+                    "type": "number"
+                },
+                "operator": {
+                    "type": "string"
+                },
+                "row_separator": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "ParameterOrderByItem": {
+            "properties": {
+                "direction": {
+                    "type": "string"
+                },
+                "expressionitems": {
+                    "$ref": "#/definitions/ArrayExpressionItem"
+                },
+                "operator": {
+                    "type": "string"
+                },
+                "row_separator": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "ParameterParameter": {
+            "properties": {
+                "datatype": {
+                    "$ref": "#/definitions/datatypes"
+                },
+                "operator": {
+                    "type": "string"
+                },
+                "row_separator": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "ParameterRemotable": {
+            "properties": {
+                "resource_uuid": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "ParameterSet": {
+            "properties": {
+                "row_separator": {
+                    "type": "string"
+                },
+                "set_operator": {
+                    "$ref": "#/definitions/set_operator"
+                },
+                "subsets": {
+                    "$ref": "#/definitions/ArrayTabularExpressionItem"
+                }
+            },
+            "type": "object"
+        },
+        "ParameterSource": {
+            "properties": {
+                "alias": {
+                    "type": "string"
+                },
+                "conditions": {
+                    "$ref": "#/definitions/ArrayParameterCondition"
+                },
+                "expression": {
+                    "$ref": "#/definitions/ArrayExpressionItem"
+                },
+                "join_type": {
+                    "$ref": "#/definitions/join_types"
+                },
+                "resource_uuid": {
+                    "type": "string"
+                },
+                "row_separator": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "ParameterString": {
+            "properties": {
+                "escape_character": {
+                    "type": "string"
+                },
+                "operator": {
+                    "type": "string"
+                },
+                "row_separator": {
+                    "type": "string"
+                },
+                "string_value": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "ParameterWhen": {
+            "properties": {
+                "conditions": {
+                    "$ref": "#/definitions/ArrayParameterCondition"
+                },
+                "result": {
+                    "$ref": "#/definitions/ArrayExpressionItem"
+                },
+                "row_separator": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "TabularExpressionItem": {
+            "anyOf": [
+                {
+                    "properties": {
+                        "VerbSelect": {
+                            "$ref": "#/definitions/VerbSelect"
+                        }
+                    }
+                },
+                {
+                    "properties": {
+                        "ParameterDataset": {
+                            "$ref": "#/definitions/ParameterDataset"
+                        }
+                    }
+                },
+                {
+                    "properties": {
+                        "ParameterSet": {
+                            "$ref": "#/definitions/ParameterSet"
+                        }
+                    }
+                }
+            ],
+            "type": "object"
+        },
+        "VerbCreateIndex": {
+            "properties": {
+                "column_names": {
+                    "$ref": "#/definitions/ArrayString"
+                },
+                "index_type": {
+                    "$ref": "#/definitions/index_types"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "row_separator": {
+                    "type": "string"
+                },
+                "tablename": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "VerbCreateTable": {
+            "properties": {
+                "columns": {
+                    "$ref": "#/definitions/ArrayParameterColumndefinition"
+                },
+                "constraints": {
+                    "$ref": "#/definitions/ArrayParameterConstraint"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "row_separator": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "VerbCustom": {
+            "properties": {
+                "row_separator": {
+                    "type": "string"
+                },
+                "sql_db2": {
+                    "type": "string"
+                },
+                "sql_mysql": {
+                    "type": "string"
+                },
+                "sql_oracle": {
+                    "type": "string"
+                },
+                "sql_postgresql": {
+                    "type": "string"
+                },
+                "sql_sqlserver": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "VerbDelete": {
+            "properties": {
+                "row_separator": {
+                    "type": "string"
+                },
+                "sources": {
+                    "$ref": "#/definitions/ArrayParameterSource"
+                }
+            },
+            "type": "object"
+        },
+        "VerbDropTable": {
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "row_separator": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "VerbInsert": {
+            "properties": {
+                "column_identifiers": {
+                    "$ref": "#/definitions/ArrayParameterIdentifier"
+                },
+                "data": {
+                    "$ref": "#/definitions/TabularExpressionItem"
+                },
+                "destination_identifier": {
+                    "$ref": "#/definitions/ParameterIdentifier"
+                },
+                "row_separator": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "VerbSelect": {
+            "properties": {
+                "fields": {
+                    "$ref": "#/definitions/ArrayParameterField"
+                },
+                "operator": {
+                    "type": "string"
+                },
+                "order_by": {
+                    "$ref": "#/definitions/ArrayParameterOrderByItem"
+                },
+                "resource_uuid": {
+                    "type": "string"
+                },
+                "row_separator": {
+                    "type": "string"
+                },
+                "sources": {
+                    "$ref": "#/definitions/ArrayParameterSource"
+                },
+                "top_limit": {
+                    "type": "integer"
+                }
+            },
+            "type": "object"
+        },
+        "VerbUpdate": {
+            "properties": {
+                "assignments": {
+                    "$ref": "#/definitions/ArrayParameterAssignment"
+                },
+                "conditions": {
+                    "$ref": "#/definitions/ArrayParameterCondition"
+                },
+                "row_separator": {
+                    "type": "string"
+                },
+                "table_identifier": {
+                    "$ref": "#/definitions/ParameterIdentifier"
+                }
+            },
+            "type": "object"
+        },
+        "and_or": {
+            "enum": [
+                "AND",
+                "OR"
+            ],
+            "type": "string"
+        },
+        "condition_part": {
+            "anyOf": [
+                {
+                    "properties": {
+                        "ParameterConditions": {
+                            "$ref": "#/definitions/ParameterConditions"
+                        }
+                    }
+                },
+                {
+                    "properties": {
+                        "ParameterCondition": {
+                            "$ref": "#/definitions/ParameterCondition"
+                        }
+                    }
+                },
+                {
+                    "properties": {
+                        "VerbSelect": {
+                            "$ref": "#/definitions/VerbSelect"
+                        }
+                    }
+                },
+                {
+                    "properties": {
+                        "ParameterExpression": {
+                            "$ref": "#/definitions/ParameterExpression"
+                        }
+                    }
+                },
+                {
+                    "properties": {
+                        "ParameterString": {
+                            "$ref": "#/definitions/ParameterString"
+                        }
+                    }
+                },
+                {
+                    "properties": {
+                        "ParameterNumeric": {
+                            "$ref": "#/definitions/ParameterNumeric"
+                        }
+                    }
+                },
+                {
+                    "properties": {
+                        "ParameterIdentifier": {
+                            "$ref": "#/definitions/ParameterIdentifier"
+                        }
+                    }
+                },
+                {
+                    "properties": {
+                        "ParameterCast": {
+                            "$ref": "#/definitions/ParameterCast"
+                        }
+                    }
+                },
+                {
+                    "properties": {
+                        "ParameterFunction": {
+                            "$ref": "#/definitions/ParameterFunction"
+                        }
+                    }
+                },
+                {
+                    "properties": {
+                        "ParameterIn": {
+                            "$ref": "#/definitions/ParameterIn"
+                        }
+                    }
+                },
+                {
+                    "properties": {
+                        "ParameterDataset": {
+                            "$ref": "#/definitions/ParameterDataset"
+                        }
+                    }
+                },
+                {
+                    "properties": {
+                        "ParameterCase": {
+                            "$ref": "#/definitions/ParameterCase"
+                        }
+                    }
+                },
+                {
+                    "properties": {
+                        "ParameterSet": {
+                            "$ref": "#/definitions/ParameterSet"
+                        }
+                    }
+                }
+            ],
+            "type": "object"
+        },
+        "constraint_types": {
+            "enum": [
+                "NOT NULL",
+                "UNIQUE",
+                "PRIMARY KEY",
+                "FOREIGN KEY",
+                "CHECK",
+                "DEFAULT"
+            ],
+            "type": "string"
+        },
+        "csv_dialects": {
+            "enum": [
+                "unix",
+                "excel-tab",
+                "excel"
+            ],
+            "type": "string"
+        },
+        "data_source_types": {
+            "anyOf": [
+                {
+                    "properties": {
+                        "FlatfileDataset": {
+                            "$ref": "#/definitions/FlatfileDataset"
+                        }
+                    }
+                },
+                {
+                    "properties": {
+                        "XpathDataset": {
+                            "$ref": "#/definitions/XpathDataset"
+                        }
+                    }
+                },
+                {
+                    "properties": {
+                        "MatrixDataset": {
+                            "$ref": "#/definitions/MatrixDataset"
+                        }
+                    }
+                },
+                {
+                    "properties": {
+                        "SpreadsheetDataset": {
+                            "$ref": "#/definitions/SpreadsheetDataset"
+                        }
+                    }
+                },
+                {
+                    "properties": {
+                        "RDBMSDataset": {
+                            "$ref": "#/definitions/RDBMSDataset"
+                        }
+                    }
+                }
+            ],
+            "type": "object"
+        },
+        "datatypes": {
+            "pattern": "(integer|string|string(\\(.*\\))|serial|timestamp)",
+            "type": "string"
+        },
+        "db_types": {
+            "enum": [
+                "MySQL",
+                "PostgreSQL",
+                "Oracle",
+                "DB2",
+                "SQLserver"
+            ],
+            "type": "string"
+        },
+        "in_types": {
+            "enum": [
+                "VerbSelect",
+                "ParameterString"
+            ],
+            "type": "string"
+        },
+        "index_types": {
+            "enum": [
+                "UNIQUE",
+                "CLUSTERED",
+                "NONCLUSTERED"
+            ],
+            "type": "string"
+        },
+        "join_types": {
+            "enum": [
+                "",
+                "INNER",
+                "LEFT OUTER",
+                "RIGHT OUTER",
+                "FULL OUTER",
+                "CROSS"
+            ],
+            "type": "string"
+        },
+        "quoting": {
+            "enum": [
+                "QUOTE_MINIMAL",
+                "QUOTE_ALL",
+                "QUOTE_NONE"
+            ],
+            "type": "string"
+        },
+        "set_operator": {
+            "enum": [
+                "UNION",
+                "INTERSECT",
+                "DIFFERENCE"
+            ],
+            "type": "string"
+        },
+        "statement": {
+            "anyOf": [
+                {
+                    "properties": {
+                        "VerbCreateTable": {
+                            "$ref": "#/definitions/VerbCreateTable"
+                        }
+                    }
+                },
+                {
+                    "properties": {
+                        "VerbCreateIndex": {
+                            "$ref": "#/definitions/VerbCreateIndex"
+                        }
+                    }
+                },
+                {
+                    "properties": {
+                        "VerbSelect": {
+                            "$ref": "#/definitions/VerbSelect"
+                        }
+                    }
+                },
+                {
+                    "properties": {
+                        "VerbCustom": {
+                            "$ref": "#/definitions/VerbCustom"
+                        }
+                    }
+                },
+                {
+                    "properties": {
+                        "VerbInsert": {
+                            "$ref": "#/definitions/VerbInsert"
+                        }
+                    }
+                },
+                {
+                    "properties": {
+                        "VerbDelete": {
+                            "$ref": "#/definitions/VerbDelete"
+                        }
+                    }
+                },
+                {
+                    "properties": {
+                        "VerbUpdate": {
+                            "$ref": "#/definitions/VerbUpdate"
+                        }
+                    }
+                }
+            ],
+            "type": "object"
+        },
+        "xpath_data_format": {
+            "enum": [
+                "XML",
+                "XHTML",
+                "HTML"
+            ],
+            "type": "string"
+        }
+    },
+    "description": "The JSON Schema for QAL SQL settings",
+    "properties": {
+        "statement": {
+            "$ref": "#/definitions/statement"
+        }
+    },
+    "required": [
+        "statement"
+    ],
+    "title": "QAL SQL JSON Schema",
+    "type": "object",
+    "version": "0.5"
+}

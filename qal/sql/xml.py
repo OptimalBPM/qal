@@ -122,28 +122,28 @@ class SQLXML(XMLTranslation):
         self._add_child_type_restriction(_document, _parent_node, "statement", verbs())
         self._add_child_type_restriction(_document, _parent_node, "condition_part", condition_part())
         self._add_child_type_restriction(_document, _parent_node, "data_source_types", data_source_types())
-        self._add_child_type_restriction(_document, _parent_node, "tabular_expression_item",
+        self._add_child_type_restriction(_document, _parent_node, "TabularExpressionItem",
                                          tabular_expression_item_types())
         self._add_child_type_restriction(_document, _parent_node, "field_types",
                                          data_types())
 
-        self._add_child_array_of(_document, _parent_node, 'Array_string', 'xsd:string')
-        self._add_child_array_of(_document, _parent_node, 'Array_ParameterString', ['ParameterString'])
-        self._add_child_array_of(_document, _parent_node, 'Array_ParameterConstraint', ['ParameterConstraint'])
-        self._add_child_array_of(_document, _parent_node, 'Array_ParameterColumndefinition',
+        self._add_child_array_of(_document, _parent_node, 'ArrayString', 'xsd:string')
+        self._add_child_array_of(_document, _parent_node, 'ArrayParameterString', ['ParameterString'])
+        self._add_child_array_of(_document, _parent_node, 'ArrayParameterConstraint', ['ParameterConstraint'])
+        self._add_child_array_of(_document, _parent_node, 'ArrayParameterColumndefinition',
                                  ['ParameterColumndefinition'])
-        self._add_child_array_of(_document, _parent_node, 'Array_ParameterSource', ['ParameterSource'])
-        self._add_child_array_of(_document, _parent_node, 'Array_ParameterWhen', ['ParameterWhen'])
-        self._add_child_array_of(_document, _parent_node, 'Array_ParameterIdentifier', ["ParameterIdentifier"])
-        self._add_child_array_of(_document, _parent_node, 'Array_Statement', ["statement"])
-        self._add_child_array_of(_document, _parent_node, 'Array_ParameterOrderByItem', ["ParameterOrderByItem"])
-        self._add_child_array_of(_document, _parent_node, 'Array_ParameterCondition', ["ParameterCondition"])
-        self._add_child_array_of(_document, _parent_node, 'Array_ParameterField', ["ParameterField"])
-        self._add_child_array_of(_document, _parent_node, 'Array_ParameterAssignment', ["ParameterAssignment"])
-        self._add_child_array_of(_document, _parent_node, 'Array_expression_item', expression_item_types())
-        self._add_child_array_of(_document, _parent_node, 'Array_tabular_expression_item',
+        self._add_child_array_of(_document, _parent_node, 'ArrayParameterSource', ['ParameterSource'])
+        self._add_child_array_of(_document, _parent_node, 'ArrayParameterWhen', ['ParameterWhen'])
+        self._add_child_array_of(_document, _parent_node, 'ArrayParameterIdentifier', ["ParameterIdentifier"])
+        self._add_child_array_of(_document, _parent_node, 'ArrayStatement', ["statement"])
+        self._add_child_array_of(_document, _parent_node, 'ArrayParameterOrderByItem', ["ParameterOrderByItem"])
+        self._add_child_array_of(_document, _parent_node, 'ArrayParameterCondition', ["ParameterCondition"])
+        self._add_child_array_of(_document, _parent_node, 'ArrayParameterField', ["ParameterField"])
+        self._add_child_array_of(_document, _parent_node, 'ArrayParameterAssignment', ["ParameterAssignment"])
+        self._add_child_array_of(_document, _parent_node, 'ArrayExpressionItem', expression_item_types())
+        self._add_child_array_of(_document, _parent_node, 'ArrayTabularExpressionItem',
                                  tabular_expression_item_types())
-        self._add_child_array_of(_document, _parent_node, 'Array_list', '')
+        self._add_child_array_of(_document, _parent_node, 'ArrayList', '')
 
     def _add_child_property_node(self, _document, _parent_node, _property_name):
         _curr_node = _document.createElementNS(self.namespace, self.prefix_schema + ":element")
