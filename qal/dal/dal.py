@@ -165,6 +165,7 @@ class DatabaseAbstractionLayer(object):
 
             if self.db_type == DB_SQLSERVER:
                 if platform.system().lower() == 'linux':
+                    #TODO: Set a reasonable timeout
                     _connection_string = "DRIVER={FreeTDS};SERVER=" + self.db_server + ";DATABASE=" + \
                                          self.db_databasename + ";TDS_VERSION=8.0;UID=" + self.db_username + ";PWD=" + \
                                          self.db_password + ";PORT=" + str(self.db_port) + ";Trusted_Connection=no;"
