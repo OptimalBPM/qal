@@ -859,8 +859,8 @@
         "csv_dialects": {
             "enum": [
                 "unix",
-                "excel-tab",
-                "excel"
+                "excel",
+                "excel-tab"
             ],
             "type": "string"
         },
@@ -1012,6 +1012,10 @@
                     }
                 }
             ],
+            "type": "object"
+        },
+        "verbs": {
+            "properties": {},
             "type": "object"
         },
         "xpath_data_format": {

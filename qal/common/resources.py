@@ -19,12 +19,12 @@ def add_xml_subitem(_parent, _nodename, _nodetext):
 
 
 def resource_types():
-    """Returns a list of the supported resource types"""
+    """Returns a list of the QAL-supported resource types"""
     return ["CUSTOM", "FLATFILE", "MATRIX", "XPATH", "RDBMS"]
 
 
 class Resource(object):
-    """The resource class represents a QAL resource. 
+    """The resource class represents a QAL resource.
     Could be any entity like a database server, flat file or a web page.
     Resources have a globally unique resource uuid"""
 
@@ -51,9 +51,9 @@ class Resource(object):
     def as_json_dict(self):
         """This function encode an XML structure into resource objects. Uses lxml as opposed to parse_xml()."""
         _resource = {}
-        _resource["_caption"] = self.caption
-        _resource["_type"] = self.type
-        _resource["_uuid"] = self.uuid
+        _resource["name"] = self.caption
+        _resource["type"] = self.type
+        _resource["uuid"] = self.uuid
         # Loop data. Sorted to be predictable enough for testing purposes
         for _curr_data_key, _curr_data_value in sorted(self.data.items()):
             if _curr_data_value is not None:
@@ -84,6 +84,53 @@ class Resource(object):
 
         return _resource
 
+    def generate_schema(self):
+        """Generates an JSON schema based on the class structure in SQL.py"""
+
+        _result = {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "description": "The JSON Schema for QAL resources",
+            "title": "QAL Resources",
+            "type": "object",
+            "version": "0.5",
+            "properties": {"resources": {"$ref": "#/definitions/Resource"}},
+            "required": ["statement"],
+            "definitions": {
+                "Resource" : {
+                    "type": "object",
+                    "items": "Resource",
+                    "properties": {
+                        "uuid": {
+                            "type": "string",
+                            "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+                        },
+                        "type": {
+                            "type": "string"
+                        },
+                        "name": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+        # First add types
+        _result["definitions"].update(self._get_child_types())
+
+        # First, Add parameter types
+        for _curr_class in list_parameter_classes():
+            _result["definitions"].update({_curr_class: {
+                "type": "object",
+                "properties": self._add_child_property(_curr_class)}})
+
+        # Then add verbs.
+
+        for _curr_class in list_verb_classes():
+            _result["definitions"].update({_curr_class: {
+                "type": "object",
+                "properties": self._add_child_property(_curr_class)}})
+
+        return _result
 
 class Resources(XMLTranslation):
     """
@@ -118,21 +165,21 @@ class Resources(XMLTranslation):
         if _resources_json_dict is not None:
             self.parse_json(_resources_json_dict)
 
-    def get_resource(self, _uuid):
+    def get_resource(self, uuid):
         """Returns the resource with the corresponding uuid"""
 
         _resource = None
 
         """Check local list"""
-        if self.local_resources and _uuid in self.local_resources:
-            _resource = self.local_resources[_uuid]
+        if self.local_resources and uuid in self.local_resources:
+            _resource = self.local_resources[uuid]
 
         """Lookup externally"""
         if (_resource is None) and self.external_resources_callback:
-            _resource = self.external_resources_callback(_uuid)
+            _resource = self.external_resources_callback(uuid)
 
         if _resource is None:
-            raise Exception("get_resource: Resource not found - uuid: " + _uuid)
+            raise Exception("get_resource: Resource not found - uuid: " + uuid)
         else:
             return _resource
 
@@ -144,12 +191,12 @@ class Resources(XMLTranslation):
         self.local_resources = dict()
 
         for _curr_key, _curr_resource in _resources_dict.items():
-            if "_uuid" in _curr_resource:
+            if "uuid" in _curr_resource:
                 self._debug_print("Resources.parse_json: Create new resource object")
                 _new_resource = Resource()
-                _new_resource.uuid = _curr_resource["_uuid"]
-                _new_resource.type = _curr_resource["_type"]
-                _new_resource.caption = _curr_resource["_caption"]
+                _new_resource.uuid = _curr_resource["uuid"]
+                _new_resource.type = _curr_resource["type"]
+                _new_resource.caption = _curr_resource["name"]
                 _new_resource.base_path = self.base_path
 
                 for _curr_resource_key, _curr_resource_value in _curr_resource.items():

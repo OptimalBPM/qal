@@ -16,9 +16,9 @@ def ci_index(_list, _value):
     return -1
 
 
-def unenumerate(value, _type):
+def unenumerate(value, type):
     """Returns the value of a specific type"""
-    return value[_type]
+    return value[type]
 
 
 def find_next_match(_list, _start_idx, _match):

@@ -8,17 +8,22 @@ from xml.dom.minidom import Document
 from xml.sax.saxutils import escape
 from csv import list_dialects
 import os
-from qal.dataset.xpath import xpath_data_formats
 
-from qal.sql.meta import list_class_properties, list_parameter_classes, list_verb_classes, find_class
+from qal.dataset.xpath import xpath_data_formats
+from qal.tools.meta import list_class_properties, list_prefixed_classes, find_class
 from qal.sql.types import sql_property_to_type, and_or, \
-    constraint_types, index_types, verbs, expression_item_types, \
-    condition_part, set_operator, tabular_expression_item_types, data_source_types, in_types, join_types, data_types, \
+    constraint_types, index_types, verbs, set_operator, data_source_types, in_types, join_types, data_types, \
     quoting_types
 from qal.dal.types import db_types
 from qal.common.xml_utils import XMLTranslation, xml_base_type_value, find_child_node, xml_get_text, \
     xml_set_cdata, xml_get_numeric, xml_get_boolean, xml_get_allowed_value, xml_find_non_text_child
 from qal.common.resources import Resources
+
+
+
+# Imported for class resolution
+
+from qal.sql.sql import *  # @UnusedWildImport #IGNORE:W0401
 
 
 def sql_property_to_xml_type(_propertyname):
@@ -161,7 +166,7 @@ class SQLXML(XMLTranslation):
         _all_node = _document.createElementNS(self.namespace, self.prefix_schema + ":all")
         _complex_node.appendChild(_all_node)
 
-        for _curr_property in list_class_properties(_class_name):
+        for _curr_property in list_class_properties(globals(), _class_name):
             self._add_child_property_node(_document, _all_node, _curr_property)
 
         _parent_node.appendChild(_complex_node)
@@ -172,12 +177,12 @@ class SQLXML(XMLTranslation):
 
         self._add_child_restrictions(_document, _parentnode)
         # First, Add parameter types
-        for _curr_class in list_parameter_classes():
+        for _curr_class in list_prefixed_classes(globals(), "parameter"):
             self._add_child_type_node(_document, _parentnode, _curr_class)
 
         # Then add verbs.
 
-        for _curr_class in list_verb_classes():
+        for _curr_class in list_prefixed_classes(globals(), "verb"):
             self._add_child_type_node(_document, _parentnode, _curr_class)
 
         # Then add datasets.
@@ -235,7 +240,7 @@ class SQLXML(XMLTranslation):
             return xml_base_type_value(_node, _stripped_classname)
 
             # Find and instatiate the actual class.
-        _obj, _obj_name = find_class(_stripped_classname)
+        _obj, _obj_name = find_class(globals(), _stripped_classname)
 
         if hasattr(_obj, 'as_sql'):
             _obj._parent = _parent

@@ -5,18 +5,20 @@ Created on Nov 22, 2012
 
 """
 from csv import list_dialects
-import os
-from qal.common.resources import Resources
 
-from qal.dataset.custom import CustomDataset
+from qal.common.resources import Resources
 from qal.dataset.xpath import xpath_data_formats
-from qal.sql.base import ParameterBase
-from qal.sql.meta import list_class_properties, list_parameter_classes, list_verb_classes, find_class
+from qal.tools.meta import list_class_properties, list_prefixed_classes, find_class
 from qal.sql.types import sql_property_to_type, and_or, \
-    constraint_types, index_types, verbs, expression_item_types, \
-    condition_part, set_operator, tabular_expression_item_types, join_types, in_types, quoting_types, data_source_types
+    constraint_types, index_types, verbs, set_operator, join_types, in_types, quoting_types, data_source_types
 from qal.dal.types import db_types
 
+
+# Imported for class resolution
+
+from qal.sql.sql import *  # @UnusedWildImport #IGNORE:W0401
+from qal.sql.base import *
+from qal.dataset.custom import CustomDataset
 
 class SQLJSON():
     """
@@ -130,7 +132,7 @@ class SQLJSON():
 
         _properties = {}
 
-        for _curr_property in list_class_properties(_class_name):
+        for _curr_property in list_class_properties(globals(), _class_name):
             _type = sql_property_to_type(_curr_property, _json_ref='#/definitions/')[0]
             if "$ref" not in _type:
                 _type = {"type": _type}
@@ -155,14 +157,14 @@ class SQLJSON():
         _result["definitions"].update(self._get_child_types())
 
         # First, Add parameter types
-        for _curr_class in list_parameter_classes():
+        for _curr_class in list_prefixed_classes(globals(), "parameter"):
             _result["definitions"].update({_curr_class: {
                 "type": "object",
                 "properties": self._add_child_property(_curr_class)}})
 
         # Then add verbs.
 
-        for _curr_class in list_verb_classes():
+        for _curr_class in list_prefixed_classes(globals(), "verb"):
             _result["definitions"].update({_curr_class: {
                 "type": "object",
                 "properties": self._add_child_property(_curr_class)}})
@@ -263,7 +265,7 @@ class SQLJSON():
             return str(_attribute_value)
 
             # Find and instatiate the actual class.
-        _obj, _obj_name = find_class(_attribute_name)
+        _obj, _obj_name = find_class(globals(), _attribute_name)
 
         if hasattr(_obj, 'as_sql'):
             _obj._parent = _parent_obj
