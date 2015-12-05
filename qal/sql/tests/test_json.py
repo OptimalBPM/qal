@@ -65,7 +65,7 @@ class ClassSQLMetaJSONTest(unittest.TestCase):
 
         meta_json = SQLJSON()
         print()
-        f = open(os.path.join(Test_Resource_Dir, "../../", "JSON.json"), "w")
+        f = open(os.path.join(Test_Resource_Dir, "../../../schema/", "sql.json"), "w")
         _schema = meta_json.generate_schema()
 
         json.dump(_schema, f)
@@ -87,7 +87,7 @@ class ClassSQLMetaJSONTest(unittest.TestCase):
         # Test XML-to-Structure with a create table verb and back to XML. Should generate an identical file.
 
     def validate_json_against_sql_schema(self, _dict):
-        _f = open(os.path.join(Test_Resource_Dir, "../../JSON.json"), "r")
+        _f = open(os.path.join(Test_Resource_Dir, "../../../schema/", "sql.json"), "r")
         _schema = json.loads(_f.read())
         validate(_dict, _schema)
 
