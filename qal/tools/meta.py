@@ -7,8 +7,21 @@ Created on Sep 19, 2010
 
 
 
+def _json_add_child_property(_globals, _class_name, _property_to_type):
+    """Convenience function when building JSON Schema"""
+    _properties = {}
+
+    for _curr_property in list_class_properties(_globals, _class_name):
+        _type = _property_to_type(_curr_property)[0]
+        if "$ref" not in _type:
+            _type = {"type": _type}
+        _properties[_curr_property] = _type
+
+    return _properties
+
+
 def list_prefixed_classes(_globals, _prefix):
-    """List all verb classes"""
+    """List all classes in the scope with the providex prefix"""
     _result = list()
     _prefix_length = len(_prefix)
     for k in _globals.items():

@@ -24,7 +24,12 @@ from qal.common.resources import Resources
 # Imported for class resolution
 
 from qal.sql.sql import *  # @UnusedWildImport #IGNORE:W0401
-
+from qal.dataset.custom import CustomDataset # @UnusedWildImport #IGNORE:W0401
+from qal.dataset.flatfile import FlatfileDataset # @UnusedWildImport #IGNORE:W0401
+from qal.dataset.matrix import MatrixDataset # @UnusedWildImport #IGNORE:W0401
+from qal.dataset.rdbms import RDBMSDataset # @UnusedWildImport #IGNORE:W0401
+from qal.dataset.spreadsheet import SpreadsheetDataset # @UnusedWildImport #IGNORE:W0401
+from qal.dataset.xpath import XpathDataset# @UnusedWildImport #IGNORE:W0401
 
 def sql_property_to_xml_type(_propertyname):
     """Converts a SQL class' property name to an XML type"""
