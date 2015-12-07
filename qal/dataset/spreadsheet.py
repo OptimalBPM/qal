@@ -6,7 +6,7 @@ Created on Dec 28, 2013
 from qal.common.strings import make_path_absolute, string_to_bool
 
 from qal.dataset.custom import CustomDataset
-from qal.tools.discover import import_error_to_help
+from qal.common.discover import import_error_to_help
 
 
 def none_to_zero(_value):

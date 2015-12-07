@@ -7,25 +7,31 @@ Created on Sep 19, 2010
 
 
 
-def _json_add_child_property(_globals, _class_name, _property_to_type):
+def _json_add_child_properties(_globals, _class_name, _property_to_type = None, _type = None):
     """Convenience function when building JSON Schema"""
     _properties = {}
 
     for _curr_property in list_class_properties(_globals, _class_name):
-        _type = _property_to_type(_curr_property)[0]
-        if "$ref" not in _type:
-            _type = {"type": _type}
-        _properties[_curr_property] = _type
+        if _property_to_type is not None:
+            _curr_type = _property_to_type(_curr_property)[0]
+            if "$ref" not in _curr_type:
+                _curr_type = {"type": _curr_type}
+        elif _type is not None:
+            _curr_type = {"type": _type}
+        else:
+            _curr_type = {"type": "string"}
+
+        _properties[_curr_property] = _curr_type
 
     return _properties
 
 
 def list_prefixed_classes(_globals, _prefix):
-    """List all classes in the scope with the providex prefix"""
+    """List all classes in the scope with the provided prefix"""
     _result = list()
     _prefix_length = len(_prefix)
     for k in _globals.items():
-        if (k[0][0:_prefix_length]).lower() == _prefix:
+        if hasattr(k[1], "__dict__") and (k[0][0:_prefix_length]).lower() == _prefix:
             _result.append(k[0])
     return _result
 

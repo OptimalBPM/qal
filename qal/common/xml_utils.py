@@ -11,6 +11,7 @@
 from urllib.request import quote, unquote
 from xml.dom.minidom import Text
 from xml.dom.minidom import Document, parseString
+from qal.recurse import Recurse
 
 from qal.sql.utils import check_for_param_content
 
@@ -112,7 +113,7 @@ def find_child_node(_node, _nodename):
     return None
 
 
-class XMLTranslation(object):
+class XMLTranslation(Recurse):
     """
     This is a base class for translations between XML structures and object structures. 
     """
@@ -127,8 +128,6 @@ class XMLTranslation(object):
     encoding = 'utf-8'
 
     # Debugging
-    debuglevel = 2
-    nestinglevel = 0
 
     def __init__(self):
         """
@@ -136,26 +135,6 @@ class XMLTranslation(object):
         """
         pass
 
-    """ Debugging """
-
-    def _print_nestinglevel(self, _value):
-        """Prints the current nesting level. Not thread safe."""
-        self._debug_print(_value + ' level: ' + str(self.nestinglevel), 4)
-
-    def _get_up(self, _value):
-        """Gets up one nesting level. Not thread safe."""
-        self.nestinglevel -= 1
-        self._print_nestinglevel("Leaving " + _value)
-
-    def _go_down(self, _value):
-        """Gets down one nesting level. Not thread safe."""
-        self.nestinglevel += 1
-        self._print_nestinglevel("Entering " + _value)
-
-    def _debug_print(self, _value, _debuglevel=3):
-        """Prints a debug message if the debugging level is sufficient."""
-        if self.debuglevel >= _debuglevel:
-            print(_value)
 
     """Helper utilities"""
 

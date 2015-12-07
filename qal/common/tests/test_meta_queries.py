@@ -8,7 +8,7 @@ Created on Oct 10, 2010
 import unittest
 
 from qal.dal.tests.framework import get_default_dal
-from qal.tools.meta_queries import MetaQueries
+from qal.common.meta_queries import MetaQueries
 from qal.dal.types import DB_POSTGRESQL
 
 

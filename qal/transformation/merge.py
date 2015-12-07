@@ -7,15 +7,15 @@ Created on Nov 3, 2013
 from os.path import exists
 
 from lxml import etree
-from qal.transformation.mapping import Mapping
 
+from qal.transformation.mapping import Mapping
 from qal.common.resources import Resources, Resource
 from qal.common.strings import string_to_bool, make_path_absolute
 from qal.transformation.transform import perform_transformations, IfEmpty, Replace
 from qal.dataset.factory import dataset_from_resource
 from qal.common.xml_utils import xml_isnone
 from qal.dataset.rdbms import RDBMSDataset
-from qal.tools.meta_queries import MetaQueries
+from qal.common.meta_queries import MetaQueries
 
 
 class Merge(object):

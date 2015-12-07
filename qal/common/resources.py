@@ -10,7 +10,7 @@ import os
 from lxml import etree
 
 from qal.common.xml_utils import XMLTranslation
-from qal.tools.meta import list_prefixed_classes
+from qal.common.meta import list_prefixed_classes, _json_add_child_properties
 
 
 def add_xml_subitem(_parent, _nodename, _nodetext):
@@ -115,21 +115,13 @@ class Resource(object):
                 }
             }
         }
-        # First add types
-        _result["definitions"].update(self._get_child_types())
+
 
         # First, Add parameter types
-        for _curr_class in list_parameter_classes():
+        for _curr_class in list_prefixed_classes(globals(), "resource"):
             _result["definitions"].update({_curr_class: {
                 "type": "object",
-                "properties": self._add_child_property(_curr_class)}})
-
-        # Then add verbs.
-
-        for _curr_class in list_prefixed_classes(globals()):
-            _result["definitions"].update({_curr_class: {
-                "type": "object",
-                "properties": self._add_child_property(_curr_class)}})
+                "properties": _json_add_child_properties(globals(), _curr_class)}})
 
         return _result
 

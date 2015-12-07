@@ -5,8 +5,8 @@ Created on Nov 3, 2013
 """
 import unittest
 
-from qal.tools.discover import import_error_to_help
-from source.qal.tools.discover import platform_to_int, get_python_versions
+from qal.common.discover import import_error_to_help
+from qal.common.discover import platform_to_int, get_python_versions
 
 
 class DiscoverTest(unittest.TestCase):

@@ -11,7 +11,7 @@ import os
 from distlib.util import get_resources_dests
 from qal.common.diff import DictDiffer
 
-from qal.common.resources import Resources
+from qal.common.resources import Resources, Resource
 
 Test_Script_Dir = os.path.dirname(__file__)
 Test_Resource_Dir = os.path.join(Test_Script_Dir, 'resources')
@@ -63,6 +63,15 @@ class Test(unittest.TestCase):
         else:
             DictDiffer.pretty_print_diff(_changes)
             self.assertTrue(False)
+
+
+    def test_3_json_schema(self):
+        _resource = Resource()
+        _schema = _resource.generate_schema()
+        f_out = open(os.path.join(Test_Resource_Dir, "../../../", "schema/resource.json"), "w")
+        json.dump(obj=_schema, fp=f_out, sort_keys=True, indent=4)
+        f_out.close()
+
 
 if __name__ == "__main__":
     # import sys;sys.argv = ['', 'Test.testDev']

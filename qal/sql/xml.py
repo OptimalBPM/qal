@@ -10,7 +10,7 @@ from csv import list_dialects
 import os
 
 from qal.dataset.xpath import xpath_data_formats
-from qal.tools.meta import list_class_properties, list_prefixed_classes, find_class
+from qal.common.meta import list_class_properties, list_prefixed_classes, find_class
 from qal.sql.types import sql_property_to_type, and_or, \
     constraint_types, index_types, verbs, set_operator, data_source_types, in_types, join_types, data_types, \
     quoting_types
@@ -18,6 +18,7 @@ from qal.dal.types import db_types
 from qal.common.xml_utils import XMLTranslation, xml_base_type_value, find_child_node, xml_get_text, \
     xml_set_cdata, xml_get_numeric, xml_get_boolean, xml_get_allowed_value, xml_find_non_text_child
 from qal.common.resources import Resources
+
 
 
 

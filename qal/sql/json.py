@@ -8,7 +8,7 @@ from csv import list_dialects
 
 from qal.common.resources import Resources
 from qal.dataset.xpath import xpath_data_formats
-from qal.tools.meta import list_class_properties, list_prefixed_classes, find_class, _json_add_child_property
+from qal.common.meta import list_prefixed_classes, find_class, _json_add_child_properties
 from qal.sql.types import sql_property_to_type, and_or, \
     constraint_types, index_types, verbs, set_operator, join_types, in_types, quoting_types, data_source_types
 from qal.dal.types import db_types
@@ -27,7 +27,7 @@ from qal.dataset.xpath import XpathDataset# @UnusedWildImport #IGNORE:W0401
 
 # IMPORTANT, there should be imports of all qal.dataset.* modules above for generate schema to work
 
-class SQLJSON():
+class SQLJSON(Recurse):
     """
     This class converts the SQL structure(see SQL.py) into a JSON-compatible dict and back.
     """
@@ -41,35 +41,6 @@ class SQLJSON():
     """The resources"""
     _resources = None
 
-    # Debugging
-    debuglevel = 2
-    nestinglevel = 0
-
-    def __init__(self):
-        """
-        Constructor
-        """
-        self.debuglevel = 2
-        self.nestinglevel = 0
-
-    def _print_nestinglevel(self, _value):
-        """Prints the current nesting level. Not thread safe."""
-        self._debug_print(_value + ' level: ' + str(self.nestinglevel), 4)
-
-    def _get_up(self, _value):
-        """Gets up one nesting level. Not thread safe."""
-        self.nestinglevel -= 1
-        self._print_nestinglevel("Leaving " + _value)
-
-    def _go_down(self, _value):
-        """Gets down one nesting level. Not thread safe."""
-        self.nestinglevel += 1
-        self._print_nestinglevel("Entering " + _value)
-
-    def _debug_print(self, _value, _debuglevel=3):
-        """Prints a debug message if the debugging level is sufficient."""
-        if self.debuglevel >= _debuglevel:
-            print(_value)
 
     def _child_array_of(self, _types):
         if len(_types) > 1 or isinstance(_types, dict):
@@ -163,14 +134,14 @@ class SQLJSON():
         for _curr_class in list_prefixed_classes(globals(), "parameter"):
             _result["definitions"].update({_curr_class: {
                 "type": "object",
-                "properties": _json_add_child_property(_globals, _curr_class, json_sql_property_to_type)}})
+                "properties": _json_add_child_properties(_globals, _curr_class, json_sql_property_to_type)}})
 
         # Then add verbs.
 
         for _curr_class in list_prefixed_classes(globals(), "verb"):
             _result["definitions"].update({_curr_class: {
                 "type": "object",
-                "properties": _json_add_child_property(_globals, _curr_class, json_sql_property_to_type)}})
+                "properties": _json_add_child_properties(_globals, _curr_class, json_sql_property_to_type)}})
 
         return _result
 

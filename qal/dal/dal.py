@@ -11,7 +11,7 @@
 
 from qal.dal.types import DB_MYSQL, DB_POSTGRESQL, DB_ORACLE, DB_DB2, DB_SQLSERVER, string_to_db_type, db_type_to_string
 from qal.dal.conversions import parse_description, python_type_to_sql_type
-from qal.tools.discover import import_error_to_help
+from qal.common.discover import import_error_to_help
 
 
 class DatabaseAbstractionLayer(object):
