@@ -7,31 +7,30 @@ Created on Sep 19, 2010
 
 
 
-def _json_add_child_properties(_globals, _class_name, _property_to_type = None, _type = None):
+def _json_add_child_properties(_globals, _class_name, _property_to_type):
     """Convenience function when building JSON Schema"""
     _properties = {}
 
     for _curr_property in list_class_properties(_globals, _class_name):
-        if _property_to_type is not None:
-            _curr_type = _property_to_type(_curr_property)[0]
-            if "$ref" not in _curr_type:
-                _curr_type = {"type": _curr_type}
-        elif _type is not None:
-            _curr_type = {"type": _type}
-        else:
-            _curr_type = {"type": "string"}
+
+        _curr_type = _property_to_type(_curr_property)[0]
+
+        if not isinstance(_curr_type, dict) and"$ref" not in _curr_type:
+            _curr_type = {"type": _curr_type}
+
 
         _properties[_curr_property] = _curr_type
 
     return _properties
 
 
-def list_prefixed_classes(_globals, _prefix):
+def list_prefixed_classes(_globals, _prefix, _exclude=[]):
     """List all classes in the scope with the provided prefix"""
     _result = list()
     _prefix_length = len(_prefix)
     for k in _globals.items():
-        if hasattr(k[1], "__dict__") and (k[0][0:_prefix_length]).lower() == _prefix:
+        if  hasattr(k[1], "__dict__") and len(k[1].__dict__) > 0 \
+            and (k[0][0:_prefix_length]).lower() == _prefix and k[0] not in _exclude:
             _result.append(k[0])
     return _result
 
@@ -43,7 +42,7 @@ def list_class_properties(_globals, _class_name, _result = None):
         _result = list()
     if _class_name in _globals:
         for k in _globals[_class_name].__dict__.items():
-            if not (hasattr(k[1], '__call__') or isinstance(k[1], staticmethod)) and k[0][0:1] != '_' and k[0] not in _result:
+            if not (callable(k[1]) or isinstance(k[1], staticmethod)) and k[0][0:1] != '_' and k[0] not in _result:
                 _result.append(k[0])
         _mro_length = len(_globals[_class_name]().__class__.__mro__)
         if _mro_length > 2:

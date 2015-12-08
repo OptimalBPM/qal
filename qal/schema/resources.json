@@ -1,0 +1,38 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "definitions": {
+        "Resource": {
+            "properties": {
+                "base_path": {
+                    "type": "string"
+                },
+                "caption": {
+                    "type": "string"
+                },
+                "data": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "uuid": {
+                    "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        }
+    },
+    "description": "The JSON Schema for QAL resources",
+    "properties": {
+        "resources": {
+            "$ref": "#/definitions/Resource"
+        }
+    },
+    "required": [
+        "resources"
+    ],
+    "title": "QAL Resources",
+    "type": "object",
+    "version": "0.5"
+}

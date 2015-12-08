@@ -11,6 +11,7 @@ from lxml import etree
 
 from qal.common.xml_utils import XMLTranslation
 from qal.common.meta import list_prefixed_classes, _json_add_child_properties
+from qal.recurse import Recurse
 
 
 def add_xml_subitem(_parent, _nodename, _nodetext):
@@ -23,6 +24,39 @@ def resource_types():
     """Returns a list of the QAL-supported resource types"""
     return ["CUSTOM", "FLATFILE", "MATRIX", "XPATH", "RDBMS"]
 
+def generate_schema():
+    """Generates an JSON schema based on the class structure in SQL.py"""
+
+    _result = {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "description": "The JSON Schema for QAL resources",
+        "title": "QAL Resources",
+        "type": "object",
+        "version": "0.5",
+        "properties": {"resources": {"$ref": "#/definitions/Resource"}},
+        "required": ["resources"],
+        "definitions": {
+
+        }
+    }
+
+    def _property_to_type(_property_name):
+        if _property_name == "uuid":
+            return [{
+                        "type": "string",
+                        "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+                    }]
+        else:
+            return [{
+                        "type": "string"
+            }]
+    # First, Add parameter types
+    for _curr_class in list_prefixed_classes(globals(), "resource", _exclude=["Resources"]):
+        _result["definitions"].update({_curr_class: {
+            "type": "object",
+            "properties": _json_add_child_properties(globals(), _curr_class, _property_to_type)}})
+
+    return _result
 
 class Resource(object):
     """The resource class represents a QAL resource.
@@ -85,47 +119,9 @@ class Resource(object):
 
         return _resource
 
-    def generate_schema(self):
-        """Generates an JSON schema based on the class structure in SQL.py"""
-
-        _result = {
-            "$schema": "http://json-schema.org/draft-04/schema#",
-            "description": "The JSON Schema for QAL resources",
-            "title": "QAL Resources",
-            "type": "object",
-            "version": "0.5",
-            "properties": {"resources": {"$ref": "#/definitions/Resource"}},
-            "required": ["statement"],
-            "definitions": {
-                "Resource" : {
-                    "type": "object",
-                    "items": "Resource",
-                    "properties": {
-                        "uuid": {
-                            "type": "string",
-                            "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
-                        },
-                        "type": {
-                            "type": "string"
-                        },
-                        "name": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        }
 
 
-        # First, Add parameter types
-        for _curr_class in list_prefixed_classes(globals(), "resource"):
-            _result["definitions"].update({_curr_class: {
-                "type": "object",
-                "properties": _json_add_child_properties(globals(), _curr_class)}})
-
-        return _result
-
-class Resources(XMLTranslation):
+class Resources(Recurse):
     """
     The resource class provides access to resources available through either XML-definitions or callback functions.
     """

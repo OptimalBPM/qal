@@ -9,9 +9,10 @@ import json
 import unittest
 import os
 from distlib.util import get_resources_dests
+from jsonschema.validators import Draft4Validator
 from qal.common.diff import DictDiffer
 
-from qal.common.resources import Resources, Resource
+from qal.common.resources import Resources, Resource, generate_schema
 
 Test_Script_Dir = os.path.dirname(__file__)
 Test_Resource_Dir = os.path.join(Test_Script_Dir, 'resources')
@@ -66,11 +67,12 @@ class Test(unittest.TestCase):
 
 
     def test_3_json_schema(self):
-        _resource = Resource()
-        _schema = _resource.generate_schema()
-        f_out = open(os.path.join(Test_Resource_Dir, "../../../", "schema/resource.json"), "w")
+        _schema = generate_schema()
+        f_out = open(os.path.join(Test_Resource_Dir, "../../../", "schema/resources.json"), "w")
         json.dump(obj=_schema, fp=f_out, sort_keys=True, indent=4)
         f_out.close()
+
+        Draft4Validator.check_schema(_schema)
 
 
 if __name__ == "__main__":
