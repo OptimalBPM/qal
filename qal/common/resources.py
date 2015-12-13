@@ -54,7 +54,10 @@ def generate_schema():
     for _curr_class in list_prefixed_classes(globals(), "resource", _exclude=["Resources"]):
         _result["definitions"].update({_curr_class: {
             "type": "object",
-            "properties": _json_add_child_properties(globals(), _curr_class, _property_to_type)}})
+            "properties": _json_add_child_properties(globals(), _curr_class, _property_to_type),
+            "additionalProperties": True
+            }
+        })
 
     return _result
 
