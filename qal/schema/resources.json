@@ -2,6 +2,7 @@
     "$schema": "http://json-schema.org/draft-04/schema#",
     "definitions": {
         "Resource": {
+            "additionalProperties": true,
             "properties": {
                 "base_path": {
                     "type": "string"
