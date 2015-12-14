@@ -27,25 +27,25 @@ class DatabaseAbstractionLayer(object):
     connected = False
     """Is true if connected"""
 
-    db_connection = None
+    connection = None
     """The database connection"""
     db_type = None
     """Database type"""
-    db_server = ''
+    server = ''
     """Server name"""
-    db_databasename = ''
+    databasename = ''
     """Database name"""
-    db_username = ''
+    username = ''
     """Username"""
-    db_password = ''
+    password = ''
     """Password"""
-    db_instance = ''
+    instance = ''
     """Instance"""
-    db_driver = None
+    driver = None
     """Database driver"""
-    db_autocommit = True
+    autocommit = True
     """Autocommit. If True, the SQL is committed immidiately, if False, commit needs to be called to commit changes."""
-    db_port = None
+    port = None
     """The TCP port of the database server"""
 
     field_names = None
@@ -63,14 +63,14 @@ class DatabaseAbstractionLayer(object):
         """
         if _ini_parser.parser.has_option("database", "type"):
             self.db_type = string_to_db_type(_ini_parser.parser.get("database", "type"))
-            self.db_server = _ini_parser.parser.get("database", "server")
-            self.db_databasename = _ini_parser.parser.get("database", "database_name")
-            self.db_username = _ini_parser.parser.get("database", "username")
-            self.db_password = _ini_parser.parser.get("database", "password")
-            self.db_port = _ini_parser.parser.get("database", "port")
-            self.db_autocommit = _ini_parser.get("database", "autocommit", True)
+            self.server = _ini_parser.parser.get("database", "server")
+            self.databasename = _ini_parser.parser.get("database", "database_name")
+            self.username = _ini_parser.parser.get("database", "username")
+            self.password = _ini_parser.parser.get("database", "password")
+            self.port = _ini_parser.parser.get("database", "port")
+            self.autocommit = _ini_parser.get("database", "autocommit", True)
             if _ini_parser.parser.has_option("database", "instance"):
-                self.db_instance = _ini_parser.parser.get("database", "instance")
+                self.instance = _ini_parser.parser.get("database", "instance")
         else:
             print("read_ini_settings: Settings not valid, not raising error.")
 
@@ -81,30 +81,36 @@ class DatabaseAbstractionLayer(object):
         """
         if _resource.type.upper() != 'RDBMS':
             raise Exception("DAL.read_resource_settings error: Wrong resource type - " + _resource.type)
-        self.db_type = string_to_db_type(_resource.data.get("db_type"))
-        self.db_server = _resource.data.get("db_server")
-        self.db_databasename = _resource.data.get("db_databasename")
-        self.db_instance = _resource.data.get("db_instance")
-        self.db_username = _resource.data.get("db_username")
-        self.db_password = _resource.data.get("db_password")
-        self.db_port = _resource.data.get("db_port")
-        self.db_autocommit = _resource.data.get("db_autocommit")
-
+        self.db_type = string_to_db_type(_resource.db_type)
+        self.server = _resource.server
+        self.databasename = _resource.databasename
+        
+        self.username = _resource.username
+        self.password = _resource.password
+        if hasattr(_resource, "port"):
+            self.port = _resource.port
+        if hasattr(_resource, "autocommit"):
+            self.autocommit = _resource.autocommit
+        if hasattr(_resource, "instance"):
+            self.instance = _resource.instance
     def write_resource_settings(self, _resource):
         """
         Write settings to a resource object
         :param _resource: A resource object.
         """
         _resource.type = 'RDBMS'
-        _resource.data.clear()
-        _resource.data["db_type"] = db_type_to_string(self.db_type)
-        _resource.data["db_server"] = self.db_server
-        _resource.data["db_databasename"] = self.db_databasename
-        _resource.data["db_instance"] = self.db_instance
-        _resource.data["db_username"] = self.db_username
-        _resource.data["db_password"] = self.db_password
-        _resource.data["db_port"] = self.db_port
-        _resource.data["db_autocommit"] = self.db_autocommit
+        _resource.db_type = db_type_to_string(self.db_type)
+        _resource.server = self.server
+        _resource.databasename = self.databasename
+
+        _resource.username = self.username
+        _resource.password = self.password
+        if _resource.autocommit:
+            _resource.autocommit = self.autocommit
+        if _resource.port:
+            _resource.port = self.port
+        if _resource.instance:
+            _resource.instance = self.instance
 
     def connect_to_db(self):
         """Connects to the database"""
@@ -116,10 +122,10 @@ class DatabaseAbstractionLayer(object):
                 raise Exception(import_error_to_help(_module="pymysql", _err_obj=_err, _pip_package="pymysql3",
                                                      _apt_package=None, _win_package=None))
 
-            _connection = pymysql.connect(host=self.db_server,
-                                          db=self.db_databasename,
-                                          user=self.db_username,
-                                          passwd=self.db_password,
+            _connection = pymysql.connect(host=self.server,
+                                          db=self.databasename,
+                                          user=self.username,
+                                          passwd=self.password,
                                           )
 
         elif self.db_type == DB_POSTGRESQL:
@@ -137,14 +143,14 @@ class DatabaseAbstractionLayer(object):
                                                                      "See https://bugs.debian.org/cgi-bin/bugreport" +
                                                                      ".cgi?bug=724597"))
 
-            if self.db_port is None or self.db_port == "" or self.db_port == 0:
+            if self.port is None or self.port == "" or self.port == 0:
                 _port = 5432
             else:
-                _port = self.db_port
-            _connection = pg_driver.connect(host=self.db_server,
-                                            database=self.db_databasename,
-                                            user=self.db_username,
-                                            password=self.db_password,
+                _port = self.port
+            _connection = pg_driver.connect(host=self.server,
+                                            database=self.databasename,
+                                            user=self.username,
+                                            password=self.password,
                                             port=_port)
 
         elif self.db_type in [DB_SQLSERVER, DB_DB2]:
@@ -166,13 +172,13 @@ class DatabaseAbstractionLayer(object):
             if self.db_type == DB_SQLSERVER:
                 if platform.system().lower() == 'linux':
                     #TODO: Set a reasonable timeout
-                    _connection_string = "DRIVER={FreeTDS};SERVER=" + self.db_server + ";DATABASE=" + \
-                                         self.db_databasename + ";TDS_VERSION=8.0;UID=" + self.db_username + ";PWD=" + \
-                                         self.db_password + ";PORT=" + str(self.db_port) + ";Trusted_Connection=no;"
+                    _connection_string = "DRIVER={FreeTDS};SERVER=" + self.server + ";DATABASE=" + \
+                                         self.databasename + ";TDS_VERSION=8.0;UID=" + self.username + ";PWD=" + \
+                                         self.password + ";PORT=" + str(self.port) + ";Trusted_Connection=no;"
                 elif platform.system().lower() == 'windows':
-                    _connection_string = "Driver={SQL Server};Server=" + self.db_server + ";DATABASE=" + \
-                                         self.db_databasename + ";UID=" + self.db_username + ";PWD=" + self.db_password + \
-                                         ";PORT=" + str(self.db_port) + ";Trusted_Connection=no"
+                    _connection_string = "Driver={SQL Server};Server=" + self.server + ";DATABASE=" + \
+                                         self.databasename + ";UID=" + self.username + ";PWD=" + self.password + \
+                                         ";PORT=" + str(self.port) + ";Trusted_Connection=no"
                 else:
                     raise Exception("connect_to_db: ODBC connections on " + platform.system() + " not supported yet.")
 
@@ -186,13 +192,13 @@ class DatabaseAbstractionLayer(object):
                     raise Exception("connect_to_db: DB2 connections on " + platform.system() + " not supported yet.")
 
                 # DSN-less?{IBM DB2 ODBC DRIVER} ?? http://www.webmasterworld.com/forum88/4434.htm
-                _connection_string = "Driver=" + drivername + ";Database=" + self.db_databasename + ";hostname=" + \
-                                     self.db_server + ";port=" + str(self.db_port) + ";protocol=TCPIP; uid=" + \
-                                     self.db_username + "; pwd=" + self.db_password
-                # _connection_string = "DSN=" + self.db_server + ";UID=" + self.db_username + ";PWD=" + self.db_password
+                _connection_string = "Driver=" + drivername + ";Database=" + self.databasename + ";hostname=" + \
+                                     self.server + ";port=" + str(self.port) + ";protocol=TCPIP; uid=" + \
+                                     self.username + "; pwd=" + self.password
+                # _connection_string = "DSN=" + self.server + ";UID=" + self.username + ";PWD=" + self.password
 
             print("Connect to database using connection string:  " + _connection_string)
-            _connection = pyodbc.connect(_connection_string, autocommit=self.db_autocommit)
+            _connection = pyodbc.connect(_connection_string, autocommit=self.autocommit)
 
         # cx_Oracle in python 3.X not checked yet.
         elif self.db_type == DB_ORACLE:
@@ -207,16 +213,16 @@ class DatabaseAbstractionLayer(object):
                                                      _import_comment="(Linux) 2014-04-16: No python3-pyodbc available" +
                                                                      " at build time."))
 
-            _connection_string = self.db_username + '/' + self.db_password + '@' + self.db_server + ':' + \
-                                 str(self.db_port) + '/' + self.db_instance
+            _connection_string = self.username + '/' + self.password + '@' + self.server + ':' + \
+                                 str(self.port) + '/' + self.instance
             print("Connect to database using connection string:  " + _connection_string)
             _connection = cx_Oracle.connect(_connection_string)
-            _connection.autocommit = self.db_autocommit
+            _connection.autocommit = self.autocommit
 
         else:
             raise Exception("connect_to_db: Invalid database type.")
 
-        self.db_connection = _connection
+        self.connection = _connection
 
         if self.on_connect:
             self.on_connect()
@@ -244,9 +250,9 @@ class DatabaseAbstractionLayer(object):
         """Execute the SQL statement, expect no dataset"""
 
         if self.db_type == DB_POSTGRESQL:
-            self.db_connection.execute(_sql)
+            self.connection.execute(_sql)
         else:
-            cur = self.db_connection.cursor()
+            cur = self.connection.cursor()
             cur.execute(_sql)
 
     @staticmethod
@@ -276,12 +282,12 @@ class DatabaseAbstractionLayer(object):
             # TODO: Correctly handle other datatypes than string.
             _sql = self._make_positioned_params(_sql)
 
-            _prepared = self.db_connection.prepare(_sql)
+            _prepared = self.connection.prepare(_sql)
             print(_sql)
             for _row in _values:
                 _prepared(*_row)
         else:
-            cur = self.db_connection.cursor()
+            cur = self.connection.cursor()
             cur.executemany(_sql, _values)
 
     def query(self, _sql):
@@ -289,7 +295,7 @@ class DatabaseAbstractionLayer(object):
 
         # py-postgres doesn't use the DB-API, as it doesn't work well-
         if self.db_type == DB_POSTGRESQL:
-            _ps = self.db_connection.prepare(_sql)
+            _ps = self.connection.prepare(_sql)
             _res = _ps()
             if _ps.column_names is not None:
                 self.field_names = _ps.column_names
@@ -298,7 +304,7 @@ class DatabaseAbstractionLayer(object):
                     self.field_types.append(python_type_to_sql_type(_curr_type))
 
         else:
-            cur = self.db_connection.cursor()
+            cur = self.connection.cursor()
             cur.execute(_sql)
 
             self.field_names, self.field_types = parse_description(cur.description, self.db_type)
@@ -314,12 +320,12 @@ class DatabaseAbstractionLayer(object):
 
     def close(self):
         """Close the database connection"""
-        self.db_connection.close()
+        self.connection.close()
 
     def start(self):
         """Start transaction"""
         if self.db_type == DB_POSTGRESQL and self._pg_xact is None:
-            self._pg_xact = self.db_connection.xact()
+            self._pg_xact = self.connection.xact()
             self._pg_xact.start()
         else:
             self.execute("START TRANSACTION")
@@ -331,11 +337,11 @@ class DatabaseAbstractionLayer(object):
                 self._pg_xact.commit()
                 self._pg_xact = None
         else:
-            self.db_connection.commit()
+            self.connection.commit()
 
     def rollback(self):
         """Rollback the transaction"""
         if self.db_type == DB_POSTGRESQL:
             self._pg_xact.rollback()
             self._pg_xact = None
-        self.db_connection.rollback()
+        self.connection.rollback()

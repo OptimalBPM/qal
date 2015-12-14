@@ -39,9 +39,9 @@ class RDBMSDataset(CustomDataset):
 
         self._dal = DatabaseAbstractionLayer(_resource=_resource)
 
-        self.table_name = _resource.data.get("db_table_name")
+        self.table_name = _resource.table_name
 
-        self.query = _resource.data.get("db_query")
+        self.query = _resource.data.query
 
     def write_resource_settings(self, _resource):
         """TODO: The RDBMS resource type is a special case, as it is both a database connection and/or a dataset definition.
@@ -56,8 +56,8 @@ class RDBMSDataset(CustomDataset):
             self._dal.write_resource_settings(_resource)
 
         # Add own parameters
-        _resource.data["db_table_name"] = self.table_name
-        _resource.data["db_query"] = self.query
+        _resource.table_name= self.table_name
+        _resource.query = self.query
 
     def __init__(self, _resource=None):
         """

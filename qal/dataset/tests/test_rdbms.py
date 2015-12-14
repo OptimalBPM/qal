@@ -3,6 +3,7 @@ Created on Dec 17, 2013
 
 @author: Nicklas Boerjesson
 """
+import json
 
 import unittest
 import datetime
@@ -27,8 +28,9 @@ def load_xml(_filename):
 
 class Test(unittest.TestCase):
     def test_1_Load_Save(self):
-        _resources_node = load_xml(Test_Resource_Dir + "/resources.xml").find("resources")
-        _resources = Resources(_resources_node=_resources_node)
+        _f_r = open(Test_Resource_Dir + "/resources.json", "r")
+        _resources_json_dict = json.load(_f_r)
+        _resources = Resources(_resources_json_dict=_resources_json_dict, _base_path=Test_Resource_Dir)
 
         print("rdbms_test.test_1_Load_Save: Staging source")
         _source_data = [[1, 'source', datetime.datetime(2001, 1, 1, 0, 0)],

@@ -3,6 +3,7 @@ Created on Dec 17, 2013
 
 @author: Nicklas Boerjesson
 """
+import json
 
 import unittest
 import os
@@ -59,8 +60,10 @@ class Test(unittest.TestCase):
     """Reads, writes, and reads again .xls and .xlsx-files while comparing with stored matrixes off data"""
 
     def test_1_Load_Save_xls(self):
-        _resources_node = load_xml(os.path.join(Test_Resource_Dir, "resources.xml")).find("resources")
-        _resources = Resources(_resources_node=_resources_node)
+
+        _f_r = open(Test_Resource_Dir + "/resources.json", "r")
+        _resources_json_dict = json.load(_f_r)
+        _resources = Resources(_resources_json_dict=_resources_json_dict, _base_path=Test_Resource_Dir)
         _da = SpreadsheetDataset(_resource=_resources.get_resource("{86470370-FF78-48A4-9759-A3BAE4EE22A1}"))
         _da.load()
         self.assertEqual(_da.data_table, _test_data_xls, "test_1_Load_Save: Loaded data doesn't match")
@@ -72,8 +75,9 @@ class Test(unittest.TestCase):
         self.assertEqual(_da.data_table, _test_data_xls, "test_1_Load_Save loading back: Loaded data doesn't match")
 
     def test_2_Load_Save_xlsx(self):
-        _resources_node = load_xml(os.path.join(Test_Resource_Dir, "resources.xml")).find("resources")
-        _resources = Resources(_resources_node=_resources_node)
+        _f_r = open(Test_Resource_Dir + "/resources.json", "r")
+        _resources_json_dict = json.load(_f_r)
+        _resources = Resources(_resources_json_dict=_resources_json_dict, _base_path=Test_Resource_Dir)
         _da = SpreadsheetDataset(_resource=_resources.get_resource("{86470370-FF78-48A4-9759-A3BAE4EE22A2}"))
         _da.load()
         self.assertEqual(_da.data_table, _test_data_xlsx, "test_2_Load_Save: Loaded data doesn't match")

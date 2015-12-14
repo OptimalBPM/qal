@@ -37,6 +37,14 @@ class XpathDataset(CustomDataset):
     xpath_data_format = None
     """The data format. Can be either "XML", "XHTML" or "HTML"."""
 
+    xpath_text_qualifier = None
+    """The qualifier for text"""
+
+    #TODO: Figure out if xpath_text_qualifier is actually used
+
+
+    """The qualifier for text"""
+
     _structure_tree = None
     """A private reference to the node tree, when load is called with _add_node_ref=True, an instance
     is kept for more efficient merging with diff data"""
@@ -92,28 +100,27 @@ class XpathDataset(CustomDataset):
         if _resource.type.upper() != 'XPATH':
             raise Exception(
                 "XpathDataset.read_resource_settings.parse_resource error: Wrong resource type: " + _resource.type)
-        self.filename = _resource.data.get("filename")
-        self.rows_xpath = _resource.data.get("rows_xpath")
-        self.xpath_data_format = _resource.data.get("xpath_data_format")
-        self.field_names = _resource.data.get("field_names")
-        self.field_xpaths = _resource.data.get("field_xpaths")
-        self.field_types = _resource.data.get("field_types")
-        self.xpath_text_qualifier = _resource.data.get("xpath_text_qualifier")
-        self.encoding = _resource.data.get("encoding")
+        self.filename = _resource.filename
+        self.rows_xpath = _resource.rows_xpath
+        self.xpath_data_format = _resource.xpath_data_format
+        self.field_names = _resource.field_names
+        self.field_xpaths = _resource.field_xpaths
+        self.field_types = _resource.field_types
+        if hasattr(_resource, "encoding"):
+            self.encoding = _resource.encoding
 
     def write_resource_settings(self, _resource):
         """Write settings to a resource"""
 
         _resource.type = 'XPATH'
         _resource.data.clear()
-        _resource.data["filename"] = self.filename
-        _resource.data["rows_xpath"] = self.rows_xpath
-        _resource.data["xpath_data_format"] = self.xpath_data_format
-        _resource.data["field_names"] = self.field_names
-        _resource.data["field_xpaths"] = self.field_xpaths
-        _resource.data["field_types"] = self.field_types
-        _resource.data["xpath_text_qualifier"] = self.xpath_text_qualifier
-        _resource.data["encoding"] = self.encoding
+        _resource.filename = self.filename
+        _resource.rows_xpath = self.rows_xpath
+        _resource.xpath_data_format = self.xpath_data_format
+        _resource.field_names = self.field_names
+        _resource.field_xpaths = self.field_xpaths
+        _resource.field_types = self.field_types
+        _resource.encoding = self.encoding
 
     @staticmethod
     def _file_to_tree(_data_format, _reference):

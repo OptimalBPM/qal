@@ -86,35 +86,39 @@ class FlatfileDataset(CustomDataset):
             raise Exception(
                 "FlatfileDataset.read_resource_settings.parse_resource error: Wrong resource type: " + _resource.type)
         self._base_path = _resource.base_path
-        self.filename = _resource.data.get("filename")
-        self.delimiter = _resource.data.get("delimiter")
-        if _resource.data.get("has_header"):
-            self.has_header = string_to_bool(str(_resource.data.get("has_header")))
+        self.filename = _resource.filename
+        self.delimiter = _resource.delimiter
+        if _resource.has_header:
+            self.has_header = string_to_bool(str(_resource.has_header))
         else:
             self.has_header = None
-        self.csv_dialect = _resource.data.get("csv_dialect")
-        self.quoting = _resource.data.get("quoting")
-        self.escapechar = _resource.data.get("escapechar")
-        if _resource.data.get("lineterminator") is not None:
-            self.lineterminator = bytes(_resource.data.get("lineterminator"), "UTF-8").decode("unicode-escape")
+        self.csv_dialect = _resource.csv_dialect
+        self.quoting = _resource.quoting
+        if hasattr(_resource, "escapechar"):
+            self.escapechar = _resource.escapechar
+        if _resource.lineterminator is not None:
+            self.lineterminator = bytes(_resource.lineterminator, "UTF-8").decode("unicode-escape")
         else:
             self.lineterminator = None
-        self.quotechar = _resource.data.get("quotechar") or '"'
-        self.skipinitialspace = _resource.data.get("skipinitialspace")
+        if hasattr(_resource, "quotechar"):
+            self.quotechar = _resource.quotechar or '"'
+        if hasattr(_resource, "skipinitialspace"):
+            self.skipinitialspace = _resource.skipinitialspace
 
     def write_resource_settings(self, _resource):
         # Clear first, one could be overwriting an resource with other data fields
         _resource.data = {}
         _resource.type = _resource.type
-        _resource.data["filename"] = self.filename
-        _resource.data["delimiter"] = self.delimiter
-        _resource.data["has_header"] = self.has_header
-        _resource.data["csv_dialect"] = self.csv_dialect
-        _resource.data["quoting"] = self.quoting
-        _resource.data["escapechar"] = self.escapechar
-        _resource.data["lineterminator"] = self.lineterminator
-        _resource.data["quotechar"] = self.quotechar
-        _resource.data["skipinitialspace"] = self.skipinitialspace
+        _resource.filename = self.filename
+        _resource.delimiter = self.delimiter
+        _resource.has_header = self.has_header
+        _resource.csv_dialect = self.csv_dialect
+        _resource.quoting = self.quoting
+        if self.escapechar:
+            _resource.escapechar = self.escapechar
+        _resource.lineterminator = self.lineterminator
+        _resource.quotechar = self.quotechar
+        _resource.skipinitialspace = self.skipinitialspace
 
     @staticmethod
     def _quotestr_to_constants(_str):

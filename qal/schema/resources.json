@@ -27,7 +27,10 @@
     "description": "The JSON Schema for QAL resources",
     "properties": {
         "resources": {
-            "$ref": "#/definitions/Resource"
+            "items": {
+                "$ref": "#/definitions/Resource"
+            },
+            "type": "array"
         }
     },
     "required": [

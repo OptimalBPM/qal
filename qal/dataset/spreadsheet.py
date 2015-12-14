@@ -40,33 +40,32 @@ class SpreadsheetDataset(CustomDataset):
             raise Exception(
                 "SpreadsheetDataset.read_resource_settings.parse_resource error: Wrong resource type: " +
                 _resource.type)
-        self.filename = _resource.data.get("filename")
-        self.delimiter = _resource.data.get("delimiter")
-        if _resource.data.get("has_header"):
-            self.has_header = string_to_bool(str(_resource.data.get("has_header")))
+        self.filename = _resource.filename
+
+        if _resource.has_header:
+            self.has_header = string_to_bool(str(_resource.has_header))
         else:
             self.has_header = None
 
-        self.sheet_name = _resource.data.get("sheet_name")
+        self.sheet_name = _resource.sheet_name
 
-        if _resource.data.get("x_offset") is not None:
-            self.x_offset = int(_resource.data.get("x_offset"))
+        if hasattr(_resource, "x_offset") and _resource.x_offset is not None:
+            self.x_offset = int(_resource.x_offset)
         else:
             self.x_offset = 0
-        if _resource.data.get("y_offset") is not None:
-            self.y_offset = int(_resource.data.get("y_offset"))
+        if hasattr(_resource, "y_offset") and _resource.y_offset is not None:
+            self.y_offset = int(_resource.y_offset)
         else:
             self.y_offset = 0
 
     def write_resource_settings(self, _resource):
         _resource.type = 'SPREADSHEET'
         _resource.data.clear()
-        _resource.data["filename"] = self.filename
-        _resource.data["delimiter"] = self.delimiter
-        _resource.data["has_header"] = self.has_header
-        _resource.data["sheet_name"] = self.sheet_name
-        _resource.data["x_offset"] = self.x_offset
-        _resource.data["y_offset"] = self.y_offset
+        _resource.filename = self.filename
+        _resource.has_header = self.has_header
+        _resource.sheet_name = self.sheet_name
+        _resource.x_offset = self.x_offset
+        _resource.y_offset = self.y_offset
 
     def __init__(self, _filename=None, _has_header=None, _resource=None, _sheet_name=None, _x_offset=None,
                  _y_offset=None):
@@ -264,7 +263,7 @@ class SpreadsheetDataset(CustomDataset):
         _number_of_rows = len(self.data_table)
         if _number_of_rows > 0:
             _number_of_columns = len(self.data_table[0])
-        print("SpreadsheetDataset.save: Filename='" + str(self.filename) + "', Delimiter='" + str(self.delimiter) + "'")
+        print("SpreadsheetDataset.save: Filename='" + str(self.filename) + "'")
         import os.path
 
         _extension = os.path.splitext(self.filename)[1]

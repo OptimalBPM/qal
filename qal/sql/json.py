@@ -117,7 +117,10 @@ class SQLJSON(Recurse):
             "title": "QAL SQL JSON Schema",
             "type": "object",
             "version": "0.5",
-            "properties": {"statement": {"$ref": "#/definitions/statement"}},
+            "properties": {
+                "statement": {"$ref": "#/definitions/statement"},
+                "resources": {"$ref": "qal://resources/definitions/statement"}
+                           },
             "required": ["statement"],
             "definitions": {}
         }

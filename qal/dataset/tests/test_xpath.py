@@ -4,6 +4,7 @@ Created on Dec 17, 2013
 @author: Nicklas Boerjesson
 @note: The tests work against copies of xml_dest_in.xml
 """
+import json
 
 import unittest
 from shutil import copyfile
@@ -39,9 +40,9 @@ class Test(unittest.TestCase):
         """
 
         copyfile(Test_Resource_Dir + "/xml_dest_in.xml", Test_Resource_Dir + "/xml_out.xml")
-
-        _resources_node = load_xml(Test_Resource_Dir + "/resources.xml").find("resources")
-        _resources = Resources(_resources_node=_resources_node)
+        _f_r = open(Test_Resource_Dir + "/resources.json", "r")
+        _resources_json_dict = json.load(_f_r)
+        _resources = Resources(_resources_json_dict=_resources_json_dict, _base_path=Test_Resource_Dir)
 
         # xml_in
         _source = XpathDataset(_resource=_resources.get_resource("{969A610A-FCA6-4837-B33A-BAA8F13D8B70}"))
