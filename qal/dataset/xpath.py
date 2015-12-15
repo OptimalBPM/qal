@@ -37,14 +37,6 @@ class XpathDataset(CustomDataset):
     xpath_data_format = None
     """The data format. Can be either "XML", "XHTML" or "HTML"."""
 
-    xpath_text_qualifier = None
-    """The qualifier for text"""
-
-    #TODO: Figure out if xpath_text_qualifier is actually used
-
-
-    """The qualifier for text"""
-
     _structure_tree = None
     """A private reference to the node tree, when load is called with _add_node_ref=True, an instance
     is kept for more efficient merging with diff data"""

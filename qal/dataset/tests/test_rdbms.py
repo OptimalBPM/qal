@@ -28,6 +28,8 @@ def load_xml(_filename):
 
 class Test(unittest.TestCase):
     def test_1_Load_Save(self):
+        """ Merge data from a PostgreSQL table into a MySQL table
+        """
         _f_r = open(Test_Resource_Dir + "/resources.json", "r")
         _resources_json_dict = json.load(_f_r)
         _resources = Resources(_resources_json_dict=_resources_json_dict, _base_path=Test_Resource_Dir)
@@ -38,7 +40,6 @@ class Test(unittest.TestCase):
                         [3, 'source_new', datetime.datetime(2014, 1, 1, 0, 0)]]
         _field_names = ["ID", "Name", "Changed"]
         _field_types = ["integer", "string(200)", "datetime"]
-
         _source_dal = DatabaseAbstractionLayer(
             _resource=_resources.get_resource("{1D62083E-88F7-4442-920D-0B6CC59BA2FF}"))
         _source_dal.connect_to_db()
@@ -70,7 +71,8 @@ class Test(unittest.TestCase):
 
         print("dest:\n" + str(_d_dest.data_table))
 
-        _d_dest.apply_new_data(_d_source.data_table, [2])
+        _d_dest.apply_new_data(_new_data_table = _d_source.data_table, _key_fields=[2],
+                               _insert=True, _update=True, _delete=True)
 
         _d_dest.save()
         _d_dest.load()
@@ -91,8 +93,9 @@ class Test(unittest.TestCase):
                                               [2, 'source', datetime.datetime(2001, 1, 2, 0, 0)],
                                               [3, 'source_new', datetime.datetime(2014, 1, 1, 0, 0)]], "Results differ")
 
-        _d_source.dal.close()
-        _d_dest.dal.close()
+        # TODO: Check if connections aren't garbage collected, are these needed?
+        _d_source._dal.close()
+        _d_dest._dal.close()
 
 
 if __name__ == "__main__":

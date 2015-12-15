@@ -40,8 +40,10 @@ class RDBMSDataset(CustomDataset):
         self._dal = DatabaseAbstractionLayer(_resource=_resource)
 
         self.table_name = _resource.table_name
+        if hasattr(_resource, "query"):
+            self.query = _resource.query
+            #TODO: Make nicer handling of resource attributes, both reading and writing (PROD-91)
 
-        self.query = _resource.data.query
 
     def write_resource_settings(self, _resource):
         """TODO: The RDBMS resource type is a special case, as it is both a database connection and/or a dataset definition.
@@ -50,7 +52,6 @@ class RDBMSDataset(CustomDataset):
         if self._dal is None:
             # Clear, as the DAL is not going to
             _resource.type = 'RDBMS'
-            _resource.data.clear()
         else:
             # Let the DAL go first
             self._dal.write_resource_settings(_resource)
