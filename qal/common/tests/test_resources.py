@@ -29,12 +29,6 @@ class Test(unittest.TestCase):
 
         #self.assertEqual(len(_resources.local_resources), 5, 'Resources are not as many as they should')
 
-        _dict_out = _resources.as_json_dict()
-
-        f_out = open(Test_Resource_Dir + "/_test_resource_out2.json", "w")
-        print(json.dumps(_dict_out), file=f_out)
-        f_out.close()
-
         _test_resource = _resources.get_resource("{1D62083E-88F7-4442-920D-0B6CC59BA2FF}")
         self.assertIsNotNone(_test_resource, 'Resource data not found')
         self.assertEqual(_test_resource.name, "localhost_pg", 'Resource name do not match')
