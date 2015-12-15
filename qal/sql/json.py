@@ -9,6 +9,7 @@ from csv import list_dialects
 from qal.common.resources import Resources
 from qal.dataset.xpath import xpath_data_formats
 from qal.common.meta import list_prefixed_classes, find_class, _json_add_child_properties
+from qal.recurse import Recurse
 from qal.sql.types import sql_property_to_type, and_or, \
     constraint_types, index_types, verbs, set_operator, join_types, in_types, quoting_types, data_source_types
 from qal.dal.types import db_types
