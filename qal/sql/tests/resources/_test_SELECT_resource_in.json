@@ -3,12 +3,12 @@
     "{DD34A233-47A6-4C16-A26F-195711B49B97}": {
       "uuid": "{DD34A233-47A6-4C16-A26F-195711B49B97}",
       "db_type": "MySQL",
-      "db_username": "bpmuser",
+      "username": "bpmuser",
       "type": "rdbms",
-      "db_server": "localhost",
+      "server": "localhost",
       "name": "localhost_mysql",
-      "db_password": "test",
-      "db_databasename": "bpmtest"
+      "password": "test",
+      "databasename": "bpmtest"
     },
     "{0B8B71C1-D3A8-4F16-B8E1-9C73E196254C}": {
       "rows_xpath": "/html/body/form/table/tr[4]/td[2]/table/tr[2]/td/table[2]/tr/td/table/tr[10]/td/table/tr[position()>2]",
@@ -53,12 +53,12 @@
     "{1D62083E-88F7-4442-920D-0B6CC59BA2FF}": {
       "uuid": "{1D62083E-88F7-4442-920D-0B6CC59BA2FF}",
       "db_type": "PostgreSQL",
-      "db_username": "bpmuser",
+      "username": "bpmuser",
       "type": "rdbms",
-      "db_server": "localhost",
+      "server": "localhost",
       "name": "localhost_pg",
-      "db_password": "test",
-      "db_databasename": "bpmtest"
+      "password": "test",
+      "databasename": "bpmtest"
     },
     "{86470370-FF78-48A4-9759-A3BAE4EE22FE}": {
       "uuid": "{86470370-FF78-48A4-9759-A3BAE4EE22FE}",
