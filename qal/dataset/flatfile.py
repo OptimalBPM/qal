@@ -93,13 +93,12 @@ class FlatfileDataset(CustomDataset):
         else:
             self.has_header = None
         self.csv_dialect = _resource.csv_dialect
-        self.quoting = _resource.quoting
+        if hasattr(_resource, "quoting"):
+            self.quoting = _resource.quoting
         if hasattr(_resource, "escapechar"):
             self.escapechar = _resource.escapechar
-        if _resource.lineterminator is not None:
+        if hasattr(_resource, "lineterminator"):
             self.lineterminator = bytes(_resource.lineterminator, "UTF-8").decode("unicode-escape")
-        else:
-            self.lineterminator = None
         if hasattr(_resource, "quotechar"):
             self.quotechar = _resource.quotechar or '"'
         if hasattr(_resource, "skipinitialspace"):

@@ -42,6 +42,7 @@ class ParameterRemotable(object):
         import string
 
         char_set = string.ascii_lowercase + string.digits
+        # Generate
         _tmp_table_name = '#' + ''.join(random.sample(char_set * 8, 8))
 
         from qal.sql.sql import ParameterIdentifier
@@ -50,7 +51,9 @@ class ParameterRemotable(object):
             if not self._dal:
                 """Make connection to resource defined by the resource_uuid"""
                 self._dal = DatabaseAbstractionLayer(_resource=self._resource)
-                self._dal.connect_to_db()
+                print(self.__class__.__name__ + "._bring_into_context: Connected to: "+ self._resource.server +
+                      ", database name: " + self._resource.databasename + ", resource_uuid: " + str(
+                    self._resource.uuid))
 
             _source_sql = self._generate_sql(self._dal.db_type)
             from qal.sql.sql import ParameterSource
@@ -68,7 +71,6 @@ class ParameterRemotable(object):
             _data = self._dal.query(_source_sql)
             _field_names = self._dal.field_names
             _field_types = self._dal.field_types
-            self._dal.close()
 
         elif self._resource.type.upper() in ["FLATFILE"]:
 
@@ -99,7 +101,6 @@ class ParameterRemotable(object):
         else:
             """If it doesn't, create one to the resource, and use that."""
             _parent_dal = DatabaseAbstractionLayer(_resource=self._out_of_context_parent._resource)
-            _parent_dal.connect_to_db()
             """Also set the parents _dal, since we are using temporary tables, they need to be in the same context."""
             self._out_of_context_parent._dal = _parent_dal
 
@@ -128,7 +129,9 @@ class ParameterRemotable(object):
             if hasattr(_curr_parent, 'resource_uuid') and _curr_parent.resource_uuid:
                 if self.resource_uuid == _curr_parent.resource_uuid:
                     if _curr_parent._dal is not None:
-                        self._dal = _curr_parent
+                        self._dal = _curr_parent._dal
+                        print(self.__class__.__name__ + "._check_need_prepare: Matching resource uuid found:" + str(
+                        _curr_parent.resource_uuid))
                     return False
                 else:
                     print(self.__class__.__name__ + "._check_need_prepare: Different resource uuid found:" + str(

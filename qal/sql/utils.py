@@ -255,7 +255,7 @@ def make_function(_name, _value):
 
 def handle_temp_table_ref(_identifier, _db_type):
     """Removes the "#" in SQL Server temporary table references. """
-    if len(_identifier) > 0 and _identifier[0] == "#" and _db_type != DB_SQLSERVER:
+    if len(_identifier) > 0 and _identifier[0] == "#" and _db_type not in [DB_SQLSERVER]:
         return _identifier[1:]
     else:
         return _identifier

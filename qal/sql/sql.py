@@ -461,7 +461,7 @@ class VerbSelect(ParameterExpressionItem, ParameterRemotable):
             for index, item in enumerate(self.sources):
 
                 if index > 0:
-                    """As as_sql is not called, as_sql has to be called explicitly."""
+                    """As as_sql is not called, as_sql has to be called explicitly to trigger all events."""
                     item.as_sql(_db_type)
                     if item.join_type:
                         result += " " + item.join_type
@@ -834,7 +834,7 @@ class VerbCreateTable(ParameterDDL):
             else:
                 _result = "CREATE TABLE "
 
-            _result += citate(self.name[1:len(self.name)], _db_type) + " (" + self.row_separator
+            _result += citate(handle_temp_table_ref(self.name, _db_type), _db_type) + " (" + self.row_separator
         else:
             _result = "CREATE TABLE "
             _result += citate(self.name, _db_type) + " (" + self.row_separator

@@ -96,7 +96,7 @@ class MergeTest(unittest.TestCase):
 
         _source_dal = DatabaseAbstractionLayer(_resource=_resources.get_resource("source_uuid"))
         _source_table_name = 'table_src'
-        _source_dal.connect_to_db()
+
 
         copy_to_table(_source_dal, _source_data, _field_names, _field_types, _source_table_name, _create_table=True,
                       _drop_existing=True)
@@ -108,7 +108,7 @@ class MergeTest(unittest.TestCase):
 
         _dest_dal = DatabaseAbstractionLayer(_resource=_resources.get_resource("dest_uuid"))
         _dest_table_name = 'table_dst'
-        _dest_dal.connect_to_db()
+
 
         copy_to_table(_dest_dal, _dest_data, _field_names, _field_types, _dest_table_name, _create_table=True,
                       _drop_existing=True)
@@ -147,7 +147,7 @@ class MergeTest(unittest.TestCase):
 
         _source_dal = DatabaseAbstractionLayer(_resource=_resources.get_resource("source_uuid"))
         _source_table_name = 'table_src'
-        _source_dal.connect_to_db()
+
         copy_to_table(_source_dal, _source_data, _field_names, _field_types, _source_table_name, _create_table=True,
                       _drop_existing=True)
 
@@ -155,7 +155,7 @@ class MergeTest(unittest.TestCase):
         _dest_table_name = 'table_new'
 
         # drop table
-        _dest_dal.connect_to_db()
+
         try:
             _dest_dal.execute(VerbDropTable(_dest_table_name).as_sql(_dest_dal.db_type))
             _dest_dal.commit()

@@ -230,7 +230,7 @@ class DatabaseAbstractionLayer(object):
 
         return _connection
 
-    def __init__(self, _settings=None, _resource=None):
+    def __init__(self, _settings=None, _resource=None, _connect = True):
         """
         Init
 
@@ -241,10 +241,16 @@ class DatabaseAbstractionLayer(object):
         if _settings is not None:
             self.settings = _settings
             self.read_ini_settings(_settings)
+            if _connect:
+                self.connect_to_db()
 
         if _resource is not None:
             self.resource = _resource
             self.read_resource_settings(_resource)
+            if _connect:
+                self.connect_to_db()
+
+
 
     def execute(self, _sql):
         """Execute the SQL statement, expect no dataset"""
@@ -292,6 +298,10 @@ class DatabaseAbstractionLayer(object):
 
     def query(self, _sql):
         """Execute the SQL statement, get a dataset"""
+        if self.connection is None:
+            raise Exception("Error: dal.query() is called without a database connection. Query:\n" + _sql)
+
+
 
         # py-postgres doesn't use the DB-API, as it doesn't work well-
         if self.db_type == DB_POSTGRESQL:

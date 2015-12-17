@@ -43,7 +43,6 @@ def get_default_dal(_db_type, _db_name=""):
         if _db_name:
             settings.parser.set("database", "database_name", _db_name)
         _dal = DatabaseAbstractionLayer(settings)
-        _dal.connect_to_db()
         return _dal
     else:
         return None
