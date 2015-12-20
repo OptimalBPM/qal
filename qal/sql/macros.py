@@ -127,7 +127,7 @@ def copy_to_table(_dal, _values, _field_names, _field_types, _table_name, _creat
     if _create_table:
         # Always create temporary table even if it ends up empty.
         _create_table_sql = create_table_skeleton(_table_name, _field_names, _field_types).as_sql(_dal.db_type)
-        print("Creating " + _table_name + " table..\n" + _create_table_sql)
+        print("Creating " + _table_name + " table in "+ str(_dal) +"/" + str(_dal.connection) +", sql:\n" + _create_table_sql)
         _dal.execute(_create_table_sql)
         _dal.commit()
 

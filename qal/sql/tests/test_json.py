@@ -11,8 +11,11 @@ import unittest
 from jsonschema import Draft4Validator, validate
 
 from qal.common.diff import diff_strings, DictDiffer
+from qal.common.resources import Resources
+from qal.dal.dal import DatabaseAbstractionLayer
 from qal.dal.types import db_types, DB_POSTGRESQL
 from qal.sql.json import SQLJSON
+from qal.sql.macros import copy_to_table
 from qal.sql.xml import SQLXML
 
 
@@ -37,6 +40,7 @@ class ClassSQLMetaJSONTest(unittest.TestCase):
         _db_types = db_types()
         for _curr_db_type_idx in range(len(_db_types)):
             _filename_part = _prefix + "_" + _db_types[_curr_db_type_idx]
+            print("Comparing for " + _filename_part)
 
             if not _overwrite:
                 f = open(Test_Resource_Dir + "/" + _filename_part + "_in.sql", "r", newline='')
@@ -306,15 +310,37 @@ class ClassSQLMetaJSONTest(unittest.TestCase):
 
     def test_9_resource(self):
         # TODO: Describe the requirements for the test.
+        
+        # Init tables
+
 
         _meta_dict = SQLJSON()
         f = open(Test_Resource_Dir + "/_test_SELECT_resource_in.json", "r")
         _dict_in = json.loads(f.read())
         f.close()
 
+
+        # Init tables
+
+        _resources = Resources(_resources_json_dict=_dict_in["resources"], _base_path=Test_Resource_Dir)
+        _pg_dal = DatabaseAbstractionLayer(_resource=_resources["{1D62083E-88F7-4442-920D-0B6CC59BA2FF}"])
+        copy_to_table(_dal=_pg_dal, _values=[[1, "DataPostgres"]],
+                                    _field_names= ["table_postgresID", "table_postgresName"] ,
+                                    _field_types=["integer", "string"], _table_name= "table_postgres",
+                                    _create_table=True, _drop_existing=True)
+
+        _pg_dal.close()
+        _mysql_dal = DatabaseAbstractionLayer(_resource=_resources["{DD34A233-47A6-4C16-A26F-195711B49B97}"])
+        copy_to_table(_dal=_mysql_dal, _values=[[1, "DataMySQL"]],
+                                    _field_names=["table_mysqlID", "table_mysqlName"] ,
+                                    _field_types=["integer", "string"], _table_name= "table_mysql",
+                                    _create_table=True, _drop_existing=True)
+
+        _mysql_dal.close()
+
+        # Start testing
+
         _statement = _meta_dict.dict_to_sql_structure(_dict_in, _base_path=Test_Resource_Dir)
-
-
         _dict_out = _meta_dict.sql_structure_to_dict(_statement, _meta_dict._resources)
 
         f_out = open(Test_Resource_Dir + "/_test_SELECT_resource_out.json", "w")
@@ -323,24 +349,19 @@ class ClassSQLMetaJSONTest(unittest.TestCase):
 
 
         # Compare with all SQL flavours
-        self._compare_sql_files_for_all_db_types(_statement,"_test_SELECT_resource_out", _overwrite = True)
+        #self._compare_sql_files_for_all_db_types(_statement,"_test_SELECT_resource_out", _overwrite = True)
 
         _sql_out = _statement.as_sql(DB_POSTGRESQL)
         print(_sql_out)
 
         _rows = _statement._dal.query(_sql_out)
-
+        _dict_cmp_data = [[1, 1, 'DataPostgres', 'DataMySQL', 'csv', 'AUD      ', '29.1358 ', 'MSXML3: A Comprehensive Guide', 36.95], [1, 1, 'DataPostgres', 'DataMySQL', 'csv', 'BND      ', '24.3550 ', 'MSXML3: A Comprehensive Guide', 36.95], [1, 1, 'DataPostgres', 'DataMySQL', 'csv', 'CAD      ', '29.9598 ', 'MSXML3: A Comprehensive Guide', 36.95], [1, 1, 'DataPostgres', 'DataMySQL', 'csv', 'CHF      ', '34.4377 ', 'MSXML3: A Comprehensive Guide', 36.95], [1, 1, 'DataPostgres', 'DataMySQL', 'csv', 'CNY      ', '5.0313 ', 'MSXML3: A Comprehensive Guide', 36.95], [1, 1, 'DataPostgres', 'DataMySQL', 'csv', 'DKK      ', '5.6530 ', 'MSXML3: A Comprehensive Guide', 36.95], [1, 1, 'DataPostgres', 'DataMySQL', 'csv', 'EUR      ', '42.2219 ', 'MSXML3: A Comprehensive Guide', 36.95], [1, 1, 'DataPostgres', 'DataMySQL', 'csv', 'GBP      ', '50.0854 ', 'MSXML3: A Comprehensive Guide', 36.95], [1, 1, 'DataPostgres', 'DataMySQL', 'csv', 'HKD      ', '3.9914 ', 'MSXML3: A Comprehensive Guide', 36.95], [1, 1, 'DataPostgres', 'DataMySQL', 'csv', 'IDR      ', '2.4461 ', 'MSXML3: A Comprehensive Guide', 36.95], [1, 1, 'DataPostgres', 'DataMySQL', 'csv', 'INR      ', '0.4485 ', 'MSXML3: A Comprehensive Guide', 36.95], [1, 1, 'DataPostgres', 'DataMySQL', 'csv', 'JPY      ', '31.8058 ', 'MSXML3: A Comprehensive Guide', 36.95], [1, 1, 'DataPostgres', 'DataMySQL', 'csv', 'MYR      ', '9.6064 ', 'MSXML3: A Comprehensive Guide', 36.95], [1, 1, 'DataPostgres', 'DataMySQL', 'csv', 'NOK      ', '5.1948 ', 'MSXML3: A Comprehensive Guide', 36.95], [1, 1, 'DataPostgres', 'DataMySQL', 'csv', 'NZD      ', '25.6424 ', 'MSXML3: A Comprehensive Guide', 36.95], [1, 1, 'DataPostgres', 'DataMySQL', 'csv', 'PHP      ', '0.6994 ', 'MSXML3: A Comprehensive Guide', 36.95], [1, 1, 'DataPostgres', 'DataMySQL', 'csv', 'PKR      ', '0.2809 ', 'MSXML3: A Comprehensive Guide', 36.95], [1, 1, 'DataPostgres', 'DataMySQL', 'csv', 'SEK      ', '4.8697 ', 'MSXML3: A Comprehensive Guide', 36.95], [1, 1, 'DataPostgres', 'DataMySQL', 'csv', 'SGD      ', '24.7693 ', 'MSXML3: A Comprehensive Guide', 36.95], [1, 1, 'DataPostgres', 'DataMySQL', 'csv', 'USD      ', '31.0644 ', 'MSXML3: A Comprehensive Guide', 36.95]]
+        print("Data:")
         for _row in _rows:
             print(str(_row))
 
 
-        self.validate_json_against_sql_schema(_dict_out)
-        _changes = DictDiffer.compare_documents(_dict_in, _dict_out)
-        if len(_changes) == 0:
-            self.assertTrue(True)
-        else:
-            DictDiffer.pretty_print_diff(_changes)
-            self.assertTrue(False)
+        self.assertTrue(_rows == _dict_cmp_data)
 
 
 if __name__ == "__main__":

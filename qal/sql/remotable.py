@@ -19,7 +19,7 @@ class ParameterRemotable(object):
     """The classes' DAL connection."""
     _dal = None
     """The nearest parent that is in another database context than self"""
-    _out_of_context_parent = None
+    _top_parent = None
     """This value identifies what context this part of the query resides in"""
     resource_uuid = None
 
@@ -95,49 +95,56 @@ class ParameterRemotable(object):
             raise Exception(self.__class__.__name__ + "._bring_into_context - Error: Invalid resource type : " + str(
                 self._resource.type))
 
-        """Does the out-of-context parent have a connection? If so, that's where the data should go."""
-        if self._out_of_context_parent._dal:
-            _parent_dal = self._out_of_context_parent._dal
+        """Are we not at the top, i.e. the destination of the data"""
+        if self._parent:
+            """Does the top parent have a connection? If so, that's where the data should go."""
+            if self._top_parent._dal:
+                _destination_dal = self._top_parent._dal
+            else:
+                """If it doesn't, create one to the resource, and use that."""
+                _destination_dal = DatabaseAbstractionLayer(_resource=self._top_parent._resource)
+                """Also set the parents _dal, since we are using temporary tables, they need to be in the same context."""
+                self._top_parent._dal = _destination_dal
         else:
-            """If it doesn't, create one to the resource, and use that."""
-            _parent_dal = DatabaseAbstractionLayer(_resource=self._out_of_context_parent._resource)
-            """Also set the parents _dal, since we are using temporary tables, they need to be in the same context."""
-            self._out_of_context_parent._dal = _parent_dal
+            _destination_dal = self._dal
 
         """ The sql_macros library is imported locally, to not interfere with the qal.sql.* structure."""
         from qal.sql.macros import copy_to_table
 
         """Copy the data into the parents' context so the parent can access it."""
-        _table_name = copy_to_table(_dal=_parent_dal, _values=_data, _field_names=_field_names,
+        _table_name = copy_to_table(_dal=_destination_dal, _values=_data, _field_names=_field_names,
                                     _field_types=_field_types, _table_name=_tmp_table_name, _create_table=True)
 
         _ident = ParameterIdentifier(_identifier=_table_name)
-        return _ident.as_sql(_parent_dal.db_type)
+        return _ident.as_sql(_destination_dal.db_type)
 
     def _check_need_prepare(self):
         """
         Checks context, whether a call to _bring_into_context is needed. It is needed if:
-        1. If the nearest parent with resource has a different resource ID
+        1. If none of the parents have the same resource ID
         2. If no parent has a resourceID
-        
-        It is NOT needed if the nearest parent with resource has the same ID. 
-        
+
+        It is NOT needed if the nearest parent with resource has the same ID.  ???
+
         """
-        _curr_parent = self._parent
-        while _curr_parent:
-            print(self.__class__.__name__ + "._check_need_prepare: level up" + str(_curr_parent))
-            if hasattr(_curr_parent, 'resource_uuid') and _curr_parent.resource_uuid:
-                if self.resource_uuid == _curr_parent.resource_uuid:
-                    if _curr_parent._dal is not None:
+        # The top should never be brought into context
+        if self._parent is None:
+            return False
+        else:
+            _curr_parent = self._parent
+            _result = True
+            while _curr_parent:
+                self._top_parent = _curr_parent
+                print(self.__class__.__name__ + "._check_need_prepare: level up" + str(_curr_parent))
+                if hasattr(_curr_parent, 'resource_uuid') and _curr_parent.resource_uuid:
+                    if self.resource_uuid == _curr_parent.resource_uuid and _curr_parent._dal is not None:
                         self._dal = _curr_parent._dal
                         print(self.__class__.__name__ + "._check_need_prepare: Matching resource uuid found:" + str(
                         _curr_parent.resource_uuid))
-                    return False
-                else:
-                    print(self.__class__.__name__ + "._check_need_prepare: Different resource uuid found:" + str(
-                        _curr_parent.resource_uuid) + " (own: " + str(self.resource_uuid) + ")")
-                    self._out_of_context_parent = _curr_parent
-                    return True
-            _curr_parent = _curr_parent._parent
+                        _result = False
 
-        return False
+                _curr_parent = _curr_parent._parent
+
+
+
+            return _result

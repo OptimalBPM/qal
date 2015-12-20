@@ -62,9 +62,13 @@ def mysql_type_to_sql_type(_type_code):
             MySQL_TINY_BLOB,
             MySQL_MEDIUM_BLOB,
             MySQL_LONG_BLOB,
-            MySQL_BLOB,
     ):
         return "blob"
+    elif _type_code in (
+            MySQL_BLOB,
+    ):
+        """TODO: This is obviously not correct, but PyMySQL seems to return MySQL_BLOB for common strings."""
+        return "string"
     elif _type_code in (
             MySQL_DECIMAL,
             MySQL_FLOAT,
@@ -123,6 +127,8 @@ def parse_description(_descriptions, _db_type):
     """
     _field_names = []
     _field_types = []
+
+    """name, type_code, display_size, internal_size, precision, scale, null_ok"""
 
     for _column in _descriptions:
         _field_names.append(_column[0])

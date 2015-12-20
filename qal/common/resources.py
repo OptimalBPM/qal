@@ -268,3 +268,7 @@ class Resources(Recurse):
             _result[_curr_resource_key] =_curr_resource_value.as_json_dict()
 
         return _result
+
+
+    def __getitem__(self, item):
+        return self.get_resource(item)

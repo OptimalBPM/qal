@@ -162,7 +162,7 @@ def db_specific_object_reference(_value, _db_type):
         return '[' + _value + ']'
 
     else:
-        raise Exception("db_specific_object_reference: Invalid database type.")
+        raise Exception("db_specific_object_reference: Invalid database type:" + str(_db_type))
 
 
 def db_specific_datatype_parse_length(_value):

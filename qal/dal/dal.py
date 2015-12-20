@@ -254,7 +254,7 @@ class DatabaseAbstractionLayer(object):
 
     def execute(self, _sql):
         """Execute the SQL statement, expect no dataset"""
-
+        print("Info: dal.execute() at "+ str(self) + "/" + str(self.connection) + " running the following SQL:\n" + str(_sql))
         if self.db_type == DB_POSTGRESQL:
             self.connection.execute(_sql)
         else:
@@ -302,7 +302,7 @@ class DatabaseAbstractionLayer(object):
             raise Exception("Error: dal.query() is called without a database connection. Query:\n" + _sql)
 
 
-
+        print("Info: dal.query() at "+ str(self) + "/" + str(self.connection) + " running the following SQL:\n" + _sql)
         # py-postgres doesn't use the DB-API, as it doesn't work well-
         if self.db_type == DB_POSTGRESQL:
             _ps = self.connection.prepare(_sql)
