@@ -858,8 +858,8 @@
         },
         "csv_dialects": {
             "enum": [
-                "unix",
                 "excel",
+                "unix",
                 "excel-tab"
             ],
             "type": "string"
@@ -1026,7 +1026,7 @@
     "description": "The JSON Schema for QAL SQL settings",
     "properties": {
         "resources": {
-            "$ref": "qal://resources/definitions/statement"
+            "$ref": "qal://resources.json#/definitions/statement"
         },
         "statement": {
             "$ref": "#/definitions/statement"
