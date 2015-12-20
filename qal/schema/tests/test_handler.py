@@ -4,7 +4,9 @@
     :copyright: Copyright 2010-2014 by Nicklas Boerjesson
     :license: BSD, see LICENSE for details.
 """
+import unittest
 import jsonschema
+from jsonschema.validators import RefResolver
 
 from qal.schema.handler import qal_uri_handler
 
@@ -17,14 +19,14 @@ class Test(unittest.TestCase):
             "properties": {
                 "resource":
                     {
-                        "$ref": "qal://resources.json/definitions/Resource"
+                        "$ref": "qal://resources.json#/definitions/Resource"
                     }
             },
             "required": ["resource"],
         }
         _test_data = {
             "resource": {
-                "uuid": "sdfölksdfölk",
+                "uuid": "d03b44af-2887-4038-93fd-fbba5cbf5362",
                 "name": "test",
                 "base_path":"",
                 "caption": "",
@@ -34,9 +36,8 @@ class Test(unittest.TestCase):
 
         }
         _resolver = RefResolver(base_uri="",
-                                handlers=qal_uri_handler, referrer=None, cache_remote=False)
-        jsonschema.validators.Draft4Validator(schema=_test_schema, resolver=self.resolver).validate(_test_data)
-        .validate(_data, _json_schema_obj)
+                                handlers={"qal":qal_uri_handler}, referrer=None, cache_remote=False)
+        jsonschema.validators.Draft4Validator(schema=_test_schema, resolver=_resolver).validate(_test_data)
 
 
 if __name__ == "__main__":

@@ -1,10 +1,14 @@
 """
 This module hold functionality for validating the qal schemas
 """
+import json
+import os
+from urllib.parse import urlparse
+
 _mbe_schema_folder = os.path.join(os.path.dirname(__file__))
 __author__ = 'nibo'
 
-def qal_uri_handler(self, uri):
+def qal_uri_handler(uri):
     """
 
     Handle the qal:// namespace references
