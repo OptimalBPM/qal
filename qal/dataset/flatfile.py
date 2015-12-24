@@ -106,7 +106,6 @@ class FlatfileDataset(CustomDataset):
 
     def write_resource_settings(self, _resource):
         # Clear first, one could be overwriting an resource with other data fields
-        _resource.data = {}
         _resource.type = _resource.type
         _resource.filename = self.filename
         _resource.delimiter = self.delimiter

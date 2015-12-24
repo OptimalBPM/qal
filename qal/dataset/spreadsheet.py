@@ -60,7 +60,6 @@ class SpreadsheetDataset(CustomDataset):
 
     def write_resource_settings(self, _resource):
         _resource.type = 'SPREADSHEET'
-        _resource.data.clear()
         _resource.filename = self.filename
         _resource.has_header = self.has_header
         _resource.sheet_name = self.sheet_name
