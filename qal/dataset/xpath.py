@@ -105,7 +105,6 @@ class XpathDataset(CustomDataset):
         """Write settings to a resource"""
 
         _resource.type = 'XPATH'
-        _resource.data.clear()
         _resource.filename = self.filename
         _resource.rows_xpath = self.rows_xpath
         _resource.xpath_data_format = self.xpath_data_format
@@ -437,7 +436,7 @@ class XpathDataset(CustomDataset):
         """Save the document"""
 
         if not _save_as:
-            _save_as = make_path_absolute(self.filename, self._base_path())
+            _save_as = make_path_absolute(self.filename, self._base_path)
 
         self._structure_tree.write(_save_as)
 
