@@ -8,7 +8,7 @@
 		    <src_datatype>string</src_datatype>
 		    <transformations>
 		    	<trim order="1">end</trim>
-		        <IfEmpty order="2">::identity::</IfEmpty>
+		        <ifempty order="2">::identity::</ifempty>
                 <cast order="5">
 		      		<dest_type>string</dest_type>
 		        	<format_string></format_string>
@@ -99,7 +99,7 @@
 		        	<new>.</new>
 		        	<max/>
 		        </replace>
-		        <IfEmpty order="4">0</IfEmpty>
+		        <ifempty order="4">0</ifempty>
 		        <cast order="5">
 		        	<dest_type>float</dest_type>
 		        	<format_string></format_string>
@@ -135,7 +135,7 @@
     <post_execute_sql></post_execute_sql>
   </settings>
   <resources>
-    <resource caption="destination" type="flatfile" uuid="dest_uuid">
+    <resource name="destination" type="flatfile" uuid="dest_uuid">
      	<csv_dialect>excel-tab</csv_dialect>
 		<delimiter>;</delimiter>
 		<filename>csv_out.csv</filename>
@@ -143,7 +143,7 @@
         <quotechar>"</quotechar>
 		<quoting>ALL</quoting>
 	</resource>
-    <resource caption="source" type="flatfile" uuid="source_uuid">
+    <resource name="source" type="flatfile" uuid="source_uuid">
 		<csv_dialect>excel-tab</csv_dialect>
 		<delimiter>;</delimiter>
 		<filename>csv_source.csv</filename>

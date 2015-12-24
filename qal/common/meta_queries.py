@@ -107,7 +107,7 @@ class MetaQueries(object):
         """
         if not _dal.connected:
             _dal.connect_to_db()
-        _rows = _dal.query(_table_info_sql(_dal.db_type, _table_name, _dal.db_databasename))
+        _rows = _dal.query(_table_info_sql(_dal.db_type, _table_name, _dal.databasename))
         columns = []
         for row in _rows:
             columns.append(row[0])

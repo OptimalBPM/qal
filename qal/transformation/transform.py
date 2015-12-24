@@ -45,6 +45,33 @@ def make_transformations_xml_node(_transformations):
 
     return _xml_node
 
+def make_transformation_array_from_json(_json, _substitution=None):
+    _result = []
+    for _curr_item in _json:
+        if _curr_item["type"] == 'trim':
+            _result.append(Trim(_json=_curr_item, _substitution=_substitution))
+        elif _curr_item["type"] == 'ifempty':
+            _result.append(IfEmpty(_json=_curr_item, _substitution=_substitution))
+        elif _curr_item["type"] == 'cast':
+            _result.append(Cast(_json=_curr_item, _substitution=_substitution))
+        elif _curr_item["type"] == 'replace':
+            _result.append(Replace(_json=_curr_item, _substitution=_substitution))
+        elif _curr_item["type"] == 'replace_regex':
+            _result.append(ReplaceRegex(_json=_curr_item, _substitution=_substitution))
+    return _result
+
+
+def make_transformations_json(_transformations):
+    _result = []
+    for _curr_transformation in _transformations:
+        _result.append(_curr_transformation.as_json())
+
+    return _result
+
+def set_if_set(_dest, _attribute, _value):
+
+    if _value is not None:
+        _dest[_attribute] = _value
 
 class CustomTransformation(object):
     """
@@ -58,7 +85,7 @@ class CustomTransformation(object):
     substitution = None
     """An optional instance of the substitution class. Usually shared by several transformations."""
 
-    def __init__(self, _xml_node=None, _substitution=None):
+    def __init__(self, _xml_node=None, _json=None, _substitution=None):
         """
         Constructor
         """
@@ -67,6 +94,9 @@ class CustomTransformation(object):
 
         if _xml_node is not None:
             self.load_from_xml_node(_xml_node)
+
+        if _json is not None:
+            self.load_from_json(_json)
 
     def do_on_done(self, _value=None, _error=None):
         if self.on_done:
@@ -83,11 +113,28 @@ class CustomTransformation(object):
         raise Exception(
             "CustomTransformation.as_xml_node : Should not be called. Not implemented in base class, use init_base_to_node().")
 
+    def init_base_dict(self, _name):
+        _result = {}
+        set_if_set(_result, "type", _name)
+        set_if_set(_result, "order", self.order)
+        return _result
+
+    # noinspection PyPep8
+    def as_json(self):
+
+        raise Exception(
+            "CustomTransformation.as_json : Should not be called. Not implemented in base class, use init_base_to_node().")
     def load_from_xml_node(self, _xml_node):
         if _xml_node is not None:
             self.order = _xml_node.get("order")
         else:
             raise Exception("CustomTransformation.load_from_xml_node : Base class need a destination node.")
+
+    def load_from_json(self, _json):
+        if _json is not None:
+            self.order = _json["order"]
+        else:
+            raise Exception("CustomTransformation.load_from_json : Base class need a destination node.")
 
     def transform(self, _value):
         try:
@@ -121,6 +168,16 @@ class Trim(CustomTransformation):
 
         return _xml_node
 
+    def load_from_json(self, _json):
+        super(Trim, self).load_from_json(_xml_node)
+        self.value = _json
+
+    def as_json(self):
+        _result = self.init_base_dict("trim")
+        set_if_set(_result, "value", self.value)
+        return _result
+
+
     def _transform(self, _value):
         """Make transformation"""
         if _value is not None:
@@ -141,10 +198,19 @@ class IfEmpty(CustomTransformation):
         self.value = _xml_node.text
 
     def as_xml_node(self):
-        _xml_node = self.init_base_to_node("IfEmpty")
+        _xml_node = self.init_base_to_node("ifempty")
         _xml_node.text = self.value
 
         return _xml_node
+
+    def load_from_json(self, _json):
+        super(IfEmpty, self).load_from_json(_xml_node)
+        self.value = _json
+
+    def as_json(self):
+        _result = self.init_base_dict("ifempty")
+        set_if_set(_result, "value", self.value)
+        return _result
 
     def _transform(self, _value):
         """Make transformation"""
@@ -180,6 +246,18 @@ class Cast(CustomTransformation):
         etree.SubElement(_xml_node, "format_string").text = self.format_string
 
         return _xml_node
+
+    def load_from_json(self, _json):
+        super(Cast, self).load_from_json(_xml_node)
+        self.dest_type = _json["dest_type"]
+        self.format_string = _json["format_string"]
+
+    def as_json(self):
+        _result = self.init_base_dict("cast")
+        set_if_set(_result, "dest_type", self.dest_type)
+        set_if_set(_result, "format_string", self.format_string)
+        return _result
+
 
     def _transform(self, _value):
         """Make cast"""
@@ -242,6 +320,19 @@ class Replace(CustomTransformation):
 
         return _xml_node
 
+    def load_from_json(self, _json):
+        super(Replace, self).load_from_json(_xml_node)
+        self.old = _json["old"]
+        self.new = _json["new"]
+        self.max = _json["max"]
+
+    def as_json(self):
+        _result = self.init_base_dict("replace")
+        set_if_set(_result, "old", self.old)
+        set_if_set(_result, "new", self.new)
+        set_if_set(_result, "max", self.max)
+        return _result
+
     def _transform(self, _value):
         """Make replace transformation"""
         # It is a string operation, None will be handled as a string.
@@ -290,12 +381,25 @@ class ReplaceRegex(CustomTransformation):
         self.max = xml_isnone(_xml_node.find("max"))
 
     def as_xml_node(self):
-        _xml_node = self.init_base_to_node("replace_regex")
+        _xml_node = self.init_base_dict("replace_regex")
         etree.SubElement(_xml_node, "pattern").text = self.pattern
         etree.SubElement(_xml_node, "new").text = self.new
         etree.SubElement(_xml_node, "max").text = self.max
 
         return _xml_node
+
+    def load_from_json(self, _json):
+        super(ReplaceRegex, self).load_from_json(_xml_node)
+        self.old = _json["pattern"]
+        self.new = _json["new"]
+        self.max = _json["max"]
+
+    def as_json(self):
+        _result = self.init_base_to_node("replaceRegex")
+        set_if_set(_result, "pattern", self.pattern)
+        set_if_set(_result, "new", self.new)
+        set_if_set(_result, "max", self.max)
+        return _result
 
     def _transform(self, _value):
         """Make replace transformation"""

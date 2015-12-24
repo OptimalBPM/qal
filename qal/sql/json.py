@@ -120,7 +120,7 @@ class SQLJSON(Recurse):
             "version": "0.5",
             "properties": {
                 "statement": {"$ref": "#/definitions/statement"},
-                "resources": {"$ref": "qal://resources.json#/definitions/statement"}
+                "resources": {"$ref": "qal://resources.json#/properties/resources"}
                            },
             "required": ["statement"],
             "definitions": {}

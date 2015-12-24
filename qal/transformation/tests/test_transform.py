@@ -3,11 +3,13 @@ Created on Nov 3, 2013
 
 @author: Nicklas Boerjesson
 """
+import json
 import unittest
 from datetime import datetime
 import os
 
 from lxml import etree
+
 
 from qal.transformation.transform import Trim, Replace, ReplaceRegex, IfEmpty, Cast
 
@@ -24,8 +26,10 @@ class TransformTest(unittest.TestCase):
     def test_1_trim(self):
         """Test trim transformation input/output and XML encoding/decoding"""
         _tree = self._parse_xml(Test_Resource_Dir + "/test_transform.xml")
+        
         _xml_def = _tree.find("mappings/field_mappings/field_mapping/transformations/trim")
         _tested = Trim(_xml_def)
+
         _result = _tested.transform(' test ')
         self.assertEqual(_result, ' test', "Results differ")
         self.assertEqual(etree.tostring(_xml_def).strip(), etree.tostring(_tested.as_xml_node()), "XML in/out differ")

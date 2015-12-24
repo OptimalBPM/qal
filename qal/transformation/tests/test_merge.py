@@ -3,6 +3,7 @@ Created on Nov 3, 2013
 
 @author: Nicklas Boerjesson
 """
+import json
 import unittest
 from shutil import copyfile
 import datetime
@@ -66,6 +67,12 @@ class MergeTest(unittest.TestCase):
 
         _merge_xml = self._parse_xml(os.path.join(Test_Resource_Dir, "test_merge_two_files.xml"))
         _merge = Merge(_xml_node=_merge_xml)
+
+        _f_out = open(Test_Resource_Dir + "/test_merge_two_files.json", "w")
+        _dict_out = _merge.as_json()
+        json.dump(_dict_out, _f_out, sort_keys=True, indent=4)
+        _f_out.close()
+
         _merge.destination_log_level = DATASET_LOGLEVEL_DETAIL
         print("as_xml_node: " + str(etree.tostring(_merge.as_xml_node())))
 
@@ -116,6 +123,13 @@ class MergeTest(unittest.TestCase):
         _merge_xml = self._parse_xml(os.path.join(Test_Resource_Dir, "test_merge_two_tables.xml"))
         _merge = Merge(_xml_node=_merge_xml)
         _merge.destination_log_level = DATASET_LOGLEVEL_DETAIL
+
+
+        _f_out = open(Test_Resource_Dir + "/test_merge_two_tables.json", "w")
+        _dict_out = _merge.as_json()
+        json.dump(_dict_out, _f_out, sort_keys=True, indent=4)
+        _f_out.close()
+
         print(etree.tostring(_merge.as_xml_node()))
         print(etree.tostring(_merge_xml))
 
@@ -167,6 +181,11 @@ class MergeTest(unittest.TestCase):
         _merge.destination_log_level = DATASET_LOGLEVEL_DETAIL
         print(etree.tostring(_merge.as_xml_node()))
         print(etree.tostring(_merge_xml))
+
+        _f_out = open(Test_Resource_Dir + "/test_merge_no_keys_to_nonexisting.json", "w")
+        _dict_out = _merge.as_json()
+        json.dump(_dict_out, _f_out, sort_keys=True, indent=4)
+        _f_out.close()
 
         self.assertEqual(etree.tostring(_merge.as_xml_node()),
             etree.tostring(_merge_xml),

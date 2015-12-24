@@ -114,6 +114,63 @@ class Merge(object):
             _xml_node.append(self.resources.as_xml_node())
         return _xml_node
 
+    def as_json(self):
+
+        _mappings = []
+
+        for _curr_mapping in self.mappings:
+            _mappings.append(_curr_mapping.as_json())
+
+
+
+        _settings = {}
+
+        _settings["insert"] = self.insert
+        _settings["update"] = self.update
+        _settings["delete"] = self.delete
+        _settings["post_execute_sql"] = self.post_execute_sql
+
+        if self.resources is None:
+            self.resources = Resources()
+
+        if self.source is not None:
+            try:
+                _source_resource = self.resources.get_resource('source_uuid')
+            except Exception:
+                _source_resource = None
+            if _source_resource is None:
+                _source_resource = Resource()
+                _source_resource.uuid = 'source_uuid'
+                _source_resource.caption = "source"
+                self.resources.local_resources['source_uuid'] = _source_resource
+            self.source.write_resource_settings(_source_resource)
+        if self.destination is not None:
+            try:
+                _dest_resource = self.resources.get_resource('dest_uuid')
+            except Exception:
+                _dest_resource = None
+            if _dest_resource is None:
+                _dest_resource = Resource()
+                _dest_resource.uuid = 'dest_uuid'
+                _dest_resource.caption = "destination"
+                self.resources.local_resources['dest_uuid'] = _dest_resource
+
+            self.destination.write_resource_settings(_dest_resource)
+
+        """ TODO: Handle remotely defined resources properly. This way, they are included in the XML, which perhaps isn't
+            right. Perhaps get_resource should return a tuple with a source parameter.
+        """
+
+        if self.source is not None or self.destination is not None:
+            # If either aren't set, anything in resources are likely to be residuals from earlier.
+            # However, there could be old resources left in one of them.
+            _resources = []
+            _resources.append(self.resources.as_json_dict())
+
+            return {"merge": {"mappings": _mappings, "settings": _settings, "resources": _resources}}
+        else:
+            return {"merge": {"mappings": _mappings, "settings": _settings}}
+
     def load_field_mappings_from_xml_node(self, _xml_node):
         if _xml_node is not None:
             _mapping_idx = 0
@@ -193,7 +250,7 @@ class Merge(object):
             if (hasattr(self.destination, "filename") and
                     not exists(make_path_absolute(self.destination.filename, self.destination._base_path))) or \
                     (isinstance(self.destination, RDBMSDataset) and
-                    len(MetaQueries.table_info(self.destination.dal, self.destination.table_name)) == 0):
+                    len(MetaQueries.table_info(self.destination._dal, self.destination.table_name)) == 0):
                 self.destination.field_names = [_curr_mapping.dest_reference for _curr_mapping in self.mappings]
                 self.destination.data_table = []
 
@@ -370,9 +427,11 @@ class Merge(object):
         if _commit:
             self.destination.save()
 
-            if self.post_execute_sql is not None and self.post_execute_sql != "" and hasattr(self.destination, "dal"):
-                self.destination.dal.execute(self.post_execute_sql)
-                self.destination.dal.commit()
+            # TODO: We access private members here, is that what we want?
+
+            if self.post_execute_sql is not None and self.post_execute_sql != "" and hasattr(self.destination, "_dal"):
+                self.destination._dal.execute(self.post_execute_sql)
+                self.destination._dal.commit()
 
         return _merged_dataset, self.destination._log, _deletes, _inserts, _updates
 

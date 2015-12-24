@@ -4,6 +4,7 @@
     :copyright: Copyright 2010-2014 by Nicklas Boerjesson
     :license: BSD, see LICENSE for details. 
 """
+from operator import itemgetter
 from urllib.parse import unquote
 import os
 
@@ -84,22 +85,27 @@ class Resource(object):
     """If this resource was read from a file, base path is the directory where the file was located.
     Makes it possible to deduce the absolute path from relative paths in the files,
     making them slightly more portable."""
-    data = None
-    """A dict of all the custom data that belongs to the resource. Access this way: _filename = data['file_name'].'"""
+    _excluded_fields = None
+    """This private field lists the fields that aren't persistent and not part of the definition"""
+
 
     def __init__(self):
         self.uuid = None
         self.type = None
         self.name = None
         self.base_path = None
+        self._excluded_fields = ["base_path"]
 
 
     def as_json_dict(self):
         """This function encode an XML structure into resource objects. Uses lxml as opposed to parse_xml()."""
         _resource = {}
+
         # Loop data. Sorted to be predictable enough for testing purposes
         for _curr_data_key, _curr_data_value in sorted(self.__dict__.items()):
-            if _curr_data_value is not None:
+            if _curr_data_value is not None and\
+                            _curr_data_key[0] != "_" and \
+                            _curr_data_key not in self._excluded_fields:
                 if isinstance(_curr_data_value, list):
                     _resource[_curr_data_key] = []
                     for _curr_item in _curr_data_value:
@@ -112,12 +118,21 @@ class Resource(object):
     def as_xml_node(self):
         """This function encode an XML structure into resource objects. Uses lxml as opposed to parse_xml()."""
         _resource = etree.Element("resource")
-        _resource.set("name", self.caption)
+        _resource.set("name", self.name)
         _resource.set("type", self.type)
         _resource.set("uuid", self.uuid)
+        def cmp_value(x):
+            if x is None:
+                return False
+            else:
+                return x
+
+
         # Loop data. Sorted to be predictable enough for testing purposes
-        for _curr_data_key, _curr_data_value in sorted(self.data.items(), key = itemgetter(1)):
-            if _curr_data_value is not None:
+        for _curr_data_key, _curr_data_value in sorted(self.__dict__.items(), key=cmp_value):
+            if _curr_data_value is not None and\
+                            _curr_data_key[0] != "_" and \
+                            _curr_data_key not in self._excluded_fields + ["name", "type", "uuid"]:
                 if isinstance(_curr_data_value, list):
                     _item_parent = add_xml_subitem(_resource, _curr_data_key, "")
                     for _item in _curr_data_value:

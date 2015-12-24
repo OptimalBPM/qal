@@ -105,11 +105,11 @@ class DatabaseAbstractionLayer(object):
 
         _resource.username = self.username
         _resource.password = self.password
-        if _resource.autocommit:
+        if hasattr(_resource, "autocommit"):
             _resource.autocommit = self.autocommit
-        if _resource.port:
+        if hasattr(_resource, "port"):
             _resource.port = self.port
-        if _resource.instance:
+        if hasattr(_resource, "instance"):
             _resource.instance = self.instance
 
     def connect_to_db(self):

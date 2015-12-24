@@ -7,7 +7,8 @@ from lxml import etree
 from qal.transformation.substitution import Substitution
 
 from qal.common.strings import string_to_bool, empty_when_none
-from qal.transformation.transform import make_transformation_array_from_xml_node, make_transformations_xml_node
+from qal.transformation.transform import make_transformation_array_from_xml_node, make_transformations_xml_node, \
+    make_transformations_json, make_transformation_array_from_json
 from qal.common.xml_utils import xml_isnone
 
 
@@ -56,3 +57,22 @@ class Mapping(object):
         etree.SubElement(_xml_node, "dest_reference").text = empty_when_none(self.dest_reference)
 
         return _xml_node
+
+    def as_json(self):
+        return {
+                "is_key": self.is_key,
+                "src_reference": self.src_reference,
+                "src_datatype": self.src_datatype,
+                "dest_reference": self.dest_reference,
+                "transformations": make_transformations_json(self.transformations)
+            }
+
+    def load_from_json(self, _json):
+        if _xml_node is not None:
+            self.is_key = _json["is_key"]
+            self.src_reference = _json["src_reference"]
+            self.src_datatype = _json["src_datatype"]
+            self.dest_reference = _json["dest_reference"]
+            self.transformations = make_transformation_array_from_json(_json["transformations"],
+                                                                           self.substitution)
+
