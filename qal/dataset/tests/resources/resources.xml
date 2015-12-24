@@ -2,20 +2,20 @@
 <sql:statement xmlns:sql="http://www.optimalbpm.se/XMLschema/DAL/SQL" xmlns:xsi="http://www.w3.org/2001/XMLSchema" xsi:schemaLocation="http://www.optimalbpm.se/XMLschema/DAL/SQL ../../dal/SQL.xsd">
 	<resources>
 		<resource type="rdbms" uuid="{1D62083E-88F7-4442-920D-0B6CC59BA2FF}" caption="localhost_pg">
-			<db_server>localhost</db_server>
+			<server>localhost</server>
 			<db_type>PostgreSQL</db_type>
-			<db_databasename>bpmtest</db_databasename>
-			<db_username>bpmuser</db_username>
-			<db_password>test</db_password>
-			<db_table_name>table_src</db_table_name>
+			<databasename>bpmtest</databasename>
+			<username>bpmuser</username>
+			<password>test</password>
+			<table_name>table_src</table_name>
 		</resource>
 		<resource type="rdbms" uuid="{DD34A233-47A6-4C16-A26F-195711B49B97}" caption="localhost_mysql">
-			<db_server>localhost</db_server>
+			<server>localhost</server>
 			<db_type>MySQL</db_type>
-			<db_databasename>bpmtest</db_databasename>
-			<db_username>bpmuser</db_username>
-			<db_password>test</db_password>
-			<db_table_name>table_dst</db_table_name>
+			<databasename>bpmtest</databasename>
+			<username>bpmuser</username>
+			<password>test</password>
+			<table_name>table_dst</table_name>
 		</resource>
 		<resource type="flatfile" uuid="{86470370-FF78-48A4-9759-A3BAE4EE22FE}" caption="csv-file">
 			<filename>csv_in.csv</filename>
