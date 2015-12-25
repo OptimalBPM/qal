@@ -254,4 +254,5 @@ class DictDiffer(object):
     @staticmethod
     def pretty_print_diff(_changes):
         for _curr_diff in _changes:
-            print("Attribute : " + str(_curr_diff["attribute"]) + "Action : " + str(_curr_diff["action"]) + "\nBefore : " + str(_curr_diff["before"]) + "\nAfter :  " + str(_curr_diff["after"]))
+            print("Attribute : " + str(_curr_diff["attribute"]) + ", action : " +  str(_curr_diff["action"]) +
+                  "\nBefore : " + str(_curr_diff["before"]) + "\nAfter :  " + str(_curr_diff["after"]))
