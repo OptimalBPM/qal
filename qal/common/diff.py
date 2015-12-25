@@ -237,7 +237,6 @@ class DictDiffer(object):
         # TODO: This must probably be using field xpaths or something. JSON XPaths might be useful
         # The problem is if a field is in a list of objects. Then fieldId will not be unique in the list of objects.
         # How about always using xpaths for a change? The problem is fieldIds in lists.
-        pass
         _changes = []
         _differ = DictDiffer(_new, _old)
         for _property in _differ.added():
