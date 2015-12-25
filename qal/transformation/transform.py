@@ -11,6 +11,7 @@ import re
 from datetime import date, datetime
 
 from lxml import etree
+from qal.common.meta import set_dict_if_set, set_property_if_in_dict
 
 from qal.common.strings import empty_when_none
 from qal.common.xml_utils import xml_isnone
@@ -35,6 +36,21 @@ def make_transformation_array_from_xml_node(_xml_node, _substitution=None):
             _result.append(Replace(_xml_node=_curr_node, _substitution=_substitution))
         elif _curr_node.tag.lower() == 'replace_regex':
             _result.append(ReplaceRegex(_xml_node=_curr_node, _substitution=_substitution))
+    return _result
+
+def make_transformation_array_from_json(_json, _substitution=None):
+    _result = []
+    for _curr_transformation in _json:
+        if _curr_transformation["type"] == 'trim':
+            _result.append(Trim(_json= _curr_transformation, _substitution=_substitution))
+        elif _curr_transformation["type"] == 'ifempty':
+            _result.append(IfEmpty(_json= _curr_transformation, _substitution=_substitution))
+        elif _curr_transformation["type"] == 'cast':
+            _result.append(Cast(_json= _curr_transformation, _substitution=_substitution))
+        elif _curr_transformation["type"] == 'replace':
+            _result.append(Replace(_json= _curr_transformation, _substitution=_substitution))
+        elif _curr_transformation["type"] == 'replace_regex':
+            _result.append(ReplaceRegex(_json= _curr_transformation, _substitution=_substitution))
     return _result
 
 
@@ -68,10 +84,7 @@ def make_transformations_json(_transformations):
 
     return _result
 
-def set_if_set(_dest, _attribute, _value):
 
-    if _value is not None:
-        _dest[_attribute] = _value
 
 class CustomTransformation(object):
     """
@@ -115,8 +128,8 @@ class CustomTransformation(object):
 
     def init_base_dict(self, _name):
         _result = {}
-        set_if_set(_result, "type", _name)
-        set_if_set(_result, "order", self.order)
+        set_dict_if_set(_result, "type", _name)
+        set_dict_if_set(_result, "order", self.order)
         return _result
 
     # noinspection PyPep8
@@ -132,7 +145,7 @@ class CustomTransformation(object):
 
     def load_from_json(self, _json):
         if _json is not None:
-            self.order = _json["order"]
+            set_property_if_in_dict(self, "order",_json, "Transformations require an order attribute.")
         else:
             raise Exception("CustomTransformation.load_from_json : Base class need a destination node.")
 
@@ -169,12 +182,12 @@ class Trim(CustomTransformation):
         return _xml_node
 
     def load_from_json(self, _json):
-        super(Trim, self).load_from_json(_xml_node)
-        self.value = _json
+        super(Trim, self).load_from_json(_json)
+        set_property_if_in_dict(self, "value", _json)
 
     def as_json(self):
         _result = self.init_base_dict("trim")
-        set_if_set(_result, "value", self.value)
+        set_dict_if_set(_result, "value", self.value)
         return _result
 
 
@@ -204,12 +217,13 @@ class IfEmpty(CustomTransformation):
         return _xml_node
 
     def load_from_json(self, _json):
-        super(IfEmpty, self).load_from_json(_xml_node)
-        self.value = _json
+        super(IfEmpty, self).load_from_json(_json)
+        set_property_if_in_dict(self, "value", _json)
+
 
     def as_json(self):
         _result = self.init_base_dict("ifempty")
-        set_if_set(_result, "value", self.value)
+        set_dict_if_set(_result, "value", self.value)
         return _result
 
     def _transform(self, _value):
@@ -248,14 +262,15 @@ class Cast(CustomTransformation):
         return _xml_node
 
     def load_from_json(self, _json):
-        super(Cast, self).load_from_json(_xml_node)
-        self.dest_type = _json["dest_type"]
-        self.format_string = _json["format_string"]
+        super(Cast, self).load_from_json(_json)
+        set_property_if_in_dict(self, "dest_type", _json)
+        set_property_if_in_dict(self, "format_string", _json)
+
 
     def as_json(self):
         _result = self.init_base_dict("cast")
-        set_if_set(_result, "dest_type", self.dest_type)
-        set_if_set(_result, "format_string", self.format_string)
+        set_dict_if_set(_result, "dest_type", self.dest_type)
+        set_dict_if_set(_result, "format_string", self.format_string)
         return _result
 
 
@@ -321,16 +336,17 @@ class Replace(CustomTransformation):
         return _xml_node
 
     def load_from_json(self, _json):
-        super(Replace, self).load_from_json(_xml_node)
-        self.old = _json["old"]
-        self.new = _json["new"]
-        self.max = _json["max"]
+        super(Replace, self).load_from_json(_json)
+        set_property_if_in_dict(self, "old",_json)
+        set_property_if_in_dict(self, "new",_json)
+        set_property_if_in_dict(self, "max",_json)
+
 
     def as_json(self):
         _result = self.init_base_dict("replace")
-        set_if_set(_result, "old", self.old)
-        set_if_set(_result, "new", self.new)
-        set_if_set(_result, "max", self.max)
+        set_dict_if_set(_result, "old", self.old)
+        set_dict_if_set(_result, "new", self.new)
+        set_dict_if_set(_result, "max", self.max)
         return _result
 
     def _transform(self, _value):
@@ -376,12 +392,13 @@ class ReplaceRegex(CustomTransformation):
 
     def load_from_xml_node(self, _xml_node):
         super(ReplaceRegex, self).load_from_xml_node(_xml_node)
+
         self.pattern = xml_isnone(_xml_node.find("pattern"))
         self.new = xml_isnone(_xml_node.find("new"))
         self.max = xml_isnone(_xml_node.find("max"))
 
     def as_xml_node(self):
-        _xml_node = self.init_base_dict("replace_regex")
+        _xml_node = self.init_base_to_node("replace_regex")
         etree.SubElement(_xml_node, "pattern").text = self.pattern
         etree.SubElement(_xml_node, "new").text = self.new
         etree.SubElement(_xml_node, "max").text = self.max
@@ -389,16 +406,17 @@ class ReplaceRegex(CustomTransformation):
         return _xml_node
 
     def load_from_json(self, _json):
-        super(ReplaceRegex, self).load_from_json(_xml_node)
-        self.old = _json["pattern"]
-        self.new = _json["new"]
-        self.max = _json["max"]
+        super(ReplaceRegex, self).load_from_json(_json)
+        set_property_if_in_dict(self, "pattern",_json)
+        set_property_if_in_dict(self, "new",_json)
+        set_property_if_in_dict(self, "max",_json)
+
 
     def as_json(self):
-        _result = self.init_base_to_node("replaceRegex")
-        set_if_set(_result, "pattern", self.pattern)
-        set_if_set(_result, "new", self.new)
-        set_if_set(_result, "max", self.max)
+        _result = self.init_base_dict("replace_regex")
+        set_dict_if_set(_result, "pattern", self.pattern)
+        set_dict_if_set(_result, "new", self.new)
+        set_dict_if_set(_result, "max", self.max)
         return _result
 
     def _transform(self, _value):

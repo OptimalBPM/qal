@@ -9,7 +9,7 @@ from datetime import datetime
 import os
 
 from lxml import etree
-
+from qal.transformation.merge import Merge
 
 from qal.transformation.transform import Trim, Replace, ReplaceRegex, IfEmpty, Cast
 
@@ -30,6 +30,11 @@ class TransformTest(unittest.TestCase):
         _xml_def = _tree.find("mappings/field_mappings/field_mapping/transformations/trim")
         _tested = Trim(_xml_def)
 
+        _merge = Merge(_xml_node=_tree)
+        _f_out = open(Test_Resource_Dir + "/test_transform.json", "w")
+        _dict_out = _merge.as_json()
+        json.dump(_dict_out, _f_out, sort_keys=True, indent=4)
+        _f_out.close()
         _result = _tested.transform(' test ')
         self.assertEqual(_result, ' test', "Results differ")
         self.assertEqual(etree.tostring(_xml_def).strip(), etree.tostring(_tested.as_xml_node()), "XML in/out differ")
@@ -37,7 +42,7 @@ class TransformTest(unittest.TestCase):
     def test_2_IfEmpty(self):
         """Test trim transformation input/output and XML encoding/decoding"""
         _tree = self._parse_xml(Test_Resource_Dir + "/test_transform.xml")
-        _xml_def = _tree.find("mappings/field_mappings/field_mapping/transformations/IfEmpty")
+        _xml_def = _tree.find("mappings/field_mappings/field_mapping/transformations/ifempty")
         _tested = IfEmpty(_xml_def)
         _result = _tested.transform(None)
         self.assertEqual(_result, 'NULL', "Results differ")

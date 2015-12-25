@@ -89,7 +89,7 @@ def make_path_absolute(_path, _base_path):
         return os.path.join(_base_path, _path)
     else:
         raise Exception(
-            "Resource.make_path_absolute: make_path_absolute cannot make " + _path + " absolute without a _base_path.")
+            "Resource.make_path_absolute: make_path_absolute cannot resolve and make " + _path + " absolute without a _base_path.")
 
 
 def bool_to_binary_int(_value):

@@ -1,0 +1,105 @@
+{
+    "mappings": [
+        {
+            "dest_reference": "ID",
+            "is_key": false,
+            "src_datatype": "integer",
+            "src_reference": "ID",
+            "transformations": [
+                {
+                    "order": "2",
+                    "type": "ifempty",
+                    "value": "0"
+                },
+                {
+                    "dest_type": "string",
+                    "order": "3",
+                    "type": "cast"
+                },
+                {
+                    "new": ".",
+                    "old": ",",
+                    "order": "4",
+                    "type": "replace"
+                },
+                {
+                    "dest_type": "integer",
+                    "order": "5",
+                    "type": "cast"
+                }
+            ]
+        },
+        {
+            "dest_reference": "Name",
+            "is_key": false,
+            "src_datatype": "string",
+            "src_reference": "Name",
+            "transformations": [
+                {
+                    "order": "1",
+                    "type": "trim"
+                },
+                {
+                    "dest_type": "string",
+                    "order": "4",
+                    "type": "cast"
+                }
+            ]
+        },
+        {
+            "dest_reference": "Changed",
+            "is_key": false,
+            "src_datatype": "timestamp",
+            "src_reference": "Changed",
+            "transformations": [
+                {
+                    "dest_type": "string",
+                    "order": "1",
+                    "type": "cast"
+                },
+                {
+                    "order": "3",
+                    "type": "trim"
+                },
+                {
+                    "dest_type": "timestamp",
+                    "format_string": "%Y-%m-%d %H:%M:%S",
+                    "order": "1",
+                    "type": "cast"
+                }
+            ]
+        }
+    ],
+    "resources": {
+        "dest_uuid": {
+            "autocommit": "True",
+            "databasename": "bpmtest",
+            "db_type": "MySQL",
+            "name": "destination",
+            "password": "test",
+            "server": "localhost",
+            "table_name": "table_new",
+            "type": "RDBMS",
+            "username": "bpmuser",
+            "uuid": "dest_uuid"
+        },
+        "source_uuid": {
+            "autocommit": "True",
+            "databasename": "bpmtest",
+            "db_type": "PostgreSQL",
+            "name": "source",
+            "password": "test",
+            "server": "localhost",
+            "table_name": "table_src",
+            "type": "RDBMS",
+            "username": "bpmuser",
+            "uuid": "source_uuid"
+        }
+    },
+    "settings": {
+        "delete": true,
+        "insert": true,
+        "post_execute_sql": "UPDATE table_new SET Name = 'Post-execute-sql-name' WHERE ID = 1",
+        "update": true
+    }
+}

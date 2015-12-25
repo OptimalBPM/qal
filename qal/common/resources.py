@@ -194,7 +194,7 @@ class Resources(Recurse):
             return _resource
 
     def parse_json(self, _resources_dict=None):
-        """Parses an dict structure into resource objects"""
+        """Parses a dict structure into resource objects"""
 
 
 

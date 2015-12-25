@@ -8,7 +8,7 @@
                 <src_datatype>string</src_datatype>
                 <transformations>
                     <trim order="1">end</trim>
-                    <IfEmpty order="2">NULL</IfEmpty>
+                    <ifempty order="2">NULL</ifempty>
                     <replace order="3">
                         <old>cc</old>
                         <new>c</new>
@@ -100,7 +100,7 @@
                         <new>.</new>
                         <max/>
                     </replace>
-                    <IfEmpty order="4">0</IfEmpty>
+                    <ifempty order="4">0</ifempty>
                     <cast order="5">
                         <dest_type>float</dest_type>
                         <format_string></format_string>

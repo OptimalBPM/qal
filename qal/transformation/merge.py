@@ -43,7 +43,7 @@ class Merge(object):
     update = None
     """If rows that are different in the source should be updated in the destination"""
 
-    def __init__(self, _xml_node=None):
+    def __init__(self, _xml_node=None, _json=None, _base_path = None):
         """
         Constructor
         """
@@ -51,6 +51,9 @@ class Merge(object):
         self.key_fields = []
         if _xml_node is not None:
             self.load_from_xml_node(_xml_node)
+
+        if _json is not None:
+            self.load_from_json(_json, _base_path)
 
     def _field_mappings_as_xml_node(self):
         _xml_node = etree.Element("field_mappings")
@@ -164,12 +167,10 @@ class Merge(object):
         if self.source is not None or self.destination is not None:
             # If either aren't set, anything in resources are likely to be residuals from earlier.
             # However, there could be old resources left in one of them.
-            _resources = []
-            _resources.append(self.resources.as_json_dict())
 
-            return {"merge": {"mappings": _mappings, "settings": _settings, "resources": _resources}}
+            return {"mappings": _mappings, "settings": _settings, "resources": self.resources.as_json_dict()}
         else:
-            return {"merge": {"mappings": _mappings, "settings": _settings}}
+            return {"mappings": _mappings, "settings": _settings}
 
     def load_field_mappings_from_xml_node(self, _xml_node):
         if _xml_node is not None:
@@ -198,17 +199,38 @@ class Merge(object):
         else:
             raise Exception("Merge.load_settings_from_xml_node: Missing 'settings'-node.")
 
-    def load_from_xml_node(self, _xml_node):
+    def load_from_json(self, _json, _base_path = None):
+
+        _mapping_idx = 0
+        for _curr_mapping in _json["mappings"]:
+            _new_mapping = Mapping(_json=_curr_mapping)
+            self.mappings.append(_new_mapping)
+            if _new_mapping.is_key:
+                self.key_fields.append(_mapping_idx)
+            _mapping_idx += 1
+
+        self.insert = _json["settings"]["insert"]
+        self.update = _json["settings"]["update"]
+        self.delete = _json["settings"]["delete"]
+        self.post_execute_sql = _json["settings"]["post_execute_sql"]
+
+        self.resources = Resources(_resources_json_dict= _json["resources"], _base_path=_base_path)
+        self.source = dataset_from_resource(self.resources.get_resource('source_uuid'))
+        self.destination = dataset_from_resource(self.resources.get_resource('dest_uuid'))
+
+    def load_from_xml_node(self, _xml_node, _base_path = None):
 
         if _xml_node is not None:
             self.load_mappings_from_xml_node(_xml_node.find("mappings"))
             self.load_settings_from_xml_node(_xml_node.find("settings"))
-            self.resources = Resources(_resources_node=_xml_node.find("resources"))
+            self.resources = Resources(_resources_node=_xml_node.find("resources"), _base_path=_base_path)
             self.source = dataset_from_resource(self.resources.get_resource('source_uuid'))
             self.destination = dataset_from_resource(self.resources.get_resource('dest_uuid'))
 
         else:
             raise Exception("Merge.load_from_xml_node: \"None\" is not a valid Merge node.")
+
+
 
     def _mappings_to_fields(self, _dataset, _use_dest=True):
 

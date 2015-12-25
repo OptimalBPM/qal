@@ -269,7 +269,7 @@ class ClassSQLMetaXMLTest(unittest.TestCase):
         f = open(Test_Resource_Dir + "/_test_SELECT_resource_in.xml", "r")
         _str_xml_in = f.read()
         _structure = _meta_xml.xml_to_sql_structure(_str_xml_in,
-                                                    _base_path=Test_Resource_Dir + "/_test_SELECT_resource_in.xml")
+                                                    _base_path=Test_Resource_Dir)
 
         # Compare with all SQL flavours
         # self._compare_sql_files_for_all_db_types(_structure,"_test_DELETE", _overwrite = True)

@@ -24,7 +24,7 @@ class Mapping(object):
     substitution = None
     """An instance of the substitution class. Kept for maintaining things lite incrementors and similar."""
 
-    def __init__(self, _xml_node=None, _substitution=None):
+    def __init__(self, _xml_node=None, _substitution=None, _json=None):
         """
         Constructor
         """
@@ -38,6 +38,9 @@ class Mapping(object):
         if _xml_node is not None:
             self.load_from_xml_node(_xml_node)
 
+        if _json is not None:
+            self.load_from_json(_json)
+
     def load_from_xml_node(self, _xml_node):
         if _xml_node is not None:
             self.is_key = string_to_bool(xml_isnone(_xml_node.find("is_key")))
@@ -46,6 +49,13 @@ class Mapping(object):
             self.dest_reference = xml_isnone(_xml_node.find("dest_reference"))
             self.transformations = make_transformation_array_from_xml_node(_xml_node.find("transformations"),
                                                                            self.substitution)
+    def load_from_json(self, _json):
+
+            self.is_key = _json["is_key"]
+            self.src_reference = _json["src_reference"]
+            self.src_datatype = _json["src_datatype"]
+            self.dest_reference = _json["dest_reference"]
+            self.transformations = make_transformation_array_from_json(_json["transformations"], self.substitution)
 
     def as_xml_node(self):
 
@@ -68,11 +78,11 @@ class Mapping(object):
             }
 
     def load_from_json(self, _json):
-        if _xml_node is not None:
-            self.is_key = _json["is_key"]
-            self.src_reference = _json["src_reference"]
-            self.src_datatype = _json["src_datatype"]
-            self.dest_reference = _json["dest_reference"]
-            self.transformations = make_transformation_array_from_json(_json["transformations"],
-                                                                           self.substitution)
+
+        self.is_key = _json["is_key"]
+        self.src_reference = _json["src_reference"]
+        self.src_datatype = _json["src_datatype"]
+        self.dest_reference = _json["dest_reference"]
+        self.transformations = make_transformation_array_from_json(_json["transformations"],
+                                                                       self.substitution)
 
