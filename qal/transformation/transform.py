@@ -11,7 +11,8 @@ import re
 from datetime import date, datetime
 
 from lxml import etree
-from qal.common.meta import set_dict_if_set, set_property_if_in_dict
+
+from qal.common.json import set_dict_if_set, set_property_if_in_dict
 
 from qal.common.strings import empty_when_none
 from qal.common.xml_utils import xml_isnone

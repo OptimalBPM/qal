@@ -11,6 +11,7 @@ import os
 
 from lxml import etree
 from qal.common.diff import DictDiffer
+from qal.schema.handler import check_against_qal_schema
 
 from qal.sql.sql import VerbDropTable
 from qal.transformation.merge import Merge
@@ -74,13 +75,11 @@ class MergeTest(unittest.TestCase):
         print("as_json: " + json.dumps(_merge.as_json()))
 
         print("_merge_dict : " + json.dumps(_dict_in))
-
+        check_against_qal_schema("qal://transformation.json#/definitions/Merge", _merge.as_json())
         # TODO: Make all output be validated against the schema
         # self.validate_json_against_sql_schema(_dict_out)
         _changes = DictDiffer.compare_documents(_dict_in, _merge.as_json())
-        if len(_changes) == 0:
-            self.assertTrue(True)
-        else:
+        if len(_changes) > 0:
             DictDiffer.pretty_print_diff(_changes)
             self.assertTrue(False, "The input and output definitions doesn't match.")
 
@@ -95,7 +94,7 @@ class MergeTest(unittest.TestCase):
     def test_2_Merge_tables(self):
 
         _dict_in = self.load_json(os.path.join(Test_Resource_Dir, "test_merge_two_tables.json"))
-        _resources = Resources(_resources_json_dict=_dict_in["resources"], _base_path=Test_Resource_Dir)
+        _resources = Resources(_resources_list=_dict_in["resources"], _base_path=Test_Resource_Dir)
         print("merge_test.test_Merge_tables: Staging source")
         _source_data = [[1, 'source', datetime.datetime(2001, 1, 1, 0, 0)],
                         [2, 'source', datetime.datetime(2001, 1, 2, 0, 0)],
@@ -103,7 +102,7 @@ class MergeTest(unittest.TestCase):
         _field_names = ["ID", "Name", "Changed"]
         _field_types = ["integer", "string(200)", "timestamp"]
 
-        _source_dal = DatabaseAbstractionLayer(_resource=_resources.get_resource("source_uuid"))
+        _source_dal = DatabaseAbstractionLayer(_resource=_resources["00000000-0000-0000-0000-000000000000"])
         _source_table_name = 'table_src'
 
 
@@ -115,7 +114,7 @@ class MergeTest(unittest.TestCase):
                       [2, 'dest', datetime.datetime(2001, 1, 2, 0, 0)],
                       [3, 'dest', datetime.datetime(2014, 1, 4, 0, 0)]]
 
-        _dest_dal = DatabaseAbstractionLayer(_resource=_resources.get_resource("dest_uuid"))
+        _dest_dal = DatabaseAbstractionLayer(_resource=_resources["00000000-0000-0000-0000-000000000001"])
         _dest_table_name = 'table_dst'
 
 
@@ -129,14 +128,13 @@ class MergeTest(unittest.TestCase):
         print("as_json: " + json.dumps(_merge.as_json()))
 
         print("_merge_dict : " + json.dumps(_dict_in))
-
+        check_against_qal_schema("qal://transformation.json#/definitions/Merge", _merge.as_json())
 
         _changes = DictDiffer.compare_documents(_dict_in, _merge.as_json())
-        if len(_changes) == 0:
-            self.assertTrue(True)
-        else:
+        if len(_changes) > 0:
             DictDiffer.pretty_print_diff(_changes)
             self.assertTrue(False, "The input and output definitions doesn't match.")
+
         # noinspection PyUnusedLocal
         _result = _merge.execute()
 
@@ -150,7 +148,7 @@ class MergeTest(unittest.TestCase):
 
     def test_3_Merge_to_nonexisting(self):
         _dict_in = self.load_json(os.path.join(Test_Resource_Dir, "test_merge_no_keys_to_nonexisting.json"))
-        _resources = Resources(_resources_json_dict=_dict_in["resources"], _base_path=Test_Resource_Dir)
+        _resources = Resources(_resources_list=_dict_in["resources"], _base_path=Test_Resource_Dir)
 
         print("merge_test.test_Merge_tables: Staging source")
         _source_data = [[1, 'source', datetime.datetime(2001, 1, 1, 0, 0)],
@@ -159,13 +157,13 @@ class MergeTest(unittest.TestCase):
         _field_names = ["ID", "Name", "Changed"]
         _field_types = ["integer", "string(200)", "timestamp"]
 
-        _source_dal = DatabaseAbstractionLayer(_resource=_resources.get_resource("source_uuid"))
+        _source_dal = DatabaseAbstractionLayer(_resource=_resources["00000000-0000-0000-0000-000000000000"])
         _source_table_name = 'table_src'
 
         copy_to_table(_source_dal, _source_data, _field_names, _field_types, _source_table_name, _create_table=True,
                       _drop_existing=True)
 
-        _dest_dal = DatabaseAbstractionLayer(_resource=_resources.get_resource("dest_uuid"))
+        _dest_dal = DatabaseAbstractionLayer(_resource=_resources["00000000-0000-0000-0000-000000000001"])
         _dest_table_name = 'table_new'
 
         # drop table
@@ -182,12 +180,10 @@ class MergeTest(unittest.TestCase):
         print("as_json: " + json.dumps(_merge.as_json()))
 
         print("_merge_dict : " + json.dumps(_dict_in))
-
+        check_against_qal_schema("qal://transformation.json#/definitions/Merge", _merge.as_json())
 
         _changes = DictDiffer.compare_documents(_dict_in, _merge.as_json())
-        if len(_changes) == 0:
-            self.assertTrue(True)
-        else:
+        if len(_changes) > 0:
             DictDiffer.pretty_print_diff(_changes)
             self.assertTrue(False, "The input and output definitions doesn't match.")
 

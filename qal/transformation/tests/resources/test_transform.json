@@ -1,4 +1,6 @@
 {
+    "delete": true,
+    "insert": true,
     "mappings": [
         {
             "dest_reference": "emp_no",
@@ -168,8 +170,8 @@
             ]
         }
     ],
-    "resources": {
-        "dest_uuid": {
+    "resources": [
+        {
             "csv_dialect": "excel-tab",
             "delimiter": ";",
             "filename": "csv_out.csv",
@@ -178,9 +180,9 @@
             "quotechar": "\"",
             "quoting": "ALL",
             "type": "flatfile",
-            "uuid": "dest_uuid"
+            "uuid": "00000000-0000-0000-0000-000000000001"
         },
-        "source_uuid": {
+        {
             "csv_dialect": "excel-tab",
             "delimiter": ";",
             "filename": "csv_source.csv",
@@ -189,13 +191,8 @@
             "quotechar": "\"",
             "quoting": "MINIMAL",
             "type": "flatfile",
-            "uuid": "source_uuid"
+            "uuid": "00000000-0000-0000-0000-000000000000"
         }
-    },
-    "settings": {
-        "delete": true,
-        "insert": true,
-        "post_execute_sql": null,
-        "update": true
-    }
+    ],
+    "update": true
 }

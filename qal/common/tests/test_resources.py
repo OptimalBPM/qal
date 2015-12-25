@@ -29,7 +29,7 @@ class Test(unittest.TestCase):
 
         #self.assertEqual(len(_resources.local_resources), 5, 'Resources are not as many as they should')
 
-        _test_resource = _resources.get_resource("{1D62083E-88F7-4442-920D-0B6CC59BA2FF}")
+        _test_resource = _resources["{1D62083E-88F7-4442-920D-0B6CC59BA2FF}"]
         self.assertIsNotNone(_test_resource, 'Resource data not found')
         self.assertEqual(_test_resource.name, "localhost_pg", 'Resource name do not match')
 
@@ -39,7 +39,7 @@ class Test(unittest.TestCase):
         f = open(Test_Resource_Dir + "/_test_resource_in.json", "r")
         _dict_in = json.loads(f.read())
         f.close()
-        _resources = Resources(_resources_json_dict=_dict_in)
+        _resources = Resources(_resources_list=_dict_in)
         # _resources.debuglevel = 4
 
 
@@ -51,14 +51,15 @@ class Test(unittest.TestCase):
         f_out.close()
 
 
-        self.assertEqual(len(_resources.local_resources), 5, 'Resources are not as many as they should')
+        self.assertEqual(len(_resources._local_resources), 5, 'Resources are not as many as they should')
 
-        _test_resource = _resources.get_resource("{1D62083E-88F7-4442-920D-0B6CC59BA2FF}")
+        _test_resource = _resources["{1D62083E-88F7-4442-920D-0B6CC59BA2FF}"]
         self.assertIsNotNone(_test_resource, 'Resource data not found')
         self.assertEqual(_test_resource.name, "localhost_pg", 'Resource name do not match')
         f.close()
 
-        _changes = DictDiffer.compare_documents(_dict_in, _dict_out)
+
+        _changes = DictDiffer.compare_documents( {"_":_dict_in}, {"_": _dict_out})
         if len(_changes) == 0:
             self.assertTrue(True)
         else:

@@ -858,9 +858,9 @@
         },
         "csv_dialects": {
             "enum": [
-                "excel",
                 "unix",
-                "excel-tab"
+                "excel-tab",
+                "excel"
             ],
             "type": "string"
         },

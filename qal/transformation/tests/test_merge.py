@@ -3,7 +3,7 @@ Created on Nov 3, 2013
 
 @author: Nicklas Boerjesson
 """
-import json
+
 import unittest
 from shutil import copyfile
 import datetime
@@ -68,11 +68,6 @@ class MergeTest(unittest.TestCase):
         _merge_xml = self._parse_xml(os.path.join(Test_Resource_Dir, "test_merge_two_files.xml"))
         _merge = Merge(_xml_node=_merge_xml)
 
-        _f_out = open(Test_Resource_Dir + "/test_merge_two_files.json", "w")
-        _dict_out = _merge.as_json()
-        json.dump(_dict_out, _f_out, sort_keys=True, indent=4)
-        _f_out.close()
-
         _merge.destination_log_level = DATASET_LOGLEVEL_DETAIL
         print("as_xml_node: " + str(etree.tostring(_merge.as_xml_node())))
 
@@ -101,7 +96,7 @@ class MergeTest(unittest.TestCase):
         _field_names = ["ID", "Name", "Changed"]
         _field_types = ["integer", "string(200)", "timestamp"]
 
-        _source_dal = DatabaseAbstractionLayer(_resource=_resources.get_resource("source_uuid"))
+        _source_dal = DatabaseAbstractionLayer(_resource=_resources["00000000-0000-0000-0000-000000000000"])
         _source_table_name = 'table_src'
 
 
@@ -113,7 +108,7 @@ class MergeTest(unittest.TestCase):
                       [2, 'dest', datetime.datetime(2001, 1, 2, 0, 0)],
                       [3, 'dest', datetime.datetime(2014, 1, 4, 0, 0)]]
 
-        _dest_dal = DatabaseAbstractionLayer(_resource=_resources.get_resource("dest_uuid"))
+        _dest_dal = DatabaseAbstractionLayer(_resource=_resources["00000000-0000-0000-0000-000000000001"])
         _dest_table_name = 'table_dst'
 
 
@@ -124,11 +119,6 @@ class MergeTest(unittest.TestCase):
         _merge = Merge(_xml_node=_merge_xml)
         _merge.destination_log_level = DATASET_LOGLEVEL_DETAIL
 
-
-        _f_out = open(Test_Resource_Dir + "/test_merge_two_tables.json", "w")
-        _dict_out = _merge.as_json()
-        json.dump(_dict_out, _f_out, sort_keys=True, indent=4)
-        _f_out.close()
 
         print(etree.tostring(_merge.as_xml_node()))
         print(etree.tostring(_merge_xml))
@@ -159,13 +149,13 @@ class MergeTest(unittest.TestCase):
         _field_names = ["ID", "Name", "Changed"]
         _field_types = ["integer", "string(200)", "timestamp"]
 
-        _source_dal = DatabaseAbstractionLayer(_resource=_resources.get_resource("source_uuid"))
+        _source_dal = DatabaseAbstractionLayer(_resource=_resources["00000000-0000-0000-0000-000000000000"])
         _source_table_name = 'table_src'
 
         copy_to_table(_source_dal, _source_data, _field_names, _field_types, _source_table_name, _create_table=True,
                       _drop_existing=True)
 
-        _dest_dal = DatabaseAbstractionLayer(_resource=_resources.get_resource("dest_uuid"))
+        _dest_dal = DatabaseAbstractionLayer(_resource=_resources["00000000-0000-0000-0000-000000000001"])
         _dest_table_name = 'table_new'
 
         # drop table
@@ -182,10 +172,6 @@ class MergeTest(unittest.TestCase):
         print(etree.tostring(_merge.as_xml_node()))
         print(etree.tostring(_merge_xml))
 
-        _f_out = open(Test_Resource_Dir + "/test_merge_no_keys_to_nonexisting.json", "w")
-        _dict_out = _merge.as_json()
-        json.dump(_dict_out, _f_out, sort_keys=True, indent=4)
-        _f_out.close()
 
         self.assertEqual(etree.tostring(_merge.as_xml_node()),
             etree.tostring(_merge_xml),

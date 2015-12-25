@@ -1,5 +1,5 @@
-{
-  "{0B8B71C1-D3A8-4F16-B8E1-9C73E196254C}": {
+[
+  {
     "type": "xpath",
     "uuid": "{0B8B71C1-D3A8-4F16-B8E1-9C73E196254C}",
     "field_types": [
@@ -19,7 +19,7 @@
       "td[3]"
     ]
   },
-  "{969A610A-FCA6-4837-B33A-BAA8F13D8B70}": {
+  {
     "type": "xpath",
     "uuid": "{969A610A-FCA6-4837-B33A-BAA8F13D8B70}",
     "field_types": [
@@ -39,7 +39,7 @@
       "price"
     ]
   },
-  "{DD34A233-47A6-4C16-A26F-195711B49B97}": {
+  {
     "type": "rdbms",
     "uuid": "{DD34A233-47A6-4C16-A26F-195711B49B97}",
     "password": "test",
@@ -49,7 +49,7 @@
     "db_type": "MySQL",
     "username": "ubpmuser"
   },
-  "{86470370-FF78-48A4-9759-A3BAE4EE22FE}": {
+  {
     "type": "flatfile",
     "has_header": "True",
     "uuid": "{86470370-FF78-48A4-9759-A3BAE4EE22FE}",
@@ -58,7 +58,7 @@
     "filename": "_SELECT_resource_csv_in.txt",
     "delimiter": ","
   },
-  "{1D62083E-88F7-4442-920D-0B6CC59BA2FF}": {
+  {
     "type": "rdbms",
     "uuid": "{1D62083E-88F7-4442-920D-0B6CC59BA2FF}",
     "password": "test",
@@ -68,4 +68,4 @@
     "db_type": "PostgreSQL",
     "username": "ubpmuser"
   }
-}
+]

@@ -135,7 +135,7 @@
         <delete>True</delete>
     </settings>
     <resources>
-        <resource name="destination" type="flatfile" uuid="dest_uuid">
+        <resource name="destination" type="flatfile" uuid="00000000-0000-0000-0000-000000000001">
             <csv_dialect>excel-tab</csv_dialect>
             <delimiter>;</delimiter>
             <filename>csv_out.csv</filename>
@@ -143,7 +143,7 @@
             <quotechar>"</quotechar>
             <quoting>ALL</quoting>
         </resource>
-        <resource name="source" type="flatfile" uuid="source_uuid">
+        <resource name="source" type="flatfile" uuid="00000000-0000-0000-0000-000000000000">
             <csv_dialect>excel-tab</csv_dialect>
             <delimiter>;</delimiter>
             <filename>csv_source.csv</filename>

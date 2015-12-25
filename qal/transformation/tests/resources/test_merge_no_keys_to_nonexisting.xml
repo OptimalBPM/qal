@@ -62,7 +62,7 @@
         <post_execute_sql>UPDATE table_new SET Name = 'Post-execute-sql-name' WHERE ID = 1</post_execute_sql>
     </settings>
     <resources>
-        <resource name="destination" type="RDBMS" uuid="dest_uuid">
+        <resource name="destination" type="RDBMS" uuid="00000000-0000-0000-0000-000000000001">
             <autocommit>True</autocommit>
             <databasename>bpmtest</databasename>
             <db_type>MySQL</db_type>
@@ -71,7 +71,7 @@
             <table_name>table_new</table_name>
             <username>bpmuser</username>
         </resource>
-        <resource name="source" type="RDBMS" uuid="source_uuid">
+        <resource name="source" type="RDBMS" uuid="00000000-0000-0000-0000-000000000000">
             <autocommit>True</autocommit>
             <databasename>bpmtest</databasename>
             <db_type>PostgreSQL</db_type>

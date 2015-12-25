@@ -8,8 +8,9 @@ from csv import list_dialects
 
 from qal.common.resources import Resources
 from qal.dataset.xpath import xpath_data_formats
-from qal.common.meta import list_prefixed_classes, find_class, _json_add_child_properties
-from qal.recurse import Recurse
+from qal.common.meta import list_prefixed_classes, find_class
+from qal.common.schema import json_add_child_properties
+from qal.common.recurse import Recurse
 from qal.sql.types import sql_property_to_type, and_or, \
     constraint_types, index_types, verbs, set_operator, join_types, in_types, quoting_types, data_source_types
 from qal.dal.types import db_types
@@ -20,11 +21,7 @@ from qal.dal.types import db_types
 from qal.sql.sql import *  # @UnusedWildImport #IGNORE:W0401
 from qal.sql.base import * # @UnusedWildImport #IGNORE:W0401
 from qal.dataset.custom import CustomDataset # @UnusedWildImport #IGNORE:W0401
-from qal.dataset.flatfile import FlatfileDataset # @UnusedWildImport #IGNORE:W0401
-from qal.dataset.matrix import MatrixDataset # @UnusedWildImport #IGNORE:W0401
-from qal.dataset.rdbms import RDBMSDataset # @UnusedWildImport #IGNORE:W0401
-from qal.dataset.spreadsheet import SpreadsheetDataset # @UnusedWildImport #IGNORE:W0401
-from qal.dataset.xpath import XpathDataset# @UnusedWildImport #IGNORE:W0401
+
 
 # IMPORTANT, there should be imports of all qal.dataset.* modules above for generate schema to work
 
@@ -138,14 +135,14 @@ class SQLJSON(Recurse):
         for _curr_class in list_prefixed_classes(globals(), "parameter"):
             _result["definitions"].update({_curr_class: {
                 "type": "object",
-                "properties": _json_add_child_properties(_globals, _curr_class, json_sql_property_to_type)}})
+                "properties": json_add_child_properties(_globals, _curr_class, json_sql_property_to_type)}})
 
         # Then add verbs.
 
         for _curr_class in list_prefixed_classes(globals(), "verb"):
             _result["definitions"].update({_curr_class: {
                 "type": "object",
-                "properties": _json_add_child_properties(_globals, _curr_class, json_sql_property_to_type)}})
+                "properties": json_add_child_properties(_globals, _curr_class, json_sql_property_to_type)}})
 
         return _result
 

@@ -7,6 +7,7 @@ Created on Nov 3, 2013
 from os.path import exists
 
 from lxml import etree
+from qal.common.json import set_dict_if_set, set_property_if_in_dict
 
 from qal.transformation.mapping import Mapping
 from qal.common.resources import Resources, Resource
@@ -15,7 +16,8 @@ from qal.transformation.transform import perform_transformations, IfEmpty, Repla
 from qal.dataset.factory import dataset_from_resource
 from qal.common.xml_utils import xml_isnone
 from qal.dataset.rdbms import RDBMSDataset
-from qal.common.meta_queries import MetaQueries
+from qal.sql.meta_queries import MetaQueries
+
 
 
 class Merge(object):
@@ -85,25 +87,25 @@ class Merge(object):
 
         if self.source is not None:
             try:
-                _source_resource = self.resources.get_resource('source_uuid')
+                _source_resource = self.resources["00000000-0000-0000-0000-000000000000"]
             except Exception:
                 _source_resource = None
             if _source_resource is None:
                 _source_resource = Resource()
-                _source_resource.uuid = 'source_uuid'
+                _source_resource.uuid = "00000000-0000-0000-0000-000000000000"
                 _source_resource.caption = "source"
-                self.resources.local_resources['source_uuid'] = _source_resource
+                self.resources.local_resources["00000000-0000-0000-0000-000000000000"] = _source_resource
             self.source.write_resource_settings(_source_resource)
         if self.destination is not None:
             try:
-                _dest_resource = self.resources.get_resource('dest_uuid')
+                _dest_resource = self.resources["00000000-0000-0000-0000-000000000001"]
             except Exception:
                 _dest_resource = None
             if _dest_resource is None:
                 _dest_resource = Resource()
-                _dest_resource.uuid = 'dest_uuid'
+                _dest_resource.uuid = "00000000-0000-0000-0000-000000000001"
                 _dest_resource.caption = "destination"
-                self.resources.local_resources['dest_uuid'] = _dest_resource
+                self.resources.local_resources["00000000-0000-0000-0000-000000000001"] = _dest_resource
 
             self.destination.write_resource_settings(_dest_resource)
 
@@ -125,42 +127,34 @@ class Merge(object):
             _mappings.append(_curr_mapping.as_json())
 
 
-
-        _settings = {}
-
-        _settings["insert"] = self.insert
-        _settings["update"] = self.update
-        _settings["delete"] = self.delete
-        _settings["post_execute_sql"] = self.post_execute_sql
-
         if self.resources is None:
             self.resources = Resources()
 
         if self.source is not None:
             try:
-                _source_resource = self.resources.get_resource('source_uuid')
+                _source_resource = self.resources["00000000-0000-0000-0000-000000000000"]
             except Exception:
                 _source_resource = None
             if _source_resource is None:
                 _source_resource = Resource()
-                _source_resource.uuid = 'source_uuid'
+                _source_resource.uuid = "00000000-0000-0000-0000-000000000000"
                 _source_resource.caption = "source"
-                self.resources.local_resources['source_uuid'] = _source_resource
+                self.resources["00000000-0000-0000-0000-000000000000"] = _source_resource
             self.source.write_resource_settings(_source_resource)
         if self.destination is not None:
             try:
-                _dest_resource = self.resources.get_resource('dest_uuid')
+                _dest_resource = self.resources["00000000-0000-0000-0000-000000000001"]
             except Exception:
                 _dest_resource = None
             if _dest_resource is None:
                 _dest_resource = Resource()
-                _dest_resource.uuid = 'dest_uuid'
+                _dest_resource.uuid = "00000000-0000-0000-0000-000000000001"
                 _dest_resource.caption = "destination"
-                self.resources.local_resources['dest_uuid'] = _dest_resource
+                self.resources["00000000-0000-0000-0000-000000000001"] = _dest_resource
 
             self.destination.write_resource_settings(_dest_resource)
 
-        """ TODO: Handle remotely defined resources properly. This way, they are included in the XML, which perhaps isn't
+        """ TODO: Handle remotely defined resources properly. This way, they are included in the definition, which perhaps isn't
             right. Perhaps get_resource should return a tuple with a source parameter.
         """
 
@@ -168,9 +162,16 @@ class Merge(object):
             # If either aren't set, anything in resources are likely to be residuals from earlier.
             # However, there could be old resources left in one of them.
 
-            return {"mappings": _mappings, "settings": _settings, "resources": self.resources.as_json_dict()}
+            _result = {"mappings": _mappings, "resources": self.resources.as_json_dict()}
         else:
-            return {"mappings": _mappings, "settings": _settings}
+            _result = {"mappings": _mappings}
+
+        set_dict_if_set(_result, "insert", self.insert)
+        set_dict_if_set(_result, "delete", self.delete)
+        set_dict_if_set(_result, "update", self.update)
+        set_dict_if_set(_result, "post_execute_sql", self.post_execute_sql)
+
+        return _result
 
     def load_field_mappings_from_xml_node(self, _xml_node):
         if _xml_node is not None:
@@ -209,14 +210,15 @@ class Merge(object):
                 self.key_fields.append(_mapping_idx)
             _mapping_idx += 1
 
-        self.insert = _json["settings"]["insert"]
-        self.update = _json["settings"]["update"]
-        self.delete = _json["settings"]["delete"]
-        self.post_execute_sql = _json["settings"]["post_execute_sql"]
+        set_property_if_in_dict(self, "insert", _json, False)
+        set_property_if_in_dict(self, "update", _json, False)
+        set_property_if_in_dict(self, "delete", _json, False)
+        set_property_if_in_dict(self, "post_execute_sql", _json)
 
-        self.resources = Resources(_resources_json_dict= _json["resources"], _base_path=_base_path)
-        self.source = dataset_from_resource(self.resources.get_resource('source_uuid'))
-        self.destination = dataset_from_resource(self.resources.get_resource('dest_uuid'))
+        if "resources"  in _json:
+            self.resources = Resources(_resources_list=_json["resources"], _base_path=_base_path)
+            self.source = dataset_from_resource(self.resources["00000000-0000-0000-0000-000000000000"])
+            self.destination = dataset_from_resource(self.resources["00000000-0000-0000-0000-000000000001"])
 
     def load_from_xml_node(self, _xml_node, _base_path = None):
 
@@ -224,8 +226,8 @@ class Merge(object):
             self.load_mappings_from_xml_node(_xml_node.find("mappings"))
             self.load_settings_from_xml_node(_xml_node.find("settings"))
             self.resources = Resources(_resources_node=_xml_node.find("resources"), _base_path=_base_path)
-            self.source = dataset_from_resource(self.resources.get_resource('source_uuid'))
-            self.destination = dataset_from_resource(self.resources.get_resource('dest_uuid'))
+            self.source = dataset_from_resource(self.resources["00000000-0000-0000-0000-000000000000"])
+            self.destination = dataset_from_resource(self.resources["00000000-0000-0000-0000-000000000001"])
 
         else:
             raise Exception("Merge.load_from_xml_node: \"None\" is not a valid Merge node.")

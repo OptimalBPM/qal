@@ -26,9 +26,9 @@ def load_xml(_filename):
 class Test(unittest.TestCase):
     def test_1_Load_Save(self):
         _f_r = open(Test_Resource_Dir + "/resources.json", "r")
-        _resources_json_dict = json.load(_f_r)
-        _resources = Resources(_resources_json_dict=_resources_json_dict, _base_path=Test_Resource_Dir)
-        _da = FlatfileDataset(_resource=_resources.get_resource("{86470370-FF78-48A4-9759-A3BAE4EE22FE}"))
+        _resources_list = json.load(_f_r)
+        _resources = Resources(_resources_list=_resources_list, _base_path=Test_Resource_Dir)
+        _da = FlatfileDataset(_resource=_resources["{86470370-FF78-48A4-9759-A3BAE4EE22FE}"])
         _da._log_level = DATASET_LOGLEVEL_DETAIL
         _da.load()
         print("Source: " + pretty_list(_da.data_table))

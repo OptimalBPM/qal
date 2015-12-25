@@ -41,8 +41,8 @@ class Test(unittest.TestCase):
 
         copyfile(Test_Resource_Dir + "/xml_dest_in.xml", Test_Resource_Dir + "/xml_out.xml")
         _f_r = open(Test_Resource_Dir + "/resources.json", "r")
-        _resources_json_dict = json.load(_f_r)
-        _resources = Resources(_resources_json_dict=_resources_json_dict, _base_path=Test_Resource_Dir)
+        _resources_list = json.load(_f_r)
+        _resources = Resources(_resources_list=_resources_list, _base_path=Test_Resource_Dir)
 
         # xml_in
         _source = XpathDataset(_resource=_resources.get_resource("{969A610A-FCA6-4837-B33A-BAA8F13D8B70}"))

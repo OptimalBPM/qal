@@ -31,8 +31,8 @@ class Test(unittest.TestCase):
         """ Merge data from a PostgreSQL table into a MySQL table
         """
         _f_r = open(Test_Resource_Dir + "/resources.json", "r")
-        _resources_json_dict = json.load(_f_r)
-        _resources = Resources(_resources_json_dict=_resources_json_dict, _base_path=Test_Resource_Dir)
+        _resources_list = json.load(_f_r)
+        _resources = Resources(_resources_list=_resources_list, _base_path=Test_Resource_Dir)
 
         print("rdbms_test.test_1_Load_Save: Staging source")
         _source_data = [[1, 'source', datetime.datetime(2001, 1, 1, 0, 0)],
@@ -41,7 +41,7 @@ class Test(unittest.TestCase):
         _field_names = ["ID", "Name", "Changed"]
         _field_types = ["integer", "string(200)", "datetime"]
         _source_dal = DatabaseAbstractionLayer(
-            _resource=_resources.get_resource("{1D62083E-88F7-4442-920D-0B6CC59BA2FF}"))
+            _resource=_resources["{1D62083E-88F7-4442-920D-0B6CC59BA2FF}"])
 
         _source_table_name = 'table_src'
         copy_to_table(_source_dal, _source_data, _field_names, _field_types, _source_table_name, _create_table=True,
@@ -53,19 +53,19 @@ class Test(unittest.TestCase):
                       [3, 'dest', datetime.datetime(2014, 1, 4, 0, 0)]]
 
         _dest_dal = DatabaseAbstractionLayer(
-            _resource=_resources.get_resource("{DD34A233-47A6-4C16-A26F-195711B49B97}"))
+            _resource=_resources["{DD34A233-47A6-4C16-A26F-195711B49B97}"])
 
         _dest_table_name = 'table_dst'
         copy_to_table(_dest_dal, _dest_data, _field_names, _field_types, _dest_table_name, _create_table=True,
                       _drop_existing=True)
 
         # Load source
-        _d_source = RDBMSDataset(_resource=_resources.get_resource("{1D62083E-88F7-4442-920D-0B6CC59BA2FF}"))
+        _d_source = RDBMSDataset(_resource=_resources["{1D62083E-88F7-4442-920D-0B6CC59BA2FF}"])
         _d_source.load()
         print("source:\n" + str(_d_source.data_table))
 
         # Load dest
-        _d_dest = RDBMSDataset(_resource=_resources.get_resource("{DD34A233-47A6-4C16-A26F-195711B49B97}"))
+        _d_dest = RDBMSDataset(_resource=_resources["{DD34A233-47A6-4C16-A26F-195711B49B97}"])
         _d_dest._log_level = DATASET_LOGLEVEL_DETAIL
         _d_dest.load()
 

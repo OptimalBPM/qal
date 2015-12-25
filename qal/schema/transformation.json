@@ -1,0 +1,121 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "definitions": {
+        "Cast": {
+            "properties": {
+                "dest_type": {
+                    "type": "string"
+                },
+                "format_string": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "IfEmpty": {
+            "properties": {
+                "value": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "Mapping": {
+            "properties": {
+                "dest_reference": {
+                    "type": "string"
+                },
+                "is_key": {
+                    "type": "boolean"
+                },
+                "src_datatype": {
+                    "type": "string"
+                },
+                "src_reference": {
+                    "type": "string"
+                },
+                "substitution": {
+                    "$ref": "qal://transformation.json#/definitions/Substitution"
+                }
+            },
+            "type": "object"
+        },
+        "Merge": {
+            "properties": {
+                "delete": {
+                    "type": "boolean"
+                },
+                "insert": {
+                    "type": "boolean"
+                },
+                "mappings": {
+                    "items": {
+                        "$ref": "qal://transformation.json#/definitions/Mapping"
+                    },
+                    "type": "array"
+                },
+                "post_execute_sql": {
+                    "type": "string"
+                },
+                "resources": {
+                    "items": {
+                        "$ref": "qal://resources.json#/definitions/Resource"
+                    },
+                    "type": "array"
+                },
+                "update": {
+                    "type": "boolean"
+                }
+            },
+            "type": "object"
+        },
+        "Replace": {
+            "properties": {
+                "max": {
+                    "type": "string"
+                },
+                "new": {
+                    "type": "string"
+                },
+                "old": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "ReplaceRegex": {
+            "properties": {
+                "compiled_regex": {
+                    "type": "string"
+                },
+                "max": {
+                    "type": "string"
+                },
+                "new": {
+                    "type": "string"
+                },
+                "pattern": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "Substitution": {
+            "properties": {},
+            "type": "object"
+        },
+        "Trim": {
+            "properties": {
+                "value": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        }
+    },
+    "description": "The JSON Schema for QAL resources",
+    "properties": {},
+    "title": "QAL Transformations",
+    "type": "object",
+    "version": "0.5"
+}

@@ -4,15 +4,14 @@
     :copyright: Copyright 2010-2014 by Nicklas Boerjesson
     :license: BSD, see LICENSE for details. 
 """
-from operator import itemgetter
 from urllib.parse import unquote
 import os
 
 from lxml import etree
 
-from qal.common.xml_utils import XMLTranslation
-from qal.common.meta import list_prefixed_classes, _json_add_child_properties
-from qal.recurse import Recurse
+from qal.common.meta import list_prefixed_classes
+from qal.common.json import json_add_child_properties
+from qal.common.recurse import Recurse
 
 
 def add_xml_subitem(_parent, _nodename, _nodetext):
@@ -63,7 +62,7 @@ def generate_schema():
     for _curr_class in list_prefixed_classes(globals(), "resource", _exclude=["Resources"]):
         _result["definitions"].update({_curr_class: {
             "type": "object",
-            "properties": _json_add_child_properties(globals(), _curr_class, _property_to_type),
+            "properties": json_add_child_properties(globals(), _curr_class, _property_to_type),
             "additionalProperties": True
             }
         })
@@ -149,15 +148,22 @@ class Resources(Recurse):
     The resource class provides access to resources available through either XML-definitions or callback functions.
     """
 
-    local_resources = None
-    """Local list of resources"""
+
+
     external_resources_callback = None
     """Callback method for external lookup"""
 
     base_path = None
     """If resource was loaded from a file, its path is stores here, useful when translating relative paths."""
 
-    def __init__(self, _resources_node=None, _resources_xml=None, _resources_json_dict=None, _external_resources_callback=None,
+    """Local list of resources"""
+    _local_resources = None
+    """Short cuts to the positions in the array"""
+    _local_resources_short_cuts = None
+
+
+
+    def __init__(self, _resources_node=None, _resources_xml=None, _resources_list=None, _external_resources_callback=None,
                  _base_path=None):
         """
             The argument _resources_node is an XML node from which local resources are parsed.
@@ -165,15 +171,17 @@ class Resources(Recurse):
             that has the same arguments as the get_resource-function.
         """
         super(Resources).__init__()
-        self.local_resources = dict()
+        self._local_resources = []
+        self._local_resources_short_cuts = {}
+
         if _external_resources_callback:
             raise Exception("_external_resources_callback is not implemented")
         self.base_path = _base_path
 
         if _resources_node is not None or _resources_xml is not None:
             self.parse_xml(_resources_node, _resources_xml)
-        if _resources_json_dict is not None:
-            self.parse_json(_resources_json_dict)
+        if _resources_list is not None:
+            self.parse_json(_resources_list)
 
     def get_resource(self, uuid):
         """Returns the resource with the corresponding uuid"""
@@ -181,8 +189,8 @@ class Resources(Recurse):
         _resource = None
 
         """Check local list"""
-        if self.local_resources and uuid in self.local_resources:
-            _resource = self.local_resources[uuid]
+        if self._local_resources and uuid in self._local_resources_short_cuts:
+            _resource = self._local_resources[self._local_resources_short_cuts[uuid]]
 
         """Lookup externally"""
         if (_resource is None) and self.external_resources_callback:
@@ -193,14 +201,12 @@ class Resources(Recurse):
         else:
             return _resource
 
-    def parse_json(self, _resources_dict=None):
-        """Parses a dict structure into resource objects"""
+    def parse_json(self, _resources_list=None):
+        """Parses a list structure into resource objects"""
 
-
-
-        self.local_resources = dict()
-
-        for _curr_key, _curr_resource in _resources_dict.items():
+        self._local_resources = []
+        self._local_resources_short_cuts = {}
+        for _curr_resource in _resources_list:
             if "uuid" in _curr_resource:
                 self._debug_print("Resources.parse_json: Create new resource object")
                 _new_resource = Resource()
@@ -216,7 +222,8 @@ class Resources(Recurse):
                         _new_resource.__dict__[_curr_resource_key] = _curr_resource_value
 
                 _new_resource.base_path = self.base_path
-                self.local_resources[_new_resource.uuid] = _new_resource
+                self[_new_resource.uuid] = _new_resource
+
                 self._debug_print(
                     "parse_xml: Append resource: " + str(_new_resource.caption) + " uuid: " + str(_new_resource.uuid) +
                     " type: " + str(_new_resource.type), 4)
@@ -235,7 +242,7 @@ class Resources(Recurse):
         if _resources_node.base:
             self.base_path = os.path.dirname(unquote(_resources_node.base.replace('file:///', '')))
 
-        self.local_resources = dict()
+        self._local_resources = []
 
         for _curr_resource_node in _resources_node.findall("resource"):
 
@@ -261,7 +268,7 @@ class Resources(Recurse):
                         self._debug_print("parse_xml: Add data " + str(_curr_resource_data.tag).lower() + " " + str(
                             _new_resource.__dict__[str(_curr_resource_data.tag).lower()]), 1)
 
-                self.local_resources[_new_resource.uuid] = _new_resource
+                self[_new_resource.uuid] = _new_resource
                 self._debug_print(
                     "parse_xml: Append resource: " + str(_new_resource.name) + " uuid: " + str(_new_resource.uuid) +
                     " type: " + str(_new_resource.type), 4)
@@ -270,20 +277,24 @@ class Resources(Recurse):
         """This function encode resources structure into an XML structure."""
         _xml_node = etree.Element("resources")
         # Loop resources. Sorted to be predictable enough for testing purposes
-        for _curr_resource_key, _curr_resource_value in sorted(self.local_resources.items()):
-            _xml_node.append(_curr_resource_value.as_xml_node())
+        for _curr_resource in self._local_resources:
+            _xml_node.append(_curr_resource.as_xml_node())
 
         return _xml_node
 
     def as_json_dict(self):
         """This function encode resources structure into an XML structure."""
-        _result = {}
+        _result = []
         # Loop resources. Sorted to be predictable enough for testing purposes
-        for _curr_resource_key, _curr_resource_value in sorted(self.local_resources.items()):
-            _result[_curr_resource_key] =_curr_resource_value.as_json_dict()
+        for _curr_resource in self._local_resources:
+            _result.append(_curr_resource.as_json_dict())
 
         return _result
 
 
     def __getitem__(self, item):
         return self.get_resource(item)
+
+    def __setitem__(self, key, value):
+        self._local_resources.append(value)
+        self._local_resources_short_cuts[key] =  len(self._local_resources) - 1

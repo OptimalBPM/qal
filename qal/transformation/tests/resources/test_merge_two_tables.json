@@ -1,4 +1,6 @@
 {
+    "delete": true,
+    "insert": true,
     "mappings": [
         {
             "dest_reference": "ID",
@@ -70,8 +72,9 @@
             ]
         }
     ],
-    "resources": {
-        "dest_uuid": {
+    "post_execute_sql": "SELECT * FROM table_dst",
+    "resources": [
+        {
             "autocommit": "True",
             "databasename": "bpmtest",
             "db_type": "MySQL",
@@ -81,9 +84,9 @@
             "table_name": "table_dst",
             "type": "RDBMS",
             "username": "bpmuser",
-            "uuid": "dest_uuid"
+            "uuid": "00000000-0000-0000-0000-000000000001"
         },
-        "source_uuid": {
+        {
             "autocommit": "True",
             "databasename": "bpmtest",
             "db_type": "PostgreSQL",
@@ -93,13 +96,8 @@
             "table_name": "table_src",
             "type": "RDBMS",
             "username": "bpmuser",
-            "uuid": "source_uuid"
+            "uuid": "00000000-0000-0000-0000-000000000000"
         }
-    },
-    "settings": {
-        "delete": true,
-        "insert": true,
-        "post_execute_sql": "SELECT * FROM table_dst",
-        "update": true
-    }
+    ],
+    "update": true
 }

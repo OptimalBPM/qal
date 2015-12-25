@@ -10,9 +10,9 @@
 
 from urllib.request import quote, unquote
 from xml.dom.minidom import Text
-from xml.dom.minidom import Document, parseString
-from qal.recurse import Recurse
+from xml.dom.minidom import parseString
 
+from qal.common.recurse import Recurse
 from qal.sql.utils import check_for_param_content
 
 
