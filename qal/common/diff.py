@@ -233,21 +233,21 @@ class DictDiffer(object):
                    if self.past_dict[o] == self.current_dict[o])
 
     @staticmethod
-    def compare_documents(_left, _right):
+    def compare_documents(_old, _new):
         # TODO: This must probably be using field xpaths or something. JSON XPaths might be useful
         # The problem is if a field is in a list of objects. Then fieldId will not be unique in the list of objects.
         # How about always using xpaths for a change? The problem is fieldIds in lists.
         pass
         _changes = []
-        _differ = DictDiffer(_left, _right)
+        _differ = DictDiffer(_new, _old)
         for _property in _differ.added():
-            _changes.append({"action": "added", "attribute": _property, "before": None, "after": _right[_property]})
+            _changes.append({"action": "added", "attribute": _property, "before": None, "after": _new[_property]})
 
         for _property in _differ.removed():
-            _changes.append({"action": "removed", "attribute": _property, "before": _left[_property], "after": None})
+            _changes.append({"action": "removed", "attribute": _property, "before": _old[_property], "after": None})
 
         for _property in _differ.changed():
-            _changes.append({"action": "changed", "attribute": _property, "before": _left[_property], "after": _right[_property]})
+            _changes.append({"action": "changed", "attribute": _property, "before": _old[_property], "after": _new[_property]})
 
         return _changes
 
