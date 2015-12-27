@@ -1,0 +1,66 @@
+{
+    "delete": true,
+    "insert": true,
+    "mappings": [
+        {
+            "dest_reference": "author",
+            "is_key": true,
+            "src_datatype": null,
+            "src_reference": "Name",
+            "transformations": [
+                {
+                    "new": "c",
+                    "old": "s",
+                    "order": "",
+                    "type": "replace"
+                }
+            ]
+        },
+        {
+            "dest_reference": "publish_date",
+            "is_key": false,
+            "src_datatype": null,
+            "src_reference": "Changed",
+            "transformations": []
+        }
+    ],
+    "post_execute_sql": "",
+    "resources": [
+        {
+            "encoding": "",
+            "field_names": [
+                "author",
+                "publish_date"
+            ],
+            "field_types": [
+                "string",
+                "string"
+            ],
+            "field_xpaths": [
+                "author",
+                "publish_date"
+            ],
+            "filename": "xml_in.xml",
+            "name": "destination",
+            "rows_xpath": "/catalog/book",
+            "type": "XPATH",
+            "uuid": "00000000-0000-0000-0000-000000000001",
+            "xpath_data_format": "XML"
+        },
+        {
+            "autocommit": true,
+            "databasename": "bpmtest",
+            "db_type": "MySQL",
+            "instance": "",
+            "name": "source",
+            "password": "test",
+            "port": 0,
+            "server": "localhost",
+            "table_name": "table_dst",
+            "type": "RDBMS",
+            "username": "bpmuser",
+            "uuid": "00000000-0000-0000-0000-000000000000"
+        }
+    ],
+    "update": true
+}

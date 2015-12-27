@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<merge>
+  <mappings>
+    <field_mappings>
+      <field_mapping>
+        <is_key>True</is_key>
+        <src_reference>Name</src_reference>
+        <src_datatype></src_datatype>
+        <transformations>
+          <replace order="">
+            <old>s</old>
+            <new>c</new>
+            <max></max>
+          </replace>
+        </transformations>
+        <dest_reference>author</dest_reference>
+      </field_mapping>
+    </field_mappings>
+  </mappings>
+  <settings>
+    <insert>False</insert>
+    <update>False</update>
+    <delete>False</delete>
+  </settings>
+  <resources>
+    <resource name="destination" type="XPATH" uuid="00000000-0000-0000-0000-000000000001">
+      <encoding></encoding>
+      <field_names><item>author</item></field_names>
+      <field_types><item>string</item></field_types>
+      <field_xpaths><item>author</item></field_xpaths>
+      <filename>xml_in.xml</filename>
+      <rows_xpath>/catalog/book</rows_xpath>
+      <xpath_data_format>XML</xpath_data_format>
+      <xpath_text_qualifier></xpath_text_qualifier>
+    </resource>
+    <resource name="source" type="RDBMS" uuid="00000000-0000-0000-0000-000000000000">
+      <autocommit>True</autocommit>
+      <databasename>bpmtest</databasename>
+      <instance></instance>
+      <password>test</password>
+      <port>0</port>
+      <server>localhost</server>
+      <table_name>table_dst</table_name>
+      <db_type>MySQL</db_type>
+      <username>bpmuser</username>
+    </resource>
+  </resources>
+</merge>

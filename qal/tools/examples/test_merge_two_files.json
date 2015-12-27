@@ -1,0 +1,186 @@
+{
+    "delete": true,
+    "insert": true,
+    "mappings": [
+        {
+            "dest_reference": "emp_no",
+            "is_key": true,
+            "src_datatype": "string",
+            "src_reference": "emp_no",
+            "transformations": [
+                {
+                    "order": "1",
+                    "type": "trim",
+                    "value": "end"
+                },
+                {
+                    "order": "2",
+                    "type": "ifempty",
+                    "value": "NULL"
+                },
+                {
+                    "max": "1",
+                    "new": "c",
+                    "old": "cc",
+                    "order": "3",
+                    "type": "replace"
+                }
+            ]
+        },
+        {
+            "dest_reference": "name",
+            "is_key": false,
+            "src_datatype": "string",
+            "src_reference": "name",
+            "transformations": [
+                {
+                    "order": "1",
+                    "type": "trim"
+                },
+                {
+                    "old": "mr. ",
+                    "order": "3",
+                    "type": "replace"
+                },
+                {
+                    "old": "ms. ",
+                    "order": "3",
+                    "type": "replace"
+                }
+            ]
+        },
+        {
+            "dest_reference": "position",
+            "is_key": false,
+            "src_datatype": "string",
+            "src_reference": "position",
+            "transformations": [
+                {
+                    "order": "1",
+                    "type": "trim"
+                }
+            ]
+        },
+        {
+            "dest_reference": "hiredate",
+            "is_key": false,
+            "src_datatype": "string",
+            "src_reference": "hiredate",
+            "transformations": [
+                {
+                    "order": "1",
+                    "type": "trim"
+                },
+                {
+                    "dest_type": "timestamp",
+                    "format_string": "%Y-%m-%d %H:%M:%S",
+                    "order": "5",
+                    "type": "cast"
+                }
+            ]
+        },
+        {
+            "dest_reference": "comm",
+            "is_key": false,
+            "src_datatype": "string",
+            "src_reference": "salary",
+            "transformations": [
+                {
+                    "order": "1",
+                    "type": "trim"
+                },
+                {
+                    "new": ".",
+                    "old": ",",
+                    "order": "3",
+                    "type": "replace"
+                },
+                {
+                    "dest_type": "float",
+                    "order": "5",
+                    "type": "cast"
+                }
+            ]
+        },
+        {
+            "dest_reference": "salary",
+            "is_key": false,
+            "src_datatype": "string",
+            "src_reference": "comm",
+            "transformations": [
+                {
+                    "order": "1",
+                    "type": "trim"
+                },
+                {
+                    "new": ".",
+                    "old": ",",
+                    "order": "3",
+                    "type": "replace"
+                },
+                {
+                    "order": "4",
+                    "type": "ifempty",
+                    "value": "0"
+                },
+                {
+                    "dest_type": "float",
+                    "order": "5",
+                    "type": "cast"
+                }
+            ]
+        },
+        {
+            "dest_reference": "dep_no",
+            "is_key": false,
+            "src_datatype": "string",
+            "src_reference": "dep_no",
+            "transformations": [
+                {
+                    "order": "1",
+                    "type": "trim"
+                },
+                {
+                    "old": " ",
+                    "order": "3",
+                    "type": "replace"
+                },
+                {
+                    "dest_type": "float",
+                    "order": "5",
+                    "type": "cast"
+                }
+            ]
+        }
+    ],
+    "post_execute_sql": "",
+    "resources": [
+        {
+            "csv_dialect": "excel-tab",
+            "delimiter": ";",
+            "filename": "csv_out.csv",
+            "has_header": true,
+            "lineterminator": "",
+            "name": "destination",
+            "quotechar": "\"",
+            "quoting": "ALL",
+            "skipinitialspace": "",
+            "type": "flatfile",
+            "uuid": "00000000-0000-0000-0000-000000000001"
+        },
+        {
+            "csv_dialect": "excel-tab",
+            "delimiter": ";",
+            "filename": "csv_source.csv",
+            "has_header": true,
+            "lineterminator": "",
+            "name": "source",
+            "quotechar": "\"",
+            "quoting": "MINIMAL",
+            "skipinitialspace": "",
+            "type": "flatfile",
+            "uuid": "00000000-0000-0000-0000-000000000000"
+        }
+    ],
+    "update": true
+}

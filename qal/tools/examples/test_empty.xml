@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<merge>
+  <mappings>
+    <field_mappings/>
+  </mappings>
+  <settings>
+    <insert>False</insert>
+    <update>False</update>
+    <delete>False</delete>
+  </settings>
+  <resources>
+    <resource name="destination" type="RDBMS" uuid="00000000-0000-0000-0000-000000000001">
+      <autocommit>True</autocommit>
+      <databasename>bpmtest</databasename>
+      <instance></instance>
+      <password>test</password>
+      <port>0</port>
+      <server>localhost</server>
+      <table_name>table_dst</table_name>
+      <db_type>MySQL</db_type>
+      <username>bpmuser</username>
+    </resource>
+    <resource name="source" type="RDBMS" uuid="00000000-0000-0000-0000-000000000000">
+      <autocommit>True</autocommit>
+      <databasename>bpmtest</databasename>
+      <instance></instance>
+      <password>test</password>
+      <port>0</port>
+      <server>localhost</server>
+      <table_name>table_dst</table_name>
+      <db_type>MySQL</db_type>
+      <username>bpmuser</username>
+    </resource>
+  </resources>
+</merge>

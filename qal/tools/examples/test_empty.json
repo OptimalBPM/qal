@@ -1,0 +1,37 @@
+{
+    "delete": false,
+    "insert": false,
+    "mappings": [],
+    "post_execute_sql": "",
+    "resources": [
+        {
+            "autocommit": true,
+            "databasename": "bpmtest",
+            "db_type": "MySQL",
+            "instance": "",
+            "name": "destination",
+            "password": "test",
+            "port": 0,
+            "server": "localhost",
+            "table_name": "table_dst",
+            "type": "RDBMS",
+            "username": "bpmuser",
+            "uuid": "00000000-0000-0000-0000-000000000001"
+        },
+        {
+            "autocommit": true,
+            "databasename": "bpmtest",
+            "db_type": "MySQL",
+            "instance": "",
+            "name": "source",
+            "password": "test",
+            "port": 0,
+            "server": "localhost",
+            "table_name": "table_dst",
+            "type": "RDBMS",
+            "username": "bpmuser",
+            "uuid": "00000000-0000-0000-0000-000000000000"
+        }
+    ],
+    "update": false
+}

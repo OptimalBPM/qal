@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<merge>
+  <mappings>
+    <field_mappings/>
+  </mappings>
+  <settings>
+    <insert>False</insert>
+    <update>False</update>
+    <delete>False</delete>
+  </settings>
+  <resources>
+    <resource name="destination" type="RDBMS" uuid="00000000-0000-0000-0000-000000000001">
+      <autocommit>True</autocommit>
+      <databasename>bpmtest</databasename>
+      <instance></instance>
+      <password>test</password>
+      <port>0</port>
+      <server>localhost</server>
+      <table_name>table_dst</table_name>
+      <db_type>MySQL</db_type>
+      <username>bpmuser</username>
+    </resource>
+    <resource name="source" type="XPATH" uuid="00000000-0000-0000-0000-000000000000">
+      <encoding></encoding>
+      <field_names></field_names>
+      <field_types></field_types>
+      <field_xpaths></field_xpaths>
+      <filename>xml_in.xml</filename>
+      <rows_xpath>/catalog/book</rows_xpath>
+      <xpath_data_format>XML</xpath_data_format>
+      <xpath_text_qualifier></xpath_text_qualifier>
+    </resource>
+  </resources>
+</merge>

@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<merge>
+  <mappings>
+    <field_mappings>
+      <field_mapping>
+        <is_key>True</is_key>
+        <src_reference>ID</src_reference>
+        <src_datatype>integer</src_datatype>
+        <transformations>
+          <ifempty order="2">0</ifempty>
+          <cast order="3">
+            <dest_type>string</dest_type>
+            <format_string/>
+          </cast>
+          <replace order="4">
+            <old>,</old>
+            <new>.</new>
+            <max>2</max>
+          </replace>
+          <cast order="5">
+            <dest_type>integer</dest_type>
+            <format_string/>
+          </cast>
+        </transformations>
+        <dest_reference>ID</dest_reference>
+      </field_mapping>
+      <field_mapping>
+        <is_key>False</is_key>
+        <src_reference>Changed</src_reference>
+        <src_datatype>timestamp</src_datatype>
+        <transformations>
+          <cast order="1">
+            <dest_type>string</dest_type>
+            <format_string></format_string>
+          </cast>
+          <trim order="3"></trim>
+          <cast order="1">
+            <dest_type>timestamp</dest_type>
+            <format_string>%Y-%m-%d %H:%M:%S</format_string>
+          </cast>
+        </transformations>
+        <dest_reference>Changed</dest_reference>
+      </field_mapping>
+      <field_mapping>
+        <is_key>False</is_key>
+        <src_reference>Name</src_reference>
+        <src_datatype>string</src_datatype>
+        <transformations>
+          <trim order="1"></trim>
+          <cast order="4">
+            <dest_type>string</dest_type>
+            <format_string></format_string>
+          </cast>
+          <replace_regex order="">
+            <pattern>e</pattern>
+            <new>ddd</new>
+            <max></max>
+          </replace_regex>
+        </transformations>
+        <dest_reference>Name</dest_reference>
+      </field_mapping>
+    </field_mappings>
+  </mappings>
+  <settings>
+    <insert>True</insert>
+    <update>True</update>
+    <delete>True</delete>
+    <post_execute_sql>SELECT * FROM table_dst
+</post_execute_sql>
+  </settings>
+  <resources>
+    <resource name="destination" type="RDBMS" uuid="00000000-0000-0000-0000-000000000001">
+      <autocommit>True</autocommit>
+      <databasename>bpmtest</databasename>
+      <instance></instance>
+      <password>test</password>
+      <server>localhost</server>
+      <table_name>table_dst</table_name>
+      <db_type>MySQL</db_type>
+      <username>bpmuser</username>
+    </resource>
+    <resource name="source" type="RDBMS" uuid="00000000-0000-0000-0000-000000000000">
+      <autocommit>True</autocommit>
+      <databasename>bpmtest</databasename>
+      <instance></instance>
+      <password>test</password>
+      <server>localhost</server>
+      <table_name>table_src</table_name>
+      <db_type>PostgreSQL</db_type>
+      <username>bpmuser</username>
+    </resource>
+  </resources>
+</merge>

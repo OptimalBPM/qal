@@ -1,0 +1,80 @@
+{
+    "delete": true,
+    "insert": true,
+    "mappings": [
+        {
+            "dest_reference": "author",
+            "is_key": true,
+            "src_datatype": null,
+            "src_reference": "author",
+            "transformations": [
+                {
+                    "new": "Gates",
+                    "old": "Galos",
+                    "order": "",
+                    "type": "replace"
+                }
+            ]
+        },
+        {
+            "dest_reference": "description",
+            "is_key": false,
+            "src_datatype": null,
+            "src_reference": "description",
+            "transformations": [
+                {
+                    "new": "b",
+                    "old": "a",
+                    "order": "",
+                    "type": "replace"
+                }
+            ]
+        }
+    ],
+    "post_execute_sql": "",
+    "resources": [
+        {
+            "encoding": "",
+            "field_names": [
+                "author",
+                "description"
+            ],
+            "field_types": [
+                "string",
+                "string"
+            ],
+            "field_xpaths": [
+                "author",
+                "description"
+            ],
+            "filename": "xml_in.xml",
+            "name": "destination",
+            "rows_xpath": "/catalog/book",
+            "type": "XPATH",
+            "uuid": "00000000-0000-0000-0000-000000000001",
+            "xpath_data_format": "XML"
+        },
+        {
+            "encoding": "",
+            "field_names": [
+                "author",
+                "description"
+            ],
+            "field_types": [
+                "string",
+                "string"
+            ],
+            "field_xpaths": [
+                "author",
+                "description"
+            ],
+            "filename": "xml_in.xml",
+            "name": "source",
+            "rows_xpath": "/catalog/book",
+            "type": "XPATH",
+            "uuid": "00000000-0000-0000-0000-000000000000",
+            "xpath_data_format": "XML"
+        }
+    ],
+    "update": true
+}
