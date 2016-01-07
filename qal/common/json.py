@@ -20,10 +20,10 @@ def json_add_child_properties(_globals, _class_name, _property_to_type):
 
         _curr_type = _property_to_type(_curr_property)
         if _curr_type is not None:
-            if not isinstance(_curr_type[0], dict) and "$ref" not in _curr_typ[0]:
-                _curr_type = {"type": _curr_type[0]}
-
-            _properties[_curr_property] = _curr_type[0]
+            if not isinstance(_curr_type[0], dict) and "$ref" not in _curr_type[0]:
+                _properties[_curr_property] = {"type": _curr_type[0]}
+            else:
+                _properties[_curr_property] = _curr_type[0]
 
     return _properties
 

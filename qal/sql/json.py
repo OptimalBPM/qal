@@ -5,11 +5,12 @@ Created on Nov 22, 2012
 
 """
 from csv import list_dialects
+from qal.common.json import json_add_child_properties
 
 from qal.common.resources import Resources
 from qal.dataset.xpath import xpath_data_formats
 from qal.common.meta import list_prefixed_classes, find_class
-from qal.common.schema import json_add_child_properties
+
 from qal.common.recurse import Recurse
 from qal.sql.types import sql_property_to_type, and_or, \
     constraint_types, index_types, verbs, set_operator, join_types, in_types, quoting_types, data_source_types
@@ -20,8 +21,13 @@ from qal.dal.types import db_types
 
 from qal.sql.sql import *  # @UnusedWildImport #IGNORE:W0401
 from qal.sql.base import * # @UnusedWildImport #IGNORE:W0401
-from qal.dataset.custom import CustomDataset # @UnusedWildImport #IGNORE:W0401
 
+from qal.dataset.custom import CustomDataset # @UnusedWildImport #IGNORE:W0401
+from qal.dataset.flatfile import FlatfileDataset # @UnusedWildImport #IGNORE:W0401
+from qal.dataset.matrix import MatrixDataset # @UnusedWildImport #IGNORE:W0401
+from qal.dataset.rdbms import RDBMSDataset # @UnusedWildImport #IGNORE:W0401
+from qal.dataset.spreadsheet import SpreadsheetDataset # @UnusedWildImport #IGNORE:W0401
+from qal.dataset.xpath import XpathDataset# @UnusedWildImport #IGNORE:W0401
 
 # IMPORTANT, there should be imports of all qal.dataset.* modules above for generate schema to work
 
@@ -182,9 +188,6 @@ class SQLJSON(Recurse):
                                         _curr_property_value)  # Do something about lowercase (_curr_type == "boolean"))
                                 else:
                                     _content[_curr_property_name] = None
-            elif isinstance(_object, list):
-
-                _content = self._xml_encode_list(_document, _object_node, _object)
             else:
                 _content = str(_object)
 
@@ -309,7 +312,7 @@ class SQLJSON(Recurse):
 
             # Send XML here, since resources now uses lxml
 
-            self._resources = Resources(_resources_json_dict=_dict["resources"], _base_path=_base_path)
+            self._resources = Resources(_resources_list=_dict["resources"], _base_path=_base_path)
 
         if "statement" in _dict:
 

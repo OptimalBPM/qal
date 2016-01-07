@@ -322,7 +322,7 @@ class ClassSQLMetaJSONTest(unittest.TestCase):
 
         # Init tables
 
-        _resources = Resources(_resources_json_dict=_dict_in["resources"], _base_path=Test_Resource_Dir)
+        _resources = Resources(_resources_list=_dict_in["resources"], _base_path=Test_Resource_Dir)
         _pg_dal = DatabaseAbstractionLayer(_resource=_resources["{1D62083E-88F7-4442-920D-0B6CC59BA2FF}"])
         copy_to_table(_dal=_pg_dal, _values=[[1, "DataPostgres"]],
                                     _field_names= ["table_postgresID", "table_postgresName"] ,
