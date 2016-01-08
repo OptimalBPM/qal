@@ -37,24 +37,24 @@ def generate_schema():
             return [{
                 "type": "array",
                 "items": {
-                    "$ref": "qal://transformation.json#/definitions/Mapping"
+                    "$ref": "#/definitions/Mapping"
                 }
             }]
         elif _property_name == "substitution":
-            return [{"$ref": "qal://transformation.json#/definitions/Substitution"}]
+            return [{"$ref": "#/definitions/Substitution"}]
 
         elif _property_name == "resources":
             return [{
                 "type": "array",
                 "items": {
-                    "$ref": "qal://resources.json#/definitions/Resource"
+                    "$ref": "#/definitions/Resource"
                 }
             }]
         elif _property_name == "resources":
             return [{
                 "type": "array",
                 "items": {
-                    "$ref": "qal://resources.json#/definitions/Resource"
+                    "$ref": "#/definitions/Resource"
                 }
             }]
         elif _property_name in ["builtin_substitutions", "key_fields", "destination_log_level", "key_fields",

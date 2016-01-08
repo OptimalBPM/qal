@@ -7,8 +7,8 @@ from urllib.parse import urlparse
 import jsonschema
 from jsonschema.validators import RefResolver, Draft4Validator
 
-_mbe_schema_folder = os.path.join(os.path.dirname(__file__))
-__author__ = 'nibo'
+_qal_schema_folder = os.path.join(os.path.dirname(__file__))
+__author__ = 'Nicklas Borjesson'
 
 def qal_uri_handler(uri):
     """
@@ -20,7 +20,7 @@ def qal_uri_handler(uri):
     """
 
     # Use urlparse to parse the file location from the URI
-    _file_location = os.path.abspath(os.path.join(_mbe_schema_folder, urlparse(uri).netloc))
+    _file_location = os.path.abspath(os.path.join(_qal_schema_folder, urlparse(uri).netloc))
 
     # noinspection PyTypeChecker
     _schema_file = open(_file_location, "r", encoding="utf-8")
@@ -32,11 +32,16 @@ def qal_uri_handler(uri):
 
 def check_against_qal_schema(_ref, _data):
     """ Check JSON against given schema
-    :param _schema_name: The name of the schema; "resources"
+    :param _ref: The name of the schema; "resources"
     :param _data: The data to be validated
     """
+    # First create a resolver to resolve the current schema.
     _resolver = RefResolver(base_uri="",
-                        handlers={"qal":qal_uri_handler}, referrer=None, cache_remote=False)
+                        handlers={"qal": qal_uri_handler}, referrer=None, cache_remote=True)
 
     _schema = _resolver.resolve(_ref)
-    Draft4Validator(schema=_schema[1], resolver=_resolver).validate(_data)
+    # Then a resolver that is used for validation (it has to have a resolved referrer)
+    # TODO: This is not a very nice looking solution, make sure that there is no better solution.
+    _resolver_2 = RefResolver(base_uri="", referrer=_schema[1],
+                        handlers={"qal": qal_uri_handler}, cache_remote=True)
+    Draft4Validator(schema=_schema[1], resolver=_resolver_2).validate(_data)

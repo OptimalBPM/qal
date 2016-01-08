@@ -9,7 +9,7 @@ from qal.common.json import json_add_child_properties
 
 from qal.common.resources import Resources
 from qal.dataset.xpath import xpath_data_formats
-from qal.common.meta import list_prefixed_classes, find_class
+from qal.common.meta import list_prefixed_classes, find_class, list_suffixed_classes
 
 from qal.common.recurse import Recurse
 from qal.sql.types import sql_property_to_type, and_or, \
@@ -123,8 +123,13 @@ class SQLJSON(Recurse):
             "version": "0.5",
             "properties": {
                 "statement": {"$ref": "#/definitions/statement"},
-                "resources": {"$ref": "qal://resources.json#/properties/resources"}
-                           },
+                "resources": {
+                    "items" :
+                    {
+                        "$ref": "qal://resources.json#/definitions/Resource"
+                    },
+                    "type": "array" }
+                },
             "required": ["statement"],
             "definitions": {}
         }
@@ -150,6 +155,12 @@ class SQLJSON(Recurse):
                 "type": "object",
                 "properties": json_add_child_properties(_globals, _curr_class, json_sql_property_to_type)}})
 
+        # Then add datasets.
+
+        for _curr_class in list_suffixed_classes(globals(), "dataset"):
+            _result["definitions"].update({_curr_class: {
+                "type": "object",
+                "properties": json_add_child_properties(_globals, _curr_class, json_sql_property_to_type)}})
         return _result
 
     def _list_to_dict(self, _list):

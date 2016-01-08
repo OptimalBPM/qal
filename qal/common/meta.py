@@ -23,6 +23,21 @@ def list_prefixed_classes(_globals, _prefix, _exclude=[]):
             _result.append(k[0])
     return _result
 
+def list_suffixed_classes(_globals, _suffix, _exclude=[]):
+    """
+    List all classes in the scope with the provided prefix
+    :param _globals: The scope to mine for classes
+    :param _suffix: The _suffix to filter by
+    :param _exclude: Classes to explicitly exclude
+    :return: A list of classes
+    """
+    _result = list()
+    _suffix_length = len(_suffix)
+    for k in _globals.items():
+        if isclass(k[1]) and (k[0][-_suffix_length:]).lower() == _suffix and k[0] not in _exclude:
+            _result.append(k[0])
+    return _result
+
 
 def list_class_properties(_globals, _class_name, _result = None):
     """

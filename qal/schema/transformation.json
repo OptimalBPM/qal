@@ -35,7 +35,7 @@
                     "type": "string"
                 },
                 "substitution": {
-                    "$ref": "qal://transformation.json#/definitions/Substitution"
+                    "$ref": "#/definitions/Substitution"
                 }
             },
             "type": "object"
@@ -50,7 +50,7 @@
                 },
                 "mappings": {
                     "items": {
-                        "$ref": "qal://transformation.json#/definitions/Mapping"
+                        "$ref": "#/definitions/Mapping"
                     },
                     "type": "array"
                 },
@@ -59,7 +59,7 @@
                 },
                 "resources": {
                     "items": {
-                        "$ref": "qal://resources.json#/definitions/Resource"
+                        "$ref": "#/definitions/Resource"
                     },
                     "type": "array"
                 },

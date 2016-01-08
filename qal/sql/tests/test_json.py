@@ -14,6 +14,7 @@ from qal.common.diff import diff_strings, DictDiffer
 from qal.common.resources import Resources
 from qal.dal.dal import DatabaseAbstractionLayer
 from qal.dal.types import db_types, DB_POSTGRESQL
+from qal.schema.handler import check_against_qal_schema
 from qal.sql.json import SQLJSON
 from qal.sql.macros import copy_to_table
 from qal.sql.xml import SQLXML
@@ -323,14 +324,14 @@ class ClassSQLMetaJSONTest(unittest.TestCase):
         # Init tables
 
         _resources = Resources(_resources_list=_dict_in["resources"], _base_path=Test_Resource_Dir)
-        _pg_dal = DatabaseAbstractionLayer(_resource=_resources["{1D62083E-88F7-4442-920D-0B6CC59BA2FF}"])
+        _pg_dal = DatabaseAbstractionLayer(_resource=_resources["1D62083E-88F7-4442-920D-0B6CC59BA2FF"])
         copy_to_table(_dal=_pg_dal, _values=[[1, "DataPostgres"]],
                                     _field_names= ["table_postgresID", "table_postgresName"] ,
                                     _field_types=["integer", "string"], _table_name= "table_postgres",
                                     _create_table=True, _drop_existing=True)
 
         _pg_dal.close()
-        _mysql_dal = DatabaseAbstractionLayer(_resource=_resources["{DD34A233-47A6-4C16-A26F-195711B49B97}"])
+        _mysql_dal = DatabaseAbstractionLayer(_resource=_resources["DD34A233-47A6-4C16-A26F-195711B49B97"])
         copy_to_table(_dal=_mysql_dal, _values=[[1, "DataMySQL"]],
                                     _field_names=["table_mysqlID", "table_mysqlName"] ,
                                     _field_types=["integer", "string"], _table_name= "table_mysql",
@@ -347,6 +348,8 @@ class ClassSQLMetaJSONTest(unittest.TestCase):
         print(json.dumps(_dict_out), file=f_out)
         f_out.close()
 
+
+        check_against_qal_schema("qal://sql.json", _dict_out)
 
         # Compare with all SQL flavours
         #self._compare_sql_files_for_all_db_types(_statement,"_test_SELECT_resource_out", _overwrite = True)
