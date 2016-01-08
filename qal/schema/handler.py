@@ -39,10 +39,13 @@ def check_against_qal_schema(_ref, _data):
     _resolver = RefResolver(base_uri="",
                         handlers={"qal": qal_uri_handler}, referrer=None, cache_remote=True)
 
-    _schema = _resolver.resolve(_ref)
-    _referrer = _resolver.resolve(urlparse(_ref).scheme + "://" + urlparse(_ref).netloc)
-    # Then a resolver that is used for validation (it has to have a resolved referrer)
-    # TODO: This is not a very nice looking solution, make sure that there is no better solution.
-    _resolver_2 = RefResolver(base_uri="", referrer=_referrer[1],
-                        handlers={"qal": qal_uri_handler}, cache_remote=True)
-    Draft4Validator(schema=_schema[1], resolver=_resolver_2).validate(_data)
+    _schema = _resolver.resolve(_ref)[1]
+    _base_ref = urlparse(_ref).scheme + "://" + urlparse(_ref).netloc
+    if _ref != _base_ref:
+        _resolver.referrer = _resolver.resolve(_base_ref)[1]
+    else:
+        _resolver.referrer = _schema
+
+    _resolver.store[""] = _resolver.referrer
+
+    Draft4Validator(schema=_schema, resolver=_resolver).validate(_data)

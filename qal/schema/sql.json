@@ -1003,8 +1003,8 @@
         "csv_dialects": {
             "enum": [
                 "excel",
-                "unix",
-                "excel-tab"
+                "excel-tab",
+                "unix"
             ],
             "type": "string"
         },
