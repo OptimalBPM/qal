@@ -47,14 +47,14 @@ def generate_schema():
             return [{
                 "type": "array",
                 "items": {
-                    "$ref": "#/definitions/Resource"
+                    "$ref": "qal://resources.json#/definitions/Resource"
                 }
             }]
         elif _property_name == "resources":
             return [{
                 "type": "array",
                 "items": {
-                    "$ref": "#/definitions/Resource"
+                    "$ref": "qal://resources.json#/definitions/Resource"
                 }
             }]
         elif _property_name in ["builtin_substitutions", "key_fields", "destination_log_level", "key_fields",

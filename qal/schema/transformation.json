@@ -59,7 +59,7 @@
                 },
                 "resources": {
                     "items": {
-                        "$ref": "#/definitions/Resource"
+                        "$ref": "qal://resources.json#/definitions/Resource"
                     },
                     "type": "array"
                 },
