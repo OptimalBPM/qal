@@ -129,9 +129,11 @@ class SQLJSON(Recurse):
                     {
                         "$ref": "qal://resources.json#/definitions/Resource"
                     },
-                    "type": "array" }
-                },
+                    "type": "array"
+                }
+            },
             "required": ["statement"],
+            "namespace": "qal",
             "definitions": {}
         }
         # First add types

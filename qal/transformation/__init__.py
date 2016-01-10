@@ -20,11 +20,9 @@ def generate_schema():
         "title": "QAL Transformations",
         "type": "object",
         "version": __version__,
-        "properties": {
-        },
-        "definitions": {
-
-        }
+        "properties": {},
+        "namespace": "qal",
+        "definitions": {}
     }
 
     def _property_to_type(_property_name):

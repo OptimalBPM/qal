@@ -42,6 +42,7 @@ def generate_schema():
                         }
                 }
         },
+        "namespace": "qal",
         "required": ["resources"],
         "definitions": {
 
