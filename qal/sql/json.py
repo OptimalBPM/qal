@@ -92,6 +92,7 @@ class SQLJSON(Recurse):
         _result["data_source_types"] = make_one_of(data_source_types())
 
         _result["ArrayString"] = {"type": "array", "items": {"type": "string"}}
+        _result["ArrayList"] = {"type": "array"}
 
         _result["ArrayParameterString"] = self._child_array_of(['#/definitions/ParameterString'])
         _result["ArrayParameterConstraint"] = self._child_array_of(['#/definitions/ParameterConstraint'])
@@ -106,7 +107,7 @@ class SQLJSON(Recurse):
         _result["ArrayParameterAssignment"] = self._child_array_of(['#/definitions/ParameterAssignment'])
         _result["ArrayExpressionItem"] = self._child_array_of(make_one_of(expression_item_types()))
         _result["ArrayTabularExpressionItem"] = self._child_array_of(make_one_of(tabular_expression_item_types()))
-        _result["ArrayList"] = self._child_array_of(['*'])
+
 
         return _result
 
@@ -217,13 +218,14 @@ class SQLJSON(Recurse):
 
     def json_get_allowed_value(_value, _type):
         """Check if a value is allowed in a certain XML node"""
+        # TODO: What is this?
 
         if _value in _type[1] or _value == "":
             return _value
         # Check for correct string format.
-        elif _value[0:8].lower() == "varchar(" and _value[8:len(value) - 1].isnumeric() and _value[
-                    len(value) - 1] == ")":
-            return value
+        elif _value[0:8].lower() == "varchar(" and _value[8:len(_value) - 1].isnumeric() and _value[
+                    len(_value) - 1] == ")":
+            return _value
         else:
             raise Exception("json_get_allowed_value: " + str(_value) + " is not a valid value in a " + _type[0])
 

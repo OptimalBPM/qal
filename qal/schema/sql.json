@@ -89,12 +89,7 @@
             "uniqueItems": true
         },
         "ArrayList": {
-            "items": {
-                "$ref": "*"
-            },
-            "minItems": 0,
-            "type": "array",
-            "uniqueItems": true
+            "type": "array"
         },
         "ArrayParameterAssignment": {
             "items": {
@@ -1002,9 +997,9 @@
         },
         "csv_dialects": {
             "enum": [
-                "excel",
                 "excel-tab",
-                "unix"
+                "unix",
+                "excel"
             ],
             "type": "string"
         },
