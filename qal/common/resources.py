@@ -12,7 +12,7 @@ from lxml import etree
 from qal.common.meta import list_prefixed_classes
 from qal.common.json import json_add_child_properties
 from qal.common.recurse import Recurse
-
+from qal import __version__
 
 def add_xml_subitem(_parent, _nodename, _nodetext):
     _curr_item = etree.SubElement(_parent, _nodename)
@@ -31,8 +31,9 @@ def generate_schema():
         "$schema": "http://json-schema.org/draft-04/schema#",
         "description": "The JSON Schema for QAL resources",
         "title": "QAL Resources",
+        "schemaId": "9b3f3211-60c9-44c0-b5bd-cd565ae2ec11",
         "type": "object",
-        "version": "0.5",
+        "version": __version__,
         "properties": {
             "resources":
                 {

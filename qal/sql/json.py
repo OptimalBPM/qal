@@ -15,7 +15,7 @@ from qal.common.recurse import Recurse
 from qal.sql.types import sql_property_to_type, and_or, \
     constraint_types, index_types, verbs, set_operator, join_types, in_types, quoting_types, data_source_types
 from qal.dal.types import db_types
-
+from qal import __version__
 
 # Imported for class resolution
 
@@ -121,7 +121,8 @@ class SQLJSON(Recurse):
             "description": "The JSON Schema for QAL SQL settings",
             "title": "QAL SQL JSON Schema",
             "type": "object",
-            "version": "0.5",
+            "schemaId": "f50986d4-269c-45e7-bfe7-7cf3177262ef",
+            "version": __version__,
             "properties": {
                 "statement": {"$ref": "#/definitions/statement"},
                 "resources": {
