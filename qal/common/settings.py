@@ -10,7 +10,7 @@ import configparser
 
 class BPMSettings(object):
     """This class is responsible for reading settings from ini-files and holding them in memory."""
-
+    #TODO: Remove this class. QAL should not read or store settings in ini-files(or XML), only JSON files
     parser = None
     filename = None
 
