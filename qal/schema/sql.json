@@ -1178,7 +1178,6 @@
     "required": [
         "statement"
     ],
-    "schemaId": "f50986d4-269c-45e7-bfe7-7cf3177262ef",
     "title": "QAL SQL JSON Schema",
     "type": "object",
     "version": "0.5"

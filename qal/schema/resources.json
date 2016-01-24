@@ -34,7 +34,6 @@
     "required": [
         "resources"
     ],
-    "schemaId": "9b3f3211-60c9-44c0-b5bd-cd565ae2ec11",
     "title": "QAL Resources",
     "type": "object",
     "version": "0.5"

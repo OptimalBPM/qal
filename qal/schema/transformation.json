@@ -116,7 +116,6 @@
     "description": "The JSON Schema for QAL resources",
     "namespace": "qal",
     "properties": {},
-    "schemaId": "799272d2-6bb8-4177-b183-7be2d5fdb287",
     "title": "QAL Transformations",
     "type": "object",
     "version": "0.5"
