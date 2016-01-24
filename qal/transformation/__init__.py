@@ -19,7 +19,6 @@ def generate_schema():
         "description": "The JSON Schema for QAL resources",
         "title": "QAL Transformations",
         "type": "object",
-        "schemaId": "799272d2-6bb8-4177-b183-7be2d5fdb287",
         "version": __version__,
         "properties": {},
         "namespace": "qal",

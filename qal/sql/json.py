@@ -121,7 +121,6 @@ class SQLJSON(Recurse):
             "description": "The JSON Schema for QAL SQL settings",
             "title": "QAL SQL JSON Schema",
             "type": "object",
-            "schemaId": "f50986d4-269c-45e7-bfe7-7cf3177262ef",
             "version": __version__,
             "properties": {
                 "statement": {"$ref": "#/definitions/statement"},

@@ -31,7 +31,6 @@ def generate_schema():
         "$schema": "http://json-schema.org/draft-04/schema#",
         "description": "The JSON Schema for QAL resources",
         "title": "QAL Resources",
-        "schemaId": "9b3f3211-60c9-44c0-b5bd-cd565ae2ec11",
         "type": "object",
         "version": __version__,
         "properties": {
