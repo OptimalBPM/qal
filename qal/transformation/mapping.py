@@ -50,12 +50,16 @@ class Mapping(object):
             self.transformations = make_transformation_array_from_xml_node(_xml_node.find("transformations"),
                                                                            self.substitution)
     def load_from_json(self, _json):
-
+        try:
             self.is_key = _json["is_key"]
             self.src_reference = _json["src_reference"]
             self.src_datatype = _json["src_datatype"]
             self.dest_reference = _json["dest_reference"]
             self.transformations = make_transformation_array_from_json(_json["transformations"], self.substitution)
+        except KeyError as e:
+            raise Exception("Mapping.load_from_json error loading configuration: Missing key: " + str(e) + ", data\n" +
+                            str(_json))
+
 
     def as_xml_node(self):
 
@@ -76,13 +80,4 @@ class Mapping(object):
                 "dest_reference": self.dest_reference,
                 "transformations": make_transformations_json(self.transformations)
             }
-
-    def load_from_json(self, _json):
-
-        self.is_key = _json["is_key"]
-        self.src_reference = _json["src_reference"]
-        self.src_datatype = _json["src_datatype"]
-        self.dest_reference = _json["dest_reference"]
-        self.transformations = make_transformation_array_from_json(_json["transformations"],
-                                                                       self.substitution)
 
