@@ -84,3 +84,13 @@ def find_class(_globals, _name, _raise_error=True):
 
     return _object_instance, _object_name
 
+def readattr(_obj, _name, _default = None):
+    try:
+        _value = getattr(_obj, _name)
+    except AttributeError:
+        return _default
+
+    if _value is None:
+        return _default
+    else:
+        return _value
