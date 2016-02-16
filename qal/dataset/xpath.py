@@ -10,6 +10,7 @@ from lxml import _elementpath
 from lxml import etree
 from lxml.etree import SubElement
 
+from qal.common.meta import readattr
 from qal.common.strings import make_path_absolute
 from qal.dataset.custom import CustomDataset
 from qal.common.listhelper import find_next_match, find_previous_match
@@ -75,31 +76,24 @@ class XpathDataset(CustomDataset):
         if _resource:
             self.read_resource_settings(_resource)
         else:
-            if _filename is not None:
-                self.filename = _filename
-            else:
-                self.filename = None
-            if _rows_xpath is not None:
-                self.rows_xpath = _rows_xpath
-            else:
-                self.rows_xpath = None
+            self.filename = _filename
+            self.rows_xpath = _rows_xpath
 
     def read_resource_settings(self, _resource):
         """Reads settings from a resource"""
 
-        self._base_path = _resource.base_path
+        self._base_path = readattr(_resource, "base_path")
 
         if _resource.type.upper() != 'XPATH':
             raise Exception(
                 "XpathDataset.read_resource_settings.parse_resource error: Wrong resource type: " + _resource.type)
-        self.filename = _resource.filename
-        self.rows_xpath = _resource.rows_xpath
-        self.xpath_data_format = _resource.xpath_data_format
-        self.field_names = _resource.field_names
-        self.field_xpaths = _resource.field_xpaths
-        self.field_types = _resource.field_types
-        if hasattr(_resource, "encoding"):
-            self.encoding = _resource.encoding
+        self.filename = readattr(_resource, "filename")
+        self.rows_xpath = readattr(_resource, "rows_xpath")
+        self.xpath_data_format = readattr(_resource, "xpath_data_format")
+        self.field_names = readattr(_resource, "field_names")
+        self.field_xpaths = readattr(_resource, "field_xpaths")
+        self.field_types = readattr(_resource, "field_types")
+        self.encoding = readattr(_resource, "encoding")
 
     def write_resource_settings(self, _resource):
         """Write settings to a resource"""
