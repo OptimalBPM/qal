@@ -170,7 +170,7 @@ class DatabaseAbstractionLayer(object):
             # TODO: Investigate if there is any more adapting needed, platform.release() can also be used.
 
             if self.db_type == DB_SQLSERVER:
-                if platform.system().lower() == 'linux':
+                if platform.system().lower() in ["linux", "darwin"]:
                     #TODO: Set a reasonable timeout
                     _connection_string = "DRIVER={FreeTDS};SERVER=" + self.server + ";DATABASE=" + \
                                          self.databasename + ";TDS_VERSION=8.0;UID=" + self.username + ";PWD=" + \
@@ -180,11 +180,11 @@ class DatabaseAbstractionLayer(object):
                                          self.databasename + ";UID=" + self.username + ";PWD=" + self.password + \
                                          ";PORT=" + str(self.port) + ";Trusted_Connection=no"
                 else:
-                    raise Exception("connect_to_db: ODBC connections on " + platform.system() + " not supported yet.")
+                    raise Exception("connect_to_db: SQL Server connections on " + platform.system() + " not supported yet.")
 
             elif self.db_type == DB_DB2:
 
-                if platform.system().lower() == 'linux':
+                if platform.system().lower() in ["linux", "darwin"]:
                     drivername = "DB2"
                 elif platform.system().lower() == 'windows':
                     drivername = "{IBM DATA SERVER DRIVER for ODBC - C:/PROGRA~1/IBM}"
