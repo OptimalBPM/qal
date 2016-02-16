@@ -10,19 +10,19 @@ Therefore, they have been commented out.
 """
 import unittest
 
-from qal.common.meta import list_parameter_classes, list_verb_classes, list_class_properties
+from qal.common.meta import list_prefixed_classes, list_class_properties
 
 
 class Test(unittest.TestCase):
     def _test_list_parameter_classes(self):
-        self.assertEqual(list_parameter_classes(),
+        self.assertEqual(list_prefixed_classes(_globals=globals(), _prefix="Parameter"),
             ['ParameterConditions', 'ParameterCondition', 'ParameterConditions', 'ParameterString', 'ParameterBase',
              'ParameterFunction', 'ParameterExpression', 'ParameterIdentifier', 'ParameterColumndefinition',
              'ParameterCast', 'ParameterWhen', 'ParameterConstraint', 'ParameterNumeric', 'ParameterExpressionItem',
              'Parameter_DML', 'ParameterSource', 'ParameterCase', 'ParameterField'])
 
     def _test_list_verb_classes(self):
-        self.assertEqual(list_verb_classes(),
+        self.assertEqual(list_prefixed_classes(_globals=globals(), _prefix="Verb"),
             ['VerbCreateIndex', 'VerbCreateTable', 'VerbSelect', 'VerbDelete', 'VerbCustom'])
 
     def _testList_class_properties(self):
