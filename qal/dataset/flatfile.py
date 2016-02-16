@@ -9,6 +9,7 @@ from itertools import islice
 import csv
 from urllib.parse import unquote
 
+from qal.common.meta import readattr
 from qal.common.strings import make_path_absolute, string_to_bool
 from qal.dataset.custom import CustomDataset
 
@@ -86,23 +87,20 @@ class FlatfileDataset(CustomDataset):
             raise Exception(
                 "FlatfileDataset.read_resource_settings.parse_resource error: Wrong resource type: " + _resource.type)
         self._base_path = _resource.base_path
-        self.filename = _resource.filename
-        self.delimiter = _resource.delimiter
-        if _resource.has_header:
+        self.filename = readattr(_resource, "filename")
+        self.delimiter = readattr(_resource, "delimiter")
+        self.csv_dialect = readattr(_resource, "csv_dialect")
+        self.quoting = readattr(_resource, "quoting")
+        self.escapechar = readattr(_resource, "escapechar")
+        self.quotechar = readattr(_resource, "quotechar",'"')
+        self.skipinitialspace = readattr(_resource, "skipinitialspace")
+
+        if hasattr(_resource, "lineterminator"):
+            self.lineterminator = bytes(_resource.lineterminator, "UTF-8").decode("unicode-escape")
+        if readattr(_resource, "has_header"):
             self.has_header = string_to_bool(str(_resource.has_header))
         else:
             self.has_header = None
-        self.csv_dialect = _resource.csv_dialect
-        if hasattr(_resource, "quoting"):
-            self.quoting = _resource.quoting
-        if hasattr(_resource, "escapechar"):
-            self.escapechar = _resource.escapechar
-        if hasattr(_resource, "lineterminator"):
-            self.lineterminator = bytes(_resource.lineterminator, "UTF-8").decode("unicode-escape")
-        if hasattr(_resource, "quotechar"):
-            self.quotechar = _resource.quotechar or '"'
-        if hasattr(_resource, "skipinitialspace"):
-            self.skipinitialspace = _resource.skipinitialspace
 
     def write_resource_settings(self, _resource):
         # Clear first, one could be overwriting an resource with other data fields
