@@ -45,42 +45,17 @@ class FlatfileDataset(CustomDataset):
                  _quoting=None, _quotechar=None, _skipinitialspace=None):
         """Constructor"""
         super(FlatfileDataset, self).__init__()
-
         if _resource is not None:
             self.read_resource_settings(_resource)
         else:
-            if _delimiter is not None:
-                self.delimiter = _delimiter
-            else:
-                self.delimiter = None
-            if _filename is not None:
-                self.filename = _filename
-            else:
-                self.filename = None
-            if _has_header is not None:
-                self.has_header = _has_header
-            else:
-                self.has_header = None
+            self.delimiter = _delimiter
+            self.filename = _filename
+            self.has_header = _has_header
+            self.csv_dialect = _csv_dialect
+            self.quoting = _quoting
+            self.quotechar = _quotechar
+            self.skipinitialspace = _skipinitialspace
 
-            if _csv_dialect is not None:
-                self.csv_dialect = _csv_dialect
-            else:
-                self.csv_dialect = None
-
-            if _quoting is not None:
-                self.quoting = _quoting
-            else:
-                self.quoting = None
-
-            if _quotechar is not None:
-                self.quotechar = _quotechar
-            else:
-                self.quotechar = None
-
-            if _skipinitialspace is not None:
-                self.skipinitialspace = _skipinitialspace
-            else:
-                self.skipinitialspace = None
 
     def read_resource_settings(self, _resource):
         if _resource.type.upper() != 'FLATFILE':
