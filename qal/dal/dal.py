@@ -8,7 +8,7 @@
     :copyright: Copyright 2010-2014 by Nicklas Boerjesson
     :license: BSD, see LICENSE for details.
 """
-
+from qal.common.meta import readattr
 from qal.dal.types import DB_MYSQL, DB_POSTGRESQL, DB_ORACLE, DB_DB2, DB_SQLSERVER, string_to_db_type, db_type_to_string
 from qal.dal.conversions import parse_description, python_type_to_sql_type
 from qal.common.discover import import_error_to_help
@@ -64,17 +64,15 @@ class DatabaseAbstractionLayer(object):
         if _resource.type.upper() != 'RDBMS':
             raise Exception("DAL.read_resource_settings error: Wrong resource type - " + _resource.type)
         self.db_type = string_to_db_type(_resource.db_type)
-        self.server = _resource.server
-        self.databasename = _resource.databasename
+        self.server = readattr(_resource, "server")
+        self.databasename = readattr(_resource, "databasename")
         
-        self.username = _resource.username
-        self.password = _resource.password
-        if hasattr(_resource, "port"):
-            self.port = _resource.port
-        if hasattr(_resource, "autocommit"):
-            self.autocommit = _resource.autocommit
-        if hasattr(_resource, "instance"):
-            self.instance = _resource.instance
+        self.username = readattr(_resource, "username")
+        self.password = readattr(_resource, "password")
+        self.port = readattr(_resource, "port")
+        self.autocommit = readattr(_resource, "autocommit", False)
+        self.instance = readattr(_resource, "instance")
+
     def write_resource_settings(self, _resource):
         """
         Write settings to a resource object
