@@ -56,24 +56,6 @@ class DatabaseAbstractionLayer(object):
     # Postgres transaction object
     _pg_xact = None
 
-    def read_ini_settings(self, _ini_parser):
-        """
-        Read setting from the settings.
-        :param _ini_parser: ConfigParser object
-        """
-        if _ini_parser.parser.has_option("database", "type"):
-            self.db_type = string_to_db_type(_ini_parser.parser.get("database", "type"))
-            self.server = _ini_parser.parser.get("database", "server")
-            self.databasename = _ini_parser.parser.get("database", "database_name")
-            self.username = _ini_parser.parser.get("database", "username")
-            self.password = _ini_parser.parser.get("database", "password")
-            self.port = _ini_parser.parser.get("database", "port")
-            self.autocommit = _ini_parser.get("database", "autocommit", True)
-            if _ini_parser.parser.has_option("database", "instance"):
-                self.instance = _ini_parser.parser.get("database", "instance")
-        else:
-            print("read_ini_settings: Settings not valid, not raising error.")
-
     def read_resource_settings(self, _resource):
         """
         Read settings from a resource object
@@ -230,26 +212,20 @@ class DatabaseAbstractionLayer(object):
 
         return _connection
 
-    def __init__(self, _settings=None, _resource=None, _connect = True):
+    def __init__(self, _resource=None, _connect = True):
         """
-        Init
 
+        :param _resource: A resource object to read settings from
+        :param _connect: Also connect to the database (default:True)
         """
 
         self.on_connect = None
-
-        if _settings is not None:
-            self.settings = _settings
-            self.read_ini_settings(_settings)
-            if _connect:
-                self.connect_to_db()
 
         if _resource is not None:
             self.resource = _resource
             self.read_resource_settings(_resource)
             if _connect:
                 self.connect_to_db()
-
 
 
     def execute(self, _sql):

@@ -1,0 +1,60 @@
+[
+  {
+    "uuid": 0,
+    "type": "RDBMS",
+    "name": "MySQL at OSSDB01",
+    "db_type": "mysql",
+    "databasename": "bpmtest",
+    "server": "ossdb01.yourdomain.com",
+    "username": "bpmuser",
+    "password": "test",
+    "port": "3066"
+  },
+  {
+    "uuid": 1,
+    "type": "RDBMS",
+    "name": "PostgreSQL at PGDB01",
+    "db_type": "postgresql",
+    "databasename": "bpmtest",
+    "server": "pgdb01.yourdomain.com",
+    "username": "bpmuser",
+    "password": "test",
+    "port": "5432"
+  },
+  {
+    "uuid": 2,
+    "type": "RDBMS",
+    "name": "Oracle at ORA01",
+    "db_type": "oracle",
+    "databasename": "bpmtest",
+    "port": "1521",
+    "server": "ora01.yourdomain.com",
+    "username": "bpmuser",
+    "password": "test",
+    "instance": "XE"
+  },
+  {
+    "uuid": 3,
+    "type": "RDBMS",
+    "name": "DB2 at db201",
+    "db_type": "db2",
+    "databasename": "bpmtest",
+    "server": "db201.yourdomain.com",
+    "port": "50000",
+    "instance": "db2inst1",
+    "username": "bpmuser",
+    "password": "test"
+  },
+  {
+    "uuid": 4,
+    "type": "RDBMS",
+    "name": "SQL Server att MSSQLl01",
+    "db_type": "sqlserver",
+    "databasename": "bpmtest",
+    "server": "mssql01.yourdomain.com",
+    "username": "bpmuser",
+    "password": "test",
+    "autocommit": "True",
+    "port": "1433"
+  }
+]
