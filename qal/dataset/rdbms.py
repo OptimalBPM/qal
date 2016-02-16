@@ -3,6 +3,7 @@ Created on Jan 8, 2012
 
 @author: Nicklas Boerjesson
 """
+from qal.common.meta import readattr
 from qal.dal.conversions import python_type_to_sql_type
 
 from qal.dal.types import DB_DB2, DB_ORACLE, DB_POSTGRESQL
@@ -39,10 +40,8 @@ class RDBMSDataset(CustomDataset):
 
         self._dal = DatabaseAbstractionLayer(_resource=_resource)
 
-        self.table_name = _resource.table_name
-        if hasattr(_resource, "query"):
-            self.query = _resource.query
-            #TODO: Make nicer handling of resource attributes, both reading and writing (PROD-91)
+        self.table_name = readattr(_resource, "table_name")
+        self.query = readattr(_resource, "query")
 
 
     def write_resource_settings(self, _resource):
