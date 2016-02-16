@@ -23,6 +23,7 @@ def list_prefixed_classes(_globals, _prefix, _exclude=[]):
             _result.append(k[0])
     return _result
 
+
 def list_suffixed_classes(_globals, _suffix, _exclude=[]):
     """
     List all classes in the scope with the provided prefix
@@ -39,7 +40,7 @@ def list_suffixed_classes(_globals, _suffix, _exclude=[]):
     return _result
 
 
-def list_class_properties(_globals, _class_name, _result = None):
+def list_class_properties(_globals, _class_name, _result=None):
     """
     List properties for the class specified in _class_name
     :param _globals: The scope (globals()) where the class is defined
@@ -84,13 +85,29 @@ def find_class(_globals, _name, _raise_error=True):
 
     return _object_instance, _object_name
 
-def readattr(_obj, _name, _default = None):
+
+def readattr(_obj, _name, _default=None, _error_on_none=None):
+    """
+    Reads an attribute value from an object
+    :param _obj: The object
+    :param _name: The name of the attribute
+    :param _default: If set, the value to return if the attribute is missing or the value is None
+    :param _error_on_none: If set, the message of an exception that is raised if the attribute is missing or the value is None
+    :return: The value of the attribute
+    """
+
     try:
         _value = getattr(_obj, _name)
     except AttributeError:
-        return _default
+        if _error_on_none:
+            raise Exception(_error_on_none)
+        else:
+            return _default
 
     if _value is None:
-        return _default
+        if _error_on_none:
+            raise Exception(_error_on_none)
+        else:
+            return _default
     else:
         return _value
