@@ -3,6 +3,7 @@ Created on Dec 28, 2013
 
 @author: Nicklas Boerjesson
 """
+from qal.common.meta import readattr
 from qal.common.strings import make_path_absolute, string_to_bool
 
 from qal.dataset.custom import CustomDataset
@@ -49,11 +50,11 @@ class SpreadsheetDataset(CustomDataset):
 
         self.sheet_name = _resource.sheet_name
 
-        if hasattr(_resource, "x_offset") and _resource.x_offset is not None:
+        if readattr(_resource, "x_offset") is not None:
             self.x_offset = int(_resource.x_offset)
         else:
             self.x_offset = 0
-        if hasattr(_resource, "y_offset") and _resource.y_offset is not None:
+        if readattr(_resource, "y_offset") is not None:
             self.y_offset = int(_resource.y_offset)
         else:
             self.y_offset = 0
@@ -76,27 +77,11 @@ class SpreadsheetDataset(CustomDataset):
             self.read_resource_settings(_resource)
         else:
 
-            if _filename is not None:
-                self.filename = _filename
-            else:
-                self.filename = None
-            if _has_header is not None:
-                self.has_header = _has_header
-            else:
-                self.has_header = None
-            if _sheet_name is not None:
-                self.sheet_name = _sheet_name
-            else:
-                self.sheet_name = None
-
-            if _x_offset is not None:
-                self.x_offset = _x_offset
-            else:
-                self.x_offset = None
-            if _y_offset is not None:
-                self.y_offset = _y_offset
-            else:
-                self.y_offset = None
+            self.filename = _filename
+            self.has_header = _has_header
+            self.sheet_name = _sheet_name
+            self.x_offset = _x_offset
+            self.y_offset = _y_offset
 
     @staticmethod
     def load_xls(_filename, _sheet_name, _x_offset, _y_offset, _header_offset):
@@ -129,6 +114,10 @@ class SpreadsheetDataset(CustomDataset):
     @staticmethod
     def load_xlsx(_filename, _sheet_name, _x_offset, _y_offset, _header_offset):
         print("SpreadsheetDataset.load_xlsx: using openpyxl")
+
+        # TODO: Why isn't sheet name used here but in load_xls? Does it trust that the right one is active? (PROD-128)
+        # TODO: Why is(like in load_xls) header_offset a parameter but not a class property/parameter? (PROD-128)
+
         try:
             from openpyxl import load_workbook
         except ImportError as _err:
