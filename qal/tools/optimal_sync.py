@@ -15,18 +15,20 @@
 """
 
 # Version and release information used by Sphinx for documentation and setuptools for package generation.
+import os
 
 __version__ = '0.9'
 __release__ = '0.9.0'
 __copyright__ = '2010-2014, Nicklas Boerjesson'
 
 import json
-from qal.transformation.merge import Merge
+
 
 import sys, getopt
-sys.path.append("../../")
 
+sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
 
+from qal.transformation.merge import Merge
 from qal.tools.gui.main_tk_replicator import ReplicatorMain
 
 
@@ -91,7 +93,7 @@ def main():
             """Load merge"""
             print(_definitionfile)
             with open(_definitionfile, "r") as f:
-                _merge = Merge(_json= json.load(f))
+                _merge = Merge(_json=json.load(f), _base_path=os.path.dirname(_definitionfile))
         else:
             """Create empty"""
             _merge = Merge()
