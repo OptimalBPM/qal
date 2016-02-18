@@ -9,7 +9,8 @@
     :license: BSD, see LICENSE for details.
 """
 from qal.common.meta import readattr
-from qal.dal.types import DB_MYSQL, DB_POSTGRESQL, DB_ORACLE, DB_DB2, DB_SQLSERVER, string_to_db_type, db_type_to_string
+from qal.dal.types import DB_MYSQL, DB_POSTGRESQL, DB_ORACLE, DB_DB2, DB_SQLSERVER, string_to_db_type, db_type_to_string, \
+    DB_SQLLITE
 from qal.dal.conversions import parse_description, python_type_to_sql_type
 from qal.common.discover import import_error_to_help
 
@@ -117,9 +118,9 @@ class DatabaseAbstractionLayer(object):
                                                      _pip_package="py-postgresql",
                                                      _apt_package="python3-postgresql",
                                                      _win_package=None,
-                                                     _import_comment="2014-04-16: If using apt-get, " +
+                                                     _import_comment="2014-04-16: If using apt-get on Debian, " +
                                                                      "check so version is > 1.0.3-2" +
-                                                                     " as there is a severe bug in the 1.02 version. " +
+                                                                     " as there is a severe bug in the 1.0.2 version. " +
                                                                      "See https://bugs.debian.org/cgi-bin/bugreport" +
                                                                      ".cgi?bug=724597"))
 
@@ -147,7 +148,7 @@ class DatabaseAbstractionLayer(object):
                                                                      " available at this time."))
             import platform
 
-            # TODO: Investigate if there is any more adapting needed, platform.release() can also be used.
+
 
             if self.db_type == DB_SQLSERVER:
                 if platform.system().lower() in ["linux", "darwin"]:
@@ -180,7 +181,6 @@ class DatabaseAbstractionLayer(object):
             print("Connect to database using connection string:  " + _connection_string)
             _connection = pyodbc.connect(_connection_string, autocommit=self.autocommit)
 
-        # cx_Oracle in python 3.X not checked yet.
         elif self.db_type == DB_ORACLE:
             try:
                 import cx_Oracle
@@ -198,6 +198,16 @@ class DatabaseAbstractionLayer(object):
             print("Connect to database using connection string:  " + _connection_string)
             _connection = cx_Oracle.connect(_connection_string)
             _connection.autocommit = self.autocommit
+
+        elif self.db_type == DB_SQLLITE:
+
+            try:
+                import sqlite3
+            except ImportError as _err:
+                raise Exception("Error importing sqllite3, which is built-in into Python, check your Python "
+                                "installation. Error: " + str(_err))
+
+            _connection = sqlite3.connect(self.databasename)
 
         else:
             raise Exception("connect_to_db: Invalid database type.")

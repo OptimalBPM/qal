@@ -997,9 +997,9 @@
         },
         "csv_dialects": {
             "enum": [
-                "unix",
+                "excel",
                 "excel-tab",
-                "excel"
+                "unix"
             ],
             "type": "string"
         },
@@ -1053,7 +1053,8 @@
                 "PostgreSQL",
                 "Oracle",
                 "DB2",
-                "SQLserver"
+                "SQLserver",
+                "SQLLite"
             ],
             "type": "string"
         },

@@ -1,4 +1,5 @@
-INSERT INTO Test (Column1, Column2)(SELECT 'Matrix11' AS `Column1`,'Matrix12' AS `Column2`
+INSERT INTO Test (Column1, Column2)
+(SELECT 'Matrix11' AS `Column1`,'Matrix12' AS `Column2`
 UNION
 SELECT 'Matrix21','Matrix22')
 UNION

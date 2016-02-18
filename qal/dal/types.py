@@ -11,7 +11,7 @@ DB_POSTGRESQL = 1
 DB_ORACLE = 2
 DB_DB2 = 3
 DB_SQLSERVER = 4
-
+DB_SQLLITE = 5
 
 def unenumerate(value, _type):
     """Returns the value of a specific item"""
@@ -20,7 +20,7 @@ def unenumerate(value, _type):
 
 def db_types():
     """Returns a list of supported database engines"""
-    return ['MySQL', 'PostgreSQL', 'Oracle', 'DB2', 'SQLserver']
+    return ['MySQL', 'PostgreSQL', 'Oracle', 'DB2', 'SQLserver', "SQLLite"]
 
 
 def string_to_db_type(_value):

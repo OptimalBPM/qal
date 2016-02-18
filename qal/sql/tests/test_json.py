@@ -54,7 +54,7 @@ class ClassSQLMetaJSONTest(unittest.TestCase):
                 f_out.close()
 
                 # TODO: FIXME: Using offsets to handle weird endline handling is not good.
-                self.assertEqual(_str_sql_in[:-2], _str_sql_out[:-1],
+                self.assertEqual(_str_sql_in, _str_sql_out,
                                  _filename_part + " differs from in-file.\n" + diff_strings(_str_sql_in, _str_sql_out))
             else:
 

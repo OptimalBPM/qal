@@ -3,7 +3,7 @@ Created on Oct 2, 2012
 
 @author: Nicklas Boerjesson
 """
-from qal.dal.types import DB_POSTGRESQL, DB_MYSQL, DB_ORACLE, DB_DB2, DB_SQLSERVER
+from qal.dal.types import DB_POSTGRESQL, DB_MYSQL, DB_ORACLE, DB_DB2, DB_SQLSERVER, DB_SQLLITE
 from qal.common.listhelper import unenumerate
 
 # TODO: Property document this module
@@ -131,7 +131,8 @@ def curr_user(_db_type):
         return 'SESSION_USER'
     elif _db_type == DB_SQLSERVER:
         return 'SUSER_SNAME()'
-
+    elif _db_type == DB_SQLLITE:
+        return '"Not supported by SQLLite"'
 
 def curr_datetime(_db_type):
     """Returns a database-type specific (see dal_types) way of getting the current date time."""
@@ -145,6 +146,9 @@ def curr_datetime(_db_type):
         return 'CURRENT_TIMESTAMP'
     elif _db_type == DB_SQLSERVER:
         return 'GETDATE()'
+    elif _db_type == DB_SQLLITE:
+        return "date('now')"
+
 
 
 def db_specific_object_reference(_value, _db_type):
@@ -152,7 +156,7 @@ def db_specific_object_reference(_value, _db_type):
 
     if _db_type == DB_MYSQL:
         return "`" + _value + "`"
-    elif _db_type == DB_POSTGRESQL:
+    elif _db_type in [DB_POSTGRESQL, DB_SQLLITE]:
         return '"' + _value + '"'
     elif _db_type == DB_ORACLE:
         return '"' + str(_value)[0:30] + '"'
@@ -192,7 +196,7 @@ def db_specific_datatype(value, db_type):
     # noinspection PyUnusedLocal
     result = ''
     if value.lower() == "integer":
-        result = unenumerate(['INTEGER', 'integer', 'NUMBER', 'INT', 'int'], db_type)
+        result = unenumerate(['INTEGER', 'integer', 'NUMBER', 'INT', 'int', 'INTEGER'], db_type)
     elif value[:6].lower() == "string" or value[:7].lower() == "varchar":
         strlength = db_specific_datatype_parse_length(value)
         if strlength.lower() != '':
@@ -205,25 +209,22 @@ def db_specific_datatype(value, db_type):
             # the table space so 3100 allows for the unspecified column to be at least usable.)
             # Oracle is 4000 (limitations confirmed as of dec. 2012).
             # TODO: Document this behaviour
-            result = unenumerate(['TEXT', 'varchar', 'VARCHAR2(4000)', 'VARCHAR(3100)', 'varchar(max)'], db_type)
+            result = unenumerate(['TEXT', 'varchar', 'VARCHAR2(4000)', 'VARCHAR(3100)', 'varchar(max)', 'TEXT'], db_type)
 
     elif value.lower() == "float":
-        result = unenumerate(['DOUBLE', 'double precision', 'FLOAT', 'Double', 'float'], db_type)
+        result = unenumerate(['DOUBLE', 'double precision', 'FLOAT', 'Double', 'float', 'REAL'], db_type)
 
     elif value.lower() == "serial":
         result = unenumerate(
-            ['INTEGER AUTO_INCREMENT', 'serial', 'integer', 'INT GENERATED ALWAYS AS IDENTITY', 'int IDENTITY(1,1)'],
+            ['INTEGER AUTO_INCREMENT', 'serial', 'integer', 'INT GENERATED ALWAYS AS IDENTITY', 'int IDENTITY(1,1)', 'INTEGER PRIMARY KEY AUTOINCREMENT'],
             db_type)
     elif value.lower() == "timestamp":
-        result = unenumerate(['TIMESTAMP', 'timestamp', 'TIMESTAMP', 'TIMESTAMP', 'DATETIME'], db_type)
+        result = unenumerate(['TIMESTAMP', 'timestamp', 'TIMESTAMP', 'TIMESTAMP', 'DATETIME', 'TEXT'], db_type)
     elif value.lower() == "datetime":
-        result = unenumerate(['DATETIME', 'timestamp', 'DATE', 'TIMESTAMP', 'DATETIME'], db_type)
+        result = unenumerate(['DATETIME', 'timestamp', 'DATE', 'TIMESTAMP', 'DATETIME', 'TEXT'], db_type)
     elif value.lower() == "boolean":
-        result = unenumerate(['BOOL', 'boolean', 'NUMERIC(1)', 'DECIMAL(1)', 'BIT'], db_type)
+        result = unenumerate(['BOOL', 'boolean', 'NUMERIC(1)', 'DECIMAL(1)', 'BIT', 'INTEGER'], db_type)
 
-        # elif (value.lower() == "timestamp"):
-    # result = unenumerate(['TIMESTAMP DEFAULT CURRENT_TIMESTAMP', 'DATETIME DEFAULT(NOW())',
-    # 'DATETIME DEFAULT(NOW())','TIMESTAMP', 'DATETIME DEFAULT(NOW())'], db_type)
     else:
         result = value
     return result

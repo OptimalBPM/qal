@@ -7,7 +7,7 @@ Created on Sep 20, 2010
 
 """Constants"""
 
-DEFAULT_ROWSEP = chr(13)
+DEFAULT_ROWSEP = chr(10)
 
 from csv import list_dialects
 

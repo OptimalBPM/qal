@@ -18,7 +18,7 @@
 """
 
 from qal.sql.types import DEFAULT_ROWSEP, expression_item_types, tabular_expression_item_types
-from qal.dal.types import DB_POSTGRESQL, DB_MYSQL, DB_ORACLE, DB_DB2  # , DB_SQLSERVER
+from qal.dal.types import DB_POSTGRESQL, DB_MYSQL, DB_ORACLE, DB_DB2, DB_SQLLITE  # , DB_SQLSERVER
 
 from qal.sql.base import ParameterBase, SqlList, ParameterExpressionItem
 from qal.sql.remotable import ParameterRemotable
@@ -417,7 +417,7 @@ class VerbSelect(ParameterExpressionItem, ParameterRemotable):
     def add_limit(self, _db_type):
         """Generate SQL for specified database engine for limits on number of rows (TOP/LIMIT/FETCH FIRST)"""
         if self.top_limit is not None and int(self.top_limit) > 0:
-            if _db_type in [DB_MYSQL, DB_POSTGRESQL]:
+            if _db_type in [DB_MYSQL, DB_POSTGRESQL, DB_SQLLITE]:
                 self._post_sql = "LIMIT " + str(int(self.top_limit))
             elif _db_type in [DB_DB2]:
                 self._post_sql = "FETCH FIRST " + str(int(self.top_limit)) + " ROWS ONLY "
@@ -700,10 +700,10 @@ class VerbCreateIndex(ParameterBase):
                        [[self.name, "name"], [self.index_type, "index_type"], [self.tablename, "tablename"]])
         # Handle DB2s strange deviation #1
         if _db_type == DB_DB2 and (self.index_type == "CLUSTERED" or self.index_type == "NONCLUSTERED"):
-            result = "CREATE INDEX " + db_specific_object_reference(self.name, _db_type) + chr(13)
+            result = "CREATE INDEX " + db_specific_object_reference(self.name, _db_type) + DEFAULT_ROWSEP
         else:
-            result = "CREATE " + self.index_type + " INDEX " + db_specific_object_reference(self.name, _db_type) + chr(
-                13)
+            result = "CREATE " + self.index_type + " INDEX " + db_specific_object_reference(self.name, _db_type) + \
+                     DEFAULT_ROWSEP
 
         result += "ON " + self.tablename + "("
         for index, item in enumerate(self.column_names):
@@ -711,7 +711,7 @@ class VerbCreateIndex(ParameterBase):
         result += ")"
         # Handle DB2s strange deviation #2
         if _db_type == DB_DB2 and self.index_type == "CLUSTERED":
-            result += chr(13) + "CLUSTER"
+            result += DEFAULT_ROWSEP + "CLUSTER"
         return result
 
 
