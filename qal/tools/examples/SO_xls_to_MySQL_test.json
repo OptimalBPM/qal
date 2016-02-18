@@ -1,0 +1,54 @@
+{
+    "delete": false,
+    "insert": true,
+    "mappings": [
+        {
+            "dest_reference": "so_xls_data",
+            "is_key": false,
+            "src_datatype": null,
+            "src_reference": "Data",
+            "transformations": []
+        },
+        {
+            "dest_reference": "so_xls_id",
+            "is_key": true,
+            "src_datatype": null,
+            "src_reference": "DataId",
+            "transformations": [
+                {
+                    "dest_type": "integer",
+                    "order": "",
+                    "type": "cast"
+                }
+            ]
+        }
+    ],
+    "post_execute_sql": "",
+    "resources": [
+        {
+            "autocommit": true,
+            "databasename": "bpmtest",
+            "db_type": "MySQL",
+            "instance": "",
+            "name": "destination",
+            "password": "test",
+            "port": 0,
+            "server": "localhost",
+            "table_name": "so_xls_test",
+            "type": "RDBMS",
+            "username": "bpmuser",
+            "uuid": "00000000-0000-0000-0000-000000000001"
+        },
+        {
+            "filename": "SO_xls_in.xlsx",
+            "has_header": true,
+            "name": "source",
+            "sheet_name": "Sheet1",
+            "type": "SPREADSHEET",
+            "uuid": "00000000-0000-0000-0000-000000000000",
+            "x_offset": 0,
+            "y_offset": 0
+        }
+    ],
+    "update": false
+}

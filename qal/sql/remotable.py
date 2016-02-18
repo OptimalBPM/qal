@@ -14,7 +14,7 @@ class ParameterRemotable(object):
     """The temporary table name is used by owners to reference the data correctly. It is prefixed by an underscore to 
     not be shown in the external structure.(it is possible that it will be removed)"""
     _temporary_table_name = None
-    """The resource object, usually loaded by the XML importer"""
+    """The resource object, usually loaded by the JSON importer"""
     _resource = None
     """The classes' DAL connection."""
     _dal = None

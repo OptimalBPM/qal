@@ -8,7 +8,6 @@ import unittest
 from datetime import datetime
 import os
 
-from lxml import etree
 from qal.common.diff import DictDiffer
 
 from qal.transformation.transform import Trim, Replace, ReplaceRegex, IfEmpty, Cast
@@ -24,7 +23,7 @@ class TransformTest(unittest.TestCase):
         return _dict
 
     def test_1_trim(self):
-        """Test trim transformation input/output and XML encoding/decoding"""
+        """Test trim transformation input/output and JSON encoding/decoding"""
         _dict_in = self.load_json(Test_Resource_Dir + "/test_transform.json")
         _json_def = _dict_in["mappings"][0]["transformations"][0]
         _tested = Trim(_json=_json_def)
@@ -37,7 +36,7 @@ class TransformTest(unittest.TestCase):
             self.assertTrue(False, "The input and output definitions doesn't match.")
 
     def test_2_IfEmpty(self):
-        """Test trim transformation input/output and XML encoding/decoding"""
+        """Test trim transformation input/output and JSON encoding/decoding"""
         _dict_in = self.load_json(Test_Resource_Dir + "/test_transform.json")
         _json_def = _dict_in["mappings"][0]["transformations"][1]
         _tested = IfEmpty(_json=_json_def)
@@ -50,7 +49,7 @@ class TransformTest(unittest.TestCase):
 
 
     def test_3_replace(self):
-        """Test replace transformation input/output and XML encoding/decoding"""
+        """Test replace transformation input/output and JSON encoding/decoding"""
         _dict_in = self.load_json(Test_Resource_Dir + "/test_transform.json")
         _json_def = _dict_in["mappings"][0]["transformations"][2]
         _tested = Replace(_json=_json_def)
@@ -62,7 +61,7 @@ class TransformTest(unittest.TestCase):
             self.assertTrue(False, "The input and output definitions doesn't match.")
 
     def test_4_replace_regex(self):
-        """Test replace transformation input/output and XML encoding/decoding"""
+        """Test replace transformation input/output and JSON encoding/decoding"""
         _dict_in = self.load_json(Test_Resource_Dir + "/test_transform.json")
         _json_def = _dict_in["mappings"][1]["transformations"][2]
         _tested = ReplaceRegex(_json=_json_def)
@@ -74,7 +73,7 @@ class TransformTest(unittest.TestCase):
             self.assertTrue(False, "The input and output definitions doesn't match.")
 
     def test_5_cast(self):
-        """Test trim transformation input/output and XML encoding/decoding"""
+        """Test trim transformation input/output and JSON encoding/decoding"""
         _dict_in = self.load_json(Test_Resource_Dir + "/test_transform.json")
         _json_def = _dict_in["mappings"][4]["transformations"][1]
         _tested = Cast(_json=_json_def)

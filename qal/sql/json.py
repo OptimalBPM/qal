@@ -219,7 +219,7 @@ class SQLJSON(Recurse):
             return {"statement": _statement}
 
     def json_get_allowed_value(_value, _type):
-        """Check if a value is allowed in a certain XML node"""
+        """Check if a value is allowed in a certain JSON node"""
         # TODO: What is this?
 
         if _value in _type[1] or _value == "":
@@ -290,7 +290,7 @@ class SQLJSON(Recurse):
                             _obj.__dict__[_curr_item_key] = _curr_value
                         elif _curr_type[0:5] == 'verb_' or _curr_type[0:10] == 'parameter_':
                             raise Exception(
-                                "_parse_class_xml_node: Strange VERB/PARAMETER happened parsing.. parent: " +
+                                "_parse_attribute: Strange VERB/PARAMETER happened parsing.. parent: " +
                                 _parent.__class__.__name__ + "Class: " + _attribute_name + " Currtype: " + _curr_type)
 
                         elif len(_curr_type) > 1 and type(_curr_type[1]) == list:
@@ -323,9 +323,6 @@ class SQLJSON(Recurse):
             self.base_path = _base_path
 
         if "resources" in _dict:
-            # _resources = _dict['resources']
-
-            # Send XML here, since resources now uses lxml
 
             self._resources = Resources(_resources_list=_dict["resources"], _base_path=_base_path)
 

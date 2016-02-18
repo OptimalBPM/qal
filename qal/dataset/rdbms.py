@@ -30,8 +30,6 @@ class RDBMSDataset(CustomDataset):
     table_name = None
     """If set, and table_name is not, then the SQL statement contained is executed. It is a text string."""
     query = None
-    """
-    TODO:Make it possible for it to be a backend agnostic qal.sql.sql.VerbSelect object parsed from an XML structure."""
 
     def read_resource_settings(self, _resource):
         if _resource.type.upper() != 'RDBMS':

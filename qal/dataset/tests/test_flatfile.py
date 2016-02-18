@@ -8,8 +8,6 @@ import json
 import unittest
 import os
 
-from lxml import etree
-
 from qal.dataset.flatfile import FlatfileDataset
 from qal.common.resources import Resources
 from qal.common.listhelper import pretty_list
@@ -18,9 +16,6 @@ from qal.dataset.custom import DATASET_LOGLEVEL_DETAIL
 Test_Script_Dir = os.path.dirname(__file__)
 Test_Resource_Dir = os.path.join(Test_Script_Dir, 'resources')
 
-
-def load_xml(_filename):
-    return etree.parse(_filename)
 
 
 class Test(unittest.TestCase):

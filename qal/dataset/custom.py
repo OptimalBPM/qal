@@ -20,7 +20,7 @@ DATASET_LOGLEVEL_ALL = 4
 
 class CustomDataset(object):
     """This is the base class for all (external) data sets in QAL-
-    Note: The fields are named like this to not appear as parameters in automatic generators like sql_xml.
+    Note: The fields are named like this to not appear as parameters in automatic generators like sql_json.
     TODO: Field names should be considered captions, not references, and should not be used when looping columns.
     """
 

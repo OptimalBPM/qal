@@ -8,7 +8,6 @@ import json
 import unittest
 import os
 
-from lxml import etree
 
 from qal.common.resources import Resources
 from qal.dataset.spreadsheet import SpreadsheetDataset
@@ -50,10 +49,6 @@ _test_data_xlsx = [
     [7902.0, 'FORD', 'ANALYST', 7566.0, '1981-12-03 00:00:00', 3000.0, '', 20.0],
     [7934.0, 'MILLER', 'CLERK', 7782.0, '1982-01-23 00:00:00', 1300.0, '', 10.0]
 ]
-
-
-def load_xml(_filename):
-    return etree.parse(_filename)
 
 
 class Test(unittest.TestCase):

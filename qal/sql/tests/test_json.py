@@ -17,7 +17,7 @@ from qal.dal.types import db_types, DB_POSTGRESQL
 from qal.schema.handler import check_against_qal_schema
 from qal.sql.json import SQLJSON
 from qal.sql.macros import copy_to_table
-from qal.sql.xml import SQLXML
+
 
 
 Test_Script_Dir = os.path.dirname(__file__)
@@ -87,10 +87,6 @@ class ClassSQLMetaJSONTest(unittest.TestCase):
         # when implementation is done...
 
 
-
-
-        # Test XML-to-Structure with a create table verb and back to XML. Should generate an identical file.
-
     def validate_json_against_sql_schema(self, _dict):
         _f = open(os.path.join(Test_Resource_Dir, "../../../schema/", "sql.json"), "r")
         _schema = json.loads(_f.read())
@@ -127,7 +123,7 @@ class ClassSQLMetaJSONTest(unittest.TestCase):
             DictDiffer.pretty_print_diff(_changes)
             self.assertTrue(False)
 
-    # Test XML-to-Structure with a create table verb and back to XML. Should generate an identical file.
+
     def test_3_select(self):
         _meta_dict = SQLJSON()
         # _meta_dict.debuglevel = 4
@@ -156,11 +152,6 @@ class ClassSQLMetaJSONTest(unittest.TestCase):
             DictDiffer.pretty_print_diff(_changes)
             self.assertTrue(False)
 
-    #        if _str_xml_in != _str_xml_out:
-    #            print(diff_strings(_str_xml_in, _str_xml_out))
-    #        else:
-    #            print("Identical!")
-    #        sql_for_all_databases(param)
 
     def test_4_insert(self):
 
@@ -249,7 +240,7 @@ class ClassSQLMetaJSONTest(unittest.TestCase):
             self.assertTrue(True)
         else:
             DictDiffer.pretty_print_diff(_changes)
-            self.assertTrue(False, "test_6_insert_matrix_csv: The generated XML file differs.")
+            self.assertTrue(False, "test_6_insert_matrix_csv: The generated JSON file differs.")
 
 
     def test_7_delete(self):

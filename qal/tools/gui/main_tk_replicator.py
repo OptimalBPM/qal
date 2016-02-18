@@ -10,7 +10,7 @@ from tkinter import Tk, ttk, filedialog, SUNKEN, StringVar, Button, BooleanVar, 
 from tkinter.messagebox import askquestion, askokcancel, OK
 
 from urllib.parse import unquote
-from lxml import etree
+
 from tkinter.constants import E, W, N, S, LEFT, X, BOTTOM, TOP, Y, BOTH, RIGHT, END
 from qal.common.strings import bool_to_binary_int, binary_int_to_bool
 from qal.dataset.custom import DATASET_LOGLEVEL_DETAIL
@@ -33,10 +33,6 @@ from qal.dataset.spreadsheet import SpreadsheetDataset
 from qal.transformation.transform import perform_transformations
 
 
-def add_xml_subitem(_parent, _nodename, _nodetext):
-    _curr_item = etree.SubElement(_parent, _nodename)
-    _curr_item.text = str(_nodetext)
-    return _curr_item
 
 
 class ReplicatorMain(VerticalScrolledFrame):
@@ -82,7 +78,7 @@ class ReplicatorMain(VerticalScrolledFrame):
         if _filename is not None and _merge is not None:
             # _merge._load_datasets()
             self._merge_to_gui()
-            # self.load_xml(definitions)
+
 
         self.parent.columnconfigure(0, weight=1)
         self.parent.rowconfigure(0, weight=1)
@@ -159,13 +155,9 @@ class ReplicatorMain(VerticalScrolledFrame):
         self.fr_rw = BPMFrame(self.fr_top_left)
         self.fr_rw.pack(side=TOP, fill=X)
 
-        self.btn_Load = ttk.Button(self.fr_rw, text="Load", command=self.on_load)
-        self.btn_Load.pack(side=LEFT)
-        self.btn_Load_json_json = ttk.Button(self.fr_rw, text="Load(json)", command=self.on_load_json)
+        self.btn_Load_json_json = ttk.Button(self.fr_rw, text="Load", command=self.on_load_json)
         self.btn_Load_json_json.pack(side=LEFT)
-        self.btn_Save = ttk.Button(self.fr_rw, text="Save", command=self.on_save)
-        self.btn_Save.pack(side=LEFT)
-        self.btn_Save_json = ttk.Button(self.fr_rw, text="Save(json)", command=self.on_save_json)
+        self.btn_Save_json = ttk.Button(self.fr_rw, text="Save", command=self.on_save_json)
         self.btn_Save_json.pack(side=LEFT)
         self.fr_subnet_sql = BPMFrame(self.fr_rw)
         self.l_ip = ttk.Label(self.fr_subnet_sql, text="IP(for subnet scan):")
@@ -362,27 +354,8 @@ class ReplicatorMain(VerticalScrolledFrame):
         self.merge.update = binary_int_to_bool(self.merge_update.get())
         self.merge.post_execute_sql = self.post_execute_sql.get()
 
-    def load_xml(self, _filename):
-        """Load an XML into the merge object, and populate the GUI"""
-        _tree = etree.ElementTree()
-        self.filename = _filename
-        _tree.parse(_filename)
-        _root = _tree.getroot()
-        self.notify_task('Loading transformation..', 0)
-        self.merge = Merge(_xml_node=_root)
-        try:
-            self.merge._load_datasets()
-        except Exception as e:
-            self.notify_messagebox("Error loading data", str(e))
-            # Supress the following errors. There is no real errors that matters.
-            self.suppress_errors = True
-        self._merge_to_gui()
-        self.suppress_errors = None
-        self.notify_task('Loading transformation..done', 100)
-        self.resize()
-
     def load_json(self, _filename):
-        """Load an XML into the merge object, and populate the GUI"""
+        """Load an JSON into the merge object, and populate the GUI"""
         with open(_filename, "r") as _f:
             _json = json.load(_f)
 
@@ -402,29 +375,9 @@ class ReplicatorMain(VerticalScrolledFrame):
         self.resize()
 
 
-
-    def on_save(self, *args):
-        """Triggered when save-button is clicked.
-        Displays a save dialog, fetches GUI data into merge, and saves as XML into the selected file."""
-        self.notify_task('Saving..', 0)
-        _filename = filedialog.asksaveasfilename(defaultextension=".xml",
-                                                 filetypes=[('XML files', '.xml'), ('all files', '.*')],
-                                                 title="Choose location")
-        if _filename:
-            self._gui_to_merge()
-            self.notify_task('Saving(Generating XML)..', 0)
-            _xml_node = self.merge.as_xml_node()
-            self.notify_task('Saving(Writing file)..', 50)
-            _tree = etree.ElementTree()
-            _tree._setroot(_xml_node)
-            _tree.write(_filename, encoding="UTF-8", xml_declaration=True, pretty_print=True)
-            self.notify_task('Saving..done.', 100)
-        else:
-            self.notify_task('Saving cancelled.', 0)
-
     def on_save_json(self, *args):
         """Triggered when save-button is clicked.
-        Displays a save dialog, fetches GUI data into merge, and saves as XML into the selected file."""
+        Displays a save dialog, fetches GUI data into merge, and saves as JSON into the selected file."""
         self.notify_task('Saving..', 0)
         _filename = filedialog.asksaveasfilename(initialfile= self.filename, defaultextension=".json",
                                                  filetypes=[('JSON files', '.json'), ('all files', '.*')],
@@ -441,19 +394,6 @@ class ReplicatorMain(VerticalScrolledFrame):
         else:
             self.notify_task('Saving cancelled.', 0)
 
-    def on_load(self, *args):
-        """Triggered when load-button is clicked.
-        Displays a load dialog, clears the GUI, populates the merge and uppdates the GUI"""
-        _filename = filedialog.askopenfilename(defaultextension=".xml",
-                                               filetypes=[('XML files', '.xml'), ('all files', '.*')],
-                                               title="Choose file")
-        if _filename:
-            self.g_transformations.clear()
-            self.g_mappings.clear()
-            self.clear_preview()
-            self.curr_mapping_frame = None
-            self._row_index = 0
-            self.load_xml(_filename)
 
     def on_load_json(self, *args):
         """Triggered when load-button is clicked.

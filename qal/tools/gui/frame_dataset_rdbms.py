@@ -19,18 +19,12 @@ from qal.sql.types import data_types
 from qal.common.discover import discover_database_servers
 from qal.sql.meta_queries import MetaQueries
 
-from lxml import etree
 
 from qal.common.strings import empty_when_none
 
 
 discovered_servers = []
 
-
-def add_xml_subitem(_parent, _nodename, _nodetext):
-    _curr_item = etree.SubElement(_parent, _nodename)
-    _curr_item.text = str(_nodetext)
-    return _curr_item
 
 
 class FrameRDBMSDataset(FrameCustomDataset):

@@ -10,34 +10,13 @@ Created on Nov 3, 2013
 import re
 from datetime import date, datetime
 
-from lxml import etree
-
 from qal.common.json import set_dict_if_set, set_property_if_in_dict
-
-from qal.common.strings import empty_when_none
-from qal.common.xml_utils import xml_isnone
-
 
 def perform_transformations(_input, _transformations):
     for _curr_transformation in _transformations:
         _input = _curr_transformation.transform(_input)
     return _input
 
-
-def make_transformation_array_from_xml_node(_xml_node, _substitution=None):
-    _result = []
-    for _curr_node in _xml_node:
-        if _curr_node.tag.lower() == 'trim':
-            _result.append(Trim(_xml_node=_curr_node, _substitution=_substitution))
-        elif _curr_node.tag.lower() == 'ifempty':
-            _result.append(IfEmpty(_xml_node=_curr_node, _substitution=_substitution))
-        elif _curr_node.tag.lower() == 'cast':
-            _result.append(Cast(_xml_node=_curr_node, _substitution=_substitution))
-        elif _curr_node.tag.lower() == 'replace':
-            _result.append(Replace(_xml_node=_curr_node, _substitution=_substitution))
-        elif _curr_node.tag.lower() == 'replace_regex':
-            _result.append(ReplaceRegex(_xml_node=_curr_node, _substitution=_substitution))
-    return _result
 
 def make_transformation_array_from_json(_json, _substitution=None):
     _result = []
@@ -55,12 +34,6 @@ def make_transformation_array_from_json(_json, _substitution=None):
     return _result
 
 
-def make_transformations_xml_node(_transformations):
-    _xml_node = etree.Element("transformations")
-    for _curr_transformation in _transformations:
-        _xml_node.append(_curr_transformation.as_xml_node())
-
-    return _xml_node
 
 def make_transformation_array_from_json(_json, _substitution=None):
     _result = []
@@ -99,15 +72,13 @@ class CustomTransformation(object):
     substitution = None
     """An optional instance of the substitution class. Usually shared by several transformations."""
 
-    def __init__(self, _xml_node=None, _json=None, _substitution=None):
+    def __init__(self, _json=None, _substitution=None):
         """
         Constructor
         """
         if _substitution is not None:
             self.substitution = _substitution
 
-        if _xml_node is not None:
-            self.load_from_xml_node(_xml_node)
 
         if _json is not None:
             self.load_from_json(_json)
@@ -116,16 +87,6 @@ class CustomTransformation(object):
         if self.on_done:
             self.on_done(_value, _error)
         return _value
-
-    def init_base_to_node(self, _name):
-        _xml_node = etree.Element(_name)
-        _xml_node.set("order", empty_when_none(self.order))
-        return _xml_node
-
-    # noinspection PyPep8
-    def as_xml_node(self):
-        raise Exception(
-            "CustomTransformation.as_xml_node : Should not be called. Not implemented in base class, use init_base_to_node().")
 
     def init_base_dict(self, _name):
         _result = {}
@@ -138,11 +99,6 @@ class CustomTransformation(object):
 
         raise Exception(
             "CustomTransformation.as_json : Should not be called. Not implemented in base class, use init_base_to_node().")
-    def load_from_xml_node(self, _xml_node):
-        if _xml_node is not None:
-            self.order = _xml_node.get("order")
-        else:
-            raise Exception("CustomTransformation.load_from_xml_node : Base class need a destination node.")
 
     def load_from_json(self, _json):
         if _json is not None:
@@ -172,16 +128,6 @@ class Trim(CustomTransformation):
     """
     value = None
 
-    def load_from_xml_node(self, _xml_node):
-        super(Trim, self).load_from_xml_node(_xml_node)
-        self.value = _xml_node.text
-
-    def as_xml_node(self):
-        _xml_node = self.init_base_to_node("trim")
-        _xml_node.text = self.value
-
-        return _xml_node
-
     def load_from_json(self, _json):
         super(Trim, self).load_from_json(_json)
         set_property_if_in_dict(self, "value", _json)
@@ -207,15 +153,6 @@ class IfEmpty(CustomTransformation):
     """IfEmpty returns a specified value if the input value is NULL."""
     value = None
 
-    def load_from_xml_node(self, _xml_node):
-        super(IfEmpty, self).load_from_xml_node(_xml_node)
-        self.value = _xml_node.text
-
-    def as_xml_node(self):
-        _xml_node = self.init_base_to_node("ifempty")
-        _xml_node.text = self.value
-
-        return _xml_node
 
     def load_from_json(self, _json):
         super(IfEmpty, self).load_from_json(_json)
@@ -250,17 +187,6 @@ class Cast(CustomTransformation):
     format_string = None
     """A format string where applicable"""
 
-    def load_from_xml_node(self, _xml_node):
-        super(Cast, self).load_from_xml_node(_xml_node)
-        self.dest_type = xml_isnone(_xml_node.find("dest_type"))
-        self.format_string = xml_isnone(_xml_node.find("format_string"))
-
-    def as_xml_node(self):
-        _xml_node = self.init_base_to_node("cast")
-        etree.SubElement(_xml_node, "dest_type").text = self.dest_type
-        etree.SubElement(_xml_node, "format_string").text = self.format_string
-
-        return _xml_node
 
     def load_from_json(self, _json):
         super(Cast, self).load_from_json(_json)
@@ -322,20 +248,6 @@ class Replace(CustomTransformation):
     max = None
     """The max number of times to replace"""
 
-    def load_from_xml_node(self, _xml_node):
-        super(Replace, self).load_from_xml_node(_xml_node)
-        self.old = xml_isnone(_xml_node.find("old"))
-        self.new = xml_isnone(_xml_node.find("new"))
-        self.max = xml_isnone(_xml_node.find("max"))
-
-    def as_xml_node(self):
-        _xml_node = self.init_base_to_node("replace")
-        etree.SubElement(_xml_node, "old").text = self.old
-        etree.SubElement(_xml_node, "new").text = self.new
-        etree.SubElement(_xml_node, "max").text = self.max
-
-        return _xml_node
-
     def load_from_json(self, _json):
         super(Replace, self).load_from_json(_json)
         set_property_if_in_dict(self, "old",_json)
@@ -390,21 +302,6 @@ class ReplaceRegex(CustomTransformation):
     """The max number of times to replace"""
     compiled_regex = None
     """The compiled regular expression"""
-
-    def load_from_xml_node(self, _xml_node):
-        super(ReplaceRegex, self).load_from_xml_node(_xml_node)
-
-        self.pattern = xml_isnone(_xml_node.find("pattern"))
-        self.new = xml_isnone(_xml_node.find("new"))
-        self.max = xml_isnone(_xml_node.find("max"))
-
-    def as_xml_node(self):
-        _xml_node = self.init_base_to_node("replace_regex")
-        etree.SubElement(_xml_node, "pattern").text = self.pattern
-        etree.SubElement(_xml_node, "new").text = self.new
-        etree.SubElement(_xml_node, "max").text = self.max
-
-        return _xml_node
 
     def load_from_json(self, _json):
         super(ReplaceRegex, self).load_from_json(_json)

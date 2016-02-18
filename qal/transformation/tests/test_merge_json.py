@@ -9,7 +9,6 @@ from shutil import copyfile
 import datetime
 import os
 
-from lxml import etree
 from qal.common.diff import DictDiffer
 from qal.schema.handler import check_against_qal_schema
 
@@ -88,7 +87,6 @@ class MergeTest(unittest.TestCase):
         print("Result:\n" + pretty_list(_result[0]))
         print("Log:\n" + pretty_list(_merge.destination._log))
 
-        # _merge.write_result('resources/csv_out.xml')
         self.assertEqual(_result[0], c_file_result, "Merge result differs")
 
     def test_2_Merge_tables(self):

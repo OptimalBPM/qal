@@ -20,8 +20,7 @@ __version__ = '0.9'
 __release__ = '0.9.0'
 __copyright__ = '2010-2014, Nicklas Boerjesson'
 
-
-from lxml import etree
+import json
 from qal.transformation.merge import Merge
 
 import sys, getopt
@@ -38,7 +37,7 @@ Merge data in using a definition file.
 This stand-alone tool facilitates data replication and merging with some basic transformation features. 
 It uses a definition file and an SQL compliant database for the Transformation.
 
-    -d, --definitionfile    Provide the path to an XML-based definition file to describe the Transformation 
+    -d, --definitionfile    Provide the path to an JSON definition file to describe the Transformation
     -e,                     Initialize editor
     -l, --log_level         Log level
     
@@ -65,7 +64,7 @@ def main():
     try:
         _opts = None
         _args = None
-        _opts, _args = getopt.getopt(sys.argv[1:],"ed:l:",["help","version","definitionfile=*.xml", "log_level="])
+        _opts, _args = getopt.getopt(sys.argv[1:],"ed:l:",["help","version","definitionfile=*.json", "log_level="])
     except getopt.GetoptError as err:
         print (str(err)+ "\n" +_help_msg + "\n Arguments: " + str(_args))
         sys.exit(2)
@@ -91,8 +90,8 @@ def main():
         if _definitionfile:
             """Load merge"""
             print(_definitionfile)
-            _merge_xml = etree.parse(_definitionfile)
-            _merge = Merge(_xml_node = _merge_xml)
+            with open(_definitionfile, "r") as f:
+                _merge = Merge(_json= json.load(f))
         else:
             """Create empty"""
             _merge = Merge()

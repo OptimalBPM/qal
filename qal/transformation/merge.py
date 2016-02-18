@@ -6,7 +6,6 @@ Created on Nov 3, 2013
 
 from os.path import exists
 
-from lxml import etree
 from qal.common.json import set_dict_if_set, set_property_if_in_dict
 
 from qal.transformation.mapping import Mapping
@@ -14,7 +13,6 @@ from qal.common.resources import Resources, Resource
 from qal.common.strings import string_to_bool, make_path_absolute
 from qal.transformation.transform import perform_transformations, IfEmpty, Replace
 from qal.dataset.factory import dataset_from_resource
-from qal.common.xml_utils import xml_isnone
 from qal.dataset.rdbms import RDBMSDataset
 from qal.sql.meta_queries import MetaQueries
 
@@ -45,79 +43,16 @@ class Merge(object):
     update = None
     """If rows that are different in the source should be updated in the destination"""
 
-    def __init__(self, _xml_node=None, _json=None, _base_path = None):
+    def __init__(self, _json=None, _base_path = None):
         """
         Constructor
         """
         self.mappings = []
         self.key_fields = []
-        if _xml_node is not None:
-            self.load_from_xml_node(_xml_node)
 
         if _json is not None:
             self.load_from_json(_json, _base_path)
 
-    def _field_mappings_as_xml_node(self):
-        _xml_node = etree.Element("field_mappings")
-        for _curr_mapping in self.mappings:
-            _xml_node.append(_curr_mapping.as_xml_node())
-
-        return _xml_node
-
-    def _mappings_as_xml_node(self):
-        _xml_node = etree.Element("mappings")
-        _xml_node.append(self._field_mappings_as_xml_node())
-        return _xml_node
-
-    def _settings_as_xml_node(self):
-        _xml_node = etree.Element("settings")
-        etree.SubElement(_xml_node, "insert").text = str(self.insert)
-        etree.SubElement(_xml_node, "update").text = str(self.update)
-        etree.SubElement(_xml_node, "delete").text = str(self.delete)
-        etree.SubElement(_xml_node, "post_execute_sql").text = self.post_execute_sql
-        return _xml_node
-
-    def as_xml_node(self):
-        _xml_node = etree.Element('merge')
-        _xml_node.append(self._mappings_as_xml_node())
-        _xml_node.append(self._settings_as_xml_node())
-
-        if self.resources is None:
-            self.resources = Resources()
-
-        if self.source is not None:
-            try:
-                _source_resource = self.resources["00000000-0000-0000-0000-000000000000"]
-            except Exception:
-                _source_resource = None
-            if _source_resource is None:
-                _source_resource = Resource()
-                _source_resource.uuid = "00000000-0000-0000-0000-000000000000"
-                _source_resource.caption = "source"
-                self.resources.local_resources["00000000-0000-0000-0000-000000000000"] = _source_resource
-            self.source.write_resource_settings(_source_resource)
-        if self.destination is not None:
-            try:
-                _dest_resource = self.resources["00000000-0000-0000-0000-000000000001"]
-            except Exception:
-                _dest_resource = None
-            if _dest_resource is None:
-                _dest_resource = Resource()
-                _dest_resource.uuid = "00000000-0000-0000-0000-000000000001"
-                _dest_resource.caption = "destination"
-                self.resources.local_resources["00000000-0000-0000-0000-000000000001"] = _dest_resource
-
-            self.destination.write_resource_settings(_dest_resource)
-
-        """ TODO: Handle remotely defined resources properly. This way, they are included in the XML, which perhaps isn't
-            right. Perhaps get_resource should return a tuple with a source parameter.
-        """
-
-        if self.source is not None or self.destination is not None:
-            # If either aren't set, anything in resources are likely to be residuals from earlier.
-            # However, there could be old resources left in one of them.
-            _xml_node.append(self.resources.as_xml_node())
-        return _xml_node
 
     def as_json(self):
 
@@ -173,32 +108,6 @@ class Merge(object):
 
         return _result
 
-    def load_field_mappings_from_xml_node(self, _xml_node):
-        if _xml_node is not None:
-            _mapping_idx = 0
-            for _curr_mapping in _xml_node.findall("field_mapping"):
-                _new_mapping = Mapping(_xml_node=_curr_mapping)
-                self.mappings.append(_new_mapping)
-                if _new_mapping.is_key:
-                    self.key_fields.append(_mapping_idx)
-                _mapping_idx += 1
-        else:
-            raise Exception("Merge.load_field_mappings_from_xml_node: Missing 'field_mappings'-node.")
-
-    def load_mappings_from_xml_node(self, _xml_node):
-        if _xml_node is not None:
-            self.load_field_mappings_from_xml_node(_xml_node.find("field_mappings"))
-        else:
-            raise Exception("Merge.load_field_mappings_from_xml_node: Missing 'mappings'-node.")
-
-    def load_settings_from_xml_node(self, _xml_node):
-        if _xml_node is not None:
-            self.insert = string_to_bool(xml_isnone(_xml_node.find("insert")))
-            self.update = string_to_bool(xml_isnone(_xml_node.find("update")))
-            self.delete = string_to_bool(xml_isnone(_xml_node.find("delete")))
-            self.post_execute_sql = xml_isnone(_xml_node.find("post_execute_sql"))
-        else:
-            raise Exception("Merge.load_settings_from_xml_node: Missing 'settings'-node.")
 
     def load_from_json(self, _json, _base_path = None):
 
@@ -219,18 +128,6 @@ class Merge(object):
             self.resources = Resources(_resources_list=_json["resources"], _base_path=_base_path)
             self.source = dataset_from_resource(self.resources["00000000-0000-0000-0000-000000000000"])
             self.destination = dataset_from_resource(self.resources["00000000-0000-0000-0000-000000000001"])
-
-    def load_from_xml_node(self, _xml_node, _base_path = None):
-
-        if _xml_node is not None:
-            self.load_mappings_from_xml_node(_xml_node.find("mappings"))
-            self.load_settings_from_xml_node(_xml_node.find("settings"))
-            self.resources = Resources(_resources_node=_xml_node.find("resources"), _base_path=_base_path)
-            self.source = dataset_from_resource(self.resources["00000000-0000-0000-0000-000000000000"])
-            self.destination = dataset_from_resource(self.resources["00000000-0000-0000-0000-000000000001"])
-
-        else:
-            raise Exception("Merge.load_from_xml_node: \"None\" is not a valid Merge node.")
 
 
 

@@ -3,7 +3,7 @@ Created on Oct 3, 2010
 
 @author: Nicklas Boerjesson
 @note: This module contains functionality to retrieve metadata about databases and their objects.
-@todo: These SQL:s could be moved into an XML file(VerbCustom).
+#TODO: These SQL:s could be moved into an JSON file(VerbCustom).
 The gain is yet somewhat marginal. They should not move in to the database due to versioning.  
 """
 

@@ -9,7 +9,7 @@ import unittest
 import datetime
 import os
 
-from lxml import etree
+
 
 from qal.common.listhelper import pretty_list
 from qal.dataset.rdbms import RDBMSDataset
@@ -20,10 +20,6 @@ from qal.sql.macros import copy_to_table
 
 Test_Script_Dir = os.path.dirname(__file__)
 Test_Resource_Dir = Test_Script_Dir + '/resources'
-
-
-def load_xml(_filename):
-    return etree.parse(_filename)
 
 
 class Test(unittest.TestCase):

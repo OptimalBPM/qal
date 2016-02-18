@@ -1,3 +1,8 @@
+"""
+This modules holds CLI tests for optimal_sync.
+There are not many as the functionality is covered in the libraries anyway.
+"""
+
 from io import StringIO, UnsupportedOperation
 import os
 
@@ -32,8 +37,7 @@ class MyTestCase(unittest.TestCase):
         print("err : " + str(_tmpstderr.getvalue()))
         print("Done")
         self.assertEqual(True, True)
-    #def test_merge_two_xml(self):
-    #    self.assertEqual(True, False)
+
 
 
 if __name__ == '__main__':

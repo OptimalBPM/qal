@@ -3,13 +3,12 @@ Created on Oct 20, 2014
 
 @author: Nicklas Boerjesson
 """
-from lxml import etree
+
 from qal.transformation.substitution import Substitution
 
 from qal.common.strings import string_to_bool, empty_when_none
-from qal.transformation.transform import make_transformation_array_from_xml_node, make_transformations_xml_node, \
-    make_transformations_json, make_transformation_array_from_json
-from qal.common.xml_utils import xml_isnone
+from qal.transformation.transform import make_transformations_json, make_transformation_array_from_json
+
 
 
 class Mapping(object):
@@ -24,7 +23,7 @@ class Mapping(object):
     substitution = None
     """An instance of the substitution class. Kept for maintaining things lite incrementors and similar."""
 
-    def __init__(self, _xml_node=None, _substitution=None, _json=None):
+    def __init__(self, _substitution=None, _json=None):
         """
         Constructor
         """
@@ -35,20 +34,9 @@ class Mapping(object):
         else:
             self.substitution = _substitution
 
-        if _xml_node is not None:
-            self.load_from_xml_node(_xml_node)
-
         if _json is not None:
             self.load_from_json(_json)
 
-    def load_from_xml_node(self, _xml_node):
-        if _xml_node is not None:
-            self.is_key = string_to_bool(xml_isnone(_xml_node.find("is_key")))
-            self.src_reference = xml_isnone(_xml_node.find("src_reference"))
-            self.src_datatype = xml_isnone(_xml_node.find("src_datatype"))
-            self.dest_reference = xml_isnone(_xml_node.find("dest_reference"))
-            self.transformations = make_transformation_array_from_xml_node(_xml_node.find("transformations"),
-                                                                           self.substitution)
     def load_from_json(self, _json):
         try:
             self.is_key = _json["is_key"]
@@ -60,17 +48,6 @@ class Mapping(object):
             raise Exception("Mapping.load_from_json error loading configuration: Missing key: " + str(e) + ", data\n" +
                             str(_json))
 
-
-    def as_xml_node(self):
-
-        _xml_node = etree.Element("field_mapping")
-        etree.SubElement(_xml_node, "is_key").text = str(self.is_key)
-        etree.SubElement(_xml_node, "src_reference").text = empty_when_none(self.src_reference)
-        etree.SubElement(_xml_node, "src_datatype").text = empty_when_none(self.src_datatype)
-        _xml_node.append(make_transformations_xml_node(self.transformations))
-        etree.SubElement(_xml_node, "dest_reference").text = empty_when_none(self.dest_reference)
-
-        return _xml_node
 
     def as_json(self):
         return {
