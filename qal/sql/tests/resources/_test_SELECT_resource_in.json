@@ -68,6 +68,13 @@
       "filename": "_test_SELECT_resource_csv_in.txt",
       "csv_dialect": "csv",
       "has_header": "True"
+    },
+    {
+      "type": "files",
+      "name": "a csv file",
+      "glob_path": "_test_SELECT_resource_csv_in.txt",
+      "include_data": true,
+      "uuid": "42446be5-12a0-4781-aef6-04d52e6d47d6"
     }
   ],
   "statement": {
@@ -201,6 +208,20 @@
               }
             ]
           }
+        },
+        {
+          "ParameterField": {
+            "alias": "",
+            "expression": [
+              {
+                "ParameterIdentifier": {
+                  "identifier": "data",
+                  "operator": "",
+                  "prefix": "FILES"
+                }
+              }
+            ]
+          }
         }
       ],
       "sources": [
@@ -323,6 +344,22 @@
                 "ParameterDataset": {
                   "data_source": "XpathDataset",
                   "resource_uuid": "0B8B71C1-D3A8-4F16-B8E1-9C73E196254C"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "ParameterSource": {
+            "alias": "FILES",
+            "join_type": "CROSS",
+            "resource_uuid": "",
+            "conditions": [],
+            "expression": [
+              {
+                "ParameterDataset": {
+                  "data_source": "FilesDataset",
+                  "resource_uuid": "42446be5-12a0-4781-aef6-04d52e6d47d6"
                 }
               }
             ]

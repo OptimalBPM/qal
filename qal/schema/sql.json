@@ -997,8 +997,8 @@
         },
         "csv_dialects": {
             "enum": [
-                "unix",
                 "excel",
+                "unix",
                 "excel-tab"
             ],
             "type": "string"
@@ -1037,6 +1037,13 @@
                     "properties": {
                         "RDBMSDataset": {
                             "$ref": "#/definitions/RDBMSDataset"
+                        }
+                    }
+                },
+                {
+                    "properties": {
+                        "FilesDataset": {
+                            "$ref": "#/definitions/FilesDataset"
                         }
                     }
                 }

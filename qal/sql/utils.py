@@ -224,7 +224,8 @@ def db_specific_datatype(value, db_type):
         result = unenumerate(['DATETIME', 'timestamp', 'DATE', 'TIMESTAMP', 'DATETIME', 'TEXT'], db_type)
     elif value.lower() == "boolean":
         result = unenumerate(['BOOL', 'boolean', 'NUMERIC(1)', 'DECIMAL(1)', 'BIT', 'INTEGER'], db_type)
-
+    elif value.lower() == "blob":
+        result = unenumerate(['BLOB', 'bytea', 'BLOB', 'BLOB', 'VARBINARY(MAX)'], db_type)
     else:
         result = value
     return result
@@ -267,7 +268,7 @@ def datatype_to_parameter(_db_type, _datatype):
     if _db_type == DB_MYSQL:
         return "%s"
     elif (_datatype[:6].lower() == "string" or _datatype[:7].lower() == "varchar" or _datatype in ["timestamp",
-                                                                                                   "datetime"]):
+                                                                                                   "datetime", "blob"]):
         return "%s"
     elif _datatype in ["float", "integer"]:
         return "%d"

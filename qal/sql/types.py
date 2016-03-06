@@ -36,14 +36,13 @@ def quoting_types():
 
 def data_types():
     """Returns a list of the supported data types"""
-    # @note: string(3000) is added to give some leeway for DB2s default table page size of 4000. 
-    # TODO: Investigate BLOB support
-    return ["integer", "string", "string(255)", "string(3000)", "float", "serial", "timestamp", "boolean"]
+    # @note: string(3000) is added to give some leeway for DB2s default table page size of 4000.
+    return ["integer", "string", "string(255)", "string(3000)", "float", "serial", "timestamp", "boolean", "blob"]
 
 
 def data_source_types():
     """Returns a list of the supported data source types"""
-    return ["FlatfileDataset", "XpathDataset", "MatrixDataset", "SpreadsheetDataset", "RDBMSDataset"]
+    return ["FlatfileDataset", "XpathDataset", "MatrixDataset", "SpreadsheetDataset", "RDBMSDataset", "FilesDataset"]
 
 
 def boolean():

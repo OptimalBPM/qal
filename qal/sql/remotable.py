@@ -82,6 +82,16 @@ class ParameterRemotable(object):
             _field_names = self._data_source.field_names
             _field_types = ["string"] * len(_field_names)
 
+        elif self._resource.type.upper() in ["FILES"]:
+
+            from qal.dataset.files import FilesDataset
+
+            self._data_source = FilesDataset(_resource=self._resource)
+
+            _data = self._data_source.load()
+            _field_names = self._data_source.field_names
+            _field_types = self._data_source.field_types
+
         elif self._resource.type.upper() in ["XPATH"]:
             from qal.dataset.xpath import XpathDataset
 

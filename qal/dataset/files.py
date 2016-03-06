@@ -8,6 +8,8 @@ from datetime import date
 
 import os
 
+import time
+
 from qal.common.meta import readattr
 from qal.dataset.custom import CustomDataset
 from glob import glob
@@ -31,6 +33,7 @@ class FilesDataset(CustomDataset):
         """
         super(FilesDataset, self).__init__()
         self.field_names = ["directory", "filename", "filesize", "modified", "data"]
+        self.field_types = ["string", "string", "integer", "string", "blob"]
         if _resource is not None:
             self.read_resource_settings(_resource)
         else:
@@ -55,11 +58,13 @@ class FilesDataset(CustomDataset):
             if self.include_data:
                 with open(_curr_path, mode="rb") as f:
                     # TODO: Should this try to load text files as UTF-8 encoded files? File type map?
-                    _new_row = [os.path.dirname(_curr_path), os.path.split(_curr_path)[1], _size, _mtime, f.read()];
+                    _new_row = [os.path.dirname(_curr_path), os.path.split(_curr_path)[1], _size, time.ctime(_mtime), f.read()];
             else:
-                _new_row = [os.path.dirname(_curr_path), os.path.split(_curr_path)[1], _size, _mtime, None];
+                _new_row = [os.path.dirname(_curr_path), os.path.split(_curr_path)[1], _size, time.ctime(_mtime), None];
 
             self.data_table.append(_new_row)
+
+        return self.data_table
 
     def save(self):
         """If load data is set Save the data in the dataset."""
