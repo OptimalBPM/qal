@@ -468,7 +468,10 @@ class VerbSelect(ParameterExpressionItem, ParameterRemotable):
                     result += " JOIN " + none_as_sql(item.expression, _db_type,
                                                      _error="VerbSelect: Joins must contain a "
                                                             "statement or a reference to a table.")
-                    result += " AS " + error_on_blank(item.alias, "VerbSelect: Joins must have aliases.")
+                    if _db_type != DB_ORACLE:
+                        result += " AS " + error_on_blank(item.alias, "VerbSelect: Joins must have aliases.")
+                    else:
+                        result += " " + error_on_blank(item.alias, "VerbSelect: Joins must have aliases.")
                     if item.join_type != "CROSS":
                         result += " ON " + none_as_sql(item.conditions, _db_type,
                                                        _error="VerbSelect: Joins must have conditions.")
@@ -485,10 +488,12 @@ class VerbSelect(ParameterExpressionItem, ParameterRemotable):
                 _num_conds = len(self.sources[0].conditions)
                 if _num_conds > 0:
                     result += " AND "
-                else:
-                    result += " WHERE "
-                # This is a *very* ugly solution, but the only way I could find out.
+
+                # Add a condition mimicking a top limit
                 if self.top_limit > 0:
+                    # Add a where if there are no other conditions
+                    if _num_conds == 0:
+                        result += " WHERE "
                     result += "(ROWNUM < " + str(int(self.top_limit) + 1) + ")"
 
         if len(self.order_by) > 0:

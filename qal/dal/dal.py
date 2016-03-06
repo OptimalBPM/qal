@@ -246,20 +246,24 @@ class DatabaseAbstractionLayer(object):
             cur.execute(_sql)
 
     @staticmethod
-    def _make_positioned_params(_input):
+    def _make_positioned_params(_input, _db_type):
 
         _arg_idx = 1
         _output = _input
 
+        if _db_type == DB_POSTGRESQL:
+            _prefix = "$"
+        elif _db_type == DB_ORACLE:
+            _prefix = ":"
         # Simplest possible scan, prepared to handle the types differently.
         for _curr_idx in range(0, len(_input)):
             _chunk = _input[_curr_idx:_curr_idx + 2]
 
             if _chunk == "%s":
-                _output = _output.replace(_chunk, "$" + str(_arg_idx), 1)
+                _output = _output.replace(_chunk, _prefix + str(_arg_idx), 1)
                 _arg_idx += 1
             elif _chunk == "%d":
-                _output = _output.replace(_chunk, "$" + str(_arg_idx), 1)
+                _output = _output.replace(_chunk, _prefix + str(_arg_idx), 1)
                 _arg_idx += 1
 
         return _output
@@ -270,15 +274,22 @@ class DatabaseAbstractionLayer(object):
         if self.db_type == DB_POSTGRESQL:
             # Change parameter type into Postgres positional ones, like  $1, $2 and so on.
             # TODO: Correctly handle other datatypes than string.
-            _sql = self._make_positioned_params(_sql)
+            _sql = self._make_positioned_params(_sql, DB_POSTGRESQL)
 
             _prepared = self.connection.prepare(_sql)
             print(_sql)
             for _row in _values:
                 _prepared(*_row)
-        else:
-            cur = self.connection.cursor()
-            cur.executemany(_sql, _values)
+            return
+
+        elif self.db_type in [DB_SQLSERVER, DB_DB2]:
+            _sql = _sql.replace("%d", "?").replace("%s", "?")
+
+        elif self.db_type in [DB_ORACLE]:
+            _sql = self._make_positioned_params(_sql, DB_ORACLE)
+
+        cur = self.connection.cursor()
+        cur.executemany(_sql, _values)
 
     def query(self, _sql):
         """Execute the SQL statement, get a dataset"""
@@ -305,10 +316,22 @@ class DatabaseAbstractionLayer(object):
 
             _res = cur.fetchall()
 
+
+
         # Untuple. TODO: This might need to be optimised, perhaps by working with the same array. 
         _results = []
         for _row in _res:
             _results.append(list(_row))
+
+        if self.db_type == DB_ORACLE:
+            import cx_Oracle
+            if  cx_Oracle.BLOB in self.field_types:
+                # Loop results and read all blob data
+                for _curr_row_idx, _curr_row in enumerate(_results):
+                    for _curr_col_idx, _curr_col in enumerate(_curr_row):
+                        if isinstance(_curr_col, cx_Oracle.LOB):
+                            _results[_curr_row_idx][_curr_col_idx] = _curr_col.read()
+
 
         return _results
 
