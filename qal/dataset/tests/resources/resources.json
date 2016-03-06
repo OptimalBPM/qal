@@ -113,5 +113,12 @@
       "price",
       "::@id"
     ]
+  },
+  {
+    "type": "files",
+    "name": "some files",
+    "glob_path": "files_data_*",
+    "include_data": true,
+    "uuid": "{42446be5-12a0-4781-aef6-04d52e6d47d6}"
   }
 ]

@@ -3,6 +3,7 @@ Created on Jan 12, 2014
 
 @author: Nicklas Boerjesson
 """
+from qal.dataset.files import FilesDataset
 from qal.dataset.flatfile import FlatfileDataset
 from qal.dataset.xpath import XpathDataset
 from qal.dataset.rdbms import RDBMSDataset
@@ -20,6 +21,8 @@ def dataset_from_resource(_resource):
             _ds = RDBMSDataset(_resource=_resource)
         elif _resource.type.upper() == "SPREADSHEET":
             _ds = SpreadsheetDataset(_resource=_resource)
+        elif _resource.type.upper() == "FILES":
+            _ds = FilesDataset(_resource=_resource)
         else:
             raise Exception("qal.dataset.factory.dataset_from_resource: Unsupported source resource type: " + str(
                 _resource.type.upper()))
