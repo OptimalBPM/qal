@@ -31,7 +31,7 @@ class MatrixDataset(CustomDataset):
 
     def as_sql(self, _db_type):
         """Generate SQL"""
-        # TODO: Review this code, as it is almost copied from the custom class. 
+        # TODO: Review this code, as it is almost copied from the custom class.
         # TODO: Add check here and in custom so that it is impossible to not fill all field_names when used.
         _result = []
         _add_field_names = (len(self.data_table) > 0) and (len(self.field_names) == len(self.data_table[0]))

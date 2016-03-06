@@ -3,6 +3,6 @@ INSERT INTO "Test" ("Column1", "Column2")
 UNION
 SELECT 'Matrix21','Matrix22' FROM sysibm.sysdummy1)
 UNION
-(SELECT CSV11 AS "Column1",CSV12 AS "Column2" FROM sysibm.sysdummy1
+(SELECT 'CSV11' AS "Column1",'CSV12' AS "Column2" FROM sysibm.sysdummy1
 UNION
-SELECT CSV21,CSV22 FROM sysibm.sysdummy1)
+SELECT 'CSV21','CSV22' FROM sysibm.sysdummy1)

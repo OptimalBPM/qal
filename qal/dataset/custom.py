@@ -4,7 +4,7 @@ Created on Sep 14, 2012
 @author: Nicklas Boerjesson
 """
 from urllib.parse import quote
-from datetime import datetime
+from datetime import datetime, date
 
 from qal.dal.types import DB_DB2, DB_ORACLE, DB_POSTGRESQL
 from qal.sql.utils import db_specific_object_reference
@@ -247,22 +247,42 @@ class CustomDataset(object):
         for _row in self.data_table:
             _curr_row = []
             for _col_idx in range(len(_row)):
-
                 _col = _row[_col_idx]
-                if _col.lower() == '':
+                if _col is None:
                     _str_col = 'NULL'
-                if _col.lower() == 'true':
-                    if _db_type == DB_POSTGRESQL:
-                        _str_col = 'TRUE'
+                elif isinstance(_col, str):
+                    if _col.lower() == '':
+                        _str_col = 'NULL'
+                    elif _col.lower() == 'true':
+                        if _db_type == DB_POSTGRESQL:
+                            _str_col = 'TRUE'
+                        else:
+                            _str_col = '\'1\''
+                    elif _col.lower() == 'false':
+                        if _db_type == DB_POSTGRESQL:
+                            _str_col = 'FALSE'
+                        else:
+                            _str_col = '\'0\''
                     else:
-                        _str_col = '\'1\''
-                elif _col.lower() == 'false':
-                    if _db_type == DB_POSTGRESQL:
-                        _str_col = 'FALSE'
-                    else:
-                        _str_col = '\'0\''
+                        _str_col = "'" + str(_col) + "'"
                 else:
-                    _str_col = _col
+                    if isinstance(_col, bool):
+                        if _col is True:
+                            if _db_type == DB_POSTGRESQL:
+                                _str_col = 'TRUE'
+                            else:
+                                _str_col = '\'1\''
+                        elif _col is False:
+                            if _db_type == DB_POSTGRESQL:
+                                _str_col = 'FALSE'
+                            else:
+                                _str_col = '\'0\''
+                    elif (isinstance(_col, int)) or isinstance(_col, float):
+                        _str_col = str(_col)
+                    elif (isinstance(_col, date)) or isinstance(_col, date):
+                        _str_col = "'" + _col.isoformat() + "'"
+                    else:
+                        _str_col = "'" + str(_col) + "'"
 
                 if _add_field_names:
                     _curr_row.append(
