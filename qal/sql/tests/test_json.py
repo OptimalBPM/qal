@@ -302,6 +302,7 @@ class ClassSQLMetaJSONTest(unittest.TestCase):
 
     def test_9_resource(self):
         # TODO: Describe the requirements for the test.
+        # TODO: Works for MySQL, PostgreSQL, SQL Server and Oracle as of 5325765c6fcca6c3208ff4c66376369d31ff9552, check DB2
         
         # Init tables
 
