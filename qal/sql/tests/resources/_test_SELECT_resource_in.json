@@ -61,6 +61,12 @@
       "databasename": "bpmtest"
     },
     {
+      "uuid": "1D62083E-88F7-4442-920D-0B6CC59BA2FA",
+      "db_type": "SQLite",
+      "type": "rdbms",
+      "databasename": ":memory:"
+    },
+    {
       "uuid": "86470370-FF78-48A4-9759-A3BAE4EE22FE",
       "type": "flatfile",
       "delimiter": ",",
@@ -81,7 +87,7 @@
     "VerbSelect": {
       "top_limit": "0",
       "operator": "",
-      "resource_uuid": "1D62083E-88F7-4442-920D-0B6CC59BA2FF",
+      "resource_uuid": "1D62083E-88F7-4442-920D-0B6CC59BA2FA",
       "fields": [
         {
           "ParameterField": {
