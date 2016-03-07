@@ -4,6 +4,7 @@ Created on Sep 30, 2013
 @author: Nicklas Boerjesson
 """
 from qal.dal.dal import DatabaseAbstractionLayer
+from qal.dal.types import DB_SQLITE
 
 
 class ParameterRemotable(object):
@@ -43,8 +44,7 @@ class ParameterRemotable(object):
 
         char_set = string.ascii_lowercase + string.digits
         # Generate
-        _tmp_table_name = '#' + ''.join(random.sample(char_set * 8, 8))
-
+        _tmp_table_name = '#' + ''.join(random.sample(string.ascii_lowercase * 1, 1)) + ''.join(random.sample(char_set * 7, 7))
         from qal.sql.sql import ParameterIdentifier
 
         if self._resource.type.upper() == 'RDBMS':

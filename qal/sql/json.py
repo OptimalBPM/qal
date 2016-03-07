@@ -290,7 +290,7 @@ class SQLJSON(Recurse):
                             _obj.__dict__[_curr_item_key] = _curr_value
                         elif _curr_type[0:5] == 'verb_' or _curr_type[0:10] == 'parameter_':
                             raise Exception(
-                                "_parse_attribute: Strange VERB/PARAMETER happened parsing.. parent: " +
+                                "_parse_attribute: Strange error happened parsing VERB/PARAMETER.. parent: " +
                                 _parent_obj.__class__.__name__ + "Class: " + _attribute_name + " Currtype: " + _curr_type)
 
                         elif len(_curr_type) > 1 and type(_curr_type[1]) == list:

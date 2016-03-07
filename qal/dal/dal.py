@@ -10,7 +10,7 @@
 """
 from qal.common.meta import readattr
 from qal.dal.types import DB_MYSQL, DB_POSTGRESQL, DB_ORACLE, DB_DB2, DB_SQLSERVER, string_to_db_type, db_type_to_string, \
-    DB_SQLLITE
+    DB_SQLITE
 from qal.dal.conversions import parse_description, python_type_to_sql_type
 from qal.common.discover import import_error_to_help
 
@@ -199,12 +199,12 @@ class DatabaseAbstractionLayer(object):
             _connection = cx_Oracle.connect(_connection_string)
             _connection.autocommit = self.autocommit
 
-        elif self.db_type == DB_SQLLITE:
+        elif self.db_type == DB_SQLITE:
 
             try:
                 import sqlite3
             except ImportError as _err:
-                raise Exception("Error importing sqllite3, which is built-in into Python, check your Python "
+                raise Exception("Error importing SQLite3, which is built-in into Python, check your Python "
                                 "installation. Error: " + str(_err))
 
             _connection = sqlite3.connect(self.databasename)
@@ -282,7 +282,7 @@ class DatabaseAbstractionLayer(object):
                 _prepared(*_row)
             return
 
-        elif self.db_type in [DB_SQLSERVER, DB_DB2]:
+        elif self.db_type in [DB_SQLSERVER, DB_DB2, DB_SQLITE]:
             _sql = _sql.replace("%d", "?").replace("%s", "?")
 
         elif self.db_type in [DB_ORACLE]:

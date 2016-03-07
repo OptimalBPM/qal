@@ -18,7 +18,7 @@
 """
 
 from qal.sql.types import DEFAULT_ROWSEP, expression_item_types, tabular_expression_item_types
-from qal.dal.types import DB_POSTGRESQL, DB_MYSQL, DB_ORACLE, DB_DB2, DB_SQLLITE  # , DB_SQLSERVER
+from qal.dal.types import DB_POSTGRESQL, DB_MYSQL, DB_ORACLE, DB_DB2, DB_SQLITE  # , DB_SQLSERVER
 
 from qal.sql.base import ParameterBase, SqlList, ParameterExpressionItem
 from qal.sql.remotable import ParameterRemotable
@@ -417,7 +417,7 @@ class VerbSelect(ParameterExpressionItem, ParameterRemotable):
     def add_limit(self, _db_type):
         """Generate SQL for specified database engine for limits on number of rows (TOP/LIMIT/FETCH FIRST)"""
         if self.top_limit is not None and int(self.top_limit) > 0:
-            if _db_type in [DB_MYSQL, DB_POSTGRESQL, DB_SQLLITE]:
+            if _db_type in [DB_MYSQL, DB_POSTGRESQL, DB_SQLITE]:
                 self._post_sql = "LIMIT " + str(int(self.top_limit))
             elif _db_type in [DB_DB2]:
                 self._post_sql = "FETCH FIRST " + str(int(self.top_limit)) + " ROWS ONLY "
@@ -830,7 +830,7 @@ class VerbCreateTable(ParameterDDL):
         """Generate SQL for specified database engine"""
         self._post_statements = []
         if self.name[0] == "#":
-            if _db_type in [DB_POSTGRESQL, DB_MYSQL]:
+            if _db_type in [DB_POSTGRESQL, DB_MYSQL, DB_SQLITE]:
                 _result = "CREATE TEMPORARY TABLE "
             elif _db_type == [DB_DB2]:
                 _result = "DECLARE GLOBAL TEMPORARY TABLE "

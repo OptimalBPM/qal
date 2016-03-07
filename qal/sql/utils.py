@@ -3,7 +3,7 @@ Created on Oct 2, 2012
 
 @author: Nicklas Boerjesson
 """
-from qal.dal.types import DB_POSTGRESQL, DB_MYSQL, DB_ORACLE, DB_DB2, DB_SQLSERVER, DB_SQLLITE
+from qal.dal.types import DB_POSTGRESQL, DB_MYSQL, DB_ORACLE, DB_DB2, DB_SQLSERVER, DB_SQLITE
 from qal.common.listhelper import unenumerate
 
 # TODO: Property document this module
@@ -131,8 +131,8 @@ def curr_user(_db_type):
         return 'SESSION_USER'
     elif _db_type == DB_SQLSERVER:
         return 'SUSER_SNAME()'
-    elif _db_type == DB_SQLLITE:
-        return '"Not supported by SQLLite"'
+    elif _db_type == DB_SQLITE:
+        return '"Not supported by SQLite"'
 
 def curr_datetime(_db_type):
     """Returns a database-type specific (see dal_types) way of getting the current date time."""
@@ -146,7 +146,7 @@ def curr_datetime(_db_type):
         return 'CURRENT_TIMESTAMP'
     elif _db_type == DB_SQLSERVER:
         return 'GETDATE()'
-    elif _db_type == DB_SQLLITE:
+    elif _db_type == DB_SQLITE:
         return "date('now')"
 
 
@@ -156,7 +156,7 @@ def db_specific_object_reference(_value, _db_type):
 
     if _db_type == DB_MYSQL:
         return "`" + _value + "`"
-    elif _db_type in [DB_POSTGRESQL, DB_SQLLITE]:
+    elif _db_type in [DB_POSTGRESQL, DB_SQLITE]:
         return '"' + _value + '"'
     elif _db_type == DB_ORACLE:
         return '"' + str(_value)[0:30] + '"'
@@ -191,16 +191,16 @@ def db_specific_datatype(value, db_type):
     Oracle is 4000 (limitations confirmed as of dec. 2012).
     """
 
-    # Database order: [DB_MYSQL, DB_POSTGRESQL, DB_ORACLE, DB_DB2, DB_SQLSERVER]
+    # Database order: [DB_MYSQL, DB_POSTGRESQL, DB_ORACLE, DB_DB2, DB_SQLSERVER, DB_SQLITE]
 
     # noinspection PyUnusedLocal
     result = ''
     if value.lower() == "integer":
-        result = unenumerate(['INTEGER', 'integer', 'NUMBER', 'INT', 'int', 'INTEGER'], db_type)
+        result = unenumerate(['INTEGER', 'integer', 'NUMBER', 'INT', 'int', 'INTEGER', 'INTEGER'], db_type)
     elif value[:6].lower() == "string" or value[:7].lower() == "varchar":
         strlength = db_specific_datatype_parse_length(value)
         if strlength.lower() != '':
-            result = unenumerate(['VARCHAR', 'varchar', 'VARCHAR2', 'VARCHAR', 'varchar'], db_type)
+            result = unenumerate(['VARCHAR', 'varchar', 'VARCHAR2', 'VARCHAR', 'varchar', "TEXT"], db_type)
             result += parenthesise(db_specific_datatype_parse_length(value))
         else:
             # @attention: For some reason, DB2 and Oracle doesn't support unspecified column 
@@ -225,7 +225,7 @@ def db_specific_datatype(value, db_type):
     elif value.lower() == "boolean":
         result = unenumerate(['BOOL', 'boolean', 'NUMERIC(1)', 'DECIMAL(1)', 'BIT', 'INTEGER'], db_type)
     elif value.lower() == "blob":
-        result = unenumerate(['BLOB', 'bytea', 'BLOB', 'BLOB', 'VARBINARY(MAX)'], db_type)
+        result = unenumerate(['BLOB', 'bytea', 'BLOB', 'BLOB', 'VARBINARY(MAX)', 'BLOB'], db_type)
     else:
         result = value
     return result

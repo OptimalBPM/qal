@@ -13,7 +13,7 @@ from jsonschema import Draft4Validator, validate
 from qal.common.diff import diff_strings, DictDiffer
 from qal.common.resources import Resources
 from qal.dal.dal import DatabaseAbstractionLayer
-from qal.dal.types import db_types, DB_POSTGRESQL
+from qal.dal.types import db_types, DB_POSTGRESQL, DB_SQLITE
 from qal.schema.handler import check_against_qal_schema
 from qal.sql.json import SQLJSON
 from qal.sql.macros import copy_to_table
@@ -346,7 +346,7 @@ class ClassSQLMetaJSONTest(unittest.TestCase):
         # Compare with all SQL flavours
         #self._compare_sql_files_for_all_db_types(_statement,"_test_SELECT_resource_out", _overwrite = True)
 
-        _sql_out = _statement.as_sql(DB_POSTGRESQL)
+        _sql_out = _statement.as_sql(DB_SQLITE)
         print(_sql_out)
 
         _rows = _statement._dal.query(_sql_out)
