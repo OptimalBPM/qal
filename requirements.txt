@@ -1,0 +1,10 @@
+py-postgresql
+pyodbc
+PyMySQL
+cx_Oracle
+xlrd
+xlwt
+openpyxl
+lxml
+distlib
+jsonschema
