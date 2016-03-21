@@ -1165,7 +1165,8 @@
             "enum": [
                 "XML",
                 "XHTML",
-                "HTML"
+                "HTML",
+                "JSON"
             ],
             "type": "string"
         }

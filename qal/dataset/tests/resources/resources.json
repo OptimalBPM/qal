@@ -120,5 +120,28 @@
     "glob_path": "files_data_*",
     "include_data": true,
     "uuid": "{42446be5-12a0-4781-aef6-04d52e6d47d6}"
+  },
+  {
+    "uuid": "{4a84a17f-4dbf-42fb-b42f-ad0812ed065a}",
+    "xpath_data_format": "JSON",
+    "type": "xpath",
+    "field_types": [
+      "string",
+      "string",
+      "string"
+    ],
+    "name": "json-file",
+    "filename": "json_in.json",
+    "field_names": [
+      "title",
+      "summary",
+      "thumbnail"
+    ],
+    "rows_xpath": "/top/vegetablePicture/potatoes/item[position()=2]",
+    "field_xpaths": [
+      "title",
+      "summary",
+      "thumbnail/url"
+    ]
   }
 ]

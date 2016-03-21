@@ -5,6 +5,7 @@ Created on Sep 14, 2012
 """
 
 import io
+import json
 
 from lxml import _elementpath
 from lxml import etree
@@ -17,7 +18,7 @@ from qal.common.listhelper import find_next_match, find_previous_match
 
 
 def xpath_data_formats():
-    return ["XML", "XHTML", "HTML"]  # "UNTIDY_HTML"]
+    return ["XML", "XHTML", "HTML", "JSON"]  # "UNTIDY_HTML"]
 
 
 class XpathDataset(CustomDataset):
@@ -119,6 +120,12 @@ class XpathDataset(CustomDataset):
             from lxml import etree
 
             return etree.parse(_reference)
+        if _data_format == 'JSON':
+            from lxml import etree
+            from json_lxml import element
+            with open(_reference, "r") as _f:
+                _top_element = json.load(_f)
+                return etree.ElementTree(element("top",_top_element))
         else:
             raise Exception("_file_to_tree: " + _data_format + " is not supported")
 
@@ -431,8 +438,13 @@ class XpathDataset(CustomDataset):
 
         if not _save_as:
             _save_as = make_path_absolute(self.filename, self._base_path)
-
-        self._structure_tree.write(_save_as)
+        if self.xpath_data_format == "JSON":
+            from json_lxml import value
+            _json_out = value(self._structure_tree.getroot())
+            with open(_save_as, "w") as _f:
+                json.dump(_json_out,_f)
+        else:
+            self._structure_tree.write(_save_as)
 
         self.log_save(_save_as)
         return self._log

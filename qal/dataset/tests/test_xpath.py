@@ -62,6 +62,25 @@ class Test(unittest.TestCase):
 
         # TODO: Add more tests. Especially against no existing destination and more complex files, more levels.
 
+    def test_2_json_xpath(self):
+        _f_r = open(Test_Resource_Dir + "/resources.json", "r")
+        _resources_list = json.load(_f_r)
+        _resources = Resources(_resources_list=_resources_list, _base_path=Test_Resource_Dir)
+
+        # xml_in
+        _source = XpathDataset(_resource=_resources.get_resource("{4a84a17f-4dbf-42fb-b42f-ad0812ed065a}"))
+        _source._log_level = DATASET_LOGLEVEL_DETAIL
+        _source.load(_add_node_ref=True)
+        _cmp = ["potato 2 jpg",
+                "Introduction of puneri aloo. This is a traditional potato preparation flavoured with curry leaves and"
+                " peanuts and can be eaten on fasting day. Preparation time 10 min",
+                "http://thm-a01.yimg.com/nimage/7fa23212efe84b64"]
+        self.assertEqual(_source.data_table[0][:-1], _cmp, "The data didn't match")
+
+        _source.save(_save_as=Test_Resource_Dir + "/json_out.json")
+        _source = XpathDataset()
+        _source.load()
+        _source.save(_save_as=Test_Resource_Dir + "/json_out.json")
 
 if __name__ == "__main__":
     # import sys;sys.argv = ['', 'Test.testName']

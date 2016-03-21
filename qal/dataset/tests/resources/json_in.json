@@ -1,0 +1,40 @@
+{
+    "vegetablePicture": {
+        "totalResultsReturned": 2,
+        "firstResultPosition": 1,
+        "potatoes": [
+            {
+                "title": "potato jpg",
+                "summary": "Kentang Si bungsu dari keluarga Solanum tuberosum L ini ternyata memiliki khasiat untuk mengurangi kerutan  jerawat  bintik hitam dan kemerahan pada kulit  Gunakan seminggu sekali sebagai",
+                "url": "http://www.mediaindonesia.com/spaw/uploads/images/potato.jpg",
+                "clickUrl": "http://www.mediaindonesia.com/spaw/uploads/images/potato.jpg",
+                "refererUrl": "http://www.mediaindonesia.com/mediaperempuan/index.php?ar_id=Nzkw",
+                "fileSize": 22630,
+                "fileFormat": "jpeg",
+                "height": "362",
+                "wWidth": "532",
+                "thumbnail": {
+                    "url": "http://thm-a01.yimg.com/nimage/557094559c18f16a",
+                    "height": "98",
+                    "width": "145"
+                }
+            },
+            {
+                "title": "potato 2 jpg",
+                "summary": "Introduction of puneri aloo. This is a traditional potato preparation flavoured with curry leaves and peanuts and can be eaten on fasting day. Preparation time 10 min",
+                "url": "http://www.infovisual.info/01/photo/potato.jpg",
+                "clickUrl": "http://www.infovisual.info/01/photo/potato.jpg",
+                "refererUrl": "http://sundayfood.com/puneri-aloo-indian-%20recipe",
+                "fileSize": 119398,
+                "fileFormat": "jpeg",
+                "height": "685",
+                "width": "1024",
+                "thumbnail": {
+                    "url": "http://thm-a01.yimg.com/nimage/7fa23212efe84b64",
+                    "height": "107",
+                    "width": "160"
+                }
+            }
+        ]
+    }
+}
