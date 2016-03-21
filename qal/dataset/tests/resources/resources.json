@@ -137,7 +137,7 @@
       "summary",
       "thumbnail"
     ],
-    "rows_xpath": "/top/vegetablePicture/potatoes/item[position()=2]",
+    "rows_xpath": "/top/vegetableGallery/potatoes/item[position()=2]",
     "field_xpaths": [
       "title",
       "summary",

@@ -78,9 +78,6 @@ class Test(unittest.TestCase):
         self.assertEqual(_source.data_table[0][:-1], _cmp, "The data didn't match")
 
         _source.save(_save_as=Test_Resource_Dir + "/json_out.json")
-        _source = XpathDataset()
-        _source.load()
-        _source.save(_save_as=Test_Resource_Dir + "/json_out.json")
 
 if __name__ == "__main__":
     # import sys;sys.argv = ['', 'Test.testName']
