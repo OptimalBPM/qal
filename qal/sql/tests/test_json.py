@@ -347,7 +347,7 @@ class ClassSQLMetaJSONTest(unittest.TestCase):
         #self._compare_sql_files_for_all_db_types(_statement,"_test_SELECT_resource_out", _overwrite = True)
 
         _sql_out = _statement.as_sql(DB_SQLITE)
-        print(_sql_out)
+        print("SQL to run: " + _sql_out)
 
         _rows = _statement._dal.query(_sql_out)
         _dict_cmp_data = [
