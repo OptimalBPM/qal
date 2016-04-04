@@ -16,8 +16,8 @@ def generate_schema():
 
     _result = {
         "$schema": "http://json-schema.org/draft-04/schema#",
-        "description": "The JSON Schema for QAL resources",
-        "title": "QAL Transformations",
+        "description": "The JSON Schema for QAL transformations",
+        "title": "QAL Transformation",
         "type": "object",
         "version": __version__,
         "properties": {},

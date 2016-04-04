@@ -113,10 +113,10 @@
             "type": "object"
         }
     },
-    "description": "The JSON Schema for QAL resources",
+    "description": "The JSON Schema for QAL transformations",
     "namespace": "qal",
     "properties": {},
-    "title": "QAL Transformations",
+    "title": "QAL Transformation",
     "type": "object",
     "version": "0.5"
 }
