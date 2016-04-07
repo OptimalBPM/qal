@@ -14,7 +14,8 @@ from qal import __version__
 
 def resource_types():
     """Returns a list of the QAL-supported resource types"""
-    return ["CUSTOM", "FLATFILE", "MATRIX", "XPATH", "RDBMS"]
+    return ["CUSTOM", "FLATFILE", "MATRIX", "XPATH", "RDBMS", "SPREADSHEET"]
+    # TODO: See to it that spreadsheets are added as resource types everywhere
 
 def generate_schema():
     """Generates an JSON schema based on the class structure in SQL.py"""
