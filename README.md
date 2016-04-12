@@ -76,7 +76,7 @@ gdebi is recommended*, to install gdebi, use:
 
 Install package, available for download above:
 ```bash
-sudo gdebi python3-qal_0.4.0_all.deb
+sudo gdebi python3-qal_0.6.0_all.deb
 ```
 
 ## On a tight system
@@ -99,7 +99,7 @@ pip3 install python3-qal
 ```
 or clone the source:
 ```bash
-git clone git://git.code.sf.net/p/qal/code qal-code
+git clone https://github.com/OptimalBPM/qal
 ```
 
 
